@@ -50,16 +50,14 @@ jobs:
       - name: Executar coleta
         run: node save_odds_history.js
 
-      - name: Empacotar histórico
-        run: tar -czf odds_history.tar.gz odds_history/
-
-      - name: Salvar na branch history
+      - name: Empacotar e salvar na branch history
         run: |
+          tar -czf /tmp/odds_history.tar.gz odds_history/
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout --orphan history-tmp
           git rm -rf . --quiet
-          mv odds_history.tar.gz .
+          cp /tmp/odds_history.tar.gz .
           git add odds_history.tar.gz
           git commit -m "odds: $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push origin HEAD:history --force
