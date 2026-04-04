@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '0 12 * * *'   # 12:00 UTC (09:00 Brasília)
     - cron: '0 20 * * *'   # 20:00 UTC (17:00 Brasília)
-  workflow_dispatch:         # permite rodar manualmente
+  workflow_dispatch:
 
 jobs:
   save-history:
@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: Checkout repositório
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -44,25 +42,12 @@ jobs:
         env:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
 
-      - name: Restaurar histórico anterior
-        run: |
-          git fetch origin history 2>/dev/null || echo "Branch history ainda não existe"
-          git checkout origin/history -- odds_history/ 2>/dev/null || echo "Sem histórico anterior"
-
       - name: Executar coleta
         run: node save_odds_history.js
 
-      - name: Salvar histórico no GitHub
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f odds_history/
-          git diff --staged --quiet && echo "Sem novos dados" || (
-            git stash &&
-            git checkout --orphan history-new &&
-            git rm -rf . --quiet 2>/dev/null || true &&
-            git stash pop &&
-            git add -f odds_history/ &&
-            git commit -m "odds: $(date -u '+%Y-%m-%d %H:%M') UTC" &&
-            git push origin HEAD:history --force
-          )
+      - name: Upload histórico
+        uses: actions/upload-artifact@v4
+        with:
+          name: odds-history-${{ github.run_id }}
+          path: odds_history/
+          retention-days: 90
