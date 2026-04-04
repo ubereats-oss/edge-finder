@@ -1,0 +1,28 @@
+# Dependências
+node_modules/
+
+# Dados locais (não versionar)
+*.json
+!package.json
+!package-lock.json
+
+# Histórico de odds (grande demais para Git)
+odds_history/
+
+# Flutter build
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Logs
+*.log
+*.txt
+
+# Ambiente
+.env
+
+# IDEs
+.idea/
+.vscode/
+*.iml

@@ -1,0 +1,3997 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: lib/**/*.dart, test/**/*.dart, pubspec.yaml, pubspec.lock, analysis_options.yaml, firebase.json, firestore.rules, storage.rules, android/app/src/main/AndroidManifest.xml, android/app/build.gradle, android/app/build.gradle.kts, android/build.gradle, android/build.gradle.kts, android/settings.gradle, android/settings.gradle.kts, android/app/google-services.json, android/app/src/**/google-services.json, android/app/proguard-rules.pro, ios/Runner/Info.plist, ios/Runner/AppDelegate.swift, ios/Runner/AppDelegate.m, ios/Runner/Runner.entitlements, ios/Runner/GoogleService-Info.plist, ios/Podfile, web/index.html, web/manifest.json, lib/firebase_options.dart, lib/firebase_options_*.dart, firestore.indexes.json
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+analysis_options.yaml
+lib/main.dart
+lib/screens/baseball_screen.dart
+lib/screens/basketball_br_screen.dart
+lib/screens/basketball_mode_screen.dart
+lib/screens/basketball_screen.dart
+lib/screens/home_screen.dart
+lib/screens/player_detail_screen.dart
+lib/screens/settings_screen.dart
+lib/screens/sport_selector_screen.dart
+lib/screens/tennis_screen.dart
+lib/services/api_service.dart
+lib/services/prefs_service.dart
+lib/widgets/last_updated_bar.dart
+lib/widgets/match_card.dart
+lib/widgets/mlb_prop_card.dart
+lib/widgets/prop_card.dart
+lib/widgets/props_filter_bar.dart
+lib/widgets/status_bar.dart
+pubspec.lock
+pubspec.yaml
+test/widget_test.dart
+web/index.html
+web/manifest.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="analysis_options.yaml">
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  # The lint rules applied to this project can be customized in the
+  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
+  # included above or to enable additional rules. A list of all available lints
+  # and their documentation is published at https://dart.dev/lints.
+  #
+  # Instead of disabling a lint rule for the entire project in the
+  # section below, it can also be suppressed for a single line of code
+  # or a specific dart file by using the `// ignore: name_of_lint` and
+  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
+  # producing the lint.
+  rules:
+    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
+    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
+</file>
+
+<file path="lib/main.dart">
+import 'package:flutter/material.dart';
+import 'screens/sport_selector_screen.dart';
+
+void main() {
+  runApp(const OddsApp());
+}
+
+class OddsApp extends StatelessWidget {
+  const OddsApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Edge Finder',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF12121F),
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF7C4DFF),
+          secondary: Color(0xFF00C853),
+        ),
+      ),
+      home: const SportSelectorScreen(),
+    );
+  }
+}
+</file>
+
+<file path="lib/screens/baseball_screen.dart">
+import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../widgets/match_card.dart';
+import '../widgets/mlb_prop_card.dart';
+import '../widgets/props_filter_bar.dart';
+import '../widgets/last_updated_bar.dart';
+import '../widgets/status_bar.dart';
+
+class BaseballScreen extends StatefulWidget {
+  const BaseballScreen({super.key});
+
+  @override
+  State<BaseballScreen> createState() => _BaseballScreenState();
+}
+
+class _BaseballScreenState extends State<BaseballScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  List<Map<String, dynamic>> _h2hResults = [];
+  List<Map<String, dynamic>> _propsResults = [];
+  DateTime? _h2hUpdated;
+  DateTime? _propsUpdated;
+  bool _loading = false;
+  String _status = '';
+
+  // Filtros
+  double _minEdge = 0;
+  String? _selectedProp;
+  bool _hideWarnings = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _loadAll();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadAll() async {
+    setState(() => _loading = true);
+    try {
+      final h2h = await ApiService.fetchMlbResults();
+      final props = await ApiService.fetchMlbProps();
+      setState(() {
+        _h2hResults = h2h.data;
+        _propsResults = props.data;
+        _h2hUpdated = h2h.lastUpdated;
+        _propsUpdated = props.lastUpdated;
+      });
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _runQuick() async {
+    setState(() { _loading = true; _status = 'Buscando odds...'; });
+    try {
+      await ApiService.post('mlb/update-odds');
+      setState(() => _status = 'Buscando props...');
+      await ApiService.post('mlb/update-props');
+      setState(() => _status = 'Rodando modelos...');
+      await ApiService.post('mlb/run-model');
+      await ApiService.post('mlb/run-props-model');
+      setState(() => _status = 'Carregando...');
+      await _loadAll();
+      setState(() => _status = 'Concluído.');
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _runFull() async {
+    setState(() { _loading = true; _status = 'Atualizando scores históricos (~45 min)...'; });
+    try {
+      await ApiService.post('mlb/update-scores');
+      setState(() => _status = 'Atualizando odds e props...');
+      await _runQuick();
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+    );
+  }
+
+  void _showUpdateMenu() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1E1E2E),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Atualizar dados',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+            _UpdateOption(
+              icon: Icons.bolt,
+              color: const Color(0xFFFFD600),
+              title: 'Atualização rápida',
+              subtitle: 'Odds e props do dia · ~30 segundos',
+              onTap: () { Navigator.pop(context); _runQuick(); },
+            ),
+            const SizedBox(height: 12),
+            _UpdateOption(
+              icon: Icons.sync,
+              color: const Color(0xFF00C853),
+              title: 'Atualização completa',
+              subtitle: 'Scores históricos · ~45 minutos',
+              onTap: () { Navigator.pop(context); _runFull(); },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<String> get _availableProps {
+    return _propsResults
+        .map((p) => p['prop'] as String)
+        .toSet()
+        .toList()
+      ..sort();
+  }
+
+  List<Map<String, dynamic>> get _filteredProps {
+    return _propsResults.where((p) {
+      final edge = (p['edge'] as num).toDouble();
+      if (edge < _minEdge) return false;
+      if (_selectedProp != null && p['prop'] != _selectedProp) return false;
+      if (_hideWarnings && p['lowSample'] == true) return false;
+      return true;
+    }).toList();
+  }
+
+  List<Widget> _buildPropsList() {
+    final Map<String, List<Map<String, dynamic>>> byGame = {};
+    for (final prop in _filteredProps) {
+      final game = prop['game'] as String;
+      byGame.putIfAbsent(game, () => []).add(prop);
+    }
+
+    final widgets = <Widget>[];
+    for (final entry in byGame.entries) {
+      widgets.add(_GameHeader(game: entry.key));
+      final sorted = [...entry.value]
+        ..sort((a, b) {
+          final aP = a['isPitcher'] == true ? 0 : 1;
+          final bP = b['isPitcher'] == true ? 0 : 1;
+          if (aP != bP) return aP - bP;
+          return (b['edge'] as num).compareTo(a['edge'] as num);
+        });
+      for (final prop in sorted) {
+        widgets.add(MlbPropCard(prop: prop));
+      }
+    }
+    return widgets;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF12121F),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A2E),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Row(
+          children: [
+            Text('⚾', style: TextStyle(fontSize: 20)),
+            SizedBox(width: 8),
+            Text('Beisebol',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _loading ? null : _loadAll,
+          ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: const Color(0xFF00C853),
+          labelColor: Colors.white,
+          unselectedLabelColor: const Color(0xFF888888),
+          tabs: const [Tab(text: 'H2H'), Tab(text: 'Props')],
+        ),
+      ),
+      body: Column(
+        children: [
+          if (_status.isNotEmpty) StatusBar(message: _status),
+          if (_loading)
+            const LinearProgressIndicator(
+              backgroundColor: Color(0xFF1E1E2E),
+              color: Color(0xFF00C853),
+            ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                Column(
+                  children: [
+                    LastUpdatedBar(lastUpdated: _h2hUpdated),
+                    Expanded(
+                      child: _h2hResults.isEmpty && !_loading
+                          ? const _EmptyState(
+                              msg: 'Sem jogos disponíveis.\nAtualize para buscar.')
+                          : ListView.builder(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                              itemCount: _h2hResults.length,
+                              itemBuilder: (_, i) =>
+                                  MatchCard(match: _h2hResults[i]),
+                            ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    LastUpdatedBar(lastUpdated: _propsUpdated),
+                    PropsFilterBar(
+                      minEdge: _minEdge,
+                      selectedProp: _selectedProp,
+                      hideWarnings: _hideWarnings,
+                      availableProps: _availableProps,
+                      onEdgeChanged: (v) => setState(() => _minEdge = v),
+                      onPropChanged: (v) => setState(() => _selectedProp = v),
+                      onHideWarningsChanged: (v) =>
+                          setState(() => _hideWarnings = v),
+                    ),
+                    Expanded(
+                      child: _filteredProps.isEmpty && !_loading
+                          ? const _EmptyState(
+                              msg: 'Sem props disponíveis.\nAjuste os filtros ou atualize.')
+                          : ListView(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                              children: _buildPropsList(),
+                            ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _loading ? null : _showUpdateMenu,
+        backgroundColor: const Color(0xFF00C853),
+        icon: const Icon(Icons.play_arrow, color: Colors.white),
+        label: const Text('Atualizar',
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+}
+
+class _GameHeader extends StatelessWidget {
+  final String game;
+  const _GameHeader({required this.game});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+      child: Text(
+        game,
+        style: const TextStyle(
+          color: Color(0xFF00C853),
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  final String msg;
+  const _EmptyState({required this.msg});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(msg,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Color(0xFF666666), fontSize: 15)),
+    );
+  }
+}
+
+class _UpdateOption extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _UpdateOption({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
+                  const SizedBox(height: 2),
+                  Text(subtitle,
+                      style: const TextStyle(
+                          color: Color(0xFF888888), fontSize: 12)),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: color),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/screens/basketball_br_screen.dart">
+import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../widgets/match_card.dart';
+import '../widgets/prop_card.dart';
+import '../widgets/props_filter_bar.dart';
+import '../widgets/last_updated_bar.dart';
+import '../widgets/status_bar.dart';
+
+class BasketballBrScreen extends StatefulWidget {
+  const BasketballBrScreen({super.key});
+
+  @override
+  State<BasketballBrScreen> createState() => _BasketballBrScreenState();
+}
+
+class _BasketballBrScreenState extends State<BasketballBrScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  List<Map<String, dynamic>> _h2hResults = [];
+  List<Map<String, dynamic>> _propsResults = [];
+  DateTime? _h2hUpdated;
+  DateTime? _propsUpdated;
+  bool _loading = false;
+  String _status = '';
+
+  double _minEdge = 0;
+  String? _selectedProp;
+  bool _hideWarnings = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _loadAll();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadAll() async {
+    setState(() => _loading = true);
+    try {
+      final h2h = await ApiService.fetchNbaResults();
+      final props = await ApiService.fetchNbaBrProps();
+      setState(() {
+        _h2hResults = h2h.data;
+        _propsResults = props.data;
+        _h2hUpdated = h2h.lastUpdated;
+        _propsUpdated = props.lastUpdated;
+      });
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _runQuick() async {
+    setState(() { _loading = true; _status = 'Buscando odds...'; });
+    try {
+      await ApiService.post('nba/update-odds');
+      setState(() => _status = 'Buscando props Pinnacle...');
+      await ApiService.post('nba/update-props-br');
+      setState(() => _status = 'Rodando modelos...');
+      await ApiService.post('nba/run-model');
+      await ApiService.post('nba/run-props-br-model');
+      setState(() => _status = 'Carregando...');
+      await _loadAll();
+      setState(() => _status = 'Concluído.');
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _runFull() async {
+    setState(() { _loading = true; _status = 'Atualizando scores históricos...'; });
+    try {
+      await ApiService.post('nba/update-scores');
+      setState(() => _status = 'Atualizando stats de jogadores (~20 min)...');
+      await ApiService.post('nba/update-player-stats');
+      setState(() => _status = 'Atualizando odds e props...');
+      await _runQuick();
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+    );
+  }
+
+  void _showUpdateMenu() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1E1E2E),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Atualizar dados',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+            _UpdateOption(
+              icon: Icons.bolt,
+              color: const Color(0xFFFFD600),
+              title: 'Atualização rápida',
+              subtitle: 'Odds e props do dia · ~30 segundos',
+              onTap: () { Navigator.pop(context); _runQuick(); },
+            ),
+            const SizedBox(height: 12),
+            _UpdateOption(
+              icon: Icons.sync,
+              color: const Color(0xFF00C853),
+              title: 'Atualização completa',
+              subtitle: 'Scores + stats de jogadores · ~20 minutos',
+              onTap: () { Navigator.pop(context); _runFull(); },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<String> get _availableProps {
+    return _propsResults
+        .map((p) => p['prop'] as String)
+        .toSet()
+        .toList()
+      ..sort();
+  }
+
+  List<Map<String, dynamic>> get _filteredProps {
+    return _propsResults.where((p) {
+      final edge = (p['edge'] as num).toDouble();
+      if (edge < _minEdge) return false;
+      if (_selectedProp != null && p['prop'] != _selectedProp) return false;
+      if (_hideWarnings && p['lowSample'] == true) return false;
+      return true;
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF12121F),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A2E),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Row(
+          children: [
+            Text('🇧🇷', style: TextStyle(fontSize: 20)),
+            SizedBox(width: 8),
+            Text('Odds Brasil',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _loading ? null : _loadAll,
+          ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: const Color(0xFF00C853),
+          labelColor: Colors.white,
+          unselectedLabelColor: const Color(0xFF888888),
+          tabs: const [Tab(text: 'H2H'), Tab(text: 'Props')],
+        ),
+      ),
+      body: Column(
+        children: [
+          if (_status.isNotEmpty) StatusBar(message: _status),
+          if (_loading)
+            const LinearProgressIndicator(
+              backgroundColor: Color(0xFF1E1E2E),
+              color: Color(0xFF00C853),
+            ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // H2H
+                Column(
+                  children: [
+                    LastUpdatedBar(lastUpdated: _h2hUpdated),
+                    Expanded(
+                      child: _h2hResults.isEmpty && !_loading
+                          ? const _EmptyState(
+                              msg: 'Sem jogos disponíveis.\nAtualize para buscar.')
+                          : ListView.builder(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                              itemCount: _h2hResults.length,
+                              itemBuilder: (_, i) =>
+                                  MatchCard(match: _h2hResults[i]),
+                            ),
+                    ),
+                  ],
+                ),
+                // Props
+                Column(
+                  children: [
+                    LastUpdatedBar(lastUpdated: _propsUpdated),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      color: const Color(0xFF00C853).withValues(alpha: 0.08),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.filter_alt,
+                              color: Color(0xFF00C853), size: 14),
+                          SizedBox(width: 6),
+                          Text(
+                            'Filtrado: jogadores com 30+ jogos na temporada',
+                            style: TextStyle(
+                                color: Color(0xFF00C853), fontSize: 11),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PropsFilterBar(
+                      minEdge: _minEdge,
+                      selectedProp: _selectedProp,
+                      hideWarnings: _hideWarnings,
+                      availableProps: _availableProps,
+                      onEdgeChanged: (v) => setState(() => _minEdge = v),
+                      onPropChanged: (v) => setState(() => _selectedProp = v),
+                      onHideWarningsChanged: (v) =>
+                          setState(() => _hideWarnings = v),
+                    ),
+                    Expanded(
+                      child: _filteredProps.isEmpty && !_loading
+                          ? const _EmptyState(
+                              msg:
+                                  'Sem props disponíveis.\nAjuste os filtros ou atualize.')
+                          : ListView.builder(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                              itemCount: _filteredProps.length,
+                              itemBuilder: (_, i) =>
+                                  PropCard(prop: _filteredProps[i]),
+                            ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _loading ? null : _showUpdateMenu,
+        backgroundColor: const Color(0xFF00C853),
+        icon: const Icon(Icons.play_arrow, color: Colors.white),
+        label: const Text('Atualizar',
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  final String msg;
+  const _EmptyState({required this.msg});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(msg,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Color(0xFF666666), fontSize: 15)),
+    );
+  }
+}
+
+class _UpdateOption extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _UpdateOption({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
+                  const SizedBox(height: 2),
+                  Text(subtitle,
+                      style: const TextStyle(
+                          color: Color(0xFF888888), fontSize: 12)),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: color),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/screens/basketball_mode_screen.dart">
+import 'package:flutter/material.dart';
+import 'basketball_screen.dart';
+import 'basketball_br_screen.dart';
+
+class BasketballModeScreen extends StatelessWidget {
+  const BasketballModeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF12121F),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A2E),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Row(
+          children: [
+            Text('🏀', style: TextStyle(fontSize: 20)),
+            SizedBox(width: 8),
+            Text('Basquete',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              const Text(
+                'Escolha o mercado',
+                style: TextStyle(color: Color(0xFF888888), fontSize: 16),
+              ),
+              const SizedBox(height: 32),
+              _ModeCard(
+                emoji: '🇺🇸',
+                title: 'Props US',
+                subtitle: 'Odds de casas americanas · Mercado completo',
+                color: const Color(0xFFFF6D00),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const BasketballScreen()),
+                ),
+              ),
+              const SizedBox(height: 16),
+              _ModeCard(
+                emoji: '🇧🇷',
+                title: 'Odds Brasil',
+                subtitle:
+                    'Jogadores disponíveis na bet365 · Executável no Brasil',
+                color: const Color(0xFF00C853),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const BasketballBrScreen()),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ModeCard extends StatelessWidget {
+  final String emoji;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ModeCard({
+    required this.emoji,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E1E2E),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Center(
+                child: Text(emoji,
+                    style: const TextStyle(fontSize: 28)),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                        color: Color(0xFF888888), fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: color, size: 28),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/screens/basketball_screen.dart">
+import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../widgets/match_card.dart';
+import '../widgets/prop_card.dart';
+import '../widgets/props_filter_bar.dart';
+import '../widgets/last_updated_bar.dart';
+import '../widgets/status_bar.dart';
+
+class BasketballScreen extends StatefulWidget {
+  const BasketballScreen({super.key});
+
+  @override
+  State<BasketballScreen> createState() => _BasketballScreenState();
+}
+
+class _BasketballScreenState extends State<BasketballScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  List<Map<String, dynamic>> _h2hResults = [];
+  List<Map<String, dynamic>> _propsResults = [];
+  DateTime? _h2hUpdated;
+  DateTime? _propsUpdated;
+  bool _loading = false;
+  String _status = '';
+
+  // Filtros
+  double _minEdge = 0;
+  String? _selectedProp;
+  bool _hideWarnings = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _loadAll();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadAll() async {
+    setState(() => _loading = true);
+    try {
+      final h2h = await ApiService.fetchNbaResults();
+      final props = await ApiService.fetchNbaProps();
+      setState(() {
+        _h2hResults = h2h.data;
+        _propsResults = props.data;
+        _h2hUpdated = h2h.lastUpdated;
+        _propsUpdated = props.lastUpdated;
+      });
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _runQuick() async {
+    setState(() { _loading = true; _status = 'Buscando odds...'; });
+    try {
+      await ApiService.post('nba/update-odds');
+      setState(() => _status = 'Buscando props...');
+      await ApiService.post('nba/update-props');
+      setState(() => _status = 'Rodando modelos...');
+      await ApiService.post('nba/run-model');
+      await ApiService.post('nba/run-props-model');
+      setState(() => _status = 'Carregando...');
+      await _loadAll();
+      setState(() => _status = 'Concluído.');
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _runFull() async {
+    setState(() { _loading = true; _status = 'Atualizando scores históricos...'; });
+    try {
+      await ApiService.post('nba/update-scores');
+      setState(() => _status = 'Atualizando stats de jogadores (~20 min)...');
+      await ApiService.post('nba/update-player-stats');
+      setState(() => _status = 'Atualizando odds e props...');
+      await _runQuick();
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+    );
+  }
+
+  void _showUpdateMenu() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1E1E2E),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Atualizar dados',
+                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+            _UpdateOption(
+              icon: Icons.bolt,
+              color: const Color(0xFFFFD600),
+              title: 'Atualização rápida',
+              subtitle: 'Odds e props do dia · ~30 segundos',
+              onTap: () { Navigator.pop(context); _runQuick(); },
+            ),
+            const SizedBox(height: 12),
+            _UpdateOption(
+              icon: Icons.sync,
+              color: const Color(0xFF7C4DFF),
+              title: 'Atualização completa',
+              subtitle: 'Scores + stats de jogadores · ~20 minutos',
+              onTap: () { Navigator.pop(context); _runFull(); },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<String> get _availableProps {
+    return _propsResults
+        .map((p) => p['prop'] as String)
+        .toSet()
+        .toList()
+      ..sort();
+  }
+
+  List<Map<String, dynamic>> get _filteredProps {
+    return _propsResults.where((p) {
+      final edge = (p['edge'] as num).toDouble();
+      if (edge < _minEdge) return false;
+      if (_selectedProp != null && p['prop'] != _selectedProp) return false;
+      if (_hideWarnings && p['lowSample'] == true) return false;
+      return true;
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF12121F),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A2E),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Row(children: [
+          Text('🏀', style: TextStyle(fontSize: 20)),
+          SizedBox(width: 8),
+          Text('Basquete',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        ]),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _loading ? null : _loadAll,
+          ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: const Color(0xFFFF6D00),
+          labelColor: Colors.white,
+          unselectedLabelColor: const Color(0xFF888888),
+          tabs: const [Tab(text: 'H2H'), Tab(text: 'Props')],
+        ),
+      ),
+      body: Column(
+        children: [
+          if (_status.isNotEmpty) StatusBar(message: _status),
+          if (_loading)
+            const LinearProgressIndicator(
+              backgroundColor: Color(0xFF1E1E2E),
+              color: Color(0xFFFF6D00),
+            ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // H2H
+                Column(
+                  children: [
+                    LastUpdatedBar(lastUpdated: _h2hUpdated),
+                    Expanded(
+                      child: _h2hResults.isEmpty && !_loading
+                          ? const _EmptyState(msg: 'Sem jogos disponíveis.\nAtualize para buscar.')
+                          : ListView.builder(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              itemCount: _h2hResults.length,
+                              itemBuilder: (_, i) => MatchCard(match: _h2hResults[i]),
+                            ),
+                    ),
+                  ],
+                ),
+                // Props
+                Column(
+                  children: [
+                    LastUpdatedBar(lastUpdated: _propsUpdated),
+                    PropsFilterBar(
+                      minEdge: _minEdge,
+                      selectedProp: _selectedProp,
+                      hideWarnings: _hideWarnings,
+                      availableProps: _availableProps,
+                      onEdgeChanged: (v) => setState(() => _minEdge = v),
+                      onPropChanged: (v) => setState(() => _selectedProp = v),
+                      onHideWarningsChanged: (v) => setState(() => _hideWarnings = v),
+                    ),
+                    Expanded(
+                      child: _filteredProps.isEmpty && !_loading
+                          ? const _EmptyState(msg: 'Sem props disponíveis.\nAjuste os filtros ou atualize.')
+                          : ListView.builder(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              itemCount: _filteredProps.length,
+                              itemBuilder: (_, i) => PropCard(prop: _filteredProps[i]),
+                            ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _loading ? null : _showUpdateMenu,
+        backgroundColor: const Color(0xFFFF6D00),
+        icon: const Icon(Icons.play_arrow, color: Colors.white),
+        label: const Text('Atualizar',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  final String msg;
+  const _EmptyState({required this.msg});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(msg,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Color(0xFF666666), fontSize: 15)),
+    );
+  }
+}
+
+class _UpdateOption extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _UpdateOption({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
+                  const SizedBox(height: 2),
+                  Text(subtitle,
+                      style: const TextStyle(
+                          color: Color(0xFF888888), fontSize: 12)),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: color),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/screens/home_screen.dart">
+import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../widgets/match_card.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  List<Map<String, dynamic>> _results = [];
+  bool _loading = false;
+  String _status = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadResults();
+  }
+
+  Future<void> _loadResults() async {
+    setState(() => _loading = true);
+    try {
+      final data = await ApiService.fetchResults();
+      setState(() => _results = data);
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _runPipeline() async {
+    setState(() {
+      _loading = true;
+      _status = 'Atualizando ranking...';
+    });
+    try {
+      await ApiService.updateRanking();
+      setState(() => _status = 'Buscando odds...');
+      await ApiService.updateOdds();
+      setState(() => _status = 'Rodando modelo...');
+      await ApiService.runModel();
+      setState(() => _status = 'Carregando resultados...');
+      await _loadResults();
+      setState(() => _status = 'Concluído.');
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF12121F),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A2E),
+        title: const Text(
+          'Tennis Edge',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _loading ? null : _loadResults,
+            tooltip: 'Recarregar resultados',
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          if (_status.isNotEmpty)
+            Container(
+              width: double.infinity,
+              color: const Color(0xFF1E1E2E),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text(_status,
+                  style: const TextStyle(
+                      color: Color(0xFFAAAAAA), fontSize: 13)),
+            ),
+          if (_loading)
+            const LinearProgressIndicator(
+              backgroundColor: Color(0xFF1E1E2E),
+              color: Color(0xFF7C4DFF),
+            ),
+          Expanded(
+            child: _results.isEmpty && !_loading
+                ? const Center(
+                    child: Text(
+                      'Sem partidas disponíveis.\nRode o pipeline para atualizar.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Color(0xFF666666), fontSize: 15),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    itemCount: _results.length,
+                    itemBuilder: (_, i) =>
+                        MatchCard(match: _results[i]),
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _loading ? null : _runPipeline,
+        backgroundColor: const Color(0xFF7C4DFF),
+        icon: const Icon(Icons.play_arrow, color: Colors.white),
+        label: const Text('Rodar Pipeline',
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/screens/player_detail_screen.dart">
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class PlayerDetailScreen extends StatefulWidget {
+  final Map<String, dynamic> prop;
+
+  const PlayerDetailScreen({super.key, required this.prop});
+
+  @override
+  State<PlayerDetailScreen> createState() => _PlayerDetailScreenState();
+}
+
+class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
+  Map<String, dynamic>? _playerStats;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchStats();
+  }
+
+  Future<void> _fetchStats() async {
+    final player = Uri.encodeComponent(widget.prop['player'] as String);
+    try {
+      final res = await http.get(
+        Uri.parse('http://localhost:3001/api/nba/player-stats/$player'),
+      );
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        setState(() => _playerStats = data as Map<String, dynamic>?);
+      }
+    } catch (_) {}
+    setState(() => _loading = false);
+  }
+
+  String _propLabel(String p) {
+    const labels = {
+      'points': 'Pontos',
+      'rebounds': 'Rebotes',
+      'assists': 'Assistências',
+      'steals': 'Roubos',
+      'threes': 'Cestas de 3',
+      'fouls': 'Faltas',
+    };
+    return labels[p] ?? p;
+  }
+
+  double _avg(List values) {
+    if (values.isEmpty) return 0;
+    return values.fold(0.0, (s, v) => s + (v as num).toDouble()) /
+        values.length;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final statKey = widget.prop['prop'] as String;
+    final player = widget.prop['player'] as String;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFF12121F),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A2E),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(player,
+            style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16)),
+      ),
+      body: _loading
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFF7C4DFF)))
+          : _playerStats == null
+              ? const Center(
+                  child: Text('Dados não disponíveis.',
+                      style: TextStyle(color: Color(0xFF666666))))
+              : ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    _SectionHeader(
+                        title: 'Prop: ${_propLabel(statKey)}'),
+                    const SizedBox(height: 8),
+                    _PropSummaryCard(prop: widget.prop),
+                    const SizedBox(height: 24),
+                    const _SectionHeader(title: 'Por temporada'),
+                    const SizedBox(height: 8),
+                    ..._buildSeasonCards(statKey),
+                    const SizedBox(height: 24),
+                    const _SectionHeader(title: 'Casa vs Fora'),
+                    const SizedBox(height: 8),
+                    _buildHomeAwayCard(statKey),
+                    const SizedBox(height: 24),
+                    const _SectionHeader(title: 'Regular vs Playoffs'),
+                    const SizedBox(height: 8),
+                    _buildGameTypeCard(statKey),
+                  ],
+                ),
+    );
+  }
+
+  List<Widget> _buildSeasonCards(String statKey) {
+    final seasons = _playerStats!.keys.toList()
+      ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+
+    return seasons.map((seasonStr) {
+      final season = int.parse(seasonStr);
+      final seasonData = _playerStats![seasonStr] as Map<String, dynamic>;
+      final allValues = <double>[];
+
+      for (final gameType in ['regular', 'playoffs']) {
+        for (final loc in ['home', 'away']) {
+          final ctx = (seasonData[gameType] as Map?)?[loc] as Map?;
+          final vals = ctx?[statKey];
+          if (vals is List) {
+            allValues.addAll(vals.map((v) => (v as num).toDouble()));
+          }
+        }
+      }
+
+      if (allValues.isEmpty) return const SizedBox.shrink();
+
+      final label = season == 2026
+          ? '2025-26'
+          : season == 2025
+              ? '2024-25'
+              : '2023-24';
+
+      return _StatRow(
+        label: label,
+        value: _avg(allValues).toStringAsFixed(2),
+        subLabel: '${allValues.length} jogos',
+        highlight: season == 2026,
+      );
+    }).toList();
+  }
+
+  Widget _buildHomeAwayCard(String statKey) {
+    final homeVals = <double>[];
+    final awayVals = <double>[];
+
+    for (final seasonData in _playerStats!.values) {
+      for (final gameType in ['regular', 'playoffs']) {
+        final home =
+            ((seasonData as Map)[gameType] as Map?)?['home'] as Map?;
+        final away =
+            (seasonData[gameType] as Map?)?['away'] as Map?;
+        if (home?[statKey] is List) {
+          homeVals.addAll(
+              (home![statKey] as List).map((v) => (v as num).toDouble()));
+        }
+        if (away?[statKey] is List) {
+          awayVals.addAll(
+              (away![statKey] as List).map((v) => (v as num).toDouble()));
+        }
+      }
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: _StatCard(
+            label: '🏠 Casa',
+            value: homeVals.isEmpty
+                ? '-'
+                : _avg(homeVals).toStringAsFixed(2),
+            subLabel: '${homeVals.length} jogos',
+            color: const Color(0xFF7C4DFF),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _StatCard(
+            label: '✈️ Fora',
+            value: awayVals.isEmpty
+                ? '-'
+                : _avg(awayVals).toStringAsFixed(2),
+            subLabel: '${awayVals.length} jogos',
+            color: const Color(0xFFFF6D00),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGameTypeCard(String statKey) {
+    final regularVals = <double>[];
+    final playoffVals = <double>[];
+
+    for (final seasonData in _playerStats!.values) {
+      for (final loc in ['home', 'away']) {
+        final reg =
+            ((seasonData as Map)['regular'] as Map?)?[loc] as Map?;
+        final pla =
+            (seasonData['playoffs'] as Map?)?[loc] as Map?;
+        if (reg?[statKey] is List) {
+          regularVals.addAll(
+              (reg![statKey] as List).map((v) => (v as num).toDouble()));
+        }
+        if (pla?[statKey] is List) {
+          playoffVals.addAll(
+              (pla![statKey] as List).map((v) => (v as num).toDouble()));
+        }
+      }
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: _StatCard(
+            label: '📅 Regular',
+            value: regularVals.isEmpty
+                ? '-'
+                : _avg(regularVals).toStringAsFixed(2),
+            subLabel: '${regularVals.length} jogos',
+            color: const Color(0xFF00C853),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _StatCard(
+            label: '🏆 Playoffs',
+            value: playoffVals.isEmpty
+                ? '-'
+                : _avg(playoffVals).toStringAsFixed(2),
+            subLabel: '${playoffVals.length} jogos',
+            color: const Color(0xFFFFD600),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  const _SectionHeader({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(title,
+        style: const TextStyle(
+            color: Color(0xFFAAAAAA),
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5));
+  }
+}
+
+class _PropSummaryCard extends StatelessWidget {
+  final Map<String, dynamic> prop;
+  const _PropSummaryCard({required this.prop});
+
+  Color _edgeColor(double edge) {
+    if (edge >= 5) return const Color(0xFF00C853);
+    if (edge >= 2) return const Color(0xFFFFD600);
+    return const Color(0xFFFF1744);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final edge = (prop['edge'] as num).toDouble();
+    final side = prop['side'] as String;
+    final line = (prop['line'] as num).toDouble();
+    final odds = (prop['odds'] as num).toDouble();
+    final avg = (prop['playerAvg'] as num).toDouble();
+    final std = (prop['playerStd'] as num).toDouble();
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E2E),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _edgeColor(edge).withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(prop['game'] as String,
+                    style: const TextStyle(
+                        color: Color(0xFF888888), fontSize: 12)),
+                const SizedBox(height: 6),
+                Text('Média: ${avg.toStringAsFixed(2)} ± ${std.toStringAsFixed(2)}',
+                    style: const TextStyle(color: Colors.white, fontSize: 14)),
+                Text('Linha: $line',
+                    style: const TextStyle(
+                        color: Color(0xFFAAAAAA), fontSize: 13)),
+              ],
+            ),
+          ),
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: _edgeColor(edge).withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: _edgeColor(edge)),
+            ),
+            child: Column(
+              children: [
+                Text('$side $line',
+                    style: TextStyle(
+                        color: _edgeColor(edge),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13)),
+                Text('Edge: ${edge.toStringAsFixed(2)}%',
+                    style:
+                        TextStyle(color: _edgeColor(edge), fontSize: 12)),
+                Text('@${odds.toStringAsFixed(2)}',
+                    style: TextStyle(
+                        color: _edgeColor(edge).withValues(alpha: 0.8),
+                        fontSize: 11)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final String subLabel;
+  final bool highlight;
+
+  const _StatRow({
+    required this.label,
+    required this.value,
+    required this.subLabel,
+    this.highlight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: highlight
+            ? const Color(0xFF7C4DFF).withValues(alpha: 0.1)
+            : const Color(0xFF1E1E2E),
+        borderRadius: BorderRadius.circular(10),
+        border: highlight
+            ? Border.all(
+                color: const Color(0xFF7C4DFF).withValues(alpha: 0.4))
+            : null,
+      ),
+      child: Row(
+        children: [
+          Text(label,
+              style: TextStyle(
+                  color:
+                      highlight ? const Color(0xFF7C4DFF) : Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14)),
+          if (highlight)
+            const Padding(
+              padding: EdgeInsets.only(left: 6),
+              child: Text('(atual)',
+                  style: TextStyle(
+                      color: Color(0xFF7C4DFF), fontSize: 11)),
+            ),
+          const Spacer(),
+          Text(subLabel,
+              style: const TextStyle(
+                  color: Color(0xFF888888), fontSize: 12)),
+          const SizedBox(width: 12),
+          Text(value,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final String subLabel;
+  final Color color;
+
+  const _StatCard({
+    required this.label,
+    required this.value,
+    required this.subLabel,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        children: [
+          Text(label,
+              style: const TextStyle(
+                  color: Color(0xFFAAAAAA), fontSize: 13)),
+          const SizedBox(height: 8),
+          Text(value,
+              style: TextStyle(
+                  color: color,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text(subLabel,
+              style: const TextStyle(
+                  color: Color(0xFF888888), fontSize: 11)),
+        ],
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/screens/settings_screen.dart">
+import 'package:flutter/material.dart';
+import '../services/prefs_service.dart';
+
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  final _controller = TextEditingController();
+  double _banca = 0;
+  bool _saved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  void _load() {
+    final value = PrefsService.getBanca();
+    setState(() {
+      _banca = value;
+      _controller.text = value > 0 ? value.toStringAsFixed(2) : '';
+    });
+  }
+
+  void _save() {
+    final value = double.tryParse(_controller.text.replaceAll(',', '.'));
+    if (value == null || value <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Informe um valor válido.'),
+            backgroundColor: Colors.red),
+      );
+      return;
+    }
+    PrefsService.setBanca(value);
+    setState(() {
+      _banca = value;
+      _saved = true;
+    });
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _saved = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF12121F),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A2E),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text('Configurações',
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'BANCA',
+              style: TextStyle(
+                  color: Color(0xFFAAAAAA),
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Valor total disponível para apostas (R\$)',
+              style: TextStyle(color: Color(0xFF666666), fontSize: 12),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E1E2E),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF333355)),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: _controller,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                style: const TextStyle(color: Colors.white, fontSize: 18),
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  prefixText: 'R\$ ',
+                  prefixStyle:
+                      TextStyle(color: Color(0xFF888888), fontSize: 18),
+                  hintText: '0,00',
+                  hintStyle: TextStyle(color: Color(0xFF444455)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _save,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF7C4DFF),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(
+                  _saved ? '✓ Salvo' : 'Salvar',
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+            ),
+            if (_banca > 0) ...[
+              const SizedBox(height: 32),
+              const Text(
+                'BANCA ATUAL',
+                style: TextStyle(
+                    color: Color(0xFFAAAAAA),
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E1E2E),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: const Color(0xFF7C4DFF).withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  'R\$ ${_banca.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                      color: Color(0xFF7C4DFF),
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/screens/sport_selector_screen.dart">
+import 'package:flutter/material.dart';
+import 'tennis_screen.dart';
+import 'basketball_mode_screen.dart';
+import 'baseball_screen.dart';
+import 'settings_screen.dart';
+
+class SportSelectorScreen extends StatelessWidget {
+  const SportSelectorScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF12121F),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 32),
+              Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'Edge Finder',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.settings,
+                        color: Color(0xFF888888), size: 26),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const SettingsScreen()),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Escolha o esporte',
+                style: TextStyle(color: Color(0xFF888888), fontSize: 16),
+              ),
+              const SizedBox(height: 48),
+              _SportCard(
+                emoji: '🎾',
+                title: 'Tênis',
+                subtitle: 'ATP Singles · Odds + Modelo ELO',
+                color: const Color(0xFF7C4DFF),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const TennisScreen()),
+                ),
+              ),
+              const SizedBox(height: 16),
+              _SportCard(
+                emoji: '🏀',
+                title: 'Basquete',
+                subtitle: 'NBA · H2H e Props por jogador',
+                color: const Color(0xFFFF6D00),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const BasketballModeScreen()),
+                ),
+              ),
+              const SizedBox(height: 16),
+              _SportCard(
+                emoji: '⚾',
+                title: 'Beisebol',
+                subtitle: 'MLB · H2H e Props por jogador',
+                color: const Color(0xFF00C853),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const BaseballScreen()),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SportCard extends StatelessWidget {
+  final String emoji;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _SportCard({
+    required this.emoji,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E1E2E),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Center(
+                child: Text(emoji,
+                    style: const TextStyle(fontSize: 28)),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                        color: Color(0xFF888888), fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: color, size: 28),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/screens/tennis_screen.dart">
+import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../widgets/match_card.dart';
+import '../widgets/status_bar.dart';
+import '../widgets/last_updated_bar.dart';
+
+class TennisScreen extends StatefulWidget {
+  const TennisScreen({super.key});
+
+  @override
+  State<TennisScreen> createState() => _TennisScreenState();
+}
+
+class _TennisScreenState extends State<TennisScreen> {
+  List<Map<String, dynamic>> _results = [];
+  DateTime? _lastUpdated;
+  bool _loading = false;
+  String _status = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadResults();
+  }
+
+  Future<void> _loadResults() async {
+    setState(() => _loading = true);
+    try {
+      final result = await ApiService.fetchTennisResults();
+      setState(() {
+        _results = result.data;
+        _lastUpdated = result.lastUpdated;
+      });
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _runPipeline() async {
+    setState(() { _loading = true; _status = 'Atualizando ranking...'; });
+    try {
+      await ApiService.post('tennis/update-ranking');
+      setState(() => _status = 'Buscando odds...');
+      await ApiService.post('tennis/update-odds');
+      setState(() => _status = 'Rodando modelo...');
+      await ApiService.post('tennis/run-model');
+      setState(() => _status = 'Carregando resultados...');
+      await _loadResults();
+      setState(() => _status = 'Concluído.');
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF12121F),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A2E),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Row(
+          children: [
+            Text('🎾', style: TextStyle(fontSize: 20)),
+            SizedBox(width: 8),
+            Text('Tênis',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _loading ? null : _loadResults,
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          if (_status.isNotEmpty) StatusBar(message: _status),
+          if (_loading)
+            const LinearProgressIndicator(
+              backgroundColor: Color(0xFF1E1E2E),
+              color: Color(0xFF7C4DFF),
+            ),
+          LastUpdatedBar(lastUpdated: _lastUpdated),
+          Expanded(
+            child: _results.isEmpty && !_loading
+                ? const Center(
+                    child: Text(
+                      'Sem partidas disponíveis.\nRode o pipeline para atualizar.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Color(0xFF666666), fontSize: 15),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    itemCount: _results.length,
+                    itemBuilder: (_, i) => MatchCard(match: _results[i]),
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _loading ? null : _runPipeline,
+        backgroundColor: const Color(0xFF7C4DFF),
+        icon: const Icon(Icons.play_arrow, color: Colors.white),
+        label: const Text('Atualizar',
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/services/api_service.dart">
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+const String _base = 'http://localhost:3001/api';
+
+class FetchResult {
+  final List<Map<String, dynamic>> data;
+  final DateTime? lastUpdated;
+
+  const FetchResult({required this.data, this.lastUpdated});
+}
+
+class ApiService {
+  static Future<FetchResult> fetchTennisResults() async {
+    final res = await http.get(Uri.parse('$_base/tennis/results'));
+    if (res.statusCode != 200) throw Exception('Erro ao buscar resultados de tênis');
+    final body = jsonDecode(res.body) as Map<String, dynamic>;
+    return FetchResult(
+      data: (body['data'] as List).cast<Map<String, dynamic>>(),
+      lastUpdated: body['lastUpdated'] != null
+          ? DateTime.tryParse(body['lastUpdated'])
+          : null,
+    );
+  }
+
+  static Future<FetchResult> fetchNbaResults() async {
+    final res = await http.get(Uri.parse('$_base/nba/results'));
+    if (res.statusCode != 200) throw Exception('Erro ao buscar resultados NBA');
+    final body = jsonDecode(res.body) as Map<String, dynamic>;
+    return FetchResult(
+      data: (body['data'] as List).cast<Map<String, dynamic>>(),
+      lastUpdated: body['lastUpdated'] != null
+          ? DateTime.tryParse(body['lastUpdated'])
+          : null,
+    );
+  }
+
+  static Future<FetchResult> fetchNbaProps() async {
+    final res = await http.get(Uri.parse('$_base/nba/props'));
+    if (res.statusCode != 200) throw Exception('Erro ao buscar props NBA');
+    final body = jsonDecode(res.body) as Map<String, dynamic>;
+    return FetchResult(
+      data: (body['data'] as List).cast<Map<String, dynamic>>(),
+      lastUpdated: body['lastUpdated'] != null
+          ? DateTime.tryParse(body['lastUpdated'])
+          : null,
+    );
+  }
+
+  static Future<FetchResult> fetchNbaBrProps() async {
+    final res = await http.get(Uri.parse('$_base/nba/props-br'));
+    if (res.statusCode != 200) throw Exception('Erro ao buscar props NBA BR');
+    final body = jsonDecode(res.body) as Map<String, dynamic>;
+    return FetchResult(
+      data: (body['data'] as List).cast<Map<String, dynamic>>(),
+      lastUpdated: body['lastUpdated'] != null
+          ? DateTime.tryParse(body['lastUpdated'])
+          : null,
+    );
+  }
+
+  static Future<FetchResult> fetchMlbResults() async {
+    final res = await http.get(Uri.parse('$_base/mlb/results'));
+    if (res.statusCode != 200) throw Exception('Erro ao buscar resultados MLB');
+    final body = jsonDecode(res.body) as Map<String, dynamic>;
+    return FetchResult(
+      data: (body['data'] as List).cast<Map<String, dynamic>>(),
+      lastUpdated: body['lastUpdated'] != null
+          ? DateTime.tryParse(body['lastUpdated'])
+          : null,
+    );
+  }
+
+  static Future<FetchResult> fetchMlbProps() async {
+    final res = await http.get(Uri.parse('$_base/mlb/props'));
+    if (res.statusCode != 200) throw Exception('Erro ao buscar props MLB');
+    final body = jsonDecode(res.body) as Map<String, dynamic>;
+    return FetchResult(
+      data: (body['data'] as List).cast<Map<String, dynamic>>(),
+      lastUpdated: body['lastUpdated'] != null
+          ? DateTime.tryParse(body['lastUpdated'])
+          : null,
+    );
+  }
+
+  static Future<String> post(String path) async {
+    final res = await http.post(Uri.parse('$_base/$path'));
+    final body = jsonDecode(res.body);
+    if (body['ok'] != true) throw Exception(body['error'] ?? 'Erro desconhecido');
+    return body['log'] as String? ?? '';
+  }
+}
+</file>
+
+<file path="lib/services/prefs_service.dart">
+import 'dart:convert';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
+
+class PrefsService {
+  static double getBanca() {
+    try {
+      final raw = html.window.localStorage['banca'];
+      if (raw == null) return 0;
+      return double.tryParse(raw) ?? 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  static void setBanca(double value) {
+    try {
+      html.window.localStorage['banca'] = value.toString();
+    } catch (_) {}
+  }
+}
+</file>
+
+<file path="lib/widgets/last_updated_bar.dart">
+import 'package:flutter/material.dart';
+
+class LastUpdatedBar extends StatelessWidget {
+  final DateTime? lastUpdated;
+
+  const LastUpdatedBar({super.key, this.lastUpdated});
+
+  String _formatAge() {
+    if (lastUpdated == null) return 'Nunca atualizado';
+    final diff = DateTime.now().difference(lastUpdated!);
+    if (diff.inMinutes < 1) return 'Atualizado agora';
+    if (diff.inMinutes < 60) return 'Atualizado há ${diff.inMinutes} min';
+    if (diff.inHours < 24) return 'Atualizado há ${diff.inHours}h';
+    return 'Atualizado há ${diff.inDays} dia(s)';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: const Color(0xFF12121F),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Row(
+        children: [
+          Icon(
+            Icons.access_time,
+            size: 12,
+            color: lastUpdated == null
+                ? const Color(0xFF555555)
+                : const Color(0xFF888888),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            _formatAge(),
+            style: TextStyle(
+              color: lastUpdated == null
+                  ? const Color(0xFF555555)
+                  : const Color(0xFF888888),
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/widgets/match_card.dart">
+import 'package:flutter/material.dart';
+import '../services/prefs_service.dart';
+
+class MatchCard extends StatelessWidget {
+  final Map<String, dynamic> match;
+
+  const MatchCard({super.key, required this.match});
+
+  Color _edgeColor(double edge) {
+    if (edge >= 5) return const Color(0xFF00C853);
+    if (edge >= 2) return const Color(0xFFFFD600);
+    return const Color(0xFFFF1744);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final parts = (match['match'] as String).split(' x ');
+    final p1 = parts[0];
+    final p2 = parts.length > 1 ? parts[1] : '';
+    final e1 = (match['edge1'] as num).toDouble();
+    final e2 = (match['edge2'] as num).toDouble();
+    final bestEdge = e1 >= e2 ? e1 : e2;
+    final bestPlayer = e1 >= e2 ? p1 : p2;
+    final kelly = (match['kelly'] as num?)?.toDouble() ?? 0;
+    final banca = PrefsService.getBanca();
+    final valorKelly = banca > 0 ? banca * kelly / 100 : 0.0;
+
+    return Card(
+      color: const Color(0xFF1E1E2E),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              match['match'] as String,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                _probCol(p1, (match['modelProb1'] as num).toDouble(),
+                    (match['impliedProb1'] as num).toDouble()),
+                const SizedBox(width: 12),
+                _probCol(p2, (match['modelProb2'] as num).toDouble(),
+                    (match['impliedProb2'] as num).toDouble()),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: _edgeColor(bestEdge).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: _edgeColor(bestEdge), width: 1),
+              ),
+              child: Text(
+                'Edge: $bestPlayer ${bestEdge.toStringAsFixed(2)}%',
+                style: TextStyle(
+                    color: _edgeColor(bestEdge), fontWeight: FontWeight.bold),
+              ),
+            ),
+            if (kelly > 0) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                      color: const Color(0xFF7C4DFF).withValues(alpha: 0.4)),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'Kelly: ${kelly.toStringAsFixed(2)}%',
+                      style: const TextStyle(
+                          color: Color(0xFF7C4DFF),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13),
+                    ),
+                    if (banca > 0) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        '→ R\$ ${valorKelly.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            color: Color(0xFF9E7DFF), fontSize: 13),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _probCol(String player, double model, double implied) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(player,
+              style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 12)),
+          const SizedBox(height: 4),
+          Text('Modelo: ${model.toStringAsFixed(1)}%',
+              style: const TextStyle(color: Colors.white, fontSize: 13)),
+          Text('Mercado: ${implied.toStringAsFixed(1)}%',
+              style: const TextStyle(color: Color(0xFF888888), fontSize: 12)),
+        ],
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/widgets/mlb_prop_card.dart">
+import 'package:flutter/material.dart';
+import '../services/prefs_service.dart';
+
+class MlbPropCard extends StatelessWidget {
+  final Map<String, dynamic> prop;
+
+  const MlbPropCard({super.key, required this.prop});
+
+  Color _edgeColor(double edge) {
+    if (edge >= 5) return const Color(0xFF00C853);
+    if (edge >= 2) return const Color(0xFFFFD600);
+    return const Color(0xFFFF1744);
+  }
+
+  String _propLabel(String p) {
+    const labels = {
+      'hits': 'Hits',
+      'homeRuns': 'Home Runs',
+      'strikeouts': 'Strikeouts',
+      'hitsAllowed': 'Hits Allowed',
+    };
+    return labels[p] ?? p;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final edge = (prop['edge'] as num).toDouble();
+    final avg = (prop['playerAvg'] as num).toDouble();
+    final std = (prop['playerStd'] as num).toDouble();
+    final line = (prop['line'] as num).toDouble();
+    final modelProb = (prop['modelProb'] as num).toDouble();
+    final impliedProb = (prop['impliedProb'] as num).toDouble();
+    final side = prop['side'] as String;
+    final odds = (prop['odds'] as num).toDouble();
+    final isPitcher = prop['isPitcher'] == true;
+    final kelly = (prop['kelly'] as num?)?.toDouble() ?? 0;
+    final lowSample = prop['lowSample'] == true;
+    final inefficientMarket = prop['inefficientMarket'] == true;
+    final banca = PrefsService.getBanca();
+    final valorKelly = banca > 0 ? banca * kelly / 100 : 0.0;
+
+    return Card(
+      color:
+          inefficientMarket ? const Color(0xFF1A2A1A) : const Color(0xFF1E1E2E),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: inefficientMarket
+            ? const BorderSide(color: Color(0xFF00C853), width: 1)
+            : BorderSide.none,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: isPitcher
+                        ? const Color(0xFF7C4DFF).withValues(alpha: 0.2)
+                        : const Color(0xFF00C853).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    isPitcher ? 'P' : 'B',
+                    style: TextStyle(
+                      color: isPitcher
+                          ? const Color(0xFF7C4DFF)
+                          : const Color(0xFF00C853),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    prop['player'] as String,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2A2A3E),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        _propLabel(prop['prop'] as String),
+                        style: const TextStyle(
+                            color: Color(0xFFAAAAAA), fontSize: 11),
+                      ),
+                    ),
+                    if (inefficientMarket) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color:
+                              const Color(0xFF00C853).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                              color: const Color(0xFF00C853)
+                                  .withValues(alpha: 0.5)),
+                        ),
+                        child: const Text(
+                          '🎯 Mercado ineficiente',
+                          style:
+                              TextStyle(color: Color(0xFF00C853), fontSize: 10),
+                        ),
+                      ),
+                    ],
+                    if (lowSample) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color:
+                              const Color(0xFFFF6D00).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                              color: const Color(0xFFFF6D00)
+                                  .withValues(alpha: 0.5)),
+                        ),
+                        child: const Text(
+                          '⚠️ Poucos jogos',
+                          style:
+                              TextStyle(color: Color(0xFFFF6D00), fontSize: 10),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                _statBox('Linha', line.toString()),
+                const SizedBox(width: 6),
+                _statBox('Média',
+                    '${avg.toStringAsFixed(2)}±${std.toStringAsFixed(2)}'),
+                const SizedBox(width: 6),
+                _statBox('Modelo', '${modelProb.toStringAsFixed(1)}%'),
+                const SizedBox(width: 6),
+                _statBox('Mercado', '${impliedProb.toStringAsFixed(1)}%'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: _edgeColor(edge).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: _edgeColor(edge), width: 1),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$side $line · Edge: ${edge.toStringAsFixed(2)}%',
+                    style: TextStyle(
+                        color: _edgeColor(edge),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '@${odds.toStringAsFixed(2)}',
+                    style: TextStyle(
+                        color: _edgeColor(edge).withValues(alpha: 0.8),
+                        fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            if (kelly > 0) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                      color: const Color(0xFF7C4DFF).withValues(alpha: 0.4)),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'Kelly: ${kelly.toStringAsFixed(2)}%',
+                      style: const TextStyle(
+                          color: Color(0xFF7C4DFF),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13),
+                    ),
+                    if (banca > 0) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        '→ R\$ ${valorKelly.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            color: Color(0xFF9E7DFF), fontSize: 13),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _statBox(String label, String value) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFF2A2A3E),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Column(
+          children: [
+            Text(label,
+                style: const TextStyle(color: Color(0xFF888888), fontSize: 9)),
+            const SizedBox(height: 2),
+            Text(value,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/widgets/prop_card.dart">
+import 'package:flutter/material.dart';
+import '../services/prefs_service.dart';
+import '../screens/player_detail_screen.dart';
+
+class PropCard extends StatefulWidget {
+  final Map<String, dynamic> prop;
+
+  const PropCard({super.key, required this.prop});
+
+  @override
+  State<PropCard> createState() => _PropCardState();
+}
+
+class _PropCardState extends State<PropCard> {
+  double _banca = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _banca = PrefsService.getBanca();
+  }
+
+  Color _edgeColor(double edge) {
+    if (edge >= 5) return const Color(0xFF00C853);
+    if (edge >= 2) return const Color(0xFFFFD600);
+    return const Color(0xFFFF1744);
+  }
+
+  String _propLabel(String prop) {
+    const labels = {
+      'points': 'Pontos',
+      'rebounds': 'Rebotes',
+      'assists': 'Assistências',
+      'steals': 'Roubos',
+      'threes': 'Cestas de 3',
+      'fouls': 'Faltas',
+    };
+    return labels[prop] ?? prop;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final edge = (widget.prop['edge'] as num).toDouble();
+    final avg = (widget.prop['playerAvg'] as num).toDouble();
+    final std = (widget.prop['playerStd'] as num).toDouble();
+    final line = (widget.prop['line'] as num).toDouble();
+    final modelProb = (widget.prop['modelProb'] as num).toDouble();
+    final impliedProb = (widget.prop['impliedProb'] as num).toDouble();
+    final side = widget.prop['side'] as String;
+    final odds = (widget.prop['odds'] as num).toDouble();
+    final kelly = (widget.prop['kelly'] as num?)?.toDouble() ?? 0;
+    final lowSample = widget.prop['lowSample'] == true;
+    final inefficientMarket = widget.prop['inefficientMarket'] == true;
+    final contextGames = widget.prop['contextGames'] as int? ?? 0;
+    final valorKelly = _banca > 0 ? _banca * kelly / 100 : 0.0;
+
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PlayerDetailScreen(prop: widget.prop),
+        ),
+      ),
+      child: Card(
+        color: inefficientMarket
+            ? const Color(0xFF1A2A1A)
+            : const Color(0xFF1E1E2E),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: inefficientMarket
+              ? const BorderSide(color: Color(0xFF00C853), width: 1)
+              : BorderSide.none,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.prop['player'] as String,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          widget.prop['game'] as String,
+                          style: const TextStyle(
+                              color: Color(0xFF888888), fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A2A3E),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          _propLabel(widget.prop['prop'] as String),
+                          style: const TextStyle(
+                              color: Color(0xFFAAAAAA), fontSize: 12),
+                        ),
+                      ),
+                      if (inefficientMarket) ...[
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00C853)
+                                .withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: const Color(0xFF00C853)
+                                    .withValues(alpha: 0.5)),
+                          ),
+                          child: const Text(
+                            '🎯 Mercado ineficiente',
+                            style: TextStyle(
+                                color: Color(0xFF00C853), fontSize: 10),
+                          ),
+                        ),
+                      ],
+                      if (lowSample) ...[
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF6D00)
+                                .withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: const Color(0xFFFF6D00)
+                                    .withValues(alpha: 0.5)),
+                          ),
+                          child: Text(
+                            '⚠️ Poucos jogos ($contextGames)',
+                            style: const TextStyle(
+                                color: Color(0xFFFF6D00), fontSize: 10),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  _statBox('Linha', line.toString()),
+                  const SizedBox(width: 8),
+                  _statBox('Média',
+                      '${avg.toStringAsFixed(1)}±${std.toStringAsFixed(1)}'),
+                  const SizedBox(width: 8),
+                  _statBox('Modelo', '${modelProb.toStringAsFixed(1)}%'),
+                  const SizedBox(width: 8),
+                  _statBox('Mercado', '${impliedProb.toStringAsFixed(1)}%'),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: _edgeColor(edge).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                            color: _edgeColor(edge), width: 1),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            '$side $line · Edge: ${edge.toStringAsFixed(2)}%',
+                            style: TextStyle(
+                                color: _edgeColor(edge),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '@${odds.toStringAsFixed(2)}',
+                            style: TextStyle(
+                                color: _edgeColor(edge)
+                                    .withValues(alpha: 0.8),
+                                fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.chevron_right,
+                      color: Color(0xFF555555), size: 20),
+                ],
+              ),
+              if (kelly > 0) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                        color: const Color(0xFF7C4DFF)
+                            .withValues(alpha: 0.4)),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Kelly: ${kelly.toStringAsFixed(2)}%',
+                        style: const TextStyle(
+                            color: Color(0xFF7C4DFF),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13),
+                      ),
+                      if (_banca > 0) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '→ R\$ ${valorKelly.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                              color: Color(0xFF9E7DFF), fontSize: 13),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _statBox(String label, String value) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: const BoxDecoration(
+          color: Color(0xFF2A2A3E),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+        child: Column(
+          children: [
+            Text(label,
+                style: const TextStyle(
+                    color: Color(0xFF888888), fontSize: 10)),
+            const SizedBox(height: 2),
+            Text(value,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/widgets/props_filter_bar.dart">
+import 'package:flutter/material.dart';
+
+class PropsFilterBar extends StatelessWidget {
+  final double minEdge;
+  final String? selectedProp;
+  final bool hideWarnings;
+  final List<String> availableProps;
+  final ValueChanged<double> onEdgeChanged;
+  final ValueChanged<String?> onPropChanged;
+  final ValueChanged<bool> onHideWarningsChanged;
+
+  const PropsFilterBar({
+    super.key,
+    required this.minEdge,
+    required this.selectedProp,
+    required this.hideWarnings,
+    required this.availableProps,
+    required this.onEdgeChanged,
+    required this.onPropChanged,
+    required this.onHideWarningsChanged,
+  });
+
+  static const _edgeOptions = [0.0, 2.0, 5.0, 10.0];
+
+  String _propLabel(String prop) {
+    const labels = {
+      'points': 'Pontos',
+      'rebounds': 'Rebotes',
+      'assists': 'Assistências',
+      'steals': 'Roubos',
+      'threes': 'Cestas de 3',
+      'fouls': 'Faltas',
+      'hits': 'Hits',
+      'homeRuns': 'Home Runs',
+      'strikeouts': 'Strikeouts',
+      'hitsAllowed': 'Hits Permitidos',
+    };
+    return labels[prop] ?? prop;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xFF1A1A2E),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Edge mínimo
+          Row(
+            children: [
+              const Text('Edge mín:',
+                  style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 12)),
+              const SizedBox(width: 8),
+              ..._edgeOptions.map((e) => Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: GestureDetector(
+                      onTap: () => onEdgeChanged(e),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: minEdge == e
+                              ? const Color(0xFF7C4DFF)
+                              : const Color(0xFF2A2A3E),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          e == 0 ? 'Todos' : '${e.toInt()}%+',
+                          style: TextStyle(
+                            color: minEdge == e
+                                ? Colors.white
+                                : const Color(0xFFAAAAAA),
+                            fontSize: 12,
+                            fontWeight: minEdge == e
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Tipo de prop + ocultar warnings
+          Row(
+            children: [
+              const Text('Tipo:',
+                  style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 12)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _PropChip(
+                        label: 'Todos',
+                        selected: selectedProp == null,
+                        onTap: () => onPropChanged(null),
+                      ),
+                      ...availableProps.map((p) => _PropChip(
+                            label: _propLabel(p),
+                            selected: selectedProp == p,
+                            onTap: () => onPropChanged(p),
+                          )),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () => onHideWarningsChanged(!hideWarnings),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: hideWarnings
+                        ? const Color(0xFFFF6D00).withValues(alpha: 0.2)
+                        : const Color(0xFF2A2A3E),
+                    borderRadius: BorderRadius.circular(6),
+                    border: hideWarnings
+                        ? Border.all(
+                            color: const Color(0xFFFF6D00).withValues(alpha: 0.5))
+                        : null,
+                  ),
+                  child: const Text('⚠️ Ocultar',
+                      style: TextStyle(fontSize: 11, color: Color(0xFFAAAAAA))),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PropChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _PropChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFF7C4DFF) : const Color(0xFF2A2A3E),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? Colors.white : const Color(0xFFAAAAAA),
+            fontSize: 12,
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="lib/widgets/status_bar.dart">
+import 'package:flutter/material.dart';
+
+class StatusBar extends StatelessWidget {
+  final String message;
+
+  const StatusBar({super.key, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: const Color(0xFF1E1E2E),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Text(
+        message,
+        style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
+      ),
+    );
+  }
+}
+</file>
+
+<file path="pubspec.lock">
+# Generated by pub
+# See https://dart.dev/tools/pub/glossary#lockfile
+packages:
+  async:
+    dependency: transitive
+    description:
+      name: async
+      sha256: e2eb0491ba5ddb6177742d2da23904574082139b07c1e33b8503b9f46f3e1a37
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.13.1"
+  boolean_selector:
+    dependency: transitive
+    description:
+      name: boolean_selector
+      sha256: "8aab1771e1243a5063b8b0ff68042d67334e3feab9e95b9490f9a6ebf73b42ea"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.2"
+  characters:
+    dependency: transitive
+    description:
+      name: characters
+      sha256: faf38497bda5ead2a8c7615f4f7939df04333478bf32e4173fcb06d428b5716b
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.1"
+  clock:
+    dependency: transitive
+    description:
+      name: clock
+      sha256: fddb70d9b5277016c77a80201021d40a2247104d9f4aa7bab7157b7e3f05b84b
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
+  code_assets:
+    dependency: transitive
+    description:
+      name: code_assets
+      sha256: "83ccdaa064c980b5596c35dd64a8d3ecc68620174ab9b90b6343b753aa721687"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  collection:
+    dependency: transitive
+    description:
+      name: collection
+      sha256: "2f5709ae4d3d59dd8f7cd309b4e023046b57d8a6c82130785d2b0e5868084e76"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.19.1"
+  crypto:
+    dependency: transitive
+    description:
+      name: crypto
+      sha256: c8ea0233063ba03258fbcf2ca4d6dadfefe14f02fab57702265467a19f27fadf
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.7"
+  fake_async:
+    dependency: transitive
+    description:
+      name: fake_async
+      sha256: "5368f224a74523e8d2e7399ea1638b37aecfca824a3cc4dfdf77bf1fa905ac44"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.3"
+  ffi:
+    dependency: transitive
+    description:
+      name: ffi
+      sha256: "6d7fd89431262d8f3125e81b50d3847a091d846eafcd4fdb88dd06f36d705a45"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
+  file:
+    dependency: transitive
+    description:
+      name: file
+      sha256: a3b4f84adafef897088c160faf7dfffb7696046cb13ae90b508c2cbc95d3b8d4
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.1"
+  flutter:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  flutter_lints:
+    dependency: "direct dev"
+    description:
+      name: flutter_lints
+      sha256: "5398f14efa795ffb7a33e9b6a08798b26a180edac4ad7db3f231e40f82ce11e1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0"
+  flutter_test:
+    dependency: "direct dev"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  glob:
+    dependency: transitive
+    description:
+      name: glob
+      sha256: c3f1ee72c96f8f78935e18aa8cecced9ab132419e8625dc187e1c2408efc20de
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.3"
+  google_fonts:
+    dependency: "direct main"
+    description:
+      name: google_fonts
+      sha256: ba03d03bcaa2f6cb7bd920e3b5027181db75ab524f8891c8bc3aa603885b8055
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.3"
+  hooks:
+    dependency: transitive
+    description:
+      name: hooks
+      sha256: e79ed1e8e1929bc6ecb6ec85f0cb519c887aa5b423705ded0d0f2d9226def388
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
+  http:
+    dependency: "direct main"
+    description:
+      name: http
+      sha256: "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.6.0"
+  http_parser:
+    dependency: transitive
+    description:
+      name: http_parser
+      sha256: "178d74305e7866013777bab2c3d8726205dc5a4dd935297175b19a23a2e66571"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.2"
+  leak_tracker:
+    dependency: transitive
+    description:
+      name: leak_tracker
+      sha256: "33e2e26bdd85a0112ec15400c8cbffea70d0f9c3407491f672a2fad47915e2de"
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.0.2"
+  leak_tracker_flutter_testing:
+    dependency: transitive
+    description:
+      name: leak_tracker_flutter_testing
+      sha256: "1dbc140bb5a23c75ea9c4811222756104fbcd1a27173f0c34ca01e16bea473c1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.10"
+  leak_tracker_testing:
+    dependency: transitive
+    description:
+      name: leak_tracker_testing
+      sha256: "8d5a2d49f4a66b49744b23b018848400d23e54caf9463f4eb20df3eb8acb2eb1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
+  lints:
+    dependency: transitive
+    description:
+      name: lints
+      sha256: c35bb79562d980e9a453fc715854e1ed39e24e7d0297a880ef54e17f9874a9d7
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.1"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      sha256: c8245ada5f1717ed44271ed1c26b8ce85ca3228fd2ffdb75468ab01979309d61
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.0"
+  matcher:
+    dependency: transitive
+    description:
+      name: matcher
+      sha256: dc0b7dc7651697ea4ff3e69ef44b0407ea32c487a39fff6a4004fa585e901861
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.12.19"
+  material_color_utilities:
+    dependency: transitive
+    description:
+      name: material_color_utilities
+      sha256: "9c337007e82b1889149c82ed242ed1cb24a66044e30979c44912381e9be4c48b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.0"
+  meta:
+    dependency: transitive
+    description:
+      name: meta
+      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.17.0"
+  native_toolchain_c:
+    dependency: transitive
+    description:
+      name: native_toolchain_c
+      sha256: "6ba77bb18063eebe9de401f5e6437e95e1438af0a87a3a39084fbd37c90df572"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.17.6"
+  objective_c:
+    dependency: transitive
+    description:
+      name: objective_c
+      sha256: "100a1c87616ab6ed41ec263b083c0ef3261ee6cd1dc3b0f35f8ddfa4f996fe52"
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.3.0"
+  path:
+    dependency: transitive
+    description:
+      name: path
+      sha256: "75cca69d1490965be98c73ceaea117e8a04dd21217b37b292c9ddbec0d955bc5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.9.1"
+  path_provider:
+    dependency: transitive
+    description:
+      name: path_provider
+      sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.5"
+  path_provider_android:
+    dependency: transitive
+    description:
+      name: path_provider_android
+      sha256: "149441ca6e4f38193b2e004c0ca6376a3d11f51fa5a77552d8bd4d2b0c0912ba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.23"
+  path_provider_foundation:
+    dependency: transitive
+    description:
+      name: path_provider_foundation
+      sha256: "2a376b7d6392d80cd3705782d2caa734ca4727776db0b6ec36ef3f1855197699"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.0"
+  path_provider_linux:
+    dependency: transitive
+    description:
+      name: path_provider_linux
+      sha256: f7a1fe3a634fe7734c8d3f2766ad746ae2a2884abe22e241a8b301bf5cac3279
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.1"
+  path_provider_platform_interface:
+    dependency: transitive
+    description:
+      name: path_provider_platform_interface
+      sha256: "88f5779f72ba699763fa3a3b06aa4bf6de76c8e5de842cf6f29e2e06476c2334"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.2"
+  path_provider_windows:
+    dependency: transitive
+    description:
+      name: path_provider_windows
+      sha256: bd6f00dbd873bfb70d0761682da2b3a2c2fccc2b9e84c495821639601d81afe7
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.0"
+  platform:
+    dependency: transitive
+    description:
+      name: platform
+      sha256: "5d6b1b0036a5f331ebc77c850ebc8506cbc1e9416c27e59b439f917a902a4984"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.6"
+  plugin_platform_interface:
+    dependency: transitive
+    description:
+      name: plugin_platform_interface
+      sha256: "4820fbfdb9478b1ebae27888254d445073732dae3d6ea81f0b7e06d5dedc3f02"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.8"
+  pub_semver:
+    dependency: transitive
+    description:
+      name: pub_semver
+      sha256: "5bfcf68ca79ef689f8990d1160781b4bad40a3bd5e5218ad4076ddb7f4081585"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
+  shared_preferences:
+    dependency: "direct main"
+    description:
+      name: shared_preferences
+      sha256: c3025c5534b01739267eb7d76959bbc25a6d10f6988e1c2a3036940133dd10bf
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.5"
+  shared_preferences_android:
+    dependency: transitive
+    description:
+      name: shared_preferences_android
+      sha256: e8d4762b1e2e8578fc4d0fd548cebf24afd24f49719c08974df92834565e2c53
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.23"
+  shared_preferences_foundation:
+    dependency: transitive
+    description:
+      name: shared_preferences_foundation
+      sha256: "4e7eaffc2b17ba398759f1151415869a34771ba11ebbccd1b0145472a619a64f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.6"
+  shared_preferences_linux:
+    dependency: transitive
+    description:
+      name: shared_preferences_linux
+      sha256: "580abfd40f415611503cae30adf626e6656dfb2f0cee8f465ece7b6defb40f2f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1"
+  shared_preferences_platform_interface:
+    dependency: transitive
+    description:
+      name: shared_preferences_platform_interface
+      sha256: "649dc798a33931919ea356c4305c2d1f81619ea6e92244070b520187b5140ef9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.2"
+  shared_preferences_web:
+    dependency: transitive
+    description:
+      name: shared_preferences_web
+      sha256: c49bd060261c9a3f0ff445892695d6212ff603ef3115edbb448509d407600019
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.3"
+  shared_preferences_windows:
+    dependency: transitive
+    description:
+      name: shared_preferences_windows
+      sha256: "94ef0f72b2d71bc3e700e025db3710911bd51a71cefb65cc609dd0d9a982e3c1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.1"
+  sky_engine:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  source_span:
+    dependency: transitive
+    description:
+      name: source_span
+      sha256: "56a02f1f4cd1a2d96303c0144c93bd6d909eea6bee6bf5a0e0b685edbd4c47ab"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.10.2"
+  stack_trace:
+    dependency: transitive
+    description:
+      name: stack_trace
+      sha256: "8b27215b45d22309b5cddda1aa2b19bdfec9df0e765f2de506401c071d38d1b1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.12.1"
+  stream_channel:
+    dependency: transitive
+    description:
+      name: stream_channel
+      sha256: "969e04c80b8bcdf826f8f16579c7b14d780458bd97f56d107d3950fdbeef059d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.4"
+  string_scanner:
+    dependency: transitive
+    description:
+      name: string_scanner
+      sha256: "921cd31725b72fe181906c6a94d987c78e3b98c2e205b397ea399d4054872b43"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.1"
+  term_glyph:
+    dependency: transitive
+    description:
+      name: term_glyph
+      sha256: "7f554798625ea768a7518313e58f83891c7f5024f88e46e7182a4558850a4b8e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.2"
+  test_api:
+    dependency: transitive
+    description:
+      name: test_api
+      sha256: "8161c84903fd860b26bfdefb7963b3f0b68fee7adea0f59ef805ecca346f0c7a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.10"
+  typed_data:
+    dependency: transitive
+    description:
+      name: typed_data
+      sha256: f9049c039ebfeb4cf7a7104a675823cd72dba8297f264b6637062516699fa006
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
+  vector_math:
+    dependency: transitive
+    description:
+      name: vector_math
+      sha256: d530bd74fea330e6e364cda7a85019c434070188383e1cd8d9777ee586914c5b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
+  vm_service:
+    dependency: transitive
+    description:
+      name: vm_service
+      sha256: "45caa6c5917fa127b5dbcfbd1fa60b14e583afdc08bfc96dda38886ca252eb60"
+      url: "https://pub.dev"
+    source: hosted
+    version: "15.0.2"
+  web:
+    dependency: transitive
+    description:
+      name: web
+      sha256: "868d88a33d8a87b18ffc05f9f030ba328ffefba92d6c127917a2ba740f9cfe4a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
+  xdg_directories:
+    dependency: transitive
+    description:
+      name: xdg_directories
+      sha256: "7a3f37b05d989967cdddcbb571f1ea834867ae2faa29725fd085180e0883aa15"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
+  yaml:
+    dependency: transitive
+    description:
+      name: yaml
+      sha256: b9da305ac7c39faa3f030eccd175340f968459dae4af175130b3fc47e40d76ce
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.3"
+sdks:
+  dart: ">=3.10.3 <4.0.0"
+  flutter: ">=3.38.4"
+</file>
+
+<file path="pubspec.yaml">
+name: odds_app
+description: Tennis betting assistant
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  google_fonts: ^6.1.0
+  shared_preferences: ^2.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+</file>
+
+<file path="test/widget_test.dart">
+// This is a basic Flutter widget test.
+//
+// To perform an interaction with a widget in your test, use the WidgetTester
+// utility in the flutter_test package. For example, you can send tap and scroll
+// gestures. You can also use WidgetTester to find child widgets in the widget
+// tree, read text, and verify that the values of widget properties are correct.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:odds_app/main.dart';
+
+void main() {
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const MyApp());
+
+    // Verify that our counter starts at 0.
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsNothing);
+
+    // Tap the '+' icon and trigger a frame.
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+
+    // Verify that our counter has incremented.
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
+  });
+}
+</file>
+
+<file path="web/index.html">
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="odds_app">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>odds_app</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
+
+    For more details:
+    * https://docs.flutter.dev/platform-integration/web/initialization
+  -->
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
+</file>
+
+<file path="web/manifest.json">
+{
+    "name": "odds_app",
+    "short_name": "odds_app",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "A new Flutter project.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
+</file>
+
+</files>

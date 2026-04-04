@@ -1,0 +1,1 @@
+dir lib /s /b > lib_tree.txt
