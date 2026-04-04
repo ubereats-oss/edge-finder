@@ -56,13 +56,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add odds_history/
+          git add -f odds_history/
           git diff --staged --quiet && echo "Sem novos dados" || (
             git stash &&
             git checkout --orphan history-new &&
             git rm -rf . --quiet 2>/dev/null || true &&
             git stash pop &&
-            git add odds_history/ &&
+            git add -f odds_history/ &&
             git commit -m "odds: $(date -u '+%Y-%m-%d %H:%M') UTC" &&
             git push origin HEAD:history --force
           )
