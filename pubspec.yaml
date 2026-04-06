@@ -1,5 +1,5 @@
 name: odds_app
-description: Tennis betting assistant
+description: Edge Finder - apostas esportivas quantitativas
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -12,6 +12,7 @@ dependencies:
   http: ^1.2.0
   google_fonts: ^6.1.0
   shared_preferences: ^2.2.2
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:

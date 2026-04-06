@@ -26,7 +26,7 @@ jobs:
           node-version: '24'
 
       - name: Instalar dependências
-        run: npm install axios
+        run: npm install axios firebase-admin
 
       - name: Injetar chaves de API
         run: |
@@ -55,6 +55,11 @@ jobs:
 
       - name: Executar coleta
         run: node save_odds_history.js
+
+      - name: Sincronizar histórico com Firestore
+        run: node firebase_sync.js history
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Empacotar e salvar na branch history
         run: |
