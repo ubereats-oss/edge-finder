@@ -1,9 +1,13 @@
 const axios = require('axios');
 const fs = require('fs');
 
-for (const line of fs.readFileSync('.env', 'utf-8').split('\n')) {
-  const [k, ...v] = line.split('=');
-  if (k) process.env[k.trim()] = v.join('=').trim();
+// Lê .env apenas se existir (execução local)
+// No GitHub Actions as variáveis já estão no processo via secrets
+if (fs.existsSync('.env')) {
+  for (const line of fs.readFileSync('.env', 'utf-8').split('\n')) {
+    const [k, ...v] = line.split('=');
+    if (k) process.env[k.trim()] = v.join('=').trim();
+  }
 }
 
 // Carrega todas as chaves disponíveis
@@ -28,7 +32,7 @@ function getNextValidKey() {
       return API_KEYS[idx];
     }
   }
-  return null; // todas esgotadas
+  return null;
 }
 
 function markCurrentKeyExhausted() {
@@ -52,7 +56,6 @@ async function fetchEvents() {
   return res.data;
 }
 
-// Tenta buscar props tentando todas as chaves válidas antes de desistir
 async function fetchEventProps(eventId) {
   const url = `https://api.the-odds-api.com/v4/sports/basketball_nba/events/${eventId}/odds`;
   let lastError = null;
@@ -81,7 +84,7 @@ async function fetchEventProps(eventId) {
         lastError = e;
         continue;
       }
-      throw e; // erro que não é quota — propaga
+      throw e;
     }
   }
 
