@@ -37,21 +37,17 @@ jobs:
       - name: Instalar dependências
         run: npm install axios firebase-admin
 
-      - name: Injetar variáveis de ambiente
+      - name: Injetar chaves da Odds API no ambiente
         run: |
           node -e "
-          const fs = require('fs');
           const keys = process.env.ODDS_API_KEYS.split(',');
-          // Injeta chaves no get_nba_props_br.js
-          if (fs.existsSync('get_nba_props_br.js')) {
-            let content = fs.readFileSync('get_nba_props_br.js', 'utf8');
-            content = content.replace(
-              /const API_KEYS = \[[\s\S]*?\];/,
-              'const API_KEYS = ' + JSON.stringify(keys, null, 2) + ';'
-            );
-            fs.writeFileSync('get_nba_props_br.js', content);
-          }
-          console.log('Variáveis injetadas.');
+          const lines = [];
+          keys.forEach((k, i) => {
+            const name = i === 0 ? 'ODDS_API_KEY' : 'ODDS_API_KEY_' + (i + 1);
+            lines.push(name + '=' + k.trim());
+          });
+          require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n') + '\n');
+          console.log('Chaves injetadas no ambiente:', keys.length);
           "
         env:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
@@ -65,20 +61,20 @@ jobs:
           echo "Sem histórico anterior"
           mkdir -p odds_history
 
-      - name: Restaurar player stats (NBA)
+      - name: Restaurar dados da branch data
         run: |
-          git fetch origin data 2>/dev/null && \
+          git fetch origin data 2>/dev/null || echo "Branch data não existe ainda"
+          # player stats (comprimido)
           git show origin/data:nba_player_stats.json.gz > /tmp/nba_player_stats.json.gz 2>/dev/null && \
-          gunzip -c /tmp/nba_player_stats.json.gz > nba_player_stats.json 2>/dev/null && \
-          echo "Player stats restaurados: $(wc -c < nba_player_stats.json) bytes" || \
-          echo "Sem player stats anteriores"
-
-      - name: Restaurar dados auxiliares (NBA)
-        run: |
-          git fetch origin data 2>/dev/null || true
-          for f in nba_player_team.json nba_injuries_today.json nba_boxscores_cache.json mlb_player_stats.json; do
+            gunzip -c /tmp/nba_player_stats.json.gz > nba_player_stats.json && \
+            echo "nba_player_stats.json restaurado: $(wc -c < nba_player_stats.json) bytes" || \
+            echo "nba_player_stats.json não encontrado — modelo usará stats vazios"
+          # arquivos auxiliares — falha silenciosa se não existir
+          for f in nba_player_team.json nba_boxscores_cache.json mlb_player_stats.json; do
             git show origin/data:$f > $f 2>/dev/null && echo "Restaurado: $f" || echo "Não encontrado: $f"
           done
+          # bets — fallback para array vazio
+          git show origin/data:bets.json > bets.json 2>/dev/null && echo "bets.json restaurado" || echo '[]' > bets.json
 
       - name: Atualizar injuries (NBA)
         if: ${{ github.event.inputs.sport == 'nba_br' || github.event.inputs.sport == 'nba' || github.event.inputs.sport == 'all' }}
@@ -144,21 +140,16 @@ jobs:
 
       - name: Salvar dados na branch data
         run: |
-          # Comprime player stats para caber no git
           gzip -c nba_player_stats.json > /tmp/nba_player_stats.json.gz 2>/dev/null || true
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin data 2>/dev/null || true
           git checkout --orphan data-tmp
           git rm -rf . --quiet
-
-          # Copia arquivos de dados
           cp /tmp/nba_player_stats.json.gz . 2>/dev/null || true
           for f in nba_player_team.json nba_injuries_today.json bets.json; do
             cp $f . 2>/dev/null || true
           done
-
           git add -A
           git diff --staged --quiet || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push origin HEAD:data --force
