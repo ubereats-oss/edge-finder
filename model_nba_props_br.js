@@ -1,7 +1,19 @@
 const fs = require('fs');
 const path = require('path');
-const playerStats = JSON.parse(fs.readFileSync('nba_player_stats.json'));
-const props = JSON.parse(fs.readFileSync('nba_props_pinnacle.json'));
+
+// Leitura segura — não crasha se arquivo ausente ou vazio
+function readJsonSafe(file, fallback) {
+  if (!fs.existsSync(file)) return fallback;
+  const raw = fs.readFileSync(file, 'utf-8').trim();
+  if (!raw) return fallback;
+  try { return JSON.parse(raw); } catch (e) {
+    console.warn(`Aviso: ${file} inválido — usando fallback. ${e.message}`);
+    return fallback;
+  }
+}
+
+const playerStats = readJsonSafe('nba_player_stats.json', {});
+const props = readJsonSafe('nba_props_pinnacle.json', []);
 
 const SEASON_WEIGHT = { 2024: 1, 2025: 2, 2026: 3 };
 const MIN_GAMES_CONTEXT = 10;
@@ -11,7 +23,7 @@ const KELLY_FRACTION = 0.25;
 // Carrega ausentes do dia (gerado por get_nba_injuries.js)
 let injuriesToday = {};
 if (fs.existsSync('nba_injuries_today.json')) {
-  injuriesToday = JSON.parse(fs.readFileSync('nba_injuries_today.json'));
+  injuriesToday = readJsonSafe('nba_injuries_today.json', {});
 } else {
   console.warn('nba_injuries_today.json não encontrado — filtro de ausentes desativado.');
 }
@@ -74,10 +86,8 @@ function calcKelly(p, odd) {
   return Math.max(0, parseFloat((kelly * KELLY_FRACTION * 100).toFixed(2)));
 }
 
-// Retorna os ausentes do dia para um time (normalizado)
 function getAbsentToday(teamName) {
   if (!teamName || teamName === 'unknown') return [];
-  // Tenta match exato ou parcial
   for (const [key, players] of Object.entries(injuriesToday)) {
     if (key === teamName || key.includes(teamName) || teamName.includes(key)) {
       return players;
@@ -86,8 +96,6 @@ function getAbsentToday(teamName) {
   return [];
 }
 
-// Verifica se um conjunto de ausentes do dia coincide com ausentes históricos de uma entrada
-// Retorna true se pelo menos um ausente do dia estava ausente naquele jogo histórico
 function matchesAbsentContext(entryAbsentStarters, absentToday) {
   if (absentToday.length === 0) return false;
   return absentToday.some(absent =>
@@ -98,7 +106,6 @@ function matchesAbsentContext(entryAbsentStarters, absentToday) {
   );
 }
 
-// Nova estrutura: entry é objeto { value, minutes, isBackToBack, blowout, absentStarters }
 function combineContexts(playerData, statKey, locations, gameTypes, absentToday) {
   let weightedSum = 0;
   let weightedSumSq = 0;
@@ -106,11 +113,9 @@ function combineContexts(playerData, statKey, locations, gameTypes, absentToday)
   let totalGames = 0;
   let contextGames = 0;
 
-  // Se há ausentes hoje, tenta primeiro filtrar só jogos com contexto similar
   const hasAbsentContext = absentToday.length > 0;
   let usedAbsentFilter = false;
 
-  // Primeira tentativa: com filtro de ausentes (se aplicável)
   if (hasAbsentContext) {
     let filteredSum = 0, filteredSumSq = 0, filteredWeight = 0, filteredGames = 0, filteredContext = 0;
 
@@ -124,9 +129,7 @@ function combineContexts(playerData, statKey, locations, gameTypes, absentToday)
           if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
 
           for (const entry of ctx[statKey]) {
-            // Exclui blowouts — stats truncadas
             if (entry.blowout) continue;
-            // Filtra apenas jogos com contexto de ausência similar
             if (!matchesAbsentContext(entry.absentStarters || [], absentToday)) continue;
 
             filteredSum += entry.value * w;
@@ -139,7 +142,6 @@ function combineContexts(playerData, statKey, locations, gameTypes, absentToday)
       }
     }
 
-    // Usa filtro apenas se há amostra mínima suficiente (>= 5 jogos)
     if (filteredGames >= 5) {
       weightedSum = filteredSum;
       weightedSumSq = filteredSumSq;
@@ -150,7 +152,6 @@ function combineContexts(playerData, statKey, locations, gameTypes, absentToday)
     }
   }
 
-  // Se não usou filtro de ausentes (sem contexto ou amostra insuficiente), usa todos os jogos
   if (!usedAbsentFilter) {
     for (const [seasonStr, seasonData] of Object.entries(playerData)) {
       const season = parseInt(seasonStr);
@@ -162,7 +163,6 @@ function combineContexts(playerData, statKey, locations, gameTypes, absentToday)
           if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
 
           for (const entry of ctx[statKey]) {
-            // Exclui blowouts sempre
             if (entry.blowout) continue;
 
             const value = typeof entry === 'object' ? entry.value : entry;
@@ -217,8 +217,13 @@ if (!props.length) {
   process.exit(0);
 }
 
+if (Object.keys(playerStats).length === 0) {
+  console.error('nba_player_stats.json vazio ou ausente — rode get_nba_player_stats.js primeiro.');
+  process.exit(1);
+}
+
 const NOW = Date.now();
-const MIN_15 = 15 * 60 * 1000*0;
+const MIN_15 = 0; // sem filtro temporal — o Flutter filtra em tempo real
 
 let descartadosSemStats = 0;
 let descartadosSigmaBaixa = 0;
@@ -240,9 +245,7 @@ for (const prop of props) {
     ? [prop.location]
     : ['home', 'away'];
 
-  // Determina time do jogador para buscar ausentes do dia
   const gameParts = prop.game ? prop.game.split(' x ') : [];
-  // prop.location: 'home' = primeiro time, 'away' = segundo time
   let teamName = 'unknown';
   if (prop.location === 'home' && gameParts.length >= 1) teamName = gameParts[0];
   else if (prop.location === 'away' && gameParts.length >= 2) teamName = gameParts[1];
@@ -323,7 +326,7 @@ const today = new Date().toISOString().slice(0, 10);
 const month = new Date().toISOString().slice(0, 7);
 const modelHistFile = path.join(HISTORY_DIR, `basketball_nba_model_br_${month}.json`);
 const modelHist = fs.existsSync(modelHistFile)
-  ? JSON.parse(fs.readFileSync(modelHistFile))
+  ? readJsonSafe(modelHistFile, [])
   : [];
 const existing = new Set(modelHist.map(e => e._key));
 let added = 0;
