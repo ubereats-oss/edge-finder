@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+const path = require('path');
 const playerStats = JSON.parse(fs.readFileSync('nba_player_stats.json'));
 const props = JSON.parse(fs.readFileSync('nba_props_pinnacle.json'));
 
@@ -8,18 +8,23 @@ const MIN_GAMES_CONTEXT = 10;
 const INEFFICIENT_MARKET_EDGE = 20;
 const KELLY_FRACTION = 0.25;
 
+// Carrega ausentes do dia (gerado por get_nba_injuries.js)
+let injuriesToday = {};
+if (fs.existsSync('nba_injuries_today.json')) {
+  injuriesToday = JSON.parse(fs.readFileSync('nba_injuries_today.json'));
+} else {
+  console.warn('nba_injuries_today.json não encontrado — filtro de ausentes desativado.');
+}
+
 // ── Calibração isotônica ───────────────────────────────────────────────────────
 const CALIB_TABLE = [
-  { raw: 0.525, cal: 0.500 },
-  { raw: 0.575, cal: 0.534 },
-  { raw: 0.625, cal: 0.577 },
-  { raw: 0.675, cal: 0.618 },
-  { raw: 0.725, cal: 0.655 },
-  { raw: 0.775, cal: 0.687 },
-  { raw: 0.825, cal: 0.721 },
-  { raw: 0.875, cal: 0.760 },
-  { raw: 0.925, cal: 0.813 },
-  { raw: 0.975, cal: 0.818 },
+  { raw: 0.519, cal: 0.504 },
+  { raw: 0.576, cal: 0.572 },
+  { raw: 0.625, cal: 0.608 },
+  { raw: 0.674, cal: 0.671 },
+  { raw: 0.723, cal: 0.720 },
+  { raw: 0.771, cal: 0.764 },
+  { raw: 0.816, cal: 0.811 },
 ];
 
 function calibrate(p) {
@@ -69,28 +74,104 @@ function calcKelly(p, odd) {
   return Math.max(0, parseFloat((kelly * KELLY_FRACTION * 100).toFixed(2)));
 }
 
-function combineContexts(playerData, statKey, locations, gameTypes) {
+// Retorna os ausentes do dia para um time (normalizado)
+function getAbsentToday(teamName) {
+  if (!teamName || teamName === 'unknown') return [];
+  // Tenta match exato ou parcial
+  for (const [key, players] of Object.entries(injuriesToday)) {
+    if (key === teamName || key.includes(teamName) || teamName.includes(key)) {
+      return players;
+    }
+  }
+  return [];
+}
+
+// Verifica se um conjunto de ausentes do dia coincide com ausentes históricos de uma entrada
+// Retorna true se pelo menos um ausente do dia estava ausente naquele jogo histórico
+function matchesAbsentContext(entryAbsentStarters, absentToday) {
+  if (absentToday.length === 0) return false;
+  return absentToday.some(absent =>
+    entryAbsentStarters.some(h =>
+      h.toLowerCase().includes(absent.toLowerCase()) ||
+      absent.toLowerCase().includes(h.toLowerCase())
+    )
+  );
+}
+
+// Nova estrutura: entry é objeto { value, minutes, isBackToBack, blowout, absentStarters }
+function combineContexts(playerData, statKey, locations, gameTypes, absentToday) {
   let weightedSum = 0;
   let weightedSumSq = 0;
   let totalWeight = 0;
   let totalGames = 0;
   let contextGames = 0;
 
-  for (const [seasonStr, seasonData] of Object.entries(playerData)) {
-    const season = parseInt(seasonStr);
-    const w = SEASON_WEIGHT[season] || 1;
+  // Se há ausentes hoje, tenta primeiro filtrar só jogos com contexto similar
+  const hasAbsentContext = absentToday.length > 0;
+  let usedAbsentFilter = false;
 
-    for (const gameType of gameTypes) {
-      for (const location of locations) {
-        const ctx = seasonData?.[gameType]?.[location];
-        if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
+  // Primeira tentativa: com filtro de ausentes (se aplicável)
+  if (hasAbsentContext) {
+    let filteredSum = 0, filteredSumSq = 0, filteredWeight = 0, filteredGames = 0, filteredContext = 0;
 
-        for (const v of ctx[statKey]) {
-          weightedSum += v * w;
-          weightedSumSq += v * v * w;
-          totalWeight += w;
-          totalGames++;
-          if (season === 2026) contextGames++;
+    for (const [seasonStr, seasonData] of Object.entries(playerData)) {
+      const season = parseInt(seasonStr);
+      const w = SEASON_WEIGHT[season] || 1;
+
+      for (const gameType of gameTypes) {
+        for (const location of locations) {
+          const ctx = seasonData?.[gameType]?.[location];
+          if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
+
+          for (const entry of ctx[statKey]) {
+            // Exclui blowouts — stats truncadas
+            if (entry.blowout) continue;
+            // Filtra apenas jogos com contexto de ausência similar
+            if (!matchesAbsentContext(entry.absentStarters || [], absentToday)) continue;
+
+            filteredSum += entry.value * w;
+            filteredSumSq += entry.value * entry.value * w;
+            filteredWeight += w;
+            filteredGames++;
+            if (season === 2026) filteredContext++;
+          }
+        }
+      }
+    }
+
+    // Usa filtro apenas se há amostra mínima suficiente (>= 5 jogos)
+    if (filteredGames >= 5) {
+      weightedSum = filteredSum;
+      weightedSumSq = filteredSumSq;
+      totalWeight = filteredWeight;
+      totalGames = filteredGames;
+      contextGames = filteredContext;
+      usedAbsentFilter = true;
+    }
+  }
+
+  // Se não usou filtro de ausentes (sem contexto ou amostra insuficiente), usa todos os jogos
+  if (!usedAbsentFilter) {
+    for (const [seasonStr, seasonData] of Object.entries(playerData)) {
+      const season = parseInt(seasonStr);
+      const w = SEASON_WEIGHT[season] || 1;
+
+      for (const gameType of gameTypes) {
+        for (const location of locations) {
+          const ctx = seasonData?.[gameType]?.[location];
+          if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
+
+          for (const entry of ctx[statKey]) {
+            // Exclui blowouts sempre
+            if (entry.blowout) continue;
+
+            const value = typeof entry === 'object' ? entry.value : entry;
+            weightedSum += value * w;
+            weightedSumSq += value * value * w;
+            totalWeight += w;
+            totalGames++;
+            if (season === 2026) contextGames++;
+          }
         }
       }
     }
@@ -107,6 +188,7 @@ function combineContexts(playerData, statKey, locations, gameTypes) {
     totalGames,
     contextGames,
     lowSample: contextGames < MIN_GAMES_CONTEXT,
+    usedAbsentFilter,
   };
 }
 
@@ -136,11 +218,12 @@ if (!props.length) {
 }
 
 const NOW = Date.now();
-const MIN_15 = 15 * 60 * 1000;
+const MIN_15 = 15 * 60 * 1000*0;
 
 let descartadosSemStats = 0;
 let descartadosSigmaBaixa = 0;
 let descartadosJogoBloqueado = 0;
+let comFiltroAusentes = 0;
 const results = [];
 
 for (const prop of props) {
@@ -157,9 +240,19 @@ for (const prop of props) {
     ? [prop.location]
     : ['home', 'away'];
 
-  const stats = combineContexts(playerData, statKey, locations, ['regular']);
+  // Determina time do jogador para buscar ausentes do dia
+  const gameParts = prop.game ? prop.game.split(' x ') : [];
+  // prop.location: 'home' = primeiro time, 'away' = segundo time
+  let teamName = 'unknown';
+  if (prop.location === 'home' && gameParts.length >= 1) teamName = gameParts[0];
+  else if (prop.location === 'away' && gameParts.length >= 2) teamName = gameParts[1];
+
+  const absentToday = getAbsentToday(teamName);
+
+  const stats = combineContexts(playerData, statKey, locations, ['regular'], absentToday);
   if (!stats) { descartadosSemStats++; continue; }
   if (stats.std < 0.3) { descartadosSigmaBaixa++; continue; }
+  if (stats.usedAbsentFilter) comFiltroAusentes++;
 
   const pOverRaw  = probOverRaw(stats.avg, stats.std, prop.line);
   const pUnderRaw = probUnderRaw(stats.avg, stats.std, prop.line);
@@ -201,10 +294,12 @@ for (const prop of props) {
     contextGames: stats.contextGames,
     lowSample: stats.lowSample,
     inefficientMarket,
+    absentFilter: stats.usedAbsentFilter,
+    absentToday: absentToday.length > 0 ? absentToday : undefined,
   });
 }
 
-console.log(`Props processadas: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Jogo bloqueado: ${descartadosJogoBloqueado}`);
+console.log(`Props processadas: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Jogo bloqueado: ${descartadosJogoBloqueado} | Filtro ausentes: ${comFiltroAusentes}`);
 
 results.sort((a, b) => b.edge - a.edge);
 
@@ -212,10 +307,32 @@ results.slice(0, 15).forEach((r, i) => {
   const warn   = r.lowSample         ? ' ⚠️' : '';
   const target = r.inefficientMarket ? ' 🎯' : '';
   const loc    = r.location !== 'unknown' ? ` [${r.location}]` : '';
+  const absent = r.absentFilter      ? ' 🔄' : '';
   console.log(
-    `[${i + 1}] ${r.player}${warn}${target}${loc} | ${r.prop} ${r.side} ${r.line} | Edge: ${r.edge}% | Kelly: ${r.kelly}%`
+    `[${i + 1}] ${r.player}${warn}${target}${loc}${absent} | ${r.prop} ${r.side} ${r.line} | Edge: ${r.edge}% | Kelly: ${r.kelly}%`
   );
 });
 
 fs.writeFileSync('nba_props_br_results.json', JSON.stringify(results, null, 2));
 console.log('nba_props_br_results.json salvo.');
+
+// ── Salva no histórico de modelos ──────────────────────────────────────────────
+const HISTORY_DIR = path.join(__dirname, 'odds_history');
+if (!fs.existsSync(HISTORY_DIR)) fs.mkdirSync(HISTORY_DIR, { recursive: true });
+const today = new Date().toISOString().slice(0, 10);
+const month = new Date().toISOString().slice(0, 7);
+const modelHistFile = path.join(HISTORY_DIR, `basketball_nba_model_br_${month}.json`);
+const modelHist = fs.existsSync(modelHistFile)
+  ? JSON.parse(fs.readFileSync(modelHistFile))
+  : [];
+const existing = new Set(modelHist.map(e => e._key));
+let added = 0;
+for (const r of results) {
+  const key = `${r.game}|${r.player}|${r.prop}|${r.side}|${today}`;
+  if (existing.has(key)) continue;
+  modelHist.push({ _key: key, savedDate: today, savedAt: new Date().toISOString(), ...r });
+  existing.add(key);
+  added++;
+}
+fs.writeFileSync(modelHistFile, JSON.stringify(modelHist, null, 2));
+console.log(`Histórico do modelo salvo: +${added} entradas.`);
