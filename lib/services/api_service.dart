@@ -316,31 +316,34 @@ class ApiService {
   static Future<List<Map<String, dynamic>>> fetchNbaHistory(
       String date, String type) async {
     final month = date.substring(0, 7);
-    final docId = type == 'props'
+    final baseId = type == 'props'
         ? 'basketball_nba_props_$month'
         : 'basketball_nba_h2h_$month';
-    final url = '$_firestoreBase/odds_history/$docId';
-    final res = await http.get(Uri.parse(url));
-    if (res.statusCode != 200) {
-      return [];
+
+    final all = <Map<String, dynamic>>[];
+
+    // Busca doc base + chunks _p0, _p1, ... até não encontrar
+    for (int i = -1; i < 50; i++) {
+      final docId = i == -1 ? baseId : '${baseId}_p$i';
+      final url = '$_firestoreBase/odds_history/$docId';
+      final res = await http.get(Uri.parse(url));
+      if (res.statusCode != 200) {
+        if (i == -1) continue; // doc base não existe, tenta chunks
+        break; // sem mais chunks
+      }
+      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      final fields = body['fields'] as Map<String, dynamic>?;
+      if (fields == null) break;
+      final dataField = fields['data'];
+      if (dataField == null) break;
+      final values = dataField['arrayValue']?['values'] as List? ?? [];
+      for (final item in values) {
+        all.add(_firestoreToMap(
+            item['mapValue']?['fields'] as Map<String, dynamic>? ?? {}));
+      }
     }
-    final body = jsonDecode(res.body) as Map<String, dynamic>;
-    final fields = body['fields'] as Map<String, dynamic>?;
-    if (fields == null) {
-      return [];
-    }
-    final dataField = fields['data'];
-    if (dataField == null) {
-      return [];
-    }
-    final values = dataField['arrayValue']?['values'] as List? ?? [];
-    final all = values
-        .map((item) => _firestoreToMap(
-            item['mapValue']?['fields'] as Map<String, dynamic>? ?? {}))
-        .toList();
-    return all
-        .where((r) => r['savedDate'] == date && r['bookmaker'] == 'pinnacle')
-        .toList();
+
+    return all.where((r) => r['savedDate'] == date).toList();
   }
 
   // ── Acionar workflow GitHub Actions ────────────────────────────────────────
