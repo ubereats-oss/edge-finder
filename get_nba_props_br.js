@@ -138,7 +138,8 @@ function parseBookmakerProps(data, event, playerTeam, allProps) {
 async function getNbaProps() {
   let playerTeam = {};
   if (fs.existsSync('nba_player_team.json')) {
-    playerTeam = JSON.parse(fs.readFileSync('nba_player_team.json'));
+    const raw = fs.readFileSync('nba_player_team.json', 'utf-8').trim();
+    if (raw) playerTeam = JSON.parse(raw);
   } else {
     console.warn('nba_player_team.json não encontrado — location não será preenchido.');
   }
