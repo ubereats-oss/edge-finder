@@ -89,24 +89,39 @@ async function syncOddsHistory() {
     return;
   }
 
-  const files = fs.readdirSync(histDir).filter(f => f.endsWith('.json'));
+  const files = fs.readdirSync(histDir).filter(f => f.endsWith('.json') && !f.startsWith('_'));
   let synced = 0;
 
   for (const file of files) {
     try {
       const raw = JSON.parse(fs.readFileSync(path.join(histDir, file)));
-      const docId = file.replace('.json', '');
-      await db.collection('odds_history').doc(docId).set({
-        data: raw,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
-      synced++;
+      const baseId = file.replace('.json', '');
+
+      // Divide em chunks de 300 registros para não exceder 1MB do Firestore
+      const CHUNK = 300;
+      if (raw.length <= CHUNK) {
+        await db.collection('odds_history').doc(baseId).set({
+          data: raw,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        synced++;
+      } else {
+        for (let i = 0; i * CHUNK < raw.length; i++) {
+          const chunk = raw.slice(i * CHUNK, (i + 1) * CHUNK);
+          const docId = `${baseId}_p${i}`;
+          await db.collection('odds_history').doc(docId).set({
+            data: chunk,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          synced++;
+        }
+      }
     } catch (e) {
       console.error(`  ❌ Erro ao sincronizar odds_history/${file}:`, e.message);
     }
   }
 
-  console.log(`  ✅ odds_history → Firestore (${synced} arquivos)`);
+  console.log(`  ✅ odds_history → Firestore (${synced} documentos)`);
 }
 
 async function main() {
