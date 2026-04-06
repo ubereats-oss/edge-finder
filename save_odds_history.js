@@ -29,6 +29,7 @@ const KEY_STATE_FILE = path.join(HISTORY_DIR, '_key_state.json');
 const PROPS_MARKETS  = 'player_points,player_rebounds,player_assists,player_steals,player_threes';
 
 let keyIndex = 0;
+const keyBalances = {};
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -42,7 +43,7 @@ function loadKeyState() {
 }
 
 function saveKeyState() {
-  writeJson(KEY_STATE_FILE, { month: monthStr(), keyIndex, savedAt: nowISO() });
+  writeJson(KEY_STATE_FILE, { month: monthStr(), keyIndex, savedAt: nowISO(), balances: keyBalances });
 }
 
 function currentKey() { return API_KEYS[keyIndex % API_KEYS.length]; }
@@ -57,7 +58,11 @@ async function apiGet(url, params = {}) {
   for (let i = 0; i < API_KEYS.length; i++) {
     try {
       const res = await axios.get(url, { params: { ...params, apiKey: currentKey() } });
-      const rem = parseInt(res.headers['x-requests-remaining'] ?? '999');
+      const rem  = parseInt(res.headers['x-requests-remaining'] ?? '999');
+      const used = parseInt(res.headers['x-requests-used'] ?? '0');
+      const last = parseInt(res.headers['x-requests-last'] ?? '0');
+      keyBalances[keyIndex] = { remaining: rem, used, lastCost: last, updatedAt: nowISO() };
+      saveKeyState();
       if (rem < 10) { console.log(`  [key] chave ${keyIndex} quase esgotada (${rem}) — rotacionando`); rotateKey(); }
       return res.data;
     } catch (e) {
@@ -128,6 +133,8 @@ async function collectH2H(sportKey) {
         home_team:     event.home_team,
         away_team:     event.away_team,
         bookmaker:     bm.key,
+        last_update:   bm.last_update ?? null,
+        sport_key:     sportKey,
         odds_home:     o.find(x => x.name === event.home_team)?.price ?? null,
         odds_away:     o.find(x => x.name === event.away_team)?.price ?? null,
       });
@@ -177,6 +184,8 @@ async function collectProps(sportKey) {
               line:          sides.Over.line,
               oddsOver:      sides.Over.price,
               oddsUnder:     sides.Under.price,
+              last_update:   market.last_update ?? null,
+              sport_key:     sportKey,
             });
           }
         }
