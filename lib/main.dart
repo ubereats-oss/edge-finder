@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'screens/sport_selector_screen.dart';
+import 'services/prefs_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await PrefsService.init();
   runApp(const OddsApp());
 }
 

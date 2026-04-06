@@ -1,39 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import '../widgets/bet_dialog.dart';
+import '../services/prefs_service.dart';
 
-class PlayerDetailScreen extends StatefulWidget {
+class PlayerDetailScreen extends StatelessWidget {
   final Map<String, dynamic> prop;
-
   const PlayerDetailScreen({super.key, required this.prop});
-
-  @override
-  State<PlayerDetailScreen> createState() => _PlayerDetailScreenState();
-}
-
-class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
-  Map<String, dynamic>? _playerStats;
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchStats();
-  }
-
-  Future<void> _fetchStats() async {
-    final player = Uri.encodeComponent(widget.prop['player'] as String);
-    try {
-      final res = await http.get(
-        Uri.parse('http://localhost:3001/api/nba/player-stats/$player'),
-      );
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        setState(() => _playerStats = data as Map<String, dynamic>?);
-      }
-    } catch (_) {}
-    setState(() => _loading = false);
-  }
 
   String _propLabel(String p) {
     const labels = {
@@ -47,16 +18,83 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
     return labels[p] ?? p;
   }
 
-  double _avg(List values) {
-    if (values.isEmpty) return 0;
-    return values.fold(0.0, (s, v) => s + (v as num).toDouble()) /
-        values.length;
+  Color _edgeColor(double edge) {
+    if (edge >= 5) {
+      return const Color(0xFF00C853);
+    }
+    if (edge >= 2) {
+      return const Color(0xFFFFD600);
+    }
+    return const Color(0xFFFF1744);
+  }
+
+  Color _propColor(String p) {
+    const colors = {
+      'points': Color(0xFFFFD600),
+      'rebounds': Color(0xFF00B0FF),
+      'assists': Color(0xFF00E5FF),
+      'steals': Color(0xFFFF6D00),
+      'threes': Color(0xFFE040FB),
+      'fouls': Color(0xFFFF1744),
+    };
+    return colors[p] ?? const Color(0xFFAAAAAA);
+  }
+
+  String _formatCommenceTime(String? raw) {
+    if (raw == null) {
+      return '';
+    }
+    final dt = DateTime.tryParse(raw)?.toLocal();
+    if (dt == null) {
+      return '';
+    }
+    final d =
+        '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}';
+    final h =
+        '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    return '$d às $h';
   }
 
   @override
   Widget build(BuildContext context) {
-    final statKey = widget.prop['prop'] as String;
-    final player = widget.prop['player'] as String;
+    final player = prop['player'] as String;
+    final game = prop['game'] as String;
+    final propKey = prop['prop'] as String;
+    final edge = (prop['edge'] as num).toDouble();
+    final avg = (prop['playerAvg'] as num).toDouble();
+    final std = (prop['playerStd'] as num).toDouble();
+    final line = (prop['line'] as num).toDouble();
+    final modelProb = (prop['modelProb'] as num).toDouble();
+    final impliedProb = (prop['impliedProb'] as num).toDouble();
+    final side = prop['side'] as String;
+    final odds = (prop['odds'] as num).toDouble();
+    final kelly = (prop['kelly'] as num?)?.toDouble() ?? 0;
+    final lowSample = prop['lowSample'] == true;
+    final inefficientMarket = prop['inefficientMarket'] == true;
+    final contextGames = prop['contextGames'] as int? ?? 0;
+    final totalGames = prop['totalGames'] as int? ?? 0;
+    final location = prop['location'] as String? ?? 'unknown';
+    final absentFilter = prop['absentFilter'] == true ? 'Ativo' : '';
+    final rawAbsent = prop['absentToday'];
+    final absentToday = rawAbsent is List
+        ? rawAbsent.map((e) {
+            if (e is Map<String, dynamic>) {
+              return e;
+            }
+            return <String, dynamic>{
+              'name': e.toString(),
+              'position': null,
+              'group': 'unknown',
+              'impact': 'unknown',
+            };
+          }).toList()
+        : null;
+    final playerPosition = prop['playerPosition'] as String?;
+    final commenceTime = _formatCommenceTime(prop['commence_time'] as String?);
+    final propColor = _propColor(propKey);
+    final edgeColor = _edgeColor(edge);
+    final banca = PrefsService.getBanca();
+    final valorKelly = banca > 0 ? banca * kelly / 100 : 0.0;
 
     return Scaffold(
       backgroundColor: const Color(0xFF12121F),
@@ -72,166 +110,325 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
                 fontWeight: FontWeight.bold,
                 fontSize: 16)),
       ),
-      body: _loading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF7C4DFF)))
-          : _playerStats == null
-              ? const Center(
-                  child: Text('Dados não disponíveis.',
-                      style: TextStyle(color: Color(0xFF666666))))
-              : ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    _SectionHeader(
-                        title: 'Prop: ${_propLabel(statKey)}'),
-                    const SizedBox(height: 8),
-                    _PropSummaryCard(prop: widget.prop),
-                    const SizedBox(height: 24),
-                    const _SectionHeader(title: 'Por temporada'),
-                    const SizedBox(height: 8),
-                    ..._buildSeasonCards(statKey),
-                    const SizedBox(height: 24),
-                    const _SectionHeader(title: 'Casa vs Fora'),
-                    const SizedBox(height: 8),
-                    _buildHomeAwayCard(statKey),
-                    const SizedBox(height: 24),
-                    const _SectionHeader(title: 'Regular vs Playoffs'),
-                    const SizedBox(height: 8),
-                    _buildGameTypeCard(statKey),
-                  ],
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // ── Jogo e prop ──────────────────────────────────────────────────
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E1E2E),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: propColor.withValues(alpha: 0.4)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(game,
+                          style: const TextStyle(
+                              color: Color(0xFF888888), fontSize: 12)),
+                      if (commenceTime.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text('🕐 $commenceTime',
+                            style: const TextStyle(
+                                color: Color(0xFF666688), fontSize: 11)),
+                      ],
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: propColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                              color: propColor.withValues(alpha: 0.5)),
+                        ),
+                        child: Text(
+                          _propLabel(propKey),
+                          style: TextStyle(
+                              color: propColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-    );
-  }
-
-  List<Widget> _buildSeasonCards(String statKey) {
-    final seasons = _playerStats!.keys.toList()
-      ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-
-    return seasons.map((seasonStr) {
-      final season = int.parse(seasonStr);
-      final seasonData = _playerStats![seasonStr] as Map<String, dynamic>;
-      final allValues = <double>[];
-
-      for (final gameType in ['regular', 'playoffs']) {
-        for (final loc in ['home', 'away']) {
-          final ctx = (seasonData[gameType] as Map?)?[loc] as Map?;
-          final vals = ctx?[statKey];
-          if (vals is List) {
-            allValues.addAll(vals.map((v) => (v as num).toDouble()));
-          }
-        }
-      }
-
-      if (allValues.isEmpty) return const SizedBox.shrink();
-
-      final label = season == 2026
-          ? '2025-26'
-          : season == 2025
-              ? '2024-25'
-              : '2023-24';
-
-      return _StatRow(
-        label: label,
-        value: _avg(allValues).toStringAsFixed(2),
-        subLabel: '${allValues.length} jogos',
-        highlight: season == 2026,
-      );
-    }).toList();
-  }
-
-  Widget _buildHomeAwayCard(String statKey) {
-    final homeVals = <double>[];
-    final awayVals = <double>[];
-
-    for (final seasonData in _playerStats!.values) {
-      for (final gameType in ['regular', 'playoffs']) {
-        final home =
-            ((seasonData as Map)[gameType] as Map?)?['home'] as Map?;
-        final away =
-            (seasonData[gameType] as Map?)?['away'] as Map?;
-        if (home?[statKey] is List) {
-          homeVals.addAll(
-              (home![statKey] as List).map((v) => (v as num).toDouble()));
-        }
-        if (away?[statKey] is List) {
-          awayVals.addAll(
-              (away![statKey] as List).map((v) => (v as num).toDouble()));
-        }
-      }
-    }
-
-    return Row(
-      children: [
-        Expanded(
-          child: _StatCard(
-            label: '🏠 Casa',
-            value: homeVals.isEmpty
-                ? '-'
-                : _avg(homeVals).toStringAsFixed(2),
-            subLabel: '${homeVals.length} jogos',
-            color: const Color(0xFF7C4DFF),
+                const SizedBox(width: 12),
+                Text(
+                  location == 'home'
+                      ? '🏠 Casa'
+                      : location == 'away'
+                          ? '✈️ Fora'
+                          : '📍 -',
+                  style:
+                      const TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _StatCard(
-            label: '✈️ Fora',
-            value: awayVals.isEmpty
-                ? '-'
-                : _avg(awayVals).toStringAsFixed(2),
-            subLabel: '${awayVals.length} jogos',
-            color: const Color(0xFFFF6D00),
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget _buildGameTypeCard(String statKey) {
-    final regularVals = <double>[];
-    final playoffVals = <double>[];
+          const SizedBox(height: 16),
 
-    for (final seasonData in _playerStats!.values) {
-      for (final loc in ['home', 'away']) {
-        final reg =
-            ((seasonData as Map)['regular'] as Map?)?[loc] as Map?;
-        final pla =
-            (seasonData['playoffs'] as Map?)?[loc] as Map?;
-        if (reg?[statKey] is List) {
-          regularVals.addAll(
-              (reg![statKey] as List).map((v) => (v as num).toDouble()));
-        }
-        if (pla?[statKey] is List) {
-          playoffVals.addAll(
-              (pla![statKey] as List).map((v) => (v as num).toDouble()));
-        }
-      }
-    }
+          // ── Edge e odds ───────────────────────────────────────────────────
+          GestureDetector(
+            onTap: () => showBetDialog(
+              context: context,
+              betData: prop,
+              title: player,
+              subtitle: '$side $line ${_propLabel(propKey)}',
+              kellyPct: kelly > 0 ? kelly : null,
+              oddsOver: side == 'Over' ? odds : null,
+              oddsUnder: side == 'Under' ? odds : null,
+              odds: odds,
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: edgeColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: edgeColor, width: 1.5),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$side $line · Edge: ${edge.toStringAsFixed(2)}%',
+                          style: TextStyle(
+                              color: edgeColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
+                        ),
+                        const SizedBox(height: 4),
+                        Text('@${odds.toStringAsFixed(2)}',
+                            style: TextStyle(
+                                color: edgeColor.withValues(alpha: 0.8),
+                                fontSize: 14)),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: edgeColor.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text('Registrar aposta',
+                        style: TextStyle(
+                            color: edgeColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12)),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
-    return Row(
-      children: [
-        Expanded(
-          child: _StatCard(
-            label: '📅 Regular',
-            value: regularVals.isEmpty
-                ? '-'
-                : _avg(regularVals).toStringAsFixed(2),
-            subLabel: '${regularVals.length} jogos',
-            color: const Color(0xFF00C853),
+          const SizedBox(height: 16),
+
+          // ── Estatísticas do modelo ────────────────────────────────────────
+          const _SectionHeader(title: 'MODELO'),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              _StatCard(
+                label: 'Média',
+                value: avg.toStringAsFixed(2),
+                sub: '±${std.toStringAsFixed(2)}',
+                color: const Color(0xFF7C4DFF),
+              ),
+              const SizedBox(width: 10),
+              _StatCard(
+                label: 'Linha',
+                value: line.toString(),
+                sub: '',
+                color: const Color(0xFFAAAAAA),
+              ),
+              const SizedBox(width: 10),
+              _StatCard(
+                label: 'Modelo',
+                value: '${modelProb.toStringAsFixed(1)}%',
+                sub: '',
+                color: const Color(0xFF00C853),
+              ),
+              const SizedBox(width: 10),
+              _StatCard(
+                label: 'Mercado',
+                value: '${impliedProb.toStringAsFixed(1)}%',
+                sub: '',
+                color: const Color(0xFF00B0FF),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _StatCard(
-            label: '🏆 Playoffs',
-            value: playoffVals.isEmpty
-                ? '-'
-                : _avg(playoffVals).toStringAsFixed(2),
-            subLabel: '${playoffVals.length} jogos',
-            color: const Color(0xFFFFD600),
+
+          const SizedBox(height: 16),
+
+          // ── Kelly ─────────────────────────────────────────────────────────
+          if (kelly > 0) ...[
+            const _SectionHeader(title: 'KELLY'),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: const Color(0xFF7C4DFF).withValues(alpha: 0.4)),
+              ),
+              child: Row(
+                children: [
+                  Text('${kelly.toStringAsFixed(2)}% da banca',
+                      style: const TextStyle(
+                          color: Color(0xFF7C4DFF),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
+                  if (banca > 0) ...[
+                    const Spacer(),
+                    Text('R\$ ${valorKelly.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            color: Color(0xFF9E7DFF),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18)),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // ── Contexto ──────────────────────────────────────────────────────
+          const _SectionHeader(title: 'CONTEXTO'),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E1E2E),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                _ContextRow(
+                  label: 'Jogos no contexto',
+                  value: '$contextGames',
+                ),
+                const SizedBox(height: 8),
+                _ContextRow(
+                  label: 'Total de jogos',
+                  value: '$totalGames',
+                ),
+                if (absentFilter.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  _ContextRow(
+                    label: 'Filtro de ausentes',
+                    value: absentFilter,
+                  ),
+                ],
+                if (playerPosition != null) ...[
+                  const SizedBox(height: 8),
+                  _ContextRow(label: 'Posição', value: playerPosition),
+                ],
+                if (absentToday != null && absentToday.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  const Divider(color: Color(0xFF2A2A3E)),
+                  const SizedBox(height: 8),
+                  const Text('Ausentes hoje',
+                      style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                  const SizedBox(height: 8),
+                  ...absentToday.map((a) {
+                    final isDireto = a['impact'] == 'direto';
+                    final pos = a['position'] as String? ?? '?';
+                    final name = a['name'] as String? ?? '';
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: isDireto
+                                  ? const Color(0xFFFF1744)
+                                      .withValues(alpha: 0.15)
+                                  : const Color(0xFF444466)
+                                      .withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                color: isDireto
+                                    ? const Color(0xFFFF1744)
+                                        .withValues(alpha: 0.5)
+                                    : const Color(0xFF444466),
+                              ),
+                            ),
+                            child: Text(pos,
+                                style: TextStyle(
+                                    color: isDireto
+                                        ? const Color(0xFFFF1744)
+                                        : const Color(0xFF888888),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(name,
+                                style: TextStyle(
+                                    color: isDireto
+                                        ? Colors.white
+                                        : const Color(0xFF888888),
+                                    fontSize: 13,
+                                    fontWeight: isDireto
+                                        ? FontWeight.bold
+                                        : FontWeight.normal)),
+                          ),
+                          Text(
+                            isDireto ? '⚠️ impacto direto' : 'indireto',
+                            style: TextStyle(
+                                color: isDireto
+                                    ? const Color(0xFFFF6D00)
+                                    : const Color(0xFF555566),
+                                fontSize: 11),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ],
+              ],
+            ),
           ),
-        ),
-      ],
+
+          const SizedBox(height: 16),
+
+          // ── Alertas ───────────────────────────────────────────────────────
+          if (lowSample || inefficientMarket) ...[
+            const _SectionHeader(title: 'ALERTAS'),
+            const SizedBox(height: 8),
+            if (inefficientMarket)
+              _AlertBadge(
+                icon: '🎯',
+                label: 'Mercado ineficiente',
+                sub: 'Edge > 20% com amostra confiável',
+                color: const Color(0xFF00C853),
+              ),
+            if (lowSample) ...[
+              if (inefficientMarket) const SizedBox(height: 8),
+              _AlertBadge(
+                icon: '⚠️',
+                label: 'Poucos jogos no contexto ($contextGames)',
+                sub: 'Resultado menos confiável',
+                color: const Color(0xFFFF6D00),
+              ),
+            ],
+            const SizedBox(height: 16),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -244,184 +441,121 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(title,
         style: const TextStyle(
-            color: Color(0xFFAAAAAA),
-            fontSize: 13,
+            color: Color(0xFF666688),
+            fontSize: 11,
             fontWeight: FontWeight.bold,
-            letterSpacing: 0.5));
-  }
-}
-
-class _PropSummaryCard extends StatelessWidget {
-  final Map<String, dynamic> prop;
-  const _PropSummaryCard({required this.prop});
-
-  Color _edgeColor(double edge) {
-    if (edge >= 5) return const Color(0xFF00C853);
-    if (edge >= 2) return const Color(0xFFFFD600);
-    return const Color(0xFFFF1744);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final edge = (prop['edge'] as num).toDouble();
-    final side = prop['side'] as String;
-    final line = (prop['line'] as num).toDouble();
-    final odds = (prop['odds'] as num).toDouble();
-    final avg = (prop['playerAvg'] as num).toDouble();
-    final std = (prop['playerStd'] as num).toDouble();
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1E2E),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _edgeColor(edge).withValues(alpha: 0.4)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(prop['game'] as String,
-                    style: const TextStyle(
-                        color: Color(0xFF888888), fontSize: 12)),
-                const SizedBox(height: 6),
-                Text('Média: ${avg.toStringAsFixed(2)} ± ${std.toStringAsFixed(2)}',
-                    style: const TextStyle(color: Colors.white, fontSize: 14)),
-                Text('Linha: $line',
-                    style: const TextStyle(
-                        color: Color(0xFFAAAAAA), fontSize: 13)),
-              ],
-            ),
-          ),
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: _edgeColor(edge).withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: _edgeColor(edge)),
-            ),
-            child: Column(
-              children: [
-                Text('$side $line',
-                    style: TextStyle(
-                        color: _edgeColor(edge),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13)),
-                Text('Edge: ${edge.toStringAsFixed(2)}%',
-                    style:
-                        TextStyle(color: _edgeColor(edge), fontSize: 12)),
-                Text('@${odds.toStringAsFixed(2)}',
-                    style: TextStyle(
-                        color: _edgeColor(edge).withValues(alpha: 0.8),
-                        fontSize: 11)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final String subLabel;
-  final bool highlight;
-
-  const _StatRow({
-    required this.label,
-    required this.value,
-    required this.subLabel,
-    this.highlight = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: highlight
-            ? const Color(0xFF7C4DFF).withValues(alpha: 0.1)
-            : const Color(0xFF1E1E2E),
-        borderRadius: BorderRadius.circular(10),
-        border: highlight
-            ? Border.all(
-                color: const Color(0xFF7C4DFF).withValues(alpha: 0.4))
-            : null,
-      ),
-      child: Row(
-        children: [
-          Text(label,
-              style: TextStyle(
-                  color:
-                      highlight ? const Color(0xFF7C4DFF) : Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14)),
-          if (highlight)
-            const Padding(
-              padding: EdgeInsets.only(left: 6),
-              child: Text('(atual)',
-                  style: TextStyle(
-                      color: Color(0xFF7C4DFF), fontSize: 11)),
-            ),
-          const Spacer(),
-          Text(subLabel,
-              style: const TextStyle(
-                  color: Color(0xFF888888), fontSize: 12)),
-          const SizedBox(width: 12),
-          Text(value,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
+            letterSpacing: 1.2));
   }
 }
 
 class _StatCard extends StatelessWidget {
   final String label;
   final String value;
-  final String subLabel;
+  final String sub;
   final Color color;
-
   const _StatCard({
     required this.label,
     required this.value,
-    required this.subLabel,
+    required this.sub,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: color.withValues(alpha: 0.25)),
+        ),
+        child: Column(
+          children: [
+            Text(label,
+                style: const TextStyle(color: Color(0xFF888888), fontSize: 10)),
+            const SizedBox(height: 4),
+            Text(value,
+                style: TextStyle(
+                    color: color, fontSize: 16, fontWeight: FontWeight.bold)),
+            if (sub.isNotEmpty)
+              Text(sub,
+                  style:
+                      const TextStyle(color: Color(0xFF888888), fontSize: 10)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ContextRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool highlight;
+  const _ContextRow({
+    required this.label,
+    required this.value,
+    this.highlight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label,
+            style: const TextStyle(color: Color(0xFF888888), fontSize: 13)),
+        Text(value,
+            style: TextStyle(
+                color: highlight ? const Color(0xFFFF6D00) : Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 13)),
+      ],
+    );
+  }
+}
+
+class _AlertBadge extends StatelessWidget {
+  final String icon;
+  final String label;
+  final String sub;
+  final Color color;
+  const _AlertBadge({
+    required this.icon,
+    required this.label,
+    required this.sub,
     required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Text(label,
-              style: const TextStyle(
-                  color: Color(0xFFAAAAAA), fontSize: 13)),
-          const SizedBox(height: 8),
-          Text(value,
-              style: TextStyle(
-                  color: color,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Text(subLabel,
-              style: const TextStyle(
-                  color: Color(0xFF888888), fontSize: 11)),
+          Text(icon, style: const TextStyle(fontSize: 20)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: TextStyle(
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13)),
+                Text(sub,
+                    style: const TextStyle(
+                        color: Color(0xFF888888), fontSize: 11)),
+              ],
+            ),
+          ),
         ],
       ),
     );

@@ -4,7 +4,6 @@ import '../screens/player_detail_screen.dart';
 
 class PropCard extends StatefulWidget {
   final Map<String, dynamic> prop;
-
   const PropCard({super.key, required this.prop});
 
   @override
@@ -21,8 +20,12 @@ class _PropCardState extends State<PropCard> {
   }
 
   Color _edgeColor(double edge) {
-    if (edge >= 5) return const Color(0xFF00C853);
-    if (edge >= 2) return const Color(0xFFFFD600);
+    if (edge >= 5) {
+      return const Color(0xFF00C853);
+    }
+    if (edge >= 2) {
+      return const Color(0xFFFFD600);
+    }
     return const Color(0xFFFF1744);
   }
 
@@ -38,12 +41,30 @@ class _PropCardState extends State<PropCard> {
     return labels[prop] ?? prop;
   }
 
+  Color _propColor(String prop) {
+    const colors = {
+      'points': Color(0xFFFFD600),
+      'rebounds': Color(0xFF00B0FF),
+      'assists': Color(0xFF00E5FF),
+      'steals': Color(0xFFFF6D00),
+      'threes': Color(0xFFE040FB),
+      'fouls': Color(0xFFFF1744),
+    };
+    return colors[prop] ?? const Color(0xFFAAAAAA);
+  }
+
   String _formatCommenceTime(String? raw) {
-    if (raw == null) return '';
+    if (raw == null) {
+      return '';
+    }
     final dt = DateTime.tryParse(raw)?.toLocal();
-    if (dt == null) return '';
-    final d = '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}';
-    final h = '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    if (dt == null) {
+      return '';
+    }
+    final d =
+        '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}';
+    final h =
+        '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
     return '$d às $h';
   }
 
@@ -62,7 +83,10 @@ class _PropCardState extends State<PropCard> {
     final inefficientMarket = widget.prop['inefficientMarket'] == true;
     final contextGames = widget.prop['contextGames'] as int? ?? 0;
     final valorKelly = _banca > 0 ? _banca * kelly / 100 : 0.0;
-    final commenceTime = _formatCommenceTime(widget.prop['commence_time'] as String?);
+    final commenceTime =
+        _formatCommenceTime(widget.prop['commence_time'] as String?);
+    final propKey = widget.prop['prop'] as String;
+    final propColor = _propColor(propKey);
 
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -88,6 +112,7 @@ class _PropCardState extends State<PropCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
@@ -117,20 +142,26 @@ class _PropCardState extends State<PropCard> {
                       ],
                     ),
                   ),
+                  const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                            horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A3E),
+                          color: propColor.withValues(alpha: 0.18),
                           borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                              color: propColor.withValues(alpha: 0.6),
+                              width: 1.5),
                         ),
                         child: Text(
-                          _propLabel(widget.prop['prop'] as String),
-                          style: const TextStyle(
-                              color: Color(0xFFAAAAAA), fontSize: 12),
+                          _propLabel(propKey),
+                          style: TextStyle(
+                              color: propColor,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                       if (inefficientMarket) ...[
@@ -139,8 +170,8 @@ class _PropCardState extends State<PropCard> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF00C853)
-                                .withValues(alpha: 0.15),
+                            color:
+                                const Color(0xFF00C853).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                             border: Border.all(
                                 color: const Color(0xFF00C853)
@@ -159,8 +190,8 @@ class _PropCardState extends State<PropCard> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFF6D00)
-                                .withValues(alpha: 0.15),
+                            color:
+                                const Color(0xFFFF6D00).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                             border: Border.all(
                                 color: const Color(0xFFFF6D00)
@@ -196,7 +227,7 @@ class _PropCardState extends State<PropCard> {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                          horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: _edgeColor(edge).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
@@ -222,15 +253,22 @@ class _PropCardState extends State<PropCard> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.chevron_right,
-                      color: Color(0xFF555555), size: 20),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2A2A3E),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.chevron_right,
+                        color: Color(0xFFAAAAAA), size: 22),
+                  ),
                 ],
               ),
               if (kelly > 0) ...[
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -249,7 +287,7 @@ class _PropCardState extends State<PropCard> {
                       if (_banca > 0) ...[
                         const SizedBox(width: 8),
                         Text(
-                          '→ R\$ ${valorKelly.toStringAsFixed(2)}',
+                          '· R\$ ${valorKelly.toStringAsFixed(2)}',
                           style: const TextStyle(
                               color: Color(0xFF9E7DFF), fontSize: 13),
                         ),
@@ -276,8 +314,7 @@ class _PropCardState extends State<PropCard> {
         child: Column(
           children: [
             Text(label,
-                style: const TextStyle(
-                    color: Color(0xFF888888), fontSize: 10)),
+                style: const TextStyle(color: Color(0xFF888888), fontSize: 10)),
             const SizedBox(height: 2),
             Text(value,
                 style: const TextStyle(
