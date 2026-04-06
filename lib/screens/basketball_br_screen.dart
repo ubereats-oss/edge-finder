@@ -22,7 +22,6 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
   DateTime? _propsUpdated;
   bool _loading = false;
   String _status = '';
-
   double _minEdge = 0;
   String? _selectedProp;
   bool _hideWarnings = false;
@@ -31,9 +30,13 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
 
   bool _jogoValido(Map<String, dynamic> item) {
     final raw = item['commence_time'] as String?;
-    if (raw == null) return true;
+    if (raw == null) {
+      return true;
+    }
     final dt = DateTime.tryParse(raw);
-    if (dt == null) return true;
+    if (dt == null) {
+      return true;
+    }
     return dt.difference(DateTime.now().toUtc()) >= _min15;
   }
 
@@ -68,15 +71,28 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
     }
   }
 
+  Future<void> _waitForWorkflow() async {
+    // Polling até workflow concluir (máx 3 minutos)
+    for (int i = 0; i < 36; i++) {
+      await Future.delayed(const Duration(seconds: 5));
+      try {
+        final status = await ApiService.getWorkflowStatus();
+        if (status == 'completed') {
+          return;
+        }
+      } catch (_) {}
+    }
+  }
+
   Future<void> _runQuick() async {
-    setState(() { _loading = true; _status = 'Buscando odds...'; });
+    setState(() {
+      _loading = true;
+      _status = 'Acionando workflow...';
+    });
     try {
-      await ApiService.post('nba/update-odds');
-      setState(() => _status = 'Buscando props Pinnacle...');
-      await ApiService.post('nba/update-props-br');
-      setState(() => _status = 'Rodando modelos...');
-      await ApiService.post('nba/run-model');
-      await ApiService.post('nba/run-props-br-model');
+      await ApiService.triggerUpdate('nba_br');
+      setState(() => _status = 'Aguardando conclusão...');
+      await _waitForWorkflow();
       setState(() => _status = 'Carregando...');
       await _loadAll();
       setState(() => _status = 'Concluído.');
@@ -88,13 +104,17 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
   }
 
   Future<void> _runFull() async {
-    setState(() { _loading = true; _status = 'Atualizando scores históricos...'; });
+    setState(() {
+      _loading = true;
+      _status = 'Acionando atualização completa...';
+    });
     try {
-      await ApiService.post('nba/update-scores');
-      setState(() => _status = 'Atualizando stats de jogadores (~20 min)...');
-      await ApiService.post('nba/update-player-stats');
-      setState(() => _status = 'Atualizando odds e props...');
-      await _runQuick();
+      await ApiService.triggerUpdate('nba');
+      setState(() => _status = 'Aguardando conclusão (~20 min)...');
+      await _waitForWorkflow();
+      setState(() => _status = 'Carregando...');
+      await _loadAll();
+      setState(() => _status = 'Concluído.');
     } catch (e) {
       _showError(e.toString());
     } finally {
@@ -131,7 +151,10 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
               color: const Color(0xFFFFD600),
               title: 'Atualização rápida',
               subtitle: 'Odds e props do dia · ~30 segundos',
-              onTap: () { Navigator.pop(context); _runQuick(); },
+              onTap: () {
+                Navigator.pop(context);
+                _runQuick();
+              },
             ),
             const SizedBox(height: 12),
             _UpdateOption(
@@ -139,7 +162,10 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
               color: const Color(0xFF00C853),
               title: 'Atualização completa',
               subtitle: 'Scores + stats de jogadores · ~20 minutos',
-              onTap: () { Navigator.pop(context); _runFull(); },
+              onTap: () {
+                Navigator.pop(context);
+                _runFull();
+              },
             ),
             const SizedBox(height: 16),
           ],
@@ -163,11 +189,19 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
 
   List<Map<String, dynamic>> get _filteredProps {
     return _propsResults.where((p) {
-      if (!_jogoValido(p)) return false;
+      if (!_jogoValido(p)) {
+        return false;
+      }
       final edge = (p['edge'] as num).toDouble();
-      if (edge < _minEdge) return false;
-      if (_selectedProp != null && p['prop'] != _selectedProp) return false;
-      if (_hideWarnings && p['lowSample'] == true) return false;
+      if (edge < _minEdge) {
+        return false;
+      }
+      if (_selectedProp != null && p['prop'] != _selectedProp) {
+        return false;
+      }
+      if (_hideWarnings && p['lowSample'] == true) {
+        return false;
+      }
       return true;
     }).toList();
   }
@@ -224,10 +258,10 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
                     Expanded(
                       child: _filteredH2h.isEmpty && !_loading
                           ? const _EmptyState(
-                              msg: 'Sem jogos disponíveis.\nAtualize para buscar.')
+                              msg:
+                                  'Sem jogos disponíveis.\nAtualize para buscar.')
                           : ListView.builder(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               itemCount: _filteredH2h.length,
                               itemBuilder: (_, i) =>
                                   MatchCard(match: _filteredH2h[i]),
@@ -269,10 +303,10 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
                     Expanded(
                       child: _filteredProps.isEmpty && !_loading
                           ? const _EmptyState(
-                              msg: 'Sem props disponíveis.\nAtualize ou aguarde a abertura dos mercados.')
+                              msg:
+                                  'Sem props disponíveis.\nAtualize ou aguarde a abertura dos mercados.')
                           : ListView.builder(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               itemCount: _filteredProps.length,
                               itemBuilder: (_, i) =>
                                   PropCard(prop: _filteredProps[i]),
@@ -290,8 +324,7 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
         backgroundColor: const Color(0xFF00C853),
         icon: const Icon(Icons.play_arrow, color: Colors.white),
         label: const Text('Atualizar',
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -333,9 +366,8 @@ class _UpdateOption extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
+          color: const Color(0xFF2A2A3E),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
@@ -357,7 +389,6 @@ class _UpdateOption extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: color),
           ],
         ),
       ),

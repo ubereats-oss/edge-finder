@@ -8,52 +8,52 @@ const _firestoreBase =
 
 // ── Configuração GitHub Actions ────────────────────────────────────────────────
 const _githubRepo = 'ubereats-oss/edge-finder';
-const _githubToken = String.fromEnvironment('GITHUB_TOKEN', defaultValue: '');
-const _githubBase = 'https://api.github.com';
 
 class FetchResult {
   final List<Map<String, dynamic>> data;
   final DateTime? lastUpdated;
-
   const FetchResult({required this.data, this.lastUpdated});
 }
 
 class ApiService {
   // ── Leitura do Firestore ───────────────────────────────────────────────────
-
-  static Future<FetchResult> _fetchFirestore(String collection, String document) async {
+  static Future<FetchResult> _fetchFirestore(
+      String collection, String document) async {
     final url = '$_firestoreBase/$collection/$document';
     final res = await http.get(Uri.parse(url));
     if (res.statusCode != 200) {
-      throw Exception('Erro ao buscar $collection/$document: ${res.statusCode}');
+      throw Exception(
+          'Erro ao buscar $collection/$document: ${res.statusCode}');
     }
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     final fields = body['fields'] as Map<String, dynamic>?;
-    if (fields == null) return const FetchResult(data: []);
+    if (fields == null) {
+      return const FetchResult(data: []);
+    }
 
-    // Desserializa campo 'data' (arrayValue)
     final dataField = fields['data'];
     final List<Map<String, dynamic>> data = [];
     if (dataField != null) {
       final values = dataField['arrayValue']?['values'] as List? ?? [];
       for (final item in values) {
-        final map = _firestoreToMap(item['mapValue']?['fields'] as Map<String, dynamic>? ?? {});
+        final map = _firestoreToMap(
+            item['mapValue']?['fields'] as Map<String, dynamic>? ?? {});
         data.add(map);
       }
     }
 
-    // Desserializa campo 'lastUpdated'
     DateTime? lastUpdated;
     final luField = fields['lastUpdated'];
     if (luField != null) {
       final luStr = luField['stringValue'] as String?;
-      if (luStr != null) lastUpdated = DateTime.tryParse(luStr);
+      if (luStr != null) {
+        lastUpdated = DateTime.tryParse(luStr);
+      }
     }
-
     return FetchResult(data: data, lastUpdated: lastUpdated);
   }
 
-  // Converte documento Firestore para Map Dart
+  // ── Conversão Firestore → Map ──────────────────────────────────────────────
   static Map<String, dynamic> _firestoreToMap(Map<String, dynamic> fields) {
     final result = <String, dynamic>{};
     for (final entry in fields.entries) {
@@ -63,57 +63,67 @@ class ApiService {
   }
 
   static dynamic _firestoreValue(Map<String, dynamic> value) {
-    if (value.containsKey('stringValue')) return value['stringValue'];
-    if (value.containsKey('integerValue')) return int.tryParse(value['integerValue'].toString()) ?? 0;
-    if (value.containsKey('doubleValue')) return (value['doubleValue'] as num).toDouble();
-    if (value.containsKey('booleanValue')) return value['booleanValue'] as bool;
-    if (value.containsKey('nullValue')) return null;
+    if (value.containsKey('stringValue')) {
+      return value['stringValue'];
+    }
+    if (value.containsKey('integerValue')) {
+      return int.tryParse(value['integerValue'].toString()) ?? 0;
+    }
+    if (value.containsKey('doubleValue')) {
+      return (value['doubleValue'] as num).toDouble();
+    }
+    if (value.containsKey('booleanValue')) {
+      return value['booleanValue'] as bool;
+    }
+    if (value.containsKey('nullValue')) {
+      return null;
+    }
     if (value.containsKey('arrayValue')) {
       final values = value['arrayValue']['values'] as List? ?? [];
-      return values.map((v) => _firestoreValue(v as Map<String, dynamic>)).toList();
+      return values
+          .map((v) => _firestoreValue(v as Map<String, dynamic>))
+          .toList();
     }
     if (value.containsKey('mapValue')) {
-      return _firestoreToMap(value['mapValue']['fields'] as Map<String, dynamic>? ?? {});
+      return _firestoreToMap(
+          value['mapValue']['fields'] as Map<String, dynamic>? ?? {});
     }
     return null;
   }
 
-  // ── Endpoints de leitura ──────────────────────────────────────────────────
-
+  // ── Endpoints de leitura ───────────────────────────────────────────────────
   static Future<FetchResult> fetchTennisResults() =>
       _fetchFirestore('results', 'tennis');
-
   static Future<FetchResult> fetchNbaResults() =>
       _fetchFirestore('results', 'nba_h2h');
-
   static Future<FetchResult> fetchNbaProps() =>
       _fetchFirestore('results', 'nba_props');
-
   static Future<FetchResult> fetchNbaBrProps() =>
       _fetchFirestore('results', 'nba_props_br');
-
   static Future<FetchResult> fetchMlbResults() =>
       _fetchFirestore('results', 'mlb_h2h');
-
   static Future<FetchResult> fetchMlbProps() =>
       _fetchFirestore('results', 'mlb_props');
 
-  // ── Apostas (Firestore) ───────────────────────────────────────────────────
-
+  // ── Apostas (Firestore) ────────────────────────────────────────────────────
   static Future<List<Map<String, dynamic>>> fetchBets() async {
     final url = '$_firestoreBase/bets';
     final res = await http.get(Uri.parse(url));
-    if (res.statusCode != 200) throw Exception('Erro ao buscar apostas');
+    if (res.statusCode != 200) {
+      throw Exception('Erro ao buscar apostas');
+    }
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     final documents = body['documents'] as List? ?? [];
     return documents.map((doc) {
       final fields = doc['fields'] as Map<String, dynamic>? ?? {};
       return _firestoreToMap(fields);
     }).toList()
-      ..sort((a, b) => (a['createdAt'] as String? ?? '').compareTo(b['createdAt'] as String? ?? ''));
+      ..sort((a, b) => (a['createdAt'] as String? ?? '')
+          .compareTo(b['createdAt'] as String? ?? ''));
   }
 
-  static Future<Map<String, dynamic>> createBet(Map<String, dynamic> data) async {
+  static Future<Map<String, dynamic>> createBet(
+      Map<String, dynamic> data) async {
     final id = DateTime.now().millisecondsSinceEpoch.toString();
     final bet = {
       ...data,
@@ -130,16 +140,19 @@ class ApiService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'fields': _mapToFirestore(bet)}),
     );
-    if (res.statusCode != 200) throw Exception('Erro ao registrar aposta');
+    if (res.statusCode != 200) {
+      throw Exception('Erro ao registrar aposta');
+    }
     return bet;
   }
 
   static Future<Map<String, dynamic>> updateBet(
       String id, Map<String, dynamic> data) async {
-    // Busca bet atual primeiro
     final url = '$_firestoreBase/bets/$id';
     final getRes = await http.get(Uri.parse(url));
-    if (getRes.statusCode != 200) throw Exception('Aposta não encontrada');
+    if (getRes.statusCode != 200) {
+      throw Exception('Aposta não encontrada');
+    }
     final current = _firestoreToMap(
         (jsonDecode(getRes.body)['fields'] as Map<String, dynamic>? ?? {}));
     final updated = {...current, ...data, 'id': id};
@@ -148,28 +161,36 @@ class ApiService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'fields': _mapToFirestore(updated)}),
     );
-    if (patchRes.statusCode != 200) throw Exception('Erro ao editar aposta');
+    if (patchRes.statusCode != 200) {
+      throw Exception('Erro ao editar aposta');
+    }
     return updated;
   }
 
   static Future<Map<String, dynamic>> resolveBet(String id) async {
-    // Busca bet atual
     final url = '$_firestoreBase/bets/$id';
     final getRes = await http.get(Uri.parse(url));
-    if (getRes.statusCode != 200) throw Exception('Aposta não encontrada');
+    if (getRes.statusCode != 200) {
+      throw Exception('Aposta não encontrada');
+    }
     final bet = _firestoreToMap(
         (jsonDecode(getRes.body)['fields'] as Map<String, dynamic>? ?? {}));
-
-    // Resolve via ESPN API diretamente no Flutter
     final resolved = await _resolveViaEspn(bet);
-    final updated = {...bet, ...resolved, 'id': id, 'status': 'resolved', 'resolvedAt': DateTime.now().toIso8601String()};
-
+    final updated = {
+      ...bet,
+      ...resolved,
+      'id': id,
+      'status': 'resolved',
+      'resolvedAt': DateTime.now().toIso8601String(),
+    };
     final patchRes = await http.patch(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'fields': _mapToFirestore(updated)}),
     );
-    if (patchRes.statusCode != 200) throw Exception('Erro ao salvar resolução');
+    if (patchRes.statusCode != 200) {
+      throw Exception('Erro ao salvar resolução');
+    }
     return updated;
   }
 
@@ -177,101 +198,109 @@ class ApiService {
     await http.delete(Uri.parse('$_firestoreBase/bets/$id'));
   }
 
-  // ── Resolução de apostas via ESPN ─────────────────────────────────────────
-
-  static Future<Map<String, dynamic>> _resolveViaEspn(Map<String, dynamic> bet) async {
+  // ── Resolução de apostas via ESPN ──────────────────────────────────────────
+  static Future<Map<String, dynamic>> _resolveViaEspn(
+      Map<String, dynamic> bet) async {
     final commenceTime = bet['commence_time'] as String?;
-    if (commenceTime == null) throw Exception('Data do jogo não disponível');
-
+    if (commenceTime == null) {
+      throw Exception('Data do jogo não disponível');
+    }
     final dt = DateTime.parse(commenceTime).toUtc();
     final dateStr =
         '${dt.year}${dt.month.toString().padLeft(2, '0')}${dt.day.toString().padLeft(2, '0')}';
-
-    final sport = bet['type'] == 'h2h' ? 'basketball/nba' : 'basketball/nba';
+    const sport = 'basketball/nba';
     final sbUrl =
         'https://site.api.espn.com/apis/site/v2/sports/$sport/scoreboard?dates=$dateStr';
     final sbRes = await http.get(Uri.parse(sbUrl));
-    if (sbRes.statusCode != 200) throw Exception('Erro ao buscar scoreboard ESPN');
-
+    if (sbRes.statusCode != 200) {
+      throw Exception('Erro ao buscar scoreboard ESPN');
+    }
     final sb = jsonDecode(sbRes.body) as Map<String, dynamic>;
     final events = sb['events'] as List? ?? [];
-
     final gameParts = (bet['game'] as String? ?? '').split(' x ');
     final t1 = gameParts.isNotEmpty ? gameParts[0].split(' ').last : '';
     final t2 = gameParts.length > 1 ? gameParts[1].split(' ').last : '';
-
     final event = events.firstWhere(
       (e) {
-        final competitors = (e['competitions'] as List).first['competitors'] as List;
-        final names = competitors.map((c) => c['team']['displayName'] as String).toList();
-        return names.any((n) => n.contains(t1)) && names.any((n) => n.contains(t2));
+        final competitors =
+            (e['competitions'] as List).first['competitors'] as List;
+        final names =
+            competitors.map((c) => c['team']['displayName'] as String).toList();
+        return names.any((n) => n.contains(t1)) &&
+            names.any((n) => n.contains(t2));
       },
       orElse: () => null,
     );
-
-    if (event == null) throw Exception('Jogo não encontrado no ESPN');
-
+    if (event == null) {
+      throw Exception('Jogo não encontrado no ESPN');
+    }
     final comp = (event['competitions'] as List).first;
     if (!(comp['status']?['type']?['completed'] as bool? ?? false)) {
       throw Exception('Jogo ainda não encerrado');
     }
-
     if (bet['type'] == 'h2h') {
       final competitors = comp['competitors'] as List;
-      final winner = competitors.firstWhere((c) => c['winner'] == true, orElse: () => null);
-      if (winner == null) throw Exception('Resultado indisponível');
+      final winner = competitors.firstWhere((c) => c['winner'] == true,
+          orElse: () => null);
+      if (winner == null) {
+        throw Exception('Resultado indisponível');
+      }
       final loser = competitors.firstWhere((c) => c['winner'] != true);
-      final won = (winner['team']['displayName'] as String).contains(
-          (bet['team'] as String? ?? '').split(' ').last);
+      final won = (winner['team']['displayName'] as String)
+          .contains((bet['team'] as String? ?? '').split(' ').last);
       final profit = won
-          ? double.parse(((bet['odds'] as num).toDouble() - 1) * (bet['stake'] as num).toDouble() ~/ 1 == 0
-              ? (((bet['odds'] as num).toDouble() - 1) * (bet['stake'] as num).toDouble()).toStringAsFixed(2)
-              : (((bet['odds'] as num).toDouble() - 1) * (bet['stake'] as num).toDouble()).toStringAsFixed(2))
+          ? double.parse((((bet['odds'] as num).toDouble() - 1) *
+                  (bet['stake'] as num).toDouble())
+              .toStringAsFixed(2))
           : -(bet['stake'] as num).toDouble();
       return {
-        'realValue': '${winner['team']['displayName']} ${winner['score']}-${loser['score']}',
+        'realValue':
+            '${winner['team']['displayName']} ${winner['score']}-${loser['score']}',
         'won': won,
         'profit': double.parse(profit.toStringAsFixed(2)),
       };
     }
-
-    // Props
     final sumUrl =
         'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${event['id']}';
     final sumRes = await http.get(Uri.parse(sumUrl));
-    if (sumRes.statusCode != 200) throw Exception('Erro ao buscar box score ESPN');
-
+    if (sumRes.statusCode != 200) {
+      throw Exception('Erro ao buscar box score ESPN');
+    }
     final sum = jsonDecode(sumRes.body) as Map<String, dynamic>;
-    final statMap = {
+    const statMap = {
       'points': 'points',
       'rebounds': 'rebounds',
       'assists': 'assists',
       'steals': 'steals',
       'threes': 'threePointFieldGoalsMade-threePointFieldGoalsAttempted',
     };
-    final statKey = statMap[bet['prop'] as String? ?? ''] ?? (bet['prop'] as String? ?? '');
-    final playerLastName = (bet['player'] as String? ?? '').split(' ').last.toLowerCase();
-
+    final statKey =
+        statMap[bet['prop'] as String? ?? ''] ?? (bet['prop'] as String? ?? '');
+    final playerLastName =
+        (bet['player'] as String? ?? '').split(' ').last.toLowerCase();
     double? realValue;
     final players = sum['boxscore']?['players'] as List? ?? [];
     for (final team in players) {
       for (final group in (team['statistics'] as List? ?? [])) {
         final keys = (group['keys'] as List?)?.cast<String>() ?? [];
         final colIdx = keys.indexOf(statKey);
-        if (colIdx == -1) continue;
+        if (colIdx == -1) {
+          continue;
+        }
         for (final athlete in (group['athletes'] as List? ?? [])) {
-          final name = (athlete['athlete']['displayName'] as String).toLowerCase();
+          final name =
+              (athlete['athlete']['displayName'] as String).toLowerCase();
           if (name.contains(playerLastName)) {
-            final statStr = (athlete['stats'] as List)[colIdx] as String? ?? '0';
-            // Para threes: formato "X-Y"
+            final statStr =
+                (athlete['stats'] as List)[colIdx] as String? ?? '0';
             realValue = double.tryParse(statStr.split('-').first) ?? 0;
           }
         }
       }
     }
-
-    if (realValue == null) throw Exception('Stat não encontrada no ESPN');
-
+    if (realValue == null) {
+      throw Exception('Stat não encontrada no ESPN');
+    }
     final side = bet['side'] as String? ?? 'Over';
     final line = (bet['line'] as num).toDouble();
     final odds = (bet['odds'] as num).toDouble();
@@ -280,12 +309,10 @@ class ApiService {
     final profit = won
         ? double.parse(((odds - 1) * stake).toStringAsFixed(2))
         : double.parse((-stake).toStringAsFixed(2));
-
     return {'realValue': realValue, 'won': won, 'profit': profit};
   }
 
-  // ── Histórico de apostas ──────────────────────────────────────────────────
-
+  // ── Histórico de odds ──────────────────────────────────────────────────────
   static Future<List<Map<String, dynamic>>> fetchNbaHistory(
       String date, String type) async {
     final month = date.substring(0, 7);
@@ -294,25 +321,37 @@ class ApiService {
         : 'basketball_nba_h2h_$month';
     final url = '$_firestoreBase/odds_history/$docId';
     final res = await http.get(Uri.parse(url));
-    if (res.statusCode != 200) return [];
+    if (res.statusCode != 200) {
+      return [];
+    }
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     final fields = body['fields'] as Map<String, dynamic>?;
-    if (fields == null) return [];
+    if (fields == null) {
+      return [];
+    }
     final dataField = fields['data'];
-    if (dataField == null) return [];
+    if (dataField == null) {
+      return [];
+    }
     final values = dataField['arrayValue']?['values'] as List? ?? [];
-    final all = values.map((item) =>
-        _firestoreToMap(item['mapValue']?['fields'] as Map<String, dynamic>? ?? {})).toList();
-    return all.where((r) => r['savedDate'] == date && r['bookmaker'] == 'pinnacle').toList();
+    final all = values
+        .map((item) => _firestoreToMap(
+            item['mapValue']?['fields'] as Map<String, dynamic>? ?? {}))
+        .toList();
+    return all
+        .where((r) => r['savedDate'] == date && r['bookmaker'] == 'pinnacle')
+        .toList();
   }
 
-  // ── Acionar workflow GitHub Actions ──────────────────────────────────────
-
+  // ── Acionar workflow GitHub Actions ────────────────────────────────────────
   static Future<void> triggerUpdate(String sport) async {
-    final token = const String.fromEnvironment('GITHUB_TOKEN', defaultValue: '');
-    if (token.isEmpty) throw Exception('Token GitHub não configurado');
-
-    final url = '$_githubBase/repos/$_githubRepo/actions/workflows/update_model.yml/dispatches';
+    final token =
+        const String.fromEnvironment('GITHUB_TOKEN', defaultValue: '');
+    if (token.isEmpty) {
+      throw Exception('Token GitHub não configurado');
+    }
+    final url =
+        'https://api.github.com/repos/$_githubRepo/actions/workflows/update_model.yml/dispatches';
     final res = await http.post(
       Uri.parse(url),
       headers: {
@@ -330,14 +369,15 @@ class ApiService {
     }
   }
 
-  // ── Verificar status do workflow ──────────────────────────────────────────
-
+  // ── Verificar status do workflow ───────────────────────────────────────────
   static Future<String> getWorkflowStatus() async {
-    final token = const String.fromEnvironment('GITHUB_TOKEN', defaultValue: '');
-    if (token.isEmpty) return 'unknown';
-
+    final token =
+        const String.fromEnvironment('GITHUB_TOKEN', defaultValue: '');
+    if (token.isEmpty) {
+      return 'unknown';
+    }
     final url =
-        '$_githubBase/repos/$_githubRepo/actions/workflows/update_model.yml/runs?per_page=1';
+        'https://api.github.com/repos/$_githubRepo/actions/workflows/update_model.yml/runs?per_page=1';
     final res = await http.get(
       Uri.parse(url),
       headers: {
@@ -345,15 +385,18 @@ class ApiService {
         'Accept': 'application/vnd.github+json',
       },
     );
-    if (res.statusCode != 200) return 'unknown';
+    if (res.statusCode != 200) {
+      return 'unknown';
+    }
     final body = jsonDecode(res.body) as Map<String, dynamic>;
     final runs = body['workflow_runs'] as List? ?? [];
-    if (runs.isEmpty) return 'unknown';
+    if (runs.isEmpty) {
+      return 'unknown';
+    }
     return runs.first['status'] as String? ?? 'unknown';
   }
 
-  // ── Conversão Map → Firestore ─────────────────────────────────────────────
-
+  // ── Conversão Map → Firestore ──────────────────────────────────────────────
   static Map<String, dynamic> _mapToFirestore(Map<String, dynamic> map) {
     final result = <String, dynamic>{};
     for (final entry in map.entries) {
@@ -363,11 +406,21 @@ class ApiService {
   }
 
   static Map<String, dynamic> _valueToFirestore(dynamic value) {
-    if (value == null) return {'nullValue': null};
-    if (value is bool) return {'booleanValue': value};
-    if (value is int) return {'integerValue': value.toString()};
-    if (value is double) return {'doubleValue': value};
-    if (value is String) return {'stringValue': value};
+    if (value == null) {
+      return {'nullValue': null};
+    }
+    if (value is bool) {
+      return {'booleanValue': value};
+    }
+    if (value is int) {
+      return {'integerValue': value.toString()};
+    }
+    if (value is double) {
+      return {'doubleValue': value};
+    }
+    if (value is String) {
+      return {'stringValue': value};
+    }
     if (value is List) {
       return {
         'arrayValue': {
@@ -385,11 +438,9 @@ class ApiService {
     return {'stringValue': value.toString()};
   }
 
-  // ── Método legado post() — mantido para compatibilidade ──────────────────
-  // Agora aciona o GitHub Actions em vez do server local
-
+  // ── Legado post() ──────────────────────────────────────────────────────────
   static Future<String> post(String path) async {
-    final sportMap = {
+    const sportMap = {
       'tennis/update-ranking': 'tennis',
       'tennis/update-odds': 'tennis',
       'tennis/run-model': 'tennis',
