@@ -27,7 +27,32 @@ if (fs.existsSync('nba_injuries_today.json')) {
 } else {
   console.warn('nba_injuries_today.json não encontrado — filtro de ausentes desativado.');
 }
+const playerPositions = readJsonSafe('nba_player_positions.json', {});
 
+function getPlayerGroup(playerName) {
+  if (!playerName) return 'unknown';
+  const direct = playerPositions[playerName];
+  if (direct) return direct.group;
+  const lower = playerName.toLowerCase();
+  for (const [key, val] of Object.entries(playerPositions)) {
+    if (key.toLowerCase().includes(lower) || lower.includes(key.toLowerCase())) {
+      return val.group;
+    }
+  }
+  return 'unknown';
+}
+
+function classifyAbsents(absentToday, playerName) {
+  const playerGroup = getPlayerGroup(playerName);
+  return absentToday.map(absent => {
+    const absentGroup = getPlayerGroup(absent);
+    let impact = 'indireto';
+    if (playerGroup !== 'unknown' && absentGroup !== 'unknown' && playerGroup === absentGroup) {
+      impact = 'direto';
+    }
+    return { name: absent, position: playerPositions[absent]?.position ?? null, group: absentGroup, impact };
+  });
+}
 // ── Calibração isotônica ───────────────────────────────────────────────────────
 const CALIB_TABLE = [
   { raw: 0.519, cal: 0.504 },
@@ -298,7 +323,8 @@ for (const prop of props) {
     lowSample: stats.lowSample,
     inefficientMarket,
     absentFilter: stats.usedAbsentFilter,
-    absentToday: absentToday.length > 0 ? absentToday : undefined,
+    absentToday: absentToday.length > 0 ? classifyAbsents(absentToday, prop.player) : undefined,
+    playerPosition: playerPositions[prop.player]?.position ?? null,
   });
 }
 
