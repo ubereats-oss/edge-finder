@@ -2,15 +2,15 @@ const axios = require('axios');
 const fs = require('fs');
 
 const TEAMS = [
-  { id: '1', name: 'Atlanta Hawks' },
-  { id: '2', name: 'Boston Celtics' },
-  { id: '3', name: 'New Orleans Pelicans' },
-  { id: '4', name: 'Chicago Bulls' },
-  { id: '5', name: 'Cleveland Cavaliers' },
-  { id: '6', name: 'Dallas Mavericks' },
-  { id: '7', name: 'Denver Nuggets' },
-  { id: '8', name: 'Detroit Pistons' },
-  { id: '9', name: 'Golden State Warriors' },
+  { id: '1',  name: 'Atlanta Hawks' },
+  { id: '2',  name: 'Boston Celtics' },
+  { id: '3',  name: 'New Orleans Pelicans' },
+  { id: '4',  name: 'Chicago Bulls' },
+  { id: '5',  name: 'Cleveland Cavaliers' },
+  { id: '6',  name: 'Dallas Mavericks' },
+  { id: '7',  name: 'Denver Nuggets' },
+  { id: '8',  name: 'Detroit Pistons' },
+  { id: '9',  name: 'Golden State Warriors' },
   { id: '10', name: 'Houston Rockets' },
   { id: '11', name: 'Indiana Pacers' },
   { id: '12', name: 'Los Angeles Clippers' },
@@ -34,12 +34,23 @@ const TEAMS = [
   { id: '30', name: 'Charlotte Hornets' },
 ];
 
+// Agrupa posições ESPN em categorias funcionais
+function positionGroup(abbr) {
+  if (!abbr) return 'unknown';
+  const pos = abbr.toUpperCase();
+  if (['PG', 'SG', 'G'].includes(pos)) return 'guard';
+  if (['SF', 'PF', 'F'].includes(pos)) return 'forward';
+  if (['C'].includes(pos)) return 'center';
+  return 'unknown';
+}
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function getPlayerTeams() {
   const playerTeam = {};
+  const playerPositions = {};
 
   for (const team of TEAMS) {
     try {
@@ -48,6 +59,11 @@ async function getPlayerTeams() {
       const athletes = res.data.athletes || [];
       for (const a of athletes) {
         playerTeam[a.fullName] = team.name;
+        const abbr = a.position?.abbreviation ?? null;
+        playerPositions[a.fullName] = {
+          position: abbr,
+          group: positionGroup(abbr),
+        };
       }
       console.log(`${team.name}: ${athletes.length} jogadores`);
     } catch (e) {
@@ -57,6 +73,7 @@ async function getPlayerTeams() {
   }
 
   fs.writeFileSync('nba_player_team.json', JSON.stringify(playerTeam, null, 2));
+  fs.writeFileSync('nba_player_positions.json', JSON.stringify(playerPositions, null, 2));
   console.log(`Mapeamento salvo: ${Object.keys(playerTeam).length} jogadores.`);
 }
 
