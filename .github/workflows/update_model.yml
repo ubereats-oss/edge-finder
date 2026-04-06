@@ -147,6 +147,7 @@ jobs:
           git checkout --orphan data-tmp
           git rm -rf . --quiet
           cp /tmp/nba_player_stats.json.gz . 2>/dev/null || true
+          rm -f nba_player_stats.json
           for f in nba_player_team.json nba_injuries_today.json bets.json; do
             cp $f . 2>/dev/null || true
           done
