@@ -7,6 +7,7 @@ const API_KEYS = [
   '1c578076d6dfa967d0369920e4c22969',
   'cdea0b39024b47310a32dab1dfb308a8',
   '438ae5826b683c3251a3adee591e19f5',
+  'abce8a042af4f25fd795835932746518',
   '0c92529a8b4493260dded91f83008547',
   'bf93bfd15042771f6b4b919f1c40a0ac',
   'a23686280065456cf304a7800249b2d0',
@@ -15,13 +16,19 @@ const API_KEYS = [
   'e7947fa40bf559435f11301c00a6987f',
   'e8a536d6be32236e870cf7f0d6ae7e05',
   'c96bb55d00cace6e0aca19ab7cbae462',
+  'dc6eef44441582f0aa3a4a632ee63f95',
+  'abce8a042af4f25fd795835932746518'
 ];
 
 // Esportes com coleta de props (além de H2H)
-const SPORTS_WITH_PROPS = new Set([
+const SPORTS_TO_COLLECT = new Set([
   'basketball_nba',
   'baseball_mlb',
   'tennis_atp',
+]);
+
+const SPORTS_WITH_PROPS = new Set([
+  'basketball_nba',
 ]);
 
 const HISTORY_DIR    = path.join(__dirname, 'odds_history');
@@ -110,7 +117,7 @@ function appendRecords(sport, type, records) {
 async function collectH2H(sportKey) {
   const data = await apiGet(
     `https://api.the-odds-api.com/v4/sports/${sportKey}/odds/`,
-    { regions: 'eu,us', markets: 'h2h', oddsFormat: 'decimal' }
+    { regions: 'eu', markets: 'h2h', oddsFormat: 'decimal' }
   );
   if (!data?.length) return;
 
@@ -157,7 +164,7 @@ async function collectProps(sportKey) {
     try {
       const data = await apiGet(
         `https://api.the-odds-api.com/v4/sports/${sportKey}/events/${event.id}/odds`,
-        { regions: 'eu,us', markets: PROPS_MARKETS, oddsFormat: 'decimal' }
+        { regions: 'eu', markets: PROPS_MARKETS, oddsFormat: 'decimal' }
       );
       for (const bm of data.bookmakers ?? []) {
         for (const market of bm.markets ?? []) {
@@ -219,10 +226,8 @@ async function main() {
   ensureDir(HISTORY_DIR);
   loadKeyState();
 
-  console.log('Buscando lista de esportes...');
-  const sports    = await apiGet('https://api.the-odds-api.com/v4/sports', { all: false });
-  const sportKeys = sports.filter(s => !s.has_outrights).map(s => s.key);
-  console.log(`Esportes ativos: ${sportKeys.length}\n`);
+  console.log('Esportes configurados:', [...SPORTS_TO_COLLECT].join(', '));
+  const sportKeys = [...SPORTS_TO_COLLECT];
 
   for (const sportKey of sportKeys) {
     console.log(`\n[${sportKey}]`);
