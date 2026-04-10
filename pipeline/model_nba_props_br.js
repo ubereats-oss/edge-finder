@@ -293,6 +293,32 @@ for (const prop of props) {
   if (marginRatio < 0.75) continue;
   if (stats.usedAbsentFilter) comFiltroAusentes++;
 
+  // Calcula médias dos últimos 5 e 10 jogos
+  function calcRecentAvg(n) {
+    const entries = [];
+    for (const [, seasonData] of Object.entries(playerData)) {
+      for (const [, locs] of Object.entries(seasonData)) {
+        for (const [, ctx] of Object.entries(locs)) {
+          if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
+          for (const entry of ctx[statKey]) {
+            if (entry.blowout) continue;
+            const val = typeof entry === 'object' ? entry.value : entry;
+            const date = entry.date || '';
+            entries.push({ val, date });
+          }
+        }
+      }
+    }
+    entries.sort((a, b) => b.date.localeCompare(a.date));
+    const slice = entries.slice(0, n);
+    if (!slice.length) return null;
+    return parseFloat((slice.reduce((s, e) => s + e.val, 0) / slice.length).toFixed(1));
+  }
+
+  const avg5  = calcRecentAvg(5);
+  const avg10 = calcRecentAvg(10);
+  const playerTeamName = teamName !== 'unknown' ? teamName : null;
+
   const pOverRaw  = probOverRaw(stats.avg, stats.std, prop.line);
   const pUnderRaw = probUnderRaw(stats.avg, stats.std, prop.line);
 
@@ -323,6 +349,9 @@ for (const prop of props) {
     line: prop.line,
     playerAvg: stats.avg,
     playerStd: stats.std,
+    playerAvg5: avg5,
+    playerAvg10: avg10,
+    playerTeam: teamName !== 'unknown' ? teamName : null,
     side: bestSide,
     modelProb: parseFloat((bestProb * 100).toFixed(1)),
     impliedProb: parseFloat(((1 / bestOdds) * 100).toFixed(1)),
