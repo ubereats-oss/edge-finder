@@ -68,7 +68,7 @@ jobs:
             gunzip -c /tmp/nba_player_stats.json.gz > nba_player_stats.json && \
             echo "nba_player_stats.json restaurado: $(wc -c < nba_player_stats.json) bytes" || \
             echo "nba_player_stats.json não encontrado — modelo usará stats vazios"
-          for f in nba_player_team.json nba_boxscores_cache.json mlb_player_stats.json; do
+          for f in nba_player_team.json nba_boxscores_cache.json mlb_player_stats.json nba_injuries_today.json; do
             git show origin/data:$f > $f 2>/dev/null && echo "Restaurado: $f" || echo "Não encontrado: $f"
           done
           git show origin/data:bets.json > bets.json 2>/dev/null && echo "bets.json restaurado" || echo '[]' > bets.json
