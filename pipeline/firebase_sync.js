@@ -1,0 +1,144 @@
+const fs = require('fs');
+const path = require('path');
+
+// Inicializa Firebase Admin com a chave de serviço do ambiente
+const admin = require('firebase-admin');
+
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
+
+const db = admin.firestore();
+
+// Arquivos a sincronizar: localPath -> coleção/documento no Firestore
+const SYNC_MAP = [
+  { file: 'model_results.json',        col: 'results', doc: 'tennis' },
+  { file: 'nba_results.json',          col: 'results', doc: 'nba_h2h' },
+  { file: 'nba_props_results.json',    col: 'results', doc: 'nba_props' },
+  { file: 'nba_props_br_results.json', col: 'results', doc: 'nba_props_br' },
+  { file: 'mlb_results.json',          col: 'results', doc: 'mlb_h2h' },
+  { file: 'mlb_props_results.json',    col: 'results', doc: 'mlb_props' },
+];
+
+async function syncAll() {
+  let synced = 0;
+  let skipped = 0;
+
+  for (const { file, col, doc } of SYNC_MAP) {
+    const filePath = path.join(__dirname, file);
+    if (!fs.existsSync(filePath)) {
+      console.log(`  Pulando ${file} — não encontrado`);
+      skipped++;
+      continue;
+    }
+
+    try {
+      const raw = JSON.parse(fs.readFileSync(filePath));
+      const data = Array.isArray(raw) ? raw : (raw.data || []);
+      const stat = fs.statSync(filePath);
+
+      await db.collection(col).doc(doc).set({
+        data,
+        lastUpdated: stat.mtime.toISOString(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      console.log(`  ✅ ${file} → ${col}/${doc} (${data.length} itens)`);
+      synced++;
+    } catch (e) {
+      console.error(`  ❌ Erro ao sincronizar ${file}:`, e.message);
+    }
+  }
+
+  console.log(`\nSync concluído: ${synced} arquivos sincronizados, ${skipped} pulados.`);
+}
+
+// Sincroniza apostas (bets.json) — coleção separada por documento por aposta
+async function syncBets() {
+  const filePath = path.join(__dirname, 'bets.json');
+  if (!fs.existsSync(filePath)) {
+    console.log('  Pulando bets.json — não encontrado');
+    return;
+  }
+
+  try {
+    const bets = JSON.parse(fs.readFileSync(filePath));
+    const batch = db.batch();
+
+    for (const bet of bets) {
+      const ref = db.collection('bets').doc(bet.id);
+      batch.set(ref, bet);
+    }
+
+    await batch.commit();
+    console.log(`  ✅ bets.json → bets (${bets.length} apostas)`);
+  } catch (e) {
+    console.error('  ❌ Erro ao sincronizar bets.json:', e.message);
+  }
+}
+
+// Sincroniza histórico de odds (mensal)
+async function syncOddsHistory() {
+  const histDir = path.join(__dirname, 'odds_history');
+  if (!fs.existsSync(histDir)) {
+    console.log('  Pulando odds_history — pasta não encontrada');
+    return;
+  }
+
+  const files = fs.readdirSync(histDir).filter(f => f.endsWith('.json') && !f.startsWith('_'));
+  let synced = 0;
+
+  for (const file of files) {
+    try {
+      const raw = JSON.parse(fs.readFileSync(path.join(histDir, file)));
+      const baseId = file.replace('.json', '');
+
+      // Divide em chunks de 300 registros para não exceder 1MB do Firestore
+      const CHUNK = 300;
+      if (raw.length <= CHUNK) {
+        await db.collection('odds_history').doc(baseId).set({
+          data: raw,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        synced++;
+      } else {
+        for (let i = 0; i * CHUNK < raw.length; i++) {
+          const chunk = raw.slice(i * CHUNK, (i + 1) * CHUNK);
+          const docId = `${baseId}_p${i}`;
+          await db.collection('odds_history').doc(docId).set({
+            data: chunk,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          synced++;
+        }
+      }
+    } catch (e) {
+      console.error(`  ❌ Erro ao sincronizar odds_history/${file}:`, e.message);
+    }
+  }
+
+  console.log(`  ✅ odds_history → Firestore (${synced} documentos)`);
+}
+
+async function main() {
+  console.log('Iniciando sincronização com Firestore...\n');
+
+  const args = process.argv.slice(2);
+  const syncType = args[0] || 'all';
+
+  if (syncType === 'all' || syncType === 'results') await syncAll();
+  if (syncType === 'all' || syncType === 'bets') await syncBets();
+  if (syncType === 'all' || syncType === 'history') await syncOddsHistory();
+
+  console.log('\nSincronização concluída.');
+  process.exit(0);
+}
+
+main().catch(e => {
+  console.error('Erro fatal:', e);
+  process.exit(1);
+});

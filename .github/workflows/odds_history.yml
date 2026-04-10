@@ -54,10 +54,10 @@ jobs:
           mkdir -p odds_history
 
       - name: Executar coleta
-        run: node save_odds_history.js
+        run: node pipeline/save_odds_history.js
 
       - name: Sincronizar histórico com Firestore
-        run: node firebase_sync.js history
+        run: node pipeline/firebase_sync.js history
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
