@@ -280,6 +280,9 @@ for (const prop of props) {
   const stats = combineContexts(playerData, statKey, locations, ['regular'], absentToday);
   if (!stats) { descartadosSemStats++; continue; }
   if (stats.std < 0.3) { descartadosSigmaBaixa++; continue; }
+  // Descarta quando a diferença entre média e linha é menor que 0.75 desvios padrão
+  const marginRatio = Math.abs(prop.line - stats.avg) / stats.std;
+  if (marginRatio < 0.75) continue;
   if (stats.usedAbsentFilter) comFiltroAusentes++;
 
   const pOverRaw  = probOverRaw(stats.avg, stats.std, prop.line);
