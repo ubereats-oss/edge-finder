@@ -317,6 +317,8 @@ for (const prop of props) {
     impliedProb: parseFloat(((1 / bestOdds) * 100).toFixed(1)),
     edge: edgePct,
     odds: bestOdds,
+    oddsOver: prop.oddsOver,
+    oddsUnder: prop.oddsUnder,
     kelly: kellyCrit,
     totalGames: stats.totalGames,
     contextGames: stats.contextGames,
