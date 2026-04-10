@@ -28,6 +28,7 @@ if (fs.existsSync('nba_injuries_today.json')) {
   console.warn('nba_injuries_today.json não encontrado — filtro de ausentes desativado.');
 }
 const playerPositions = readJsonSafe('nba_player_positions.json', {});
+const playerTeamMap   = readJsonSafe('nba_player_team.json', {});
 
 function getPlayerGroup(playerName) {
   if (!playerName) return 'unknown';
@@ -351,7 +352,7 @@ for (const prop of props) {
     playerStd: stats.std,
     playerAvg5: avg5,
     playerAvg10: avg10,
-    playerTeam: teamName !== 'unknown' ? teamName : null,
+    playerTeam: playerTeamMap[prop.player] ?? null,
     side: bestSide,
     modelProb: parseFloat((bestProb * 100).toFixed(1)),
     impliedProb: parseFloat(((1 / bestOdds) * 100).toFixed(1)),
