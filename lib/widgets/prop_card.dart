@@ -73,6 +73,9 @@ class _PropCardState extends State<PropCard> {
     final edge = (widget.prop['edge'] as num).toDouble();
     final avg = (widget.prop['playerAvg'] as num).toDouble();
     final std = (widget.prop['playerStd'] as num).toDouble();
+    final avg5 = (widget.prop['playerAvg5'] as num?)?.toDouble();
+    final avg10 = (widget.prop['playerAvg10'] as num?)?.toDouble();
+    final playerTeam = widget.prop['playerTeam'] as String?;
     final line = (widget.prop['line'] as num).toDouble();
     final modelProb = (widget.prop['modelProb'] as num).toDouble();
     final impliedProb = (widget.prop['impliedProb'] as num).toDouble();
@@ -125,6 +128,14 @@ class _PropCardState extends State<PropCard> {
                               fontSize: 15,
                               fontWeight: FontWeight.bold),
                         ),
+                        if (playerTeam != null) ...[
+                          const SizedBox(height: 1),
+                          Text(
+                            playerTeam,
+                            style: const TextStyle(
+                                color: Color(0xFF7C4DFF), fontSize: 11),
+                          ),
+                        ],
                         const SizedBox(height: 2),
                         Text(
                           widget.prop['game'] as String,
@@ -219,6 +230,20 @@ class _PropCardState extends State<PropCard> {
                   _statBox('Modelo', '${modelProb.toStringAsFixed(1)}%'),
                   const SizedBox(width: 8),
                   _statBox('Mercado', '${impliedProb.toStringAsFixed(1)}%'),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  _statBox('Últ. 10',
+                      avg10 != null ? avg10.toStringAsFixed(1) : '-'),
+                  const SizedBox(width: 8),
+                  _statBox(
+                      'Últ. 5', avg5 != null ? avg5.toStringAsFixed(1) : '-'),
+                  const SizedBox(width: 8),
+                  const Expanded(child: SizedBox()),
+                  const SizedBox(width: 8),
+                  const Expanded(child: SizedBox()),
                 ],
               ),
               const SizedBox(height: 10),
