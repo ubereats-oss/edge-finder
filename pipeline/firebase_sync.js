@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-// Inicializa Firebase Admin com a chave de serviço do ambiente
 const admin = require('firebase-admin');
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
@@ -14,7 +13,8 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
-// Arquivos a sincronizar: localPath -> coleção/documento no Firestore
+const ROOT = path.join(__dirname, '..');
+
 const SYNC_MAP = [
   { file: 'model_results.json',        col: 'results', doc: 'tennis' },
   { file: 'nba_results.json',          col: 'results', doc: 'nba_h2h' },
@@ -29,7 +29,7 @@ async function syncAll() {
   let skipped = 0;
 
   for (const { file, col, doc } of SYNC_MAP) {
-    const filePath = path.join(__dirname, file);
+    const filePath = path.join(ROOT, file);
     if (!fs.existsSync(filePath)) {
       console.log(`  Pulando ${file} — não encontrado`);
       skipped++;
@@ -57,9 +57,8 @@ async function syncAll() {
   console.log(`\nSync concluído: ${synced} arquivos sincronizados, ${skipped} pulados.`);
 }
 
-// Sincroniza apostas (bets.json) — coleção separada por documento por aposta
 async function syncBets() {
-  const filePath = path.join(__dirname, 'bets.json');
+  const filePath = path.join(ROOT, 'bets.json');
   if (!fs.existsSync(filePath)) {
     console.log('  Pulando bets.json — não encontrado');
     return;
@@ -81,9 +80,8 @@ async function syncBets() {
   }
 }
 
-// Sincroniza histórico de odds (mensal)
 async function syncOddsHistory() {
-  const histDir = path.join(__dirname, 'odds_history');
+  const histDir = path.join(ROOT, 'odds_history');
   if (!fs.existsSync(histDir)) {
     console.log('  Pulando odds_history — pasta não encontrada');
     return;
@@ -97,7 +95,6 @@ async function syncOddsHistory() {
       const raw = JSON.parse(fs.readFileSync(path.join(histDir, file)));
       const baseId = file.replace('.json', '');
 
-      // Divide em chunks de 300 registros para não exceder 1MB do Firestore
       const CHUNK = 300;
       if (raw.length <= CHUNK) {
         await db.collection('odds_history').doc(baseId).set({
