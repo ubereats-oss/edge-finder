@@ -351,7 +351,7 @@ fs.writeFileSync('nba_props_br_results.json', JSON.stringify(results, null, 2));
 console.log('nba_props_br_results.json salvo.');
 
 // ── Salva no histórico de modelos ──────────────────────────────────────────────
-const HISTORY_DIR = path.join(__dirname, 'odds_history');
+const HISTORY_DIR = path.join(__dirname, '..', 'odds_history');
 if (!fs.existsSync(HISTORY_DIR)) fs.mkdirSync(HISTORY_DIR, { recursive: true });
 const today = new Date().toISOString().slice(0, 10);
 const month = new Date().toISOString().slice(0, 7);
