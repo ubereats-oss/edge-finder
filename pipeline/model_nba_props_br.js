@@ -263,6 +263,14 @@ for (const prop of props) {
   const playerData = findPlayer(prop.player);
   if (!playerData) { descartadosSemStats++; continue; }
 
+  const isPlayerAbsent = Object.values(injuriesToday).some(players =>
+    players.some(absent =>
+      absent.toLowerCase().includes(prop.player.toLowerCase()) ||
+      prop.player.toLowerCase().includes(absent.toLowerCase())
+    )
+  );
+  if (isPlayerAbsent) { descartadosSemStats++; continue; }
+
   const statKey = PROP_MAP[prop.prop];
   if (!statKey) continue;
 
