@@ -64,7 +64,10 @@ class ApiService {
 
   static dynamic _firestoreValue(Map<String, dynamic> value) {
     if (value.containsKey('stringValue')) {
-      return value['stringValue'];
+      final s = value['stringValue'] as String;
+      final n = double.tryParse(s);
+      if (n != null) return n;
+      return s;
     }
     if (value.containsKey('integerValue')) {
       return int.tryParse(value['integerValue'].toString()) ?? 0;
@@ -205,18 +208,27 @@ class ApiService {
     if (commenceTime == null) {
       throw Exception('Data do jogo não disponível');
     }
-    final dt = DateTime.parse(commenceTime).toUtc();
+    final dt = DateTime.parse(commenceTime).toLocal();
     final dateStr =
         '${dt.year}${dt.month.toString().padLeft(2, '0')}${dt.day.toString().padLeft(2, '0')}';
+    final dtPrev = dt.subtract(const Duration(days: 1));
+    final dateStrPrev =
+        '${dtPrev.year}${dtPrev.month.toString().padLeft(2, '0')}${dtPrev.day.toString().padLeft(2, '0')}';
     const sport = 'basketball/nba';
-    final sbUrl =
-        'https://site.api.espn.com/apis/site/v2/sports/$sport/scoreboard?dates=$dateStr';
-    final sbRes = await http.get(Uri.parse(sbUrl));
-    if (sbRes.statusCode != 200) {
+    final sbRes = await http.get(Uri.parse(
+        'https://site.api.espn.com/apis/site/v2/sports/$sport/scoreboard?dates=$dateStr'));
+    if (sbRes.statusCode != 200)
       throw Exception('Erro ao buscar scoreboard ESPN');
+    var sb = jsonDecode(sbRes.body) as Map<String, dynamic>;
+    var events = sb['events'] as List? ?? [];
+    if (events.isEmpty) {
+      final sbRes2 = await http.get(Uri.parse(
+          'https://site.api.espn.com/apis/site/v2/sports/$sport/scoreboard?dates=$dateStrPrev'));
+      if (sbRes2.statusCode == 200) {
+        sb = jsonDecode(sbRes2.body) as Map<String, dynamic>;
+        events = sb['events'] as List? ?? [];
+      }
     }
-    final sb = jsonDecode(sbRes.body) as Map<String, dynamic>;
-    final events = sb['events'] as List? ?? [];
     final gameParts = (bet['game'] as String? ?? '').split(' x ');
     final t1 = gameParts.isNotEmpty ? gameParts[0].split(' ').last : '';
     final t2 = gameParts.length > 1 ? gameParts[1].split(' ').last : '';
@@ -344,6 +356,126 @@ class ApiService {
     }
 
     return all.where((r) => r['savedDate'] == date).toList();
+  }
+
+  static Future<Map<String, dynamic>> fetchLiveStatAndTime(
+      Map<String, dynamic> bet) async {
+    final commenceTime = bet['commence_time'] as String?;
+    if (commenceTime == null) throw Exception('Data do jogo não disponível');
+    final dt = DateTime.parse(commenceTime).toUtc();
+    final dtLocal = DateTime.parse(commenceTime).toLocal();
+    final dateStr =
+        '${dtLocal.year}${dtLocal.month.toString().padLeft(2, '0')}${dtLocal.day.toString().padLeft(2, '0')}';
+    final dtPrev2 = dtLocal.subtract(const Duration(days: 1));
+    final dateStrPrev2 =
+        '${dtPrev2.year}${dtPrev2.month.toString().padLeft(2, '0')}${dtPrev2.day.toString().padLeft(2, '0')}';
+    final sbRes = await http.get(Uri.parse(
+        'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=$dateStr'));
+    if (sbRes.statusCode != 200)
+      throw Exception('Erro ao buscar scoreboard ESPN');
+    var sb = jsonDecode(sbRes.body) as Map<String, dynamic>;
+    var events = sb['events'] as List? ?? [];
+    if (events.isEmpty) {
+      final sbRes2 = await http.get(Uri.parse(
+          'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=$dateStrPrev2'));
+      if (sbRes2.statusCode == 200) {
+        sb = jsonDecode(sbRes2.body) as Map<String, dynamic>;
+        events = sb['events'] as List? ?? [];
+      }
+    }
+    final gameParts = (bet['game'] as String? ?? '').split(' x ');
+    final t1 = gameParts.isNotEmpty ? gameParts[0].split(' ').last : '';
+    final t2 = gameParts.length > 1 ? gameParts[1].split(' ').last : '';
+    final event = events.firstWhere((e) {
+      final competitors =
+          (e['competitions'] as List).first['competitors'] as List;
+      final names =
+          competitors.map((c) => c['team']['displayName'] as String).toList();
+      return names.any((n) => n.contains(t1)) &&
+          names.any((n) => n.contains(t2));
+    }, orElse: () => null);
+    if (event == null) throw Exception('Jogo não encontrado no ESPN');
+    final comp = (event['competitions'] as List).first;
+    final statusType = comp['status']?['type'] as Map<String, dynamic>?;
+    final completed = statusType?['completed'] as bool? ?? false;
+    final state = statusType?['state'] as String? ?? 'pre';
+    final clock = comp['status']?['displayClock'] as String? ?? '';
+    final period = comp['status']?['period'] as int? ?? 0;
+    String timeInfo;
+    if (completed) {
+      timeInfo = 'Encerrado';
+    } else if (state == 'in') {
+      final clockParts = clock.split(':');
+      final clockSecs = clockParts.length == 2
+          ? (int.tryParse(clockParts[0]) ?? 0) * 60 +
+              (int.tryParse(clockParts[1]) ?? 0)
+          : 0;
+      final quartersLeft = 4 - period;
+      final totalSecsLeft = quartersLeft * 12 * 60 + clockSecs;
+      final totalMins = totalSecsLeft ~/ 60;
+      final totalSecs = totalSecsLeft % 60;
+      final totalStr =
+          '${totalMins.toString().padLeft(2, '0')}:${totalSecs.toString().padLeft(2, '0')}';
+      timeInfo =
+          'Q$period — $clock restantes\n$totalStr restantes para o final da partida';
+    } else {
+      timeInfo = 'Não iniciado';
+    }
+    if (state != 'in' && !completed) {
+      return {
+        'state': state,
+        'timeInfo': timeInfo,
+        'realValue': null,
+        'completed': false
+      };
+    }
+    final sumRes = await http.get(Uri.parse(
+        'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${event['id']}'));
+    if (sumRes.statusCode != 200)
+      throw Exception('Erro ao buscar box score ESPN');
+    final sum = jsonDecode(sumRes.body) as Map<String, dynamic>;
+    const statMap = {
+      'points': 'points',
+      'rebounds': 'rebounds',
+      'assists': 'assists',
+      'steals': 'steals',
+      'threes': 'threePointFieldGoalsMade-threePointFieldGoalsAttempted',
+    };
+    final statKey =
+        statMap[bet['prop'] as String? ?? ''] ?? (bet['prop'] as String? ?? '');
+    final playerLastName =
+        (bet['player'] as String? ?? '').split(' ').last.toLowerCase();
+    double? realValue;
+    int minutesPlayed = 0;
+    for (final team in (sum['boxscore']?['players'] as List? ?? [])) {
+      for (final grp in (team['statistics'] as List? ?? [])) {
+        final keys = (grp['keys'] as List?)?.cast<String>() ?? [];
+        final colIdx = keys.indexOf(statKey);
+        if (colIdx == -1) continue;
+        for (final athlete in (grp['athletes'] as List? ?? [])) {
+          final name =
+              (athlete['athlete']['displayName'] as String).toLowerCase();
+          if (name.contains(playerLastName)) {
+            final statStr =
+                (athlete['stats'] as List)[colIdx] as String? ?? '0';
+            realValue = double.tryParse(statStr.split('-').first) ?? 0;
+            final minIdx = keys.indexOf('minutes');
+            if (minIdx != -1) {
+              minutesPlayed = int.tryParse(
+                      (athlete['stats'] as List)[minIdx] as String? ?? '0') ??
+                  0;
+            }
+          }
+        }
+      }
+    }
+    return {
+      'state': state,
+      'timeInfo': timeInfo,
+      'realValue': realValue,
+      'completed': completed,
+      'minutesPlayed': minutesPlayed,
+    };
   }
 
   // ── Acionar workflow GitHub Actions ────────────────────────────────────────
