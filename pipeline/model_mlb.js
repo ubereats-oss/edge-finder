@@ -1,5 +1,14 @@
 const fs = require('fs');
 
+if (!fs.existsSync('mlb_team_rating.json')) {
+  console.log('mlb_team_rating.json não encontrado — pulando modelo MLB H2H.');
+  process.exit(0);
+}
+if (!fs.existsSync('mlb_odds.json')) {
+  console.log('mlb_odds.json não encontrado — pulando modelo MLB H2H.');
+  process.exit(0);
+}
+
 const teamRating = JSON.parse(fs.readFileSync('mlb_team_rating.json'));
 const odds = JSON.parse(fs.readFileSync('mlb_odds.json'));
 
@@ -21,11 +30,9 @@ function calcKelly(p, odd) {
 function getWeightedRating(teamName, location) {
   const data = teamRating[teamName];
   if (!data) return null;
-
   let weightedSum = 0;
   let totalWeight = 0;
   let hasCurrentSeason = false;
-
   for (const [seasonStr, seasonData] of Object.entries(data)) {
     const season = parseInt(seasonStr);
     const w = SEASON_WEIGHT[season] || 1;
@@ -35,7 +42,6 @@ function getWeightedRating(teamName, location) {
     totalWeight += w;
     if (season === CURRENT_SEASON) hasCurrentSeason = true;
   }
-
   if (totalWeight === 0) return null;
   return { rating: weightedSum / totalWeight, hasCurrentSeason };
 }
@@ -60,27 +66,19 @@ const results = [];
 for (const m of odds) {
   const t1Key = findTeam(m.team1);
   const t2Key = findTeam(m.team2);
-
   if (!t1Key || !t2Key) { descartados++; continue; }
-
   const r1 = getWeightedRating(t1Key, 'away');
   const r2 = getWeightedRating(t2Key, 'home');
-
   if (!r1 || !r2) { descartados++; continue; }
-
   const modelProb1 = calcProb(r1.rating, r2.rating);
   const modelProb2 = 1 - modelProb1;
-
   const impliedProb1 = 1 / m.odds1;
   const impliedProb2 = 1 / m.odds2;
-
   const edge1 = modelProb1 - impliedProb1;
   const edge2 = modelProb2 - impliedProb2;
-
   const bestEdge = edge1 >= edge2 ? edge1 : edge2;
   const bestProb = edge1 >= edge2 ? modelProb1 : modelProb2;
   const bestOdds = edge1 >= edge2 ? m.odds1 : m.odds2;
-
   results.push({
     match: `${m.team1} x ${m.team2}`,
     commence_time: m.commence_time,
@@ -95,9 +93,7 @@ for (const m of odds) {
 }
 
 console.log(`Partidas processadas: ${results.length} | Descartadas: ${descartados}`);
-
 results.sort((a, b) => Math.max(b.edge1, b.edge2) - Math.max(a.edge1, a.edge2));
-
 results.slice(0, 10).forEach((m, i) => {
   const edge = m.edge1 >= m.edge2
     ? `${m.match.split(' x ')[0]} EDGE: ${m.edge1}% | Kelly: ${m.kelly}%`
