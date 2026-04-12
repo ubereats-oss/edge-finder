@@ -34,7 +34,8 @@ jobs:
             gunzip -c /tmp/nba_player_stats.json.gz > nba_player_stats.json && \
             echo "nba_player_stats.json restaurado: $(wc -c < nba_player_stats.json) bytes" || \
             echo "nba_player_stats.json não encontrado — será criado do zero"
-          git show origin/data:mlb_player_stats.json > mlb_player_stats.json 2>/dev/null && \
+          git show origin/data:mlb_player_stats.json.gz > /tmp/mlb_player_stats.json.gz 2>/dev/null && \
+            gunzip -c /tmp/mlb_player_stats.json.gz > mlb_player_stats.json && \
             echo "mlb_player_stats.json restaurado: $(wc -c < mlb_player_stats.json) bytes" || \
             echo "mlb_player_stats.json não encontrado — será criado do zero"
 
@@ -58,7 +59,7 @@ jobs:
           git show origin/data:mlb_injuries_today.json > mlb_injuries_today.json 2>/dev/null || true
           git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
           cp /tmp/nba_player_stats.json.gz .
-          cp mlb_player_stats.json . 2>/dev/null || true
+          gzip -c mlb_player_stats.json > mlb_player_stats.json.gz 2>/dev/null || true
           cp mlb_team_rating.json . 2>/dev/null || true
           git add -A
           git diff --staged --quiet && echo "Sem mudanças nos stats" || git commit -m "stats: $(date -u '+%Y-%m-%d %H:%M') UTC"
