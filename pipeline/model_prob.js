@@ -1,7 +1,18 @@
 const fs = require('fs');
 
-const ranking = JSON.parse(fs.readFileSync('ranking.json'));
-const odds = JSON.parse(fs.readFileSync('odds.json'));
+function readJsonSafe(file, fallback) {
+  if (!fs.existsSync(file)) return fallback;
+  try { return JSON.parse(fs.readFileSync(file, 'utf-8')); } catch { return fallback; }
+}
+
+const ranking = readJsonSafe('ranking.json', {});
+const odds = readJsonSafe('odds.json', []);
+
+if (!Object.keys(ranking).length) {
+  console.log('ranking.json não encontrado — modelo tênis ignorado.');
+  fs.writeFileSync('model_results.json', JSON.stringify([], null, 2));
+  process.exit(0);
+}
 
 function rankToRating(rank) {
   return 2000 - (rank * 5);
