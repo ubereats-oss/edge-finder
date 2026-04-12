@@ -150,13 +150,15 @@ jobs:
       - name: Salvar dados na branch data
         run: |
           gzip -c nba_player_stats.json > /tmp/nba_player_stats.json.gz 2>/dev/null || true
+          gzip -c mlb_player_stats.json > /tmp/mlb_player_stats.json.gz 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin data 2>/dev/null || true
           git checkout --orphan data-tmp
           git rm -rf . --quiet
           cp /tmp/nba_player_stats.json.gz . 2>/dev/null || true
-          rm -f nba_player_stats.json
+          cp /tmp/mlb_player_stats.json.gz . 2>/dev/null || true
+          rm -f nba_player_stats.json mlb_player_stats.json
           for f in nba_player_team.json nba_injuries_today.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json bets.json; do
             cp $f . 2>/dev/null || true
           done
