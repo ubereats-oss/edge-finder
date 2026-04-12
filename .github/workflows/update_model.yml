@@ -130,11 +130,11 @@ jobs:
         run: node pipeline/model_mlb_props.js
 
       - name: Atualizar odds Tênis
-        if: ${{ github.event.inputs.sport == 'tennis' || github.event.inputs.sport == 'all' }}
+        if: ${{ github.event.inputs.sport == 'tennis' }}
         run: node pipeline/get_odds.js
 
       - name: Rodar modelo Tênis
-        if: ${{ github.event.inputs.sport == 'tennis' || github.event.inputs.sport == 'all' }}
+        if: ${{ github.event.inputs.sport == 'tennis' }}
         run: node pipeline/model_prob.js
 
       - name: Sincronizar resultados com Firestore
