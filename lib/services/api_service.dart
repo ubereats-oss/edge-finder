@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
 // ── Configuração Firebase ──────────────────────────────────────────────────────
 const _projectId = 'odds-app-edge';
@@ -16,7 +17,20 @@ class FetchResult {
 }
 
 class ApiService {
-  // ── Leitura do Firestore ───────────────────────────────────────────────────
+  // ── Token Firebase Auth ────────────────────────────────────────────────────
+  static Future<String> _authToken() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw Exception('Usuário não autenticado');
+    return await user.getIdToken() ?? '';
+  }
+
+  static String get _uid {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw Exception('Usuário não autenticado');
+    return user.uid;
+  }
+
+  // ── Leitura do Firestore (pública — sem auth) ──────────────────────────────
   static Future<FetchResult> _fetchFirestore(
       String collection, String document) async {
     final url = '$_firestoreBase/$collection/$document';
@@ -108,29 +122,63 @@ class ApiService {
   static Future<FetchResult> fetchMlbProps() =>
       _fetchFirestore('results', 'mlb_props');
 
-  // ── Apostas (Firestore) ────────────────────────────────────────────────────
+  // ── Apostas (Firestore autenticado) ───────────────────────────────────────
   static Future<List<Map<String, dynamic>>> fetchBets() async {
-    final url = '$_firestoreBase/bets';
-    final res = await http.get(Uri.parse(url));
+    final token = await _authToken();
+    final uid = _uid;
+    // Firestore REST: query por uid
+    final url =
+        'https://firestore.googleapis.com/v1/projects/$_projectId/databases/(default)/documents:runQuery';
+    final res = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'structuredQuery': {
+          'from': [
+            {'collectionId': 'bets'}
+          ],
+          'where': {
+            'fieldFilter': {
+              'field': {'fieldPath': 'uid'},
+              'op': 'EQUAL',
+              'value': {'stringValue': uid},
+            }
+          },
+          'orderBy': [
+            {
+              'field': {'fieldPath': 'createdAt'},
+              'direction': 'ASCENDING',
+            }
+          ],
+        }
+      }),
+    );
     if (res.statusCode != 200) {
-      throw Exception('Erro ao buscar apostas');
+      throw Exception('Erro ao buscar apostas: ${res.statusCode}');
     }
-    final body = jsonDecode(res.body) as Map<String, dynamic>;
-    final documents = body['documents'] as List? ?? [];
-    return documents.map((doc) {
-      final fields = doc['fields'] as Map<String, dynamic>? ?? {};
-      return _firestoreToMap(fields);
-    }).toList()
-      ..sort((a, b) => (a['createdAt'] as String? ?? '')
-          .compareTo(b['createdAt'] as String? ?? ''));
+    final list = jsonDecode(res.body) as List;
+    return list
+        .where((e) => e['document'] != null)
+        .map((e) {
+          final fields =
+              e['document']['fields'] as Map<String, dynamic>? ?? {};
+          return _firestoreToMap(fields);
+        })
+        .toList();
   }
 
   static Future<Map<String, dynamic>> createBet(
       Map<String, dynamic> data) async {
+    final token = await _authToken();
+    final uid = _uid;
     final id = DateTime.now().millisecondsSinceEpoch.toString();
     final bet = {
       ...data,
       'id': id,
+      'uid': uid,
       'createdAt': DateTime.now().toIso8601String(),
       'status': 'pending',
       'realValue': null,
@@ -140,7 +188,10 @@ class ApiService {
     final url = '$_firestoreBase/bets/$id';
     final res = await http.patch(
       Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode({'fields': _mapToFirestore(bet)}),
     );
     if (res.statusCode != 200) {
@@ -151,17 +202,24 @@ class ApiService {
 
   static Future<Map<String, dynamic>> updateBet(
       String id, Map<String, dynamic> data) async {
+    final token = await _authToken();
     final url = '$_firestoreBase/bets/$id';
-    final getRes = await http.get(Uri.parse(url));
+    final getRes = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token'},
+    );
     if (getRes.statusCode != 200) {
       throw Exception('Aposta não encontrada');
     }
     final current = _firestoreToMap(
         (jsonDecode(getRes.body)['fields'] as Map<String, dynamic>? ?? {}));
-    final updated = {...current, ...data, 'id': id};
+    final updated = {...current, ...data, 'id': id, 'uid': _uid};
     final patchRes = await http.patch(
       Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode({'fields': _mapToFirestore(updated)}),
     );
     if (patchRes.statusCode != 200) {
@@ -171,8 +229,12 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> resolveBet(String id) async {
+    final token = await _authToken();
     final url = '$_firestoreBase/bets/$id';
-    final getRes = await http.get(Uri.parse(url));
+    final getRes = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token'},
+    );
     if (getRes.statusCode != 200) {
       throw Exception('Aposta não encontrada');
     }
@@ -183,12 +245,16 @@ class ApiService {
       ...bet,
       ...resolved,
       'id': id,
+      'uid': _uid,
       'status': 'resolved',
       'resolvedAt': DateTime.now().toIso8601String(),
     };
     final patchRes = await http.patch(
       Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode({'fields': _mapToFirestore(updated)}),
     );
     if (patchRes.statusCode != 200) {
@@ -198,7 +264,11 @@ class ApiService {
   }
 
   static Future<void> deleteBet(String id) async {
-    await http.delete(Uri.parse('$_firestoreBase/bets/$id'));
+    final token = await _authToken();
+    await http.delete(
+      Uri.parse('$_firestoreBase/bets/$id'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
   }
 
   // ── Resolução de apostas via ESPN ──────────────────────────────────────────
@@ -217,8 +287,9 @@ class ApiService {
     const sport = 'basketball/nba';
     final sbRes = await http.get(Uri.parse(
         'https://site.api.espn.com/apis/site/v2/sports/$sport/scoreboard?dates=$dateStr'));
-    if (sbRes.statusCode != 200)
+    if (sbRes.statusCode != 200) {
       throw Exception('Erro ao buscar scoreboard ESPN');
+    }
     var sb = jsonDecode(sbRes.body) as Map<String, dynamic>;
     var events = sb['events'] as List? ?? [];
     if (events.isEmpty) {
@@ -296,9 +367,7 @@ class ApiService {
       for (final group in (team['statistics'] as List? ?? [])) {
         final keys = (group['keys'] as List?)?.cast<String>() ?? [];
         final colIdx = keys.indexOf(statKey);
-        if (colIdx == -1) {
-          continue;
-        }
+        if (colIdx == -1) continue;
         for (final athlete in (group['athletes'] as List? ?? [])) {
           final name =
               (athlete['athlete']['displayName'] as String).toLowerCase();
@@ -334,14 +403,13 @@ class ApiService {
 
     final all = <Map<String, dynamic>>[];
 
-    // Busca doc base + chunks _p0, _p1, ... até não encontrar
     for (int i = -1; i < 50; i++) {
       final docId = i == -1 ? baseId : '${baseId}_p$i';
       final url = '$_firestoreBase/odds_history/$docId';
       final res = await http.get(Uri.parse(url));
       if (res.statusCode != 200) {
-        if (i == -1) continue; // doc base não existe, tenta chunks
-        break; // sem mais chunks
+        if (i == -1) continue;
+        break;
       }
       final body = jsonDecode(res.body) as Map<String, dynamic>;
       final fields = body['fields'] as Map<String, dynamic>?;
@@ -362,7 +430,6 @@ class ApiService {
       Map<String, dynamic> bet) async {
     final commenceTime = bet['commence_time'] as String?;
     if (commenceTime == null) throw Exception('Data do jogo não disponível');
-    final dt = DateTime.parse(commenceTime).toUtc();
     final dtLocal = DateTime.parse(commenceTime).toLocal();
     final dateStr =
         '${dtLocal.year}${dtLocal.month.toString().padLeft(2, '0')}${dtLocal.day.toString().padLeft(2, '0')}';
@@ -371,8 +438,9 @@ class ApiService {
         '${dtPrev2.year}${dtPrev2.month.toString().padLeft(2, '0')}${dtPrev2.day.toString().padLeft(2, '0')}';
     final sbRes = await http.get(Uri.parse(
         'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=$dateStr'));
-    if (sbRes.statusCode != 200)
+    if (sbRes.statusCode != 200) {
       throw Exception('Erro ao buscar scoreboard ESPN');
+    }
     var sb = jsonDecode(sbRes.body) as Map<String, dynamic>;
     var events = sb['events'] as List? ?? [];
     if (events.isEmpty) {
@@ -431,8 +499,9 @@ class ApiService {
     }
     final sumRes = await http.get(Uri.parse(
         'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${event['id']}'));
-    if (sumRes.statusCode != 200)
+    if (sumRes.statusCode != 200) {
       throw Exception('Erro ao buscar box score ESPN');
+    }
     final sum = jsonDecode(sumRes.body) as Map<String, dynamic>;
     const statMap = {
       'points': 'points',

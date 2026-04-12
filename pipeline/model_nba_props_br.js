@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-// Leitura segura — não crasha se arquivo ausente ou vazio
 function readJsonSafe(file, fallback) {
   if (!fs.existsSync(file)) return fallback;
   const raw = fs.readFileSync(file, 'utf-8').trim();
@@ -20,7 +19,6 @@ const MIN_GAMES_CONTEXT = 10;
 const INEFFICIENT_MARKET_EDGE = 20;
 const KELLY_FRACTION = 0.25;
 
-// Carrega ausentes do dia (gerado por get_nba_injuries.js)
 let injuriesToday = {};
 if (fs.existsSync('nba_injuries_today.json')) {
   injuriesToday = readJsonSafe('nba_injuries_today.json', {});
@@ -54,6 +52,7 @@ function classifyAbsents(absentToday, playerName) {
     return { name: absent, position: playerPositions[absent]?.position ?? null, group: absentGroup, impact };
   });
 }
+
 // ── Calibração isotônica ───────────────────────────────────────────────────────
 const CALIB_TABLE = [
   { raw: 0.519, cal: 0.504 },
@@ -229,6 +228,28 @@ function findPlayer(name) {
   return null;
 }
 
+// calcRecentAvg definida fora do loop — corrigido
+function calcRecentAvg(playerData, statKey, n) {
+  const entries = [];
+  for (const [, seasonData] of Object.entries(playerData)) {
+    for (const [, locs] of Object.entries(seasonData)) {
+      for (const [, ctx] of Object.entries(locs)) {
+        if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
+        for (const entry of ctx[statKey]) {
+          if (entry.blowout) continue;
+          const val = typeof entry === 'object' ? entry.value : entry;
+          const date = entry.date || '';
+          entries.push({ val, date });
+        }
+      }
+    }
+  }
+  entries.sort((a, b) => b.date.localeCompare(a.date));
+  const slice = entries.slice(0, n);
+  if (!slice.length) return null;
+  return parseFloat((slice.reduce((s, e) => s + e.val, 0) / slice.length).toFixed(1));
+}
+
 const PROP_MAP = {
   points: 'points',
   rebounds: 'rebounds',
@@ -249,7 +270,7 @@ if (Object.keys(playerStats).length === 0) {
 }
 
 const NOW = Date.now();
-const MIN_15 = 0; // sem filtro temporal — o Flutter filtra em tempo real
+const MIN_15 = 0;
 
 let descartadosSemStats = 0;
 let descartadosSigmaBaixa = 0;
@@ -289,36 +310,12 @@ for (const prop of props) {
   const stats = combineContexts(playerData, statKey, locations, ['regular'], absentToday);
   if (!stats) { descartadosSemStats++; continue; }
   if (stats.std < 0.3) { descartadosSigmaBaixa++; continue; }
-  // Descarta quando a diferença entre média e linha é menor que 0.75 desvios padrão
   const marginRatio = Math.abs(prop.line - stats.avg) / stats.std;
   if (marginRatio < 0.75) continue;
   if (stats.usedAbsentFilter) comFiltroAusentes++;
 
-  // Calcula médias dos últimos 5 e 10 jogos
-  function calcRecentAvg(n) {
-    const entries = [];
-    for (const [, seasonData] of Object.entries(playerData)) {
-      for (const [, locs] of Object.entries(seasonData)) {
-        for (const [, ctx] of Object.entries(locs)) {
-          if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
-          for (const entry of ctx[statKey]) {
-            if (entry.blowout) continue;
-            const val = typeof entry === 'object' ? entry.value : entry;
-            const date = entry.date || '';
-            entries.push({ val, date });
-          }
-        }
-      }
-    }
-    entries.sort((a, b) => b.date.localeCompare(a.date));
-    const slice = entries.slice(0, n);
-    if (!slice.length) return null;
-    return parseFloat((slice.reduce((s, e) => s + e.val, 0) / slice.length).toFixed(1));
-  }
-
-  const avg5  = calcRecentAvg(5);
-  const avg10 = calcRecentAvg(10);
-  const playerTeamName = teamName !== 'unknown' ? teamName : null;
+  const avg5  = calcRecentAvg(playerData, statKey, 5);
+  const avg10 = calcRecentAvg(playerData, statKey, 10);
 
   const pOverRaw  = probOverRaw(stats.avg, stats.std, prop.line);
   const pUnderRaw = probUnderRaw(stats.avg, stats.std, prop.line);
@@ -388,7 +385,6 @@ results.slice(0, 15).forEach((r, i) => {
 fs.writeFileSync('nba_props_br_results.json', JSON.stringify(results, null, 2));
 console.log('nba_props_br_results.json salvo.');
 
-// ── Salva no histórico de modelos ──────────────────────────────────────────────
 const HISTORY_DIR = path.join(__dirname, '..', 'odds_history');
 if (!fs.existsSync(HISTORY_DIR)) fs.mkdirSync(HISTORY_DIR, { recursive: true });
 const today = new Date().toISOString().slice(0, 10);

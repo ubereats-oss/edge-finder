@@ -121,21 +121,25 @@ class _PropCardState extends State<PropCard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          widget.prop['player'] as String,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
+                        Row(
+                          children: [
+                            Text(
+                              widget.prop['player'] as String,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            if (playerTeam != null) ...[
+                              const SizedBox(width: 6),
+                              Text(
+                                '· $playerTeam',
+                                style: const TextStyle(
+                                    color: Color(0xFF7C4DFF), fontSize: 11),
+                              ),
+                            ],
+                          ],
                         ),
-                        if (playerTeam != null) ...[
-                          const SizedBox(height: 1),
-                          Text(
-                            playerTeam,
-                            style: const TextStyle(
-                                color: Color(0xFF7C4DFF), fontSize: 11),
-                          ),
-                        ],
                         const SizedBox(height: 2),
                         Text(
                           widget.prop['game'] as String,
@@ -223,27 +227,19 @@ class _PropCardState extends State<PropCard> {
               Row(
                 children: [
                   _statBox('Linha', line.toString()),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   _statBox('Média',
                       '${avg.toStringAsFixed(1)}±${std.toStringAsFixed(1)}'),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   _statBox('Modelo', '${modelProb.toStringAsFixed(1)}%'),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   _statBox('Mercado', '${impliedProb.toStringAsFixed(1)}%'),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
+                  const SizedBox(width: 4),
                   _statBox('Últ. 10',
                       avg10 != null ? avg10.toStringAsFixed(1) : '-'),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   _statBox(
                       'Últ. 5', avg5 != null ? avg5.toStringAsFixed(1) : '-'),
-                  const SizedBox(width: 8),
-                  const Expanded(child: SizedBox()),
-                  const SizedBox(width: 8),
-                  const Expanded(child: SizedBox()),
                 ],
               ),
               const SizedBox(height: 10),
