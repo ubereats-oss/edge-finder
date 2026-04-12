@@ -68,7 +68,7 @@ jobs:
             gunzip -c /tmp/nba_player_stats.json.gz > nba_player_stats.json && \
             echo "nba_player_stats.json restaurado: $(wc -c < nba_player_stats.json) bytes" || \
             echo "nba_player_stats.json não encontrado — modelo usará stats vazios"
-          for f in nba_player_team.json nba_boxscores_cache.json mlb_player_stats.json nba_injuries_today.json; do
+          for f in nba_player_team.json nba_boxscores_cache.json mlb_player_stats.json nba_injuries_today.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
             git show origin/data:$f > $f 2>/dev/null && echo "Restaurado: $f" || echo "Não encontrado: $f"
           done
           git show origin/data:bets.json > bets.json 2>/dev/null && echo "bets.json restaurado" || echo '[]' > bets.json
@@ -100,6 +100,14 @@ jobs:
       - name: Rodar modelo props NBA (padrão)
         if: ${{ github.event.inputs.sport == 'nba' }}
         run: node pipeline/model_nba_props.js
+
+      - name: Atualizar injuries (MLB)
+        if: ${{ github.event.inputs.sport == 'mlb' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/get_mlb_injuries.js
+
+      - name: Atualizar times MLB
+        if: ${{ github.event.inputs.sport == 'mlb' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/get_mlb_player_teams.js
 
       - name: Atualizar odds MLB
         if: ${{ github.event.inputs.sport == 'mlb' || github.event.inputs.sport == 'all' }}
@@ -145,7 +153,7 @@ jobs:
           git rm -rf . --quiet
           cp /tmp/nba_player_stats.json.gz . 2>/dev/null || true
           rm -f nba_player_stats.json
-          for f in nba_player_team.json nba_injuries_today.json bets.json; do
+          for f in nba_player_team.json nba_injuries_today.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json bets.json; do
             cp $f . 2>/dev/null || true
           done
           git add -A

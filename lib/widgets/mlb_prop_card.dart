@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/prefs_service.dart';
+import '../screens/player_detail_screen.dart';
 
 class MlbPropCard extends StatefulWidget {
   final Map<String, dynamic> prop;
@@ -70,220 +71,238 @@ class _MlbPropCardState extends State<MlbPropCard> {
     final kelly        = (widget.prop['kelly'] as num?)?.toDouble() ?? 0;
     final lowSample    = widget.prop['lowSample'] == true;
     final inefficientMarket = widget.prop['inefficientMarket'] == true;
-    final currentSeasonGames = widget.prop['currentSeasonGames'] as int? ?? 0;
+    final contextGames = widget.prop['contextGames'] as int? ?? 0;
     final valorKelly   = _banca > 0 ? _banca * kelly / 100 : 0.0;
     final commenceTime = _formatCommenceTime(widget.prop['commence_time'] as String?);
     final propKey      = widget.prop['prop'] as String;
     final propColor    = _propColor(propKey);
 
-    return Card(
-      color: inefficientMarket ? const Color(0xFF1A2A1A) : const Color(0xFF1E1E2E),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: inefficientMarket
-            ? const BorderSide(color: Color(0xFF00C853), width: 1)
-            : BorderSide.none,
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PlayerDetailScreen(prop: widget.prop),
+        ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: isPitcher
-                                  ? const Color(0xFF7C4DFF).withValues(alpha: 0.2)
-                                  : const Color(0xFF00C853).withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              isPitcher ? 'P' : 'B',
-                              style: TextStyle(
+      child: Card(
+        color: inefficientMarket ? const Color(0xFF1A2A1A) : const Color(0xFF1E1E2E),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: inefficientMarket
+              ? const BorderSide(color: Color(0xFF00C853), width: 1)
+              : BorderSide.none,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
                                 color: isPitcher
-                                    ? const Color(0xFF7C4DFF)
-                                    : const Color(0xFF00C853),
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
+                                    ? const Color(0xFF7C4DFF).withValues(alpha: 0.2)
+                                    : const Color(0xFF00C853).withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                isPitcher ? 'P' : 'B',
+                                style: TextStyle(
+                                  color: isPitcher
+                                      ? const Color(0xFF7C4DFF)
+                                      : const Color(0xFF00C853),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            widget.prop['player'] as String,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          if (playerTeam != null) ...[
                             const SizedBox(width: 6),
                             Text(
-                              '· $playerTeam',
+                              widget.prop['player'] as String,
                               style: const TextStyle(
-                                  color: Color(0xFF7C4DFF), fontSize: 11),
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
                             ),
+                            if (playerTeam != null) ...[
+                              const SizedBox(width: 6),
+                              Text(
+                                '· $playerTeam',
+                                style: const TextStyle(
+                                    color: Color(0xFF7C4DFF), fontSize: 11),
+                              ),
+                            ],
                           ],
-                        ],
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        widget.prop['game'] as String,
-                        style: const TextStyle(
-                            color: Color(0xFF888888), fontSize: 12),
-                      ),
-                      if (commenceTime.isNotEmpty) ...[
+                        ),
                         const SizedBox(height: 2),
                         Text(
-                          '🕐 $commenceTime',
+                          widget.prop['game'] as String,
                           style: const TextStyle(
-                              color: Color(0xFF666688), fontSize: 11),
+                              color: Color(0xFF888888), fontSize: 12),
                         ),
+                        if (commenceTime.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            '🕐 $commenceTime',
+                            style: const TextStyle(
+                                color: Color(0xFF666688), fontSize: 11),
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: propColor.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: propColor.withValues(alpha: 0.6), width: 1.5),
-                      ),
-                      child: Text(
-                        _propLabel(propKey),
-                        style: TextStyle(
-                            color: propColor,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold),
-                      ),
                     ),
-                    if (inefficientMarket) ...[
-                      const SizedBox(height: 4),
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF00C853).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: const Color(0xFF00C853).withValues(alpha: 0.5)),
-                        ),
-                        child: const Text(
-                          '🎯 Mercado ineficiente',
-                          style: TextStyle(color: Color(0xFF00C853), fontSize: 10),
-                        ),
-                      ),
-                    ],
-                    if (lowSample) ...[
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFF6D00).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: const Color(0xFFFF6D00).withValues(alpha: 0.5)),
+                          color: propColor.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: propColor.withValues(alpha: 0.6), width: 1.5),
                         ),
                         child: Text(
-                          '⚠️ Poucos jogos ($currentSeasonGames)',
-                          style: const TextStyle(color: Color(0xFFFF6D00), fontSize: 10),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                _statBox('Linha', line.toString()),
-                const SizedBox(width: 4),
-                _statBox('Média', '${avg.toStringAsFixed(2)}±${std.toStringAsFixed(2)}'),
-                const SizedBox(width: 4),
-                _statBox('Modelo', '${modelProb.toStringAsFixed(1)}%'),
-                const SizedBox(width: 4),
-                _statBox('Mercado', '${impliedProb.toStringAsFixed(1)}%'),
-                const SizedBox(width: 4),
-                _statBox('Últ. 10', avg10 != null ? avg10.toStringAsFixed(2) : '-'),
-                const SizedBox(width: 4),
-                _statBox('Últ. 5', avg5 != null ? avg5.toStringAsFixed(2) : '-'),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: _edgeColor(edge).withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: _edgeColor(edge), width: 1),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          '$side $line · Edge: ${edge.toStringAsFixed(2)}%',
+                          _propLabel(propKey),
                           style: TextStyle(
-                              color: _edgeColor(edge),
+                              color: propColor,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '@${odds.toStringAsFixed(2)}',
-                          style: TextStyle(
-                              color: _edgeColor(edge).withValues(alpha: 0.8),
-                              fontSize: 13),
+                      ),
+                      if (inefficientMarket) ...[
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00C853).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: const Color(0xFF00C853).withValues(alpha: 0.5)),
+                          ),
+                          child: const Text(
+                            '🎯 Mercado ineficiente',
+                            style: TextStyle(color: Color(0xFF00C853), fontSize: 10),
+                          ),
                         ),
                       ],
+                      if (lowSample) ...[
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF6D00).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: const Color(0xFFFF6D00).withValues(alpha: 0.5)),
+                          ),
+                          child: Text(
+                            '⚠️ Poucos jogos ($contextGames)',
+                            style: const TextStyle(color: Color(0xFFFF6D00), fontSize: 10),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  _statBox('Linha', line.toString()),
+                  const SizedBox(width: 4),
+                  _statBox('Média', '${avg.toStringAsFixed(2)}±${std.toStringAsFixed(2)}'),
+                  const SizedBox(width: 4),
+                  _statBox('Modelo', '${modelProb.toStringAsFixed(1)}%'),
+                  const SizedBox(width: 4),
+                  _statBox('Mercado', '${impliedProb.toStringAsFixed(1)}%'),
+                  const SizedBox(width: 4),
+                  _statBox('Últ. 10', avg10 != null ? avg10.toStringAsFixed(2) : '-'),
+                  const SizedBox(width: 4),
+                  _statBox('Últ. 5', avg5 != null ? avg5.toStringAsFixed(2) : '-'),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: _edgeColor(edge).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: _edgeColor(edge), width: 1),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            '$side $line · Edge: ${edge.toStringAsFixed(2)}%',
+                            style: TextStyle(
+                                color: _edgeColor(edge),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '@${odds.toStringAsFixed(2)}',
+                            style: TextStyle(
+                                color: _edgeColor(edge).withValues(alpha: 0.8),
+                                fontSize: 13),
+                          ),
+                        ],
+                      ),
                     ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF2A2A3E),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    ),
+                    child: const Icon(Icons.chevron_right,
+                        color: Color(0xFFAAAAAA), size: 22),
+                  ),
+                ],
+              ),
+              if (kelly > 0) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFF7C4DFF).withValues(alpha: 0.4)),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Kelly: ${kelly.toStringAsFixed(2)}%',
+                        style: const TextStyle(
+                            color: Color(0xFF7C4DFF),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13),
+                      ),
+                      if (_banca > 0) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '· R\$ ${valorKelly.toStringAsFixed(2)}',
+                          style: const TextStyle(color: Color(0xFF9E7DFF), fontSize: 13),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ],
-            ),
-            if (kelly > 0) ...[
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFF7C4DFF).withValues(alpha: 0.4)),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      'Kelly: ${kelly.toStringAsFixed(2)}%',
-                      style: const TextStyle(
-                          color: Color(0xFF7C4DFF),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13),
-                    ),
-                    if (_banca > 0) ...[
-                      const SizedBox(width: 8),
-                      Text(
-                        '· R\$ ${valorKelly.toStringAsFixed(2)}',
-                        style: const TextStyle(color: Color(0xFF9E7DFF), fontSize: 13),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
             ],
-          ],
+          ),
         ),
       ),
     );

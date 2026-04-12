@@ -12,7 +12,7 @@ class AddLateBetScreen extends StatefulWidget {
 class _AddLateBetScreenState extends State<AddLateBetScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  DateTime _selectedDate = DateTime.now().subtract(const Duration(days: 1));
+  DateTime _selectedDate = DateTime.now();
   List<Map<String, dynamic>> _items = [];
   bool _loading = false;
   String? _selectedGame;
@@ -61,9 +61,9 @@ class _AddLateBetScreenState extends State<AddLateBetScreen>
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: DateTime.now(),
       firstDate: DateTime(2026, 1, 1),
-      lastDate: DateTime.now().subtract(const Duration(days: 1)),
+      lastDate: DateTime.now(),
       builder: (ctx, child) => Theme(
         data: ThemeData.dark().copyWith(
           colorScheme: const ColorScheme.dark(primary: Color(0xFF00C853)),

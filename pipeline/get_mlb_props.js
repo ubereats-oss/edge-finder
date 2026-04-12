@@ -53,19 +53,12 @@ async function fetchEvents() {
 async function fetchEventProps(eventId) {
   const url = `https://api.the-odds-api.com/v4/sports/baseball_mlb/events/${eventId}/odds`;
   let lastError = null;
-
   for (let attempt = 0; attempt < API_KEYS.length; attempt++) {
     const key = getNextValidKey();
     if (!key) break;
     try {
       const res = await axios.get(url, {
-        params: {
-          apiKey: key,
-          regions: REGION,
-          markets: MARKETS,
-          bookmakers: BOOKMAKER,
-          oddsFormat: 'decimal',
-        },
+        params: { apiKey: key, regions: REGION, markets: MARKETS, bookmakers: BOOKMAKER, oddsFormat: 'decimal' },
       });
       return res.data;
     } catch (e) {
@@ -84,6 +77,15 @@ async function fetchEventProps(eventId) {
 }
 
 async function getMlbProps() {
+  // Carrega mapeamento jogador -> time
+  let playerTeam = {};
+  if (fs.existsSync('mlb_player_team.json')) {
+    const raw = fs.readFileSync('mlb_player_team.json', 'utf-8').trim();
+    if (raw) playerTeam = JSON.parse(raw);
+  } else {
+    console.warn('mlb_player_team.json não encontrado — location não será preenchido.');
+  }
+
   try {
     const events = await fetchEvents();
     if (!events.length) {
@@ -128,12 +130,22 @@ async function getMlbProps() {
 
           for (const [player, sides] of Object.entries(players)) {
             if (!sides.Over || !sides.Under) continue;
+
+            // Determina location
+            const team = playerTeam[player];
+            let location = 'unknown';
+            if (team) {
+              if (team === event.home_team) location = 'home';
+              else if (team === event.away_team) location = 'away';
+            }
+
             allProps.push({
               game: `${event.home_team} x ${event.away_team}`,
               commence_time: event.commence_time,
               player,
               prop: propType,
               isPitcher,
+              location,
               line: sides.Over.line,
               oddsOver: sides.Over.price,
               oddsUnder: sides.Under.price,

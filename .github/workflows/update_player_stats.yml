@@ -1,0 +1,65 @@
+name: Atualizar Estatísticas de Jogadores
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Instalar dependências
+        run: npm install axios
+
+      - name: Restaurar stats da branch data
+        run: |
+          git fetch origin data 2>/dev/null || echo "Branch data não existe ainda"
+          git show origin/data:nba_player_stats.json.gz > /tmp/nba_player_stats.json.gz 2>/dev/null && \
+            gunzip -c /tmp/nba_player_stats.json.gz > nba_player_stats.json && \
+            echo "nba_player_stats.json restaurado: $(wc -c < nba_player_stats.json) bytes" || \
+            echo "nba_player_stats.json não encontrado — será criado do zero"
+          git show origin/data:mlb_player_stats.json > mlb_player_stats.json 2>/dev/null && \
+            echo "mlb_player_stats.json restaurado: $(wc -c < mlb_player_stats.json) bytes" || \
+            echo "mlb_player_stats.json não encontrado — será criado do zero"
+
+      - name: Atualizar stats NBA (incremental)
+        run: node pipeline/get_nba_player_stats.js
+
+      - name: Atualizar stats MLB (incremental)
+        run: node pipeline/get_mlb_player_stats.js
+
+      - name: Salvar stats na branch data
+        run: |
+          gzip -c nba_player_stats.json > /tmp/nba_player_stats.json.gz
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin data 2>/dev/null || true
+          git checkout --orphan data-stats-tmp
+          git rm -rf . --quiet
+          git show origin/data:nba_player_team.json > nba_player_team.json 2>/dev/null || true
+          git show origin/data:nba_injuries_today.json > nba_injuries_today.json 2>/dev/null || true
+          git show origin/data:mlb_player_team.json > mlb_player_team.json 2>/dev/null || true
+          git show origin/data:mlb_injuries_today.json > mlb_injuries_today.json 2>/dev/null || true
+          git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
+          cp /tmp/nba_player_stats.json.gz .
+          cp mlb_player_stats.json . 2>/dev/null || true
+          cp mlb_team_rating.json . 2>/dev/null || true
+          git add -A
+          git diff --staged --quiet && echo "Sem mudanças nos stats" || git commit -m "stats: $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push origin HEAD:data --force

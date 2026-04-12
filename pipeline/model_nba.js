@@ -1,5 +1,7 @@
 const fs = require('fs');
 
+if (!fs.existsSync('nba_rating.json')) { console.log('nba_rating.json não encontrado — pulando modelo NBA H2H.'); process.exit(0); }
+if (!fs.existsSync('nba_odds.json')) { console.log('nba_odds.json não encontrado — pulando modelo NBA H2H.'); process.exit(0); }
 const rating = JSON.parse(fs.readFileSync('nba_rating.json'));
 const odds = JSON.parse(fs.readFileSync('nba_odds.json'));
 

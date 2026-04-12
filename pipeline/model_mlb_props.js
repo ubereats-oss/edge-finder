@@ -11,37 +11,43 @@ function readJsonSafe(file, fallback) {
   }
 }
 
-const mlbStats   = readJsonSafe('mlb_player_stats.json', {});
-const props      = readJsonSafe('mlb_props.json', []);
+const playerStats   = readJsonSafe('mlb_player_stats.json', {});
+const props         = readJsonSafe('mlb_props.json', []);
 const playerTeamMap = readJsonSafe('mlb_player_team.json', {});
+let injuriesToday   = readJsonSafe('mlb_injuries_today.json', {});
+if (!Object.keys(injuriesToday).length) {
+  console.warn('mlb_injuries_today.json não encontrado ou vazio — filtro de ausentes desativado.');
+}
 
 const SEASON_WEIGHT = { 2023: 1, 2024: 2, 2025: 3, 2026: 4 };
-const MIN_GAMES_CONTEXT = 15;
-const KELLY_FRACTION = 0.25;
+const MIN_GAMES_CONTEXT = 10;
 const INEFFICIENT_MARKET_EDGE = 20;
+const KELLY_FRACTION = 0.25;
 
-// ── Calibração isotônica (MLB — usar mesma tabela NBA até backtest MLB)
+// Calibração isotônica gerada por backtest_mlb_props.js
 const CALIB_TABLE = [
-  { raw: 0.519, cal: 0.504 },
-  { raw: 0.576, cal: 0.572 },
-  { raw: 0.625, cal: 0.608 },
-  { raw: 0.674, cal: 0.671 },
-  { raw: 0.723, cal: 0.720 },
-  { raw: 0.771, cal: 0.764 },
-  { raw: 0.816, cal: 0.811 },
+  { raw: 0.500, cal: 0.518 },
+  { raw: 0.550, cal: 0.554 },
+  { raw: 0.600, cal: 0.603 },
+  { raw: 0.650, cal: 0.616 },
+  { raw: 0.700, cal: 0.663 },
+  { raw: 0.750, cal: 0.693 },
+  { raw: 0.800, cal: 0.734 },
+  { raw: 0.850, cal: 0.784 },
+  { raw: 0.900, cal: 0.827 },
+  { raw: 0.950, cal: 0.862 },
+  { raw: 1.000, cal: 0.901 },
 ];
 
 function calibrate(p) {
   if (p < 0.5) return 1 - calibrate(1 - p);
   const n = CALIB_TABLE.length;
   if (p <= CALIB_TABLE[0].raw) {
-    const slope = (CALIB_TABLE[1].cal - CALIB_TABLE[0].cal) /
-                  (CALIB_TABLE[1].raw - CALIB_TABLE[0].raw);
+    const slope = (CALIB_TABLE[1].cal - CALIB_TABLE[0].cal) / (CALIB_TABLE[1].raw - CALIB_TABLE[0].raw);
     return Math.min(1, Math.max(0, CALIB_TABLE[0].cal + slope * (p - CALIB_TABLE[0].raw)));
   }
   if (p >= CALIB_TABLE[n - 1].raw) {
-    const slope = (CALIB_TABLE[n - 1].cal - CALIB_TABLE[n - 2].cal) /
-                  (CALIB_TABLE[n - 1].raw - CALIB_TABLE[n - 2].raw);
+    const slope = (CALIB_TABLE[n - 1].cal - CALIB_TABLE[n - 2].cal) / (CALIB_TABLE[n - 1].raw - CALIB_TABLE[n - 2].raw);
     return Math.min(1, Math.max(0, CALIB_TABLE[n - 1].cal + slope * (p - CALIB_TABLE[n - 1].raw)));
   }
   for (let i = 0; i < n - 1; i++) {
@@ -79,65 +85,108 @@ function calcKelly(p, odd) {
 }
 
 function findPlayer(name) {
-  if (mlbStats[name]) return mlbStats[name];
+  if (playerStats[name]) return playerStats[name];
   const lower = name.toLowerCase();
-  for (const key of Object.keys(mlbStats)) {
-    if (key.toLowerCase().includes(lower) || lower.includes(key.toLowerCase())) {
-      return mlbStats[key];
-    }
+  for (const key of Object.keys(playerStats)) {
+    if (key.toLowerCase().includes(lower) || lower.includes(key.toLowerCase())) return playerStats[key];
   }
   return null;
 }
 
-function combineContexts(playerData, statKey) {
-  let weightedSum = 0;
-  let weightedSumSq = 0;
-  let totalWeight = 0;
-  let totalGames = 0;
-  let currentSeasonGames = 0;
+function getAbsentToday(teamName) {
+  if (!teamName || teamName === 'unknown') return [];
+  for (const [key, players] of Object.entries(injuriesToday)) {
+    if (key === teamName || key.includes(teamName) || teamName.includes(key)) return players;
+  }
+  return [];
+}
+
+function matchesAbsentContext(entryAbsentStarters, absentToday) {
+  if (absentToday.length === 0) return false;
+  return absentToday.some(absent =>
+    entryAbsentStarters.some(h =>
+      h.toLowerCase().includes(absent.toLowerCase()) ||
+      absent.toLowerCase().includes(h.toLowerCase())
+    )
+  );
+}
+
+function calcRecentAvg(playerData, statKey, n) {
   const entries = [];
-
-  for (const [seasonStr, seasonData] of Object.entries(playerData)) {
-    const season = parseInt(seasonStr);
-    const w = SEASON_WEIGHT[season] || 1;
-
-    for (const gameType of ['regular']) {
-      for (const location of ['home', 'away']) {
-        const ctx = seasonData?.[gameType]?.[location];
-        if (!ctx) continue;
-        const values = ctx[statKey];
-        if (!Array.isArray(values)) continue;
-        for (const v of values) {
-          const val = typeof v === 'object' ? v.value : v;
-          const date = typeof v === 'object' ? (v.date || '') : '';
-          weightedSum += val * w;
-          weightedSumSq += val * val * w;
-          totalWeight += w;
-          totalGames++;
-          if (season === 2026) currentSeasonGames++;
+  for (const seasonData of Object.values(playerData)) {
+    for (const gameTypeData of Object.values(seasonData)) {
+      for (const loc of ['home', 'away']) {
+        const ctx = gameTypeData[loc];
+        if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
+        for (const entry of ctx[statKey]) {
+          const val  = typeof entry === 'object' ? entry.value : entry;
+          const date = typeof entry === 'object' ? (entry.date || '') : '';
           entries.push({ val, date });
+        }
+      }
+    }
+  }
+  entries.sort((a, b) => b.date.localeCompare(a.date));
+  const slice = entries.slice(0, n);
+  if (!slice.length) return null;
+  return parseFloat((slice.reduce((s, e) => s + e.val, 0) / slice.length).toFixed(2));
+}
+
+function combineContexts(playerData, statKey, locations, absentToday) {
+  let weightedSum = 0, weightedSumSq = 0, totalWeight = 0, totalGames = 0, contextGames = 0;
+  let usedAbsentFilter = false;
+
+  if (absentToday.length > 0) {
+    let fSum = 0, fSumSq = 0, fWeight = 0, fGames = 0, fContext = 0;
+    for (const [seasonStr, seasonData] of Object.entries(playerData)) {
+      const season = parseInt(seasonStr);
+      const w = SEASON_WEIGHT[season] || 1;
+      for (const loc of locations) {
+        const ctx = seasonData?.regular?.[loc];
+        if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
+        for (const entry of ctx[statKey]) {
+          if (entry.blowout) continue;
+          if (!matchesAbsentContext(entry.absentStarters || [], absentToday)) continue;
+          fSum += entry.value * w; fSumSq += entry.value * entry.value * w;
+          fWeight += w; fGames++;
+          if (season === 2026) fContext++;
+        }
+      }
+    }
+    if (fGames >= 5) {
+      weightedSum = fSum; weightedSumSq = fSumSq;
+      totalWeight = fWeight; totalGames = fGames; contextGames = fContext;
+      usedAbsentFilter = true;
+    }
+  }
+
+  if (!usedAbsentFilter) {
+    for (const [seasonStr, seasonData] of Object.entries(playerData)) {
+      const season = parseInt(seasonStr);
+      const w = SEASON_WEIGHT[season] || 1;
+      for (const loc of locations) {
+        const ctx = seasonData?.regular?.[loc];
+        if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
+        for (const entry of ctx[statKey]) {
+          if (entry.blowout) continue;
+          const value = typeof entry === 'object' ? entry.value : entry;
+          weightedSum += value * w; weightedSumSq += value * value * w;
+          totalWeight += w; totalGames++;
+          if (season === 2026) contextGames++;
         }
       }
     }
   }
 
   if (totalWeight === 0) return null;
-
   const avg = weightedSum / totalWeight;
   const variance = Math.max(0, weightedSumSq / totalWeight - avg * avg);
-
-  entries.sort((a, b) => b.date.localeCompare(a.date));
-  const avg5  = entries.length >= 1 ? parseFloat((entries.slice(0, 5).reduce((s, e) => s + e.val, 0) / Math.min(5, entries.length)).toFixed(2)) : null;
-  const avg10 = entries.length >= 1 ? parseFloat((entries.slice(0, 10).reduce((s, e) => s + e.val, 0) / Math.min(10, entries.length)).toFixed(2)) : null;
-
   return {
     avg: parseFloat(avg.toFixed(3)),
     std: parseFloat(Math.sqrt(variance).toFixed(3)),
-    totalGames,
-    currentSeasonGames,
-    lowSample: currentSeasonGames < MIN_GAMES_CONTEXT,
-    avg5,
-    avg10,
+    totalGames, contextGames,
+    lowSample: contextGames < MIN_GAMES_CONTEXT,
+    usedAbsentFilter,
   };
 }
 
@@ -148,25 +197,20 @@ const PROP_CONFIG = {
   hitsAllowed: { key: 'hitsAllowed' },
 };
 
-if (!props.length) {
-  console.log('mlb_props.json vazio — sem props disponíveis.');
-  process.exit(0);
-}
-
-if (Object.keys(mlbStats).length === 0) {
+if (!props.length) { console.log('mlb_props.json vazio — sem props disponíveis.'); process.exit(0); }
+if (Object.keys(playerStats).length === 0) {
   console.error('mlb_player_stats.json vazio ou ausente — rode get_mlb_player_stats.js primeiro.');
   process.exit(1);
 }
 
 const NOW = Date.now();
-let descartadosSemStats = 0;
-let descartadosSigmaBaixa = 0;
-let descartadosJogoBloqueado = 0;
+const MIN_15 = 0;
+let descartadosSemStats = 0, descartadosSigmaBaixa = 0, descartadosJogoBloqueado = 0, comFiltroAusentes = 0;
 const results = [];
 
 for (const prop of props) {
   const commence = new Date(prop.commence_time).getTime();
-  if (commence - NOW < 0) { descartadosJogoBloqueado++; continue; }
+  if (commence - NOW < MIN_15) { descartadosJogoBloqueado++; continue; }
 
   const config = PROP_CONFIG[prop.prop];
   if (!config) continue;
@@ -174,29 +218,47 @@ for (const prop of props) {
   const playerData = findPlayer(prop.player);
   if (!playerData) { descartadosSemStats++; continue; }
 
-  const stats = combineContexts(playerData, config.key);
+  const isPlayerAbsent = Object.values(injuriesToday).some(players =>
+    players.some(absent =>
+      absent.toLowerCase().includes(prop.player.toLowerCase()) ||
+      prop.player.toLowerCase().includes(absent.toLowerCase())
+    )
+  );
+  if (isPlayerAbsent) { descartadosSemStats++; continue; }
+
+  const locations = prop.location === 'home' || prop.location === 'away'
+    ? [prop.location] : ['home', 'away'];
+
+  const gameParts = prop.game ? prop.game.split(' x ') : [];
+  let teamName = 'unknown';
+  if (prop.location === 'home' && gameParts.length >= 1) teamName = gameParts[0];
+  else if (prop.location === 'away' && gameParts.length >= 2) teamName = gameParts[1];
+
+  const absentToday = getAbsentToday(teamName);
+  const avg5  = calcRecentAvg(playerData, config.key, 5);
+  const avg10 = calcRecentAvg(playerData, config.key, 10);
+
+  const stats = combineContexts(playerData, config.key, locations, absentToday);
   if (!stats) { descartadosSemStats++; continue; }
   if (stats.std < 0.1) { descartadosSigmaBaixa++; continue; }
 
   const marginRatio = Math.abs(prop.line - stats.avg) / stats.std;
   if (marginRatio < 0.75) continue;
 
-  const pOverRaw  = probOverRaw(stats.avg, stats.std, prop.line);
-  const pUnderRaw = probUnderRaw(stats.avg, stats.std, prop.line);
+  if (stats.usedAbsentFilter) comFiltroAusentes++;
 
-  const pOver  = calibrate(pOverRaw);
-  const pUnder = calibrate(pUnderRaw);
+  const pOver  = calibrate(probOverRaw(stats.avg, stats.std, prop.line));
+  const pUnder = calibrate(probUnderRaw(stats.avg, stats.std, prop.line));
 
   const impliedOver  = 1 / prop.oddsOver;
   const impliedUnder = 1 / prop.oddsUnder;
-
   const edgeOver  = pOver  - impliedOver;
   const edgeUnder = pUnder - impliedUnder;
 
-  const bestSide  = edgeOver >= edgeUnder ? 'Over' : 'Under';
-  const bestProb  = edgeOver >= edgeUnder ? pOver : pUnder;
-  const bestOdds  = edgeOver >= edgeUnder ? prop.oddsOver : prop.oddsUnder;
-  const bestEdge  = edgeOver >= edgeUnder ? edgeOver : edgeUnder;
+  const bestSide = edgeOver >= edgeUnder ? 'Over' : 'Under';
+  const bestProb = edgeOver >= edgeUnder ? pOver : pUnder;
+  const bestOdds = edgeOver >= edgeUnder ? prop.oddsOver : prop.oddsUnder;
+  const bestEdge = edgeOver >= edgeUnder ? edgeOver : edgeUnder;
 
   const edgePct           = parseFloat((bestEdge * 100).toFixed(2));
   const kellyCrit         = calcKelly(bestProb, bestOdds);
@@ -208,11 +270,12 @@ for (const prop of props) {
     player: prop.player,
     prop: prop.prop,
     isPitcher: prop.isPitcher,
+    location: prop.location,
     line: prop.line,
     playerAvg: stats.avg,
     playerStd: stats.std,
-    playerAvg5: stats.avg5,
-    playerAvg10: stats.avg10,
+    playerAvg5: avg5,
+    playerAvg10: avg10,
     playerTeam: playerTeamMap[prop.player] ?? null,
     side: bestSide,
     modelProb: parseFloat((bestProb * 100).toFixed(1)),
@@ -223,20 +286,24 @@ for (const prop of props) {
     oddsUnder: prop.oddsUnder,
     kelly: kellyCrit,
     totalGames: stats.totalGames,
-    currentSeasonGames: stats.currentSeasonGames,
+    contextGames: stats.contextGames,
     lowSample: stats.lowSample,
     inefficientMarket,
+    absentFilter: stats.usedAbsentFilter,
+    absentToday: absentToday.length > 0 ? absentToday : undefined,
   });
 }
 
-console.log(`Props processadas: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Jogo bloqueado: ${descartadosJogoBloqueado}`);
+console.log(`Props processadas: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Jogo bloqueado: ${descartadosJogoBloqueado} | Filtro ausentes: ${comFiltroAusentes}`);
 
 results.sort((a, b) => b.edge - a.edge);
 
 results.slice(0, 15).forEach((r, i) => {
-  const warn = r.lowSample ? ' ⚠️' : '';
+  const warn   = r.lowSample         ? ' ⚠️' : '';
   const target = r.inefficientMarket ? ' 🎯' : '';
-  console.log(`[${i + 1}] ${r.player}${warn}${target} | ${r.prop} ${r.side} ${r.line} | Edge: ${r.edge}% | Kelly: ${r.kelly}%`);
+  const loc    = r.location !== 'unknown' ? ` [${r.location}]` : '';
+  const absent = r.absentFilter      ? ' 🔄' : '';
+  console.log(`[${i + 1}] ${r.player}${warn}${target}${loc}${absent} | ${r.prop} ${r.side} ${r.line} | Edge: ${r.edge}% | Kelly: ${r.kelly}%`);
 });
 
 fs.writeFileSync('mlb_props_results.json', JSON.stringify(results, null, 2));

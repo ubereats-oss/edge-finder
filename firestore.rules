@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // results/ e odds_history/ — somente leitura pública
+    match /results/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /odds_history/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // bets/ — usuário autenticado acessa apenas as próprias apostas
+    // O pipeline (service account) tem acesso admin via SDK e ignora estas regras
+    match /bets/{betId} {
+      allow read, update, delete: if request.auth != null
+        && resource.data.uid == request.auth.uid;
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid;
+    }
+  }
+}

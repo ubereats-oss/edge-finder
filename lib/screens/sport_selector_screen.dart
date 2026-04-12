@@ -3,6 +3,7 @@ import 'tennis_screen.dart';
 import 'basketball_mode_screen.dart';
 import 'baseball_screen.dart';
 import 'settings_screen.dart';
+import 'bets_screen.dart';
 
 class SportSelectorScreen extends StatelessWidget {
   const SportSelectorScreen({super.key});
@@ -36,8 +37,7 @@ class SportSelectorScreen extends StatelessWidget {
                         color: Color(0xFF888888), size: 26),
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => const SettingsScreen()),
+                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
                     ),
                   ),
                 ],
@@ -78,8 +78,37 @@ class SportSelectorScreen extends StatelessWidget {
                 color: const Color(0xFF00C853),
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (_) => const BaseballScreen()),
+                  MaterialPageRoute(builder: (_) => const BaseballScreen()),
+                ),
+              ),
+              const SizedBox(height: 32),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BetsScreen()),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E1E2E),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                        color: const Color(0xFF7C4DFF).withValues(alpha: 0.4)),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.bar_chart, color: Color(0xFF7C4DFF), size: 22),
+                      SizedBox(width: 10),
+                      Text('Minhas Apostas',
+                          style: TextStyle(
+                              color: Color(0xFF7C4DFF),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16)),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -127,8 +156,7 @@ class _SportCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Center(
-                child: Text(emoji,
-                    style: const TextStyle(fontSize: 28)),
+                child: Text(emoji, style: const TextStyle(fontSize: 28)),
               ),
             ),
             const SizedBox(width: 16),
@@ -147,8 +175,8 @@ class _SportCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                        color: Color(0xFF888888), fontSize: 13),
+                    style:
+                        const TextStyle(color: Color(0xFF888888), fontSize: 13),
                   ),
                 ],
               ),

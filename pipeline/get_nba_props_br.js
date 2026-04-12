@@ -12,7 +12,7 @@ if (fs.existsSync('.env')) {
 
 // Carrega todas as chaves disponíveis
 const API_KEYS = [];
-for (let i = 1; i <= 12; i++) {
+for (let i = 1; i <= 14; i++) {
   const key = i === 1
     ? process.env.ODDS_API_KEY
     : process.env[`ODDS_API_KEY_${i}`];
