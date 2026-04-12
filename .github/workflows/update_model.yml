@@ -86,19 +86,19 @@ jobs:
         run: node pipeline/model_nba_props_br.js
 
       - name: Atualizar odds NBA H2H
-        if: ${{ github.event.inputs.sport == 'nba' || github.event.inputs.sport == 'all' }}
+        if: ${{ github.event.inputs.sport == 'nba' }}
         run: node pipeline/get_nba_odds.js
 
       - name: Rodar modelo NBA H2H
-        if: ${{ github.event.inputs.sport == 'nba' || github.event.inputs.sport == 'all' }}
+        if: ${{ github.event.inputs.sport == 'nba' }}
         run: node pipeline/model_nba.js
 
       - name: Atualizar props NBA (padrão)
-        if: ${{ github.event.inputs.sport == 'nba' || github.event.inputs.sport == 'all' }}
+        if: ${{ github.event.inputs.sport == 'nba' }}
         run: node pipeline/get_nba_props.js
 
       - name: Rodar modelo props NBA (padrão)
-        if: ${{ github.event.inputs.sport == 'nba' || github.event.inputs.sport == 'all' }}
+        if: ${{ github.event.inputs.sport == 'nba' }}
         run: node pipeline/model_nba_props.js
 
       - name: Atualizar odds MLB
