@@ -9,7 +9,7 @@ if (fs.existsSync('.env')) {
 }
 
 const API_KEYS = [];
-for (let i = 1; i <= 14; i++) {
+for (let i = 1; i <= 19; i++) {
   const key = i === 1 ? process.env.ODDS_API_KEY : process.env[`ODDS_API_KEY_${i}`];
   if (key && key.trim()) API_KEYS.push(key.trim());
 }
