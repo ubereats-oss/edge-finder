@@ -74,6 +74,8 @@ async function fetchEventProps(eventId) {
           oddsFormat: 'decimal',
         },
       });
+      const remaining = res.headers['x-requests-remaining'];
+      if (remaining !== undefined) console.log(`    Créditos restantes: ${remaining}`);
       return res.data;
     } catch (e) {
       const msg = e.response?.data?.message || e.message || '';
