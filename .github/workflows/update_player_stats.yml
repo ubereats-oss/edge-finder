@@ -48,19 +48,22 @@ jobs:
       - name: Salvar stats na branch data
         run: |
           gzip -c nba_player_stats.json > /tmp/nba_player_stats.json.gz
+          gzip -c mlb_player_stats.json > /tmp/mlb_player_stats.json.gz 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin data 2>/dev/null || true
           git checkout --orphan data-stats-tmp
           git rm -rf . --quiet
+          printf 'node_modules/\n*.json\n' > .gitignore
+          cp /tmp/nba_player_stats.json.gz .
+          cp /tmp/mlb_player_stats.json.gz . 2>/dev/null || true
           git show origin/data:nba_player_team.json > nba_player_team.json 2>/dev/null || true
           git show origin/data:nba_injuries_today.json > nba_injuries_today.json 2>/dev/null || true
           git show origin/data:mlb_player_team.json > mlb_player_team.json 2>/dev/null || true
           git show origin/data:mlb_injuries_today.json > mlb_injuries_today.json 2>/dev/null || true
           git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
-          cp /tmp/nba_player_stats.json.gz .
-          gzip -c mlb_player_stats.json > mlb_player_stats.json.gz 2>/dev/null || true
-          cp mlb_team_rating.json . 2>/dev/null || true
-          git add -A
+          git show origin/data:mlb_team_rating.json > mlb_team_rating.json 2>/dev/null || true
+          printf 'node_modules/\n' > .gitignore
+          git add .gitignore *.gz nba_player_team.json nba_injuries_today.json mlb_player_team.json mlb_injuries_today.json bets.json mlb_team_rating.json
           git diff --staged --quiet && echo "Sem mudanças nos stats" || git commit -m "stats: $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push origin HEAD:data --force
