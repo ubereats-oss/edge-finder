@@ -1,4 +1,4 @@
-<file path=".github/workflows/update_model.yml">
+
 name: Atualizar Modelo
 
 on:
