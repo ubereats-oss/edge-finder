@@ -73,7 +73,7 @@ jobs:
             gunzip -c /tmp/mlb_player_stats.json.gz > mlb_player_stats.json && \
             echo "mlb_player_stats.json restaurado: $(wc -c < mlb_player_stats.json) bytes" || \
             echo "mlb_player_stats.json não encontrado — modelo usará stats vazios"
-          for f in nba_player_team.json nba_boxscores_cache.json nba_injuries_today.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
+          for f in nba_player_team.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
             git show origin/data:$f > $f 2>/dev/null && echo "Restaurado: $f" || echo "Não encontrado: $f"
           done
           git show origin/data:bets.json > bets.json 2>/dev/null && echo "bets.json restaurado" || echo '[]' > bets.json
@@ -160,7 +160,7 @@ jobs:
           cp /tmp/nba_player_stats.json.gz . 2>/dev/null || true
           cp /tmp/mlb_player_stats.json.gz . 2>/dev/null || true
           rm -f nba_player_stats.json mlb_player_stats.json
-          for f in nba_player_team.json nba_injuries_today.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json bets.json; do
+          for f in nba_player_team.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json bets.json; do
             cp $f . 2>/dev/null || true
           done
           git add -A
