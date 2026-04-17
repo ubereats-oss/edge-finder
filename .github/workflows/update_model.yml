@@ -1,3 +1,4 @@
+<file path=".github/workflows/update_model.yml">
 name: Atualizar Modelo
 
 on:
@@ -90,11 +91,11 @@ jobs:
         run: node pipeline/model_nba_props_br.js
 
       - name: Atualizar odds NBA H2H
-        if: ${{ github.event.inputs.sport == 'nba' }}
+        if: ${{ github.event.inputs.sport == 'nba_br' || github.event.inputs.sport == 'nba' || github.event.inputs.sport == 'all' }}
         run: node pipeline/get_nba_odds.js
 
       - name: Rodar modelo NBA H2H
-        if: ${{ github.event.inputs.sport == 'nba' }}
+        if: ${{ github.event.inputs.sport == 'nba_br' || github.event.inputs.sport == 'nba' || github.event.inputs.sport == 'all' }}
         run: node pipeline/model_nba.js
 
       - name: Atualizar props NBA (padrão)
@@ -165,3 +166,4 @@ jobs:
           git add -A
           git diff --staged --quiet && echo "Sem mudanças" || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push origin HEAD:data --force
+</file>
