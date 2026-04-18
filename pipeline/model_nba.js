@@ -2,8 +2,21 @@ const fs = require('fs');
 
 if (!fs.existsSync('nba_rating.json')) { console.log('nba_rating.json não encontrado — pulando modelo NBA H2H.'); process.exit(0); }
 if (!fs.existsSync('nba_odds.json')) { console.log('nba_odds.json não encontrado — pulando modelo NBA H2H.'); process.exit(0); }
-const rating = JSON.parse(fs.readFileSync('nba_rating.json'));
-const odds = JSON.parse(fs.readFileSync('nba_odds.json'));
+function readJsonSafe(file, fallback) {
+  if (!fs.existsSync(file)) return fallback;
+
+  const raw = fs.readFileSync(file, 'utf-8').trim();
+  if (!raw) return fallback;
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+}
+
+const rating = readJsonSafe('nba_rating.json', {});
+const odds = readJsonSafe('nba_odds.json', []);
 
 // Kelly fracionário calibrado via backtest walk-forward (1105 jogos, 2025-26)
 // 0.25 → ROI +18.91%, Max Drawdown 36.5% | 0.15 → drawdown estimado ~15-20%

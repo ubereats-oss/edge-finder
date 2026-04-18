@@ -32,7 +32,7 @@ class _BaseballScreenState extends State<BaseballScreen>
   bool _jogoValido(Map<String, dynamic> item) {
     final raw = item['commence_time'] as String?;
     if (raw == null) return true;
-    final dt = DateTime.tryParse(raw);
+    final dt = DateTime.tryParse(raw)?.toUtc();
     if (dt == null) return true;
     return dt.difference(DateTime.now().toUtc()) >= _min15;
   }
@@ -79,7 +79,10 @@ class _BaseballScreenState extends State<BaseballScreen>
   }
 
   Future<void> _runQuick() async {
-    setState(() { _loading = true; _status = 'Acionando workflow...'; });
+    setState(() {
+      _loading = true;
+      _status = 'Acionando workflow...';
+    });
     try {
       await ApiService.triggerUpdate('mlb');
       setState(() => _status = 'Aguardando conclusão...');
@@ -95,7 +98,10 @@ class _BaseballScreenState extends State<BaseballScreen>
   }
 
   Future<void> _runFull() async {
-    setState(() { _loading = true; _status = 'Acionando atualização completa...'; });
+    setState(() {
+      _loading = true;
+      _status = 'Acionando atualização completa...';
+    });
     try {
       await ApiService.triggerUpdate('all');
       setState(() => _status = 'Aguardando conclusão (~20 min)...');
@@ -139,7 +145,10 @@ class _BaseballScreenState extends State<BaseballScreen>
               color: const Color(0xFFFFD600),
               title: 'Atualização rápida',
               subtitle: 'Odds e props do dia · ~30 segundos',
-              onTap: () { Navigator.pop(context); _runQuick(); },
+              onTap: () {
+                Navigator.pop(context);
+                _runQuick();
+              },
             ),
             const SizedBox(height: 12),
             _UpdateOption(
@@ -147,7 +156,10 @@ class _BaseballScreenState extends State<BaseballScreen>
               color: const Color(0xFF00C853),
               title: 'Atualização completa',
               subtitle: 'Todos os esportes · ~20 minutos',
-              onTap: () { Navigator.pop(context); _runFull(); },
+              onTap: () {
+                Navigator.pop(context);
+                _runFull();
+              },
             ),
             const SizedBox(height: 16),
           ],
@@ -189,8 +201,7 @@ class _BaseballScreenState extends State<BaseballScreen>
     final widgets = <Widget>[];
     for (final entry in byGame.entries) {
       widgets.add(_GameHeader(game: entry.key));
-      final sorted = [...entry.value]
-        ..sort((a, b) {
+      final sorted = [...entry.value]..sort((a, b) {
           final aP = a['isPitcher'] == true ? 0 : 1;
           final bP = b['isPitcher'] == true ? 0 : 1;
           if (aP != bP) return aP - bP;
@@ -218,7 +229,8 @@ class _BaseballScreenState extends State<BaseballScreen>
             Text('⚾', style: TextStyle(fontSize: 20)),
             SizedBox(width: 8),
             Text('Beisebol',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
           ],
         ),
         actions: [
@@ -252,11 +264,14 @@ class _BaseballScreenState extends State<BaseballScreen>
                     LastUpdatedBar(lastUpdated: _h2hUpdated),
                     Expanded(
                       child: _filteredH2h.isEmpty && !_loading
-                          ? const _EmptyState(msg: 'Sem jogos disponíveis.\nAtualize para buscar.')
+                          ? const _EmptyState(
+                              msg:
+                                  'Sem jogos disponíveis.\nAtualize para buscar.')
                           : ListView.builder(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               itemCount: _filteredH2h.length,
-                              itemBuilder: (_, i) => MatchCard(match: _filteredH2h[i]),
+                              itemBuilder: (_, i) =>
+                                  MatchCard(match: _filteredH2h[i]),
                             ),
                     ),
                   ],
@@ -265,15 +280,18 @@ class _BaseballScreenState extends State<BaseballScreen>
                   children: [
                     LastUpdatedBar(lastUpdated: _propsUpdated),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       color: const Color(0xFF00C853).withValues(alpha: 0.08),
                       child: const Row(
                         children: [
-                          Icon(Icons.filter_alt, color: Color(0xFF00C853), size: 14),
+                          Icon(Icons.filter_alt,
+                              color: Color(0xFF00C853), size: 14),
                           SizedBox(width: 6),
                           Text(
                             'Odds Pinnacle · Executável na Pinnacle e bet365',
-                            style: TextStyle(color: Color(0xFF00C853), fontSize: 11),
+                            style: TextStyle(
+                                color: Color(0xFF00C853), fontSize: 11),
                           ),
                         ],
                       ),
@@ -285,12 +303,14 @@ class _BaseballScreenState extends State<BaseballScreen>
                       availableProps: _availableProps,
                       onEdgeChanged: (v) => setState(() => _minEdge = v),
                       onPropChanged: (v) => setState(() => _selectedProp = v),
-                      onHideWarningsChanged: (v) => setState(() => _hideWarnings = v),
+                      onHideWarningsChanged: (v) =>
+                          setState(() => _hideWarnings = v),
                     ),
                     Expanded(
                       child: _filteredProps.isEmpty && !_loading
                           ? const _EmptyState(
-                              msg: 'Sem props disponíveis.\nAtualize ou aguarde a abertura dos mercados.')
+                              msg:
+                                  'Sem props disponíveis.\nAtualize ou aguarde a abertura dos mercados.')
                           : ListView(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               children: _buildPropsList(),
@@ -389,7 +409,8 @@ class _UpdateOption extends StatelessWidget {
                           fontSize: 15)),
                   const SizedBox(height: 2),
                   Text(subtitle,
-                      style: const TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                      style: const TextStyle(
+                          color: Color(0xFF888888), fontSize: 12)),
                 ],
               ),
             ),

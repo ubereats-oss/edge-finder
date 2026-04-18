@@ -33,7 +33,7 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
     if (raw == null) {
       return true;
     }
-    final dt = DateTime.tryParse(raw);
+    final dt = DateTime.tryParse(raw)?.toUtc();
     if (dt == null) {
       return true;
     }
