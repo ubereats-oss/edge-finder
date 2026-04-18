@@ -32,7 +32,7 @@ class _BasketballScreenState extends State<BasketballScreen>
   bool _jogoValido(Map<String, dynamic> item) {
     final raw = item['commence_time'] as String?;
     if (raw == null) return true;
-    final dt = DateTime.tryParse(raw);
+    final dt = DateTime.tryParse(raw)?.toUtc();
     if (dt == null) return true;
     return dt.difference(DateTime.now().toUtc()) >= _min15;
   }
@@ -69,7 +69,10 @@ class _BasketballScreenState extends State<BasketballScreen>
   }
 
   Future<void> _runQuick() async {
-    setState(() { _loading = true; _status = 'Buscando odds...'; });
+    setState(() {
+      _loading = true;
+      _status = 'Buscando odds...';
+    });
     try {
       await ApiService.post('nba/update-odds');
       setState(() => _status = 'Buscando props...');
@@ -88,7 +91,10 @@ class _BasketballScreenState extends State<BasketballScreen>
   }
 
   Future<void> _runFull() async {
-    setState(() { _loading = true; _status = 'Atualizando scores históricos...'; });
+    setState(() {
+      _loading = true;
+      _status = 'Atualizando scores históricos...';
+    });
     try {
       await ApiService.post('nba/update-scores');
       setState(() => _status = 'Atualizando stats de jogadores (~20 min)...');
@@ -121,14 +127,20 @@ class _BasketballScreenState extends State<BasketballScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text('Atualizar dados',
-                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
             _UpdateOption(
               icon: Icons.bolt,
               color: const Color(0xFFFFD600),
               title: 'Atualização rápida',
               subtitle: 'Odds e props do dia · ~30 segundos',
-              onTap: () { Navigator.pop(context); _runQuick(); },
+              onTap: () {
+                Navigator.pop(context);
+                _runQuick();
+              },
             ),
             const SizedBox(height: 12),
             _UpdateOption(
@@ -136,7 +148,10 @@ class _BasketballScreenState extends State<BasketballScreen>
               color: const Color(0xFF7C4DFF),
               title: 'Atualização completa',
               subtitle: 'Scores + stats de jogadores · ~20 minutos',
-              onTap: () { Navigator.pop(context); _runFull(); },
+              onTap: () {
+                Navigator.pop(context);
+                _runFull();
+              },
             ),
             const SizedBox(height: 16),
           ],
@@ -183,7 +198,8 @@ class _BasketballScreenState extends State<BasketballScreen>
           Text('🏀', style: TextStyle(fontSize: 20)),
           SizedBox(width: 8),
           Text('Basquete',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ]),
         actions: [
           IconButton(
@@ -217,11 +233,14 @@ class _BasketballScreenState extends State<BasketballScreen>
                     LastUpdatedBar(lastUpdated: _h2hUpdated),
                     Expanded(
                       child: _filteredH2h.isEmpty && !_loading
-                          ? const _EmptyState(msg: 'Sem jogos disponíveis.\nAtualize para buscar.')
+                          ? const _EmptyState(
+                              msg:
+                                  'Sem jogos disponíveis.\nAtualize para buscar.')
                           : ListView.builder(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               itemCount: _filteredH2h.length,
-                              itemBuilder: (_, i) => MatchCard(match: _filteredH2h[i]),
+                              itemBuilder: (_, i) =>
+                                  MatchCard(match: _filteredH2h[i]),
                             ),
                     ),
                   ],
@@ -237,15 +256,19 @@ class _BasketballScreenState extends State<BasketballScreen>
                       availableProps: _availableProps,
                       onEdgeChanged: (v) => setState(() => _minEdge = v),
                       onPropChanged: (v) => setState(() => _selectedProp = v),
-                      onHideWarningsChanged: (v) => setState(() => _hideWarnings = v),
+                      onHideWarningsChanged: (v) =>
+                          setState(() => _hideWarnings = v),
                     ),
                     Expanded(
                       child: _filteredProps.isEmpty && !_loading
-                          ? const _EmptyState(msg: 'Sem props disponíveis.\nAtualize ou aguarde a abertura dos mercados.')
+                          ? const _EmptyState(
+                              msg:
+                                  'Sem props disponíveis.\nAtualize ou aguarde a abertura dos mercados.')
                           : ListView.builder(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               itemCount: _filteredProps.length,
-                              itemBuilder: (_, i) => PropCard(prop: _filteredProps[i]),
+                              itemBuilder: (_, i) =>
+                                  PropCard(prop: _filteredProps[i]),
                             ),
                     ),
                   ],

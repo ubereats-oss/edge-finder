@@ -33,8 +33,26 @@ async function getNbaOdds() {
         const t2 = market.outcomes[1];
         odds.push({ team1: t1.name, team2: t2.name, odds1: t1.price, odds2: t2.price, commence_time: match.commence_time });
       });
-      fs.writeFileSync('nba_odds.json', JSON.stringify(odds, null, 2));
-      console.log(`NBA odds salvas: ${odds.length} partidas.`);
+      if (!odds.length) {
+  console.warn('Sem jogos válidos — salvando array vazio.');
+}
+
+const tempFile = 'nba_odds_tmp.json';
+
+fs.writeFileSync(tempFile, JSON.stringify(odds, null, 2));
+
+const check = fs.readFileSync(tempFile, 'utf-8').trim();
+
+if (!check) {
+  console.error('Erro: arquivo gerado vazio — abortando.');
+  process.exit(1);
+}
+
+JSON.parse(check);
+
+fs.renameSync(tempFile, 'nba_odds.json');
+
+console.log(`NBA odds salvas: ${odds.length} partidas.`);
       return;
     } catch (err) {
       const msg = err.response?.data?.message || err.message || '';
