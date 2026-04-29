@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'tennis_screen.dart';
 import 'basketball_mode_screen.dart';
 import 'baseball_screen.dart';
+import 'hockey_screen.dart';
+import 'football_screen.dart';
+import 'mix_screen.dart';
 import 'settings_screen.dart';
 import 'bets_screen.dart';
 
@@ -47,7 +50,58 @@ class SportSelectorScreen extends StatelessWidget {
                 'Escolha o esporte',
                 style: TextStyle(color: Color(0xFF888888), fontSize: 16),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const MixScreen()),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF4A0080), Color(0xFF003080)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                        color: const Color(0xFFFFD600).withValues(alpha: 0.4)),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.auto_awesome,
+                          color: Color(0xFFFFD600), size: 32),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Mix de Apostas',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Melhores props do dia — todos os esportes',
+                              style: TextStyle(
+                                  color: Color(0xFFCCCCEE), fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.chevron_right,
+                          color: Color(0xFFFFD600), size: 28),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
               _SportCard(
                 emoji: '🎾',
                 title: 'Tênis',
@@ -79,6 +133,28 @@ class SportSelectorScreen extends StatelessWidget {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const BaseballScreen()),
+                ),
+              ),
+              const SizedBox(height: 16),
+              _SportCard(
+                emoji: '🏒',
+                title: 'Hockey NHL',
+                subtitle: 'NHL · Props por jogador',
+                color: const Color(0xFF00B0FF),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HockeyScreen()),
+                ),
+              ),
+              const SizedBox(height: 16),
+              _SportCard(
+                emoji: '🏈',
+                title: 'Futebol Americano NFL',
+                subtitle: 'NFL · Props por jogador',
+                color: const Color(0xFFFF6D00),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const FootballScreen()),
                 ),
               ),
               const SizedBox(height: 32),

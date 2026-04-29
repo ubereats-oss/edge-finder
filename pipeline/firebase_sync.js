@@ -22,6 +22,9 @@ const SYNC_MAP = [
   { file: 'nba_props_br_results.json', col: 'results', doc: 'nba_props_br' },
   { file: 'mlb_results.json',          col: 'results', doc: 'mlb_h2h' },
   { file: 'mlb_props_results.json',    col: 'results', doc: 'mlb_props' },
+  { file: 'nhl_props_results.json',    col: 'results', doc: 'nhl_props' },
+  { file: 'nfl_props_results.json',    col: 'results', doc: 'nfl_props' },
+  { file: 'tennis_props_results.json', col: 'results', doc: 'tennis_props' },
 ];
 
 async function syncAll() {
@@ -130,6 +133,29 @@ async function main() {
   if (syncType === 'all' || syncType === 'results') await syncAll();
   if (syncType === 'all' || syncType === 'bets') await syncBets();
   if (syncType === 'all' || syncType === 'history') await syncOddsHistory();
+
+  if (['nhl', 'nfl', 'tennis_props'].includes(syncType)) {
+    const fileMap = {
+      nhl:          { file: 'nhl_props_results.json',    col: 'results', doc: 'nhl_props' },
+      nfl:          { file: 'nfl_props_results.json',    col: 'results', doc: 'nfl_props' },
+      tennis_props: { file: 'tennis_props_results.json', col: 'results', doc: 'tennis_props' },
+    };
+    const entry = fileMap[syncType];
+    const filePath = path.join(ROOT, entry.file);
+    if (fs.existsSync(filePath)) {
+      const raw = JSON.parse(fs.readFileSync(filePath));
+      const data = Array.isArray(raw) ? raw : (raw.data || []);
+      const stat = fs.statSync(filePath);
+      await db.collection(entry.col).doc(entry.doc).set({
+        data,
+        lastUpdated: stat.mtime.toISOString(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      console.log(`  ✅ ${entry.file} → ${entry.col}/${entry.doc} (${data.length} itens)`);
+    } else {
+      console.log(`  Pulando ${entry.file} — não encontrado`);
+    }
+  }
 
   console.log('\nSincronização concluída.');
   process.exit(0);
