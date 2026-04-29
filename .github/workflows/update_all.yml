@@ -1,0 +1,398 @@
+name: Atualizar Todos os Esportes
+
+on:
+  schedule:
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+    inputs:
+      sports:
+        description: 'Esporte(s) a atualizar'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - nba
+          - mlb
+          - nhl
+          - nfl
+          - tennis
+
+permissions:
+  contents: write
+
+jobs:
+
+  # ── NBA ───────────────────────────────────────────────────────────────────
+  nba:
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event.inputs.sports == 'all' ||
+      github.event.inputs.sports == 'nba'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - run: npm install axios
+
+      - name: Injetar chaves
+        run: |
+          node -e "
+          const keys = process.env.ODDS_API_KEYS.split(',');
+          const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
+          require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
+          console.log('Chaves injetadas:',keys.length);
+          "
+        env:
+          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+
+      - name: Restaurar stats NBA
+        run: |
+          git fetch origin data 2>/dev/null || true
+          git show origin/data:nba_player_stats.json.gz > /tmp/nba_ps.gz 2>/dev/null && \
+            gunzip -c /tmp/nba_ps.gz > nba_player_stats.json || true
+          for f in nba_player_team.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json; do
+            git show origin/data:$f > $f 2>/dev/null || true
+          done
+          git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
+
+      - run: node pipeline/get_nba_injuries.js
+      - run: node pipeline/get_nba_player_teams.js
+      - run: node pipeline/get_nba_props_br.js
+      - run: node pipeline/model_nba_props_br.js
+      - run: node pipeline/get_nba_odds.js
+      - run: node pipeline/model_nba.js
+
+      - name: Empacotar artefatos NBA
+        run: |
+          mkdir -p /tmp/nba-out
+          gzip -c nba_player_stats.json > /tmp/nba-out/nba_player_stats.json.gz 2>/dev/null || true
+          for f in nba_props_br_results.json nba_results.json nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json bets.json; do
+            [ -f "$f" ] && cp "$f" /tmp/nba-out/ || true
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-out
+          path: /tmp/nba-out/
+          if-no-files-found: warn
+
+  # ── MLB ───────────────────────────────────────────────────────────────────
+  mlb:
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event.inputs.sports == 'all' ||
+      github.event.inputs.sports == 'mlb'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - run: npm install axios
+
+      - name: Injetar chaves
+        run: |
+          node -e "
+          const keys = process.env.ODDS_API_KEYS.split(',');
+          const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
+          require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
+          "
+        env:
+          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+
+      - name: Restaurar stats MLB
+        run: |
+          git fetch origin data 2>/dev/null || true
+          git show origin/data:mlb_player_stats.json.gz > /tmp/mlb_ps.gz 2>/dev/null && \
+            gunzip -c /tmp/mlb_ps.gz > mlb_player_stats.json || true
+          for f in mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
+            git show origin/data:$f > $f 2>/dev/null || true
+          done
+
+      - run: node pipeline/get_mlb_injuries.js
+      - run: node pipeline/get_mlb_player_teams.js
+      - run: node pipeline/get_mlb_odds.js
+      - run: node pipeline/model_mlb.js
+      - run: node pipeline/get_mlb_props.js
+      - run: node pipeline/model_mlb_props.js
+
+      - name: Empacotar artefatos MLB
+        run: |
+          mkdir -p /tmp/mlb-out
+          gzip -c mlb_player_stats.json > /tmp/mlb-out/mlb_player_stats.json.gz 2>/dev/null || true
+          for f in mlb_props_results.json mlb_results.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
+            [ -f "$f" ] && cp "$f" /tmp/mlb-out/ || true
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mlb-out
+          path: /tmp/mlb-out/
+          if-no-files-found: warn
+
+  # ── NHL ───────────────────────────────────────────────────────────────────
+  nhl:
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event.inputs.sports == 'all' ||
+      github.event.inputs.sports == 'nhl'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - run: npm install axios
+
+      - name: Injetar chaves
+        run: |
+          node -e "
+          const keys = process.env.ODDS_API_KEYS.split(',');
+          const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
+          require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
+          "
+        env:
+          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+
+      - name: Restaurar stats NHL
+        run: |
+          git fetch origin data 2>/dev/null || true
+          git show origin/data:nhl_player_stats.json.gz > /tmp/nhl_ps.gz 2>/dev/null && \
+            gunzip -c /tmp/nhl_ps.gz > nhl_player_stats.json || true
+          git show origin/data:nhl_player_team.json > nhl_player_team.json 2>/dev/null || true
+
+      - run: node pipeline/get_nhl_player_teams.js
+      - run: node pipeline/get_nhl_player_stats.js
+      - run: node pipeline/get_nhl_props.js
+      - run: node pipeline/model_nhl_props.js
+
+      - name: Empacotar artefatos NHL
+        run: |
+          mkdir -p /tmp/nhl-out
+          gzip -c nhl_player_stats.json > /tmp/nhl-out/nhl_player_stats.json.gz 2>/dev/null || true
+          for f in nhl_props_results.json nhl_player_team.json; do
+            [ -f "$f" ] && cp "$f" /tmp/nhl-out/ || true
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nhl-out
+          path: /tmp/nhl-out/
+          if-no-files-found: warn
+
+  # ── NFL ───────────────────────────────────────────────────────────────────
+  nfl:
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event.inputs.sports == 'all' ||
+      github.event.inputs.sports == 'nfl'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - run: npm install axios
+
+      - name: Injetar chaves
+        run: |
+          node -e "
+          const keys = process.env.ODDS_API_KEYS.split(',');
+          const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
+          require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
+          "
+        env:
+          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+
+      - name: Restaurar stats NFL
+        run: |
+          git fetch origin data 2>/dev/null || true
+          git show origin/data:nfl_player_stats.json.gz > /tmp/nfl_ps.gz 2>/dev/null && \
+            gunzip -c /tmp/nfl_ps.gz > nfl_player_stats.json || true
+          git show origin/data:nfl_player_team.json > nfl_player_team.json 2>/dev/null || true
+
+      - run: node pipeline/get_nfl_player_teams.js
+      - run: node pipeline/get_nfl_player_stats.js
+      - run: node pipeline/get_nfl_props.js
+      - run: node pipeline/model_nfl_props.js
+
+      - name: Empacotar artefatos NFL
+        run: |
+          mkdir -p /tmp/nfl-out
+          gzip -c nfl_player_stats.json > /tmp/nfl-out/nfl_player_stats.json.gz 2>/dev/null || true
+          for f in nfl_props_results.json nfl_player_team.json; do
+            [ -f "$f" ] && cp "$f" /tmp/nfl-out/ || true
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-out
+          path: /tmp/nfl-out/
+          if-no-files-found: warn
+
+  # ── TÊNIS ─────────────────────────────────────────────────────────────────
+  tennis:
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event.inputs.sports == 'all' ||
+      github.event.inputs.sports == 'tennis'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - run: npm install axios
+
+      - name: Injetar chaves
+        run: |
+          node -e "
+          const keys = process.env.ODDS_API_KEYS.split(',');
+          const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
+          require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
+          "
+        env:
+          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+
+      - name: Restaurar stats Tênis
+        run: |
+          git fetch origin data 2>/dev/null || true
+          git show origin/data:tennis_player_stats.json > tennis_player_stats.json 2>/dev/null || true
+
+      - run: node pipeline/get_odds.js
+      - run: node pipeline/model_prob.js
+      - run: node pipeline/get_tennis_player_stats.js
+      - run: node pipeline/get_tennis_props.js
+      - run: node pipeline/model_tennis_props.js
+
+      - name: Empacotar artefatos Tênis
+        run: |
+          mkdir -p /tmp/tennis-out
+          for f in model_results.json tennis_props_results.json tennis_player_stats.json; do
+            [ -f "$f" ] && cp "$f" /tmp/tennis-out/ || true
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tennis-out
+          path: /tmp/tennis-out/
+          if-no-files-found: warn
+
+  # ── SALVAR DADOS (após todos os jobs) ─────────────────────────────────────
+  save-data:
+    needs: [nba, mlb, nhl, nfl, tennis]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - run: npm install firebase-admin
+
+      - name: Baixar artefatos NBA
+        uses: actions/download-artifact@v4
+        with:
+          name: nba-out
+          path: /tmp/nba-out/
+        continue-on-error: true
+
+      - name: Baixar artefatos MLB
+        uses: actions/download-artifact@v4
+        with:
+          name: mlb-out
+          path: /tmp/mlb-out/
+        continue-on-error: true
+
+      - name: Baixar artefatos NHL
+        uses: actions/download-artifact@v4
+        with:
+          name: nhl-out
+          path: /tmp/nhl-out/
+        continue-on-error: true
+
+      - name: Baixar artefatos NFL
+        uses: actions/download-artifact@v4
+        with:
+          name: nfl-out
+          path: /tmp/nfl-out/
+        continue-on-error: true
+
+      - name: Baixar artefatos Tênis
+        uses: actions/download-artifact@v4
+        with:
+          name: tennis-out
+          path: /tmp/tennis-out/
+        continue-on-error: true
+
+      - name: Copiar artefatos para diretório de trabalho
+        run: |
+          for dir in /tmp/nba-out /tmp/mlb-out /tmp/nhl-out /tmp/nfl-out /tmp/tennis-out; do
+            [ -d "$dir" ] && cp "$dir"/* . 2>/dev/null || true
+          done
+          git fetch origin data 2>/dev/null || true
+          git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
+
+      - name: Sincronizar resultados com Firestore
+        run: node pipeline/firebase_sync.js results
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Sincronizar apostas com Firestore
+        run: node pipeline/firebase_sync.js bets
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Salvar dados na branch data
+        run: |
+          # Backup para /tmp antes de limpar o working tree
+          mkdir -p /tmp/data-save
+          for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json nhl_player_team.json nfl_player_team.json tennis_player_stats.json bets.json; do
+            [ -f "$f" ] && cp "$f" /tmp/data-save/ || true
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan data-all-tmp
+          git rm -rf . --quiet
+          printf 'node_modules/\n' > .gitignore
+          cp /tmp/data-save/* . 2>/dev/null || true
+          git add .gitignore || true
+          for f in *.gz; do [ -f "$f" ] && git add "$f" || true; done
+          for f in nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json nhl_player_team.json nfl_player_team.json tennis_player_stats.json bets.json; do
+            [ -f "$f" ] && git add "$f" || true
+          done
+          git diff --staged --quiet && echo "Sem mudanças na branch data" || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push origin HEAD:data --force
