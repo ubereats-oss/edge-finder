@@ -87,6 +87,9 @@ jobs:
             git show origin/data:$f > $f 2>/dev/null || true
           done
           printf 'node_modules/\n' > .gitignore
-          git add .gitignore *.gz nfl_player_team.json nba_player_team.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json nhl_player_team.json bets.json
+          git add .gitignore || true
+          for f in *.gz nfl_player_team.json nba_player_team.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json nhl_player_team.json bets.json; do
+            [ -f "$f" ] && git add "$f" || true
+          done
           git diff --staged --quiet && echo "Sem mudanças" || git commit -m "nfl: $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push origin HEAD:data --force
