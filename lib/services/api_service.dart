@@ -121,53 +121,81 @@ class ApiService {
       _fetchFirestore('results', 'mlb_h2h');
   static Future<FetchResult> fetchMlbProps() =>
       _fetchFirestore('results', 'mlb_props');
+  static Future<FetchResult> fetchNhlProps() =>
+      _fetchFirestore('results', 'nhl_props');
+  static Future<FetchResult> fetchNflProps() =>
+      _fetchFirestore('results', 'nfl_props');
+  static Future<FetchResult> fetchTennisProps() =>
+      _fetchFirestore('results', 'tennis_props');
+
+  static Future<FetchResult> _safeFetch(Future<FetchResult> f) async {
+    try {
+      return await f;
+    } catch (_) {
+      return const FetchResult(data: []);
+    }
+  }
+
+  static Future<FetchResult> fetchAllProps() async {
+    const sportLabels = ['NBA 🏀', 'MLB ⚾', 'NHL 🏒', 'NFL 🏈', 'Tênis 🎾'];
+    final results = await Future.wait([
+      _safeFetch(fetchNbaBrProps()),
+      _safeFetch(fetchMlbProps()),
+      _safeFetch(fetchNhlProps()),
+      _safeFetch(fetchNflProps()),
+      _safeFetch(fetchTennisProps()),
+    ]);
+
+    final allData = <Map<String, dynamic>>[];
+    DateTime? lastUpdated;
+
+    for (int i = 0; i < results.length; i++) {
+      final r = results[i];
+      for (final item in r.data) {
+        allData.add({...item, 'sport': sportLabels[i]});
+      }
+      final lu = r.lastUpdated;
+      if (lu != null) {
+        if (lastUpdated == null || lu.isAfter(lastUpdated)) lastUpdated = lu;
+      }
+    }
+    return FetchResult(data: allData, lastUpdated: lastUpdated);
+  }
 
   // ── Apostas (Firestore autenticado) ───────────────────────────────────────
   static Future<List<Map<String, dynamic>>> fetchBets() async {
     final token = await _authToken();
-    final uid = _uid;
-    // Firestore REST: query por uid
-    final url =
-        'https://firestore.googleapis.com/v1/projects/$_projectId/databases/(default)/documents:runQuery';
-    final res = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode({
-        'structuredQuery': {
-          'from': [
-            {'collectionId': 'bets'}
-          ],
-          'where': {
-            'fieldFilter': {
-              'field': {'fieldPath': 'uid'},
-              'op': 'EQUAL',
-              'value': {'stringValue': uid},
-            }
-          },
-          'orderBy': [
-            {
-              'field': {'fieldPath': 'createdAt'},
-              'direction': 'ASCENDING',
-            }
-          ],
-        }
-      }),
-    );
-    if (res.statusCode != 200) {
-      throw Exception('Erro ao buscar apostas: ${res.statusCode}');
-    }
-    final list = jsonDecode(res.body) as List;
-    return list
-        .where((e) => e['document'] != null)
-        .map((e) {
-          final fields =
-              e['document']['fields'] as Map<String, dynamic>? ?? {};
-          return _firestoreToMap(fields);
-        })
-        .toList();
+    final allDocs = <dynamic>[];
+    String? pageToken;
+    do {
+      final query =
+          pageToken != null ? '?pageToken=${Uri.encodeComponent(pageToken)}' : '';
+      final res = await http.get(
+        Uri.parse('$_firestoreBase/bets$query'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      if (res.statusCode != 200) {
+        throw Exception('Erro ao buscar apostas: ${res.statusCode}');
+      }
+      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      allDocs.addAll(body['documents'] as List? ?? []);
+      pageToken = body['nextPageToken'] as String?;
+    } while (pageToken != null);
+    final bets = allDocs.map((doc) {
+      final fields = doc['fields'] as Map<String, dynamic>? ?? {};
+      final bet = _firestoreToMap(fields);
+      if (bet['id'] == null || bet['id'] is! String) {
+        final docName = doc['name'] as String;
+        bet['id'] = docName.split('/').last;
+      }
+      return bet;
+    }).toList();
+    bets.sort((a, b) {
+      final ca = (a['createdAt'] ?? '').toString();
+      final cb = (b['createdAt'] ?? '').toString();
+      return ca.compareTo(cb);
+    });
+    return bets;
   }
 
   static Future<Map<String, dynamic>> createBet(
@@ -284,7 +312,8 @@ class ApiService {
     final dtPrev = dt.subtract(const Duration(days: 1));
     final dateStrPrev =
         '${dtPrev.year}${dtPrev.month.toString().padLeft(2, '0')}${dtPrev.day.toString().padLeft(2, '0')}';
-    const sport = 'basketball/nba';
+    final prop = bet['prop'] as String? ?? '';
+    final sport = prop == 'hitsAllowed' ? 'baseball/mlb' : 'basketball/nba';
     final sbRes = await http.get(Uri.parse(
         'https://site.api.espn.com/apis/site/v2/sports/$sport/scoreboard?dates=$dateStr'));
     if (sbRes.statusCode != 200) {
@@ -329,8 +358,13 @@ class ApiService {
         throw Exception('Resultado indisponível');
       }
       final loser = competitors.firstWhere((c) => c['winner'] != true);
+      final teamStr = (bet['team'] as String? ?? '').trim();
+      if (teamStr.isEmpty) {
+        throw Exception(
+            'Time não informado nesta aposta. Edite a aposta e informe o time para poder resolver.');
+      }
       final won = (winner['team']['displayName'] as String)
-          .contains((bet['team'] as String? ?? '').split(' ').last);
+          .contains(teamStr.split(' ').last);
       final profit = won
           ? double.parse((((bet['odds'] as num).toDouble() - 1) *
                   (bet['stake'] as num).toDouble())
@@ -344,21 +378,26 @@ class ApiService {
       };
     }
     final sumUrl =
-        'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${event['id']}';
+        'https://site.api.espn.com/apis/site/v2/sports/$sport/summary?event=${event['id']}';
     final sumRes = await http.get(Uri.parse(sumUrl));
     if (sumRes.statusCode != 200) {
       throw Exception('Erro ao buscar box score ESPN');
     }
     final sum = jsonDecode(sumRes.body) as Map<String, dynamic>;
-    const statMap = {
+    const nbaStatMap = {
       'points': 'points',
       'rebounds': 'rebounds',
       'assists': 'assists',
       'steals': 'steals',
       'threes': 'threePointFieldGoalsMade-threePointFieldGoalsAttempted',
     };
-    final statKey =
-        statMap[bet['prop'] as String? ?? ''] ?? (bet['prop'] as String? ?? '');
+    // Para MLB: 'hits' no grupo de pitching (identificado por 'inningsPitched')
+    const mlbStatMap = {
+      'hitsAllowed': 'hits',
+    };
+    final isMlb = sport == 'baseball/mlb';
+    final statMap = isMlb ? mlbStatMap : nbaStatMap;
+    final statKey = statMap[prop] ?? prop;
     final playerLastName =
         (bet['player'] as String? ?? '').split(' ').last.toLowerCase();
     double? realValue;
@@ -366,6 +405,8 @@ class ApiService {
     for (final team in players) {
       for (final group in (team['statistics'] as List? ?? [])) {
         final keys = (group['keys'] as List?)?.cast<String>() ?? [];
+        // Para MLB, restringe ao grupo de pitching (contém 'inningsPitched')
+        if (isMlb && !keys.contains('inningsPitched')) continue;
         final colIdx = keys.indexOf(statKey);
         if (colIdx == -1) continue;
         for (final athlete in (group['athletes'] as List? ?? [])) {
@@ -547,6 +588,40 @@ class ApiService {
     };
   }
 
+  // ── Migração: adiciona uid a apostas antigas ──────────────────────────────
+  static Future<int> migrateOldBets() async {
+    final token = await _authToken();
+    final uid = _uid;
+    final res = await http.get(
+      Uri.parse('$_firestoreBase/bets'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception('Erro na migração: ${res.statusCode}');
+    }
+    final body = jsonDecode(res.body) as Map<String, dynamic>;
+    final documents = body['documents'] as List? ?? [];
+    int count = 0;
+    for (final doc in documents) {
+      final fields = doc['fields'] as Map<String, dynamic>? ?? {};
+      if (!fields.containsKey('uid')) {
+        final betId = (doc['name'] as String).split('/').last;
+        await http.patch(
+          Uri.parse('$_firestoreBase/bets/$betId'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            'fields': {...fields, 'uid': {'stringValue': uid}},
+          }),
+        );
+        count++;
+      }
+    }
+    return count;
+  }
+
   // ── Acionar workflow GitHub Actions ────────────────────────────────────────
   static Future<void> triggerUpdate(String sport) async {
     final token =
@@ -660,6 +735,9 @@ class ApiService {
       'mlb/run-model': 'mlb',
       'mlb/update-props': 'mlb',
       'mlb/run-props-model': 'mlb',
+      'nhl/update-props': 'nhl',
+      'nfl/update-props': 'nfl',
+      'tennis/update-props': 'tennis_props',
     };
     final sport = sportMap[path] ?? 'all';
     await triggerUpdate(sport);

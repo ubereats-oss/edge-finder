@@ -14,6 +14,9 @@ on:
           - nba
           - mlb
           - tennis
+          - nhl
+          - nfl
+          - tennis_props
           - all
 
 permissions:
@@ -137,6 +140,49 @@ jobs:
       - name: Rodar modelo Tênis
         if: ${{ github.event.inputs.sport == 'tennis' }}
         run: node pipeline/model_prob.js
+
+      - name: Restaurar stats NHL/NFL
+        if: ${{ github.event.inputs.sport == 'nhl' || github.event.inputs.sport == 'nfl' || github.event.inputs.sport == 'all' }}
+        run: |
+          git show origin/data:nhl_player_stats.json.gz > /tmp/nhl_player_stats.json.gz 2>/dev/null && gunzip -c /tmp/nhl_player_stats.json.gz > nhl_player_stats.json || true
+          git show origin/data:nfl_player_stats.json.gz > /tmp/nfl_player_stats.json.gz 2>/dev/null && gunzip -c /tmp/nfl_player_stats.json.gz > nfl_player_stats.json || true
+          for f in nhl_player_team.json nfl_player_team.json; do git show origin/data:$f > $f 2>/dev/null || true; done
+
+      - name: Atualizar times NHL
+        if: ${{ github.event.inputs.sport == 'nhl' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/get_nhl_player_teams.js
+
+      - name: Buscar props NHL
+        if: ${{ github.event.inputs.sport == 'nhl' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/get_nhl_props.js
+
+      - name: Rodar modelo NHL
+        if: ${{ github.event.inputs.sport == 'nhl' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/model_nhl_props.js
+
+      - name: Atualizar times NFL
+        if: ${{ github.event.inputs.sport == 'nfl' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/get_nfl_player_teams.js
+
+      - name: Buscar props NFL
+        if: ${{ github.event.inputs.sport == 'nfl' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/get_nfl_props.js
+
+      - name: Rodar modelo NFL
+        if: ${{ github.event.inputs.sport == 'nfl' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/model_nfl_props.js
+
+      - name: Buscar props Tênis (player)
+        if: ${{ github.event.inputs.sport == 'tennis_props' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/get_tennis_player_stats.js
+
+      - name: Buscar odds props Tênis
+        if: ${{ github.event.inputs.sport == 'tennis_props' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/get_tennis_props.js
+
+      - name: Rodar modelo Tênis Props
+        if: ${{ github.event.inputs.sport == 'tennis_props' || github.event.inputs.sport == 'all' }}
+        run: node pipeline/model_tennis_props.js
 
       - name: Sincronizar resultados com Firestore
         run: node pipeline/firebase_sync.js results

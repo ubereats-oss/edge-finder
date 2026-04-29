@@ -4,7 +4,8 @@ import '../screens/player_detail_screen.dart';
 
 class PropCard extends StatefulWidget {
   final Map<String, dynamic> prop;
-  const PropCard({super.key, required this.prop});
+  final String? sportBadge;
+  const PropCard({super.key, required this.prop, this.sportBadge});
 
   @override
   State<PropCard> createState() => _PropCardState();
@@ -37,6 +38,21 @@ class _PropCardState extends State<PropCard> {
       'steals': 'Roubos',
       'threes': 'Cestas de 3',
       'fouls': 'Faltas',
+      'hits': 'Hits',
+      'homeRuns': 'Home Runs',
+      'strikeouts': 'Strikeouts',
+      'hitsAllowed': 'Hits Permitidos',
+      'goals': 'Gols',
+      'shots': 'Chutes a Gol',
+      'blocked': 'Bloqueios',
+      'passYards': 'Jardas Passe',
+      'passTDs': 'TDs Passe',
+      'rushYards': 'Jardas Corridas',
+      'receptions': 'Recepções',
+      'receptionYards': 'Jardas Recebidas',
+      'fantasyPoints': 'Fantasy Pts',
+      'sets': 'Sets',
+      'games': 'Games',
     };
     return labels[prop] ?? prop;
   }
@@ -49,8 +65,32 @@ class _PropCardState extends State<PropCard> {
       'steals': Color(0xFFFF6D00),
       'threes': Color(0xFFE040FB),
       'fouls': Color(0xFFFF1744),
+      'hits': Color(0xFF00C853),
+      'homeRuns': Color(0xFFFF6D00),
+      'strikeouts': Color(0xFF7C4DFF),
+      'hitsAllowed': Color(0xFFFF1744),
+      'goals': Color(0xFF00B0FF),
+      'shots': Color(0xFF00E5FF),
+      'blocked': Color(0xFFAAAAAA),
+      'passYards': Color(0xFFFFD600),
+      'passTDs': Color(0xFFFF6D00),
+      'rushYards': Color(0xFF00C853),
+      'receptions': Color(0xFF00B0FF),
+      'receptionYards': Color(0xFF00E5FF),
+      'fantasyPoints': Color(0xFF7C4DFF),
+      'sets': Color(0xFFFFD600),
+      'games': Color(0xFF00C853),
     };
     return colors[prop] ?? const Color(0xFFAAAAAA);
+  }
+
+  Color _sportBadgeColor(String sport) {
+    if (sport.contains('NBA')) return const Color(0xFF7C4DFF);
+    if (sport.contains('MLB')) return const Color(0xFF00C853);
+    if (sport.contains('NHL')) return const Color(0xFF00B0FF);
+    if (sport.contains('NFL')) return const Color(0xFFFF6D00);
+    if (sport.contains('Tênis')) return const Color(0xFFFFD600);
+    return const Color(0xFFAAAAAA);
   }
 
   String _formatCommenceTime(String? raw) {
@@ -84,6 +124,7 @@ class _PropCardState extends State<PropCard> {
     final kelly = (widget.prop['kelly'] as num?)?.toDouble() ?? 0;
     final lowSample = widget.prop['lowSample'] == true;
     final inefficientMarket = widget.prop['inefficientMarket'] == true;
+    final lowMarginRatio = widget.prop['lowMarginRatio'] == true;
     final contextGames = widget.prop['contextGames'] as int? ?? 0;
     final valorKelly = _banca > 0 ? _banca * kelly / 100 : 0.0;
     final commenceTime =
@@ -161,6 +202,26 @@ class _PropCardState extends State<PropCard> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
+                      if (widget.sportBadge != null) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: _sportBadgeColor(widget.sportBadge!).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: _sportBadgeColor(widget.sportBadge!).withValues(alpha: 0.6)),
+                          ),
+                          child: Text(
+                            widget.sportBadge!,
+                            style: TextStyle(
+                                color: _sportBadgeColor(widget.sportBadge!),
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                      ],
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 6),
@@ -216,6 +277,26 @@ class _PropCardState extends State<PropCard> {
                             '⚠️ Poucos jogos ($contextGames)',
                             style: const TextStyle(
                                 color: Color(0xFFFF6D00), fontSize: 10),
+                          ),
+                        ),
+                      ],
+                      if (lowMarginRatio) ...[
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFFFF4081).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: const Color(0xFFFF4081)
+                                    .withValues(alpha: 0.5)),
+                          ),
+                          child: const Text(
+                            '📐 MARGIN RATIO BAIXA',
+                            style: TextStyle(
+                                color: Color(0xFFFF4081), fontSize: 10),
                           ),
                         ),
                       ],
