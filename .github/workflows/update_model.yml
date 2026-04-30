@@ -158,7 +158,12 @@ jobs:
 
       - name: Rodar modelo NHL
         if: ${{ github.event.inputs.sport == 'nhl' || github.event.inputs.sport == 'all' }}
-        run: node pipeline/model_nhl_props.js
+        run: |
+          if not exist nhl_player_stats.json (
+            echo nhl_player_stats.json ausente. Pulando modelo NHL.
+            exit /b 0
+          )
+          node pipeline/model_nhl_props.js
 
       - name: Atualizar times NFL
         if: ${{ github.event.inputs.sport == 'nfl' || github.event.inputs.sport == 'all' }}
