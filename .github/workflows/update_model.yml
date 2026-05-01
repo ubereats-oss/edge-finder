@@ -7,7 +7,7 @@ on:
       sport:
         description: 'Esporte a atualizar'
         required: true
-        default: 'nba_br'
+        default: 'all'
         type: choice
         options:
           - nba_br
