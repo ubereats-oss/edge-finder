@@ -203,6 +203,8 @@ jobs:
         run: |
           gzip -c nba_player_stats.json > /tmp/nba_player_stats.json.gz 2>/dev/null || true
           gzip -c mlb_player_stats.json > /tmp/mlb_player_stats.json.gz 2>/dev/null || true
+          gzip -c nhl_player_stats.json > /tmp/nhl_player_stats.json.gz 2>/dev/null || true
+          gzip -c nfl_player_stats.json > /tmp/nfl_player_stats.json.gz 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin data 2>/dev/null || true
@@ -210,7 +212,9 @@ jobs:
           git rm -rf . --quiet
           cp /tmp/nba_player_stats.json.gz . 2>/dev/null || true
           cp /tmp/mlb_player_stats.json.gz . 2>/dev/null || true
-          rm -f nba_player_stats.json mlb_player_stats.json
+          cp /tmp/nhl_player_stats.json.gz . 2>/dev/null || true
+          cp /tmp/nfl_player_stats.json.gz . 2>/dev/null || true
+          rm -f nba_player_stats.json mlb_player_stats.json nhl_player_stats.json nfl_player_stats.json
           for f in nba_player_team.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json bets.json; do
             cp $f . 2>/dev/null || true
           done
