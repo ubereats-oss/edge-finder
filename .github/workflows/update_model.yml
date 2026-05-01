@@ -158,7 +158,7 @@ jobs:
 
       - name: Rodar modelo NHL
         if: ${{ github.event.inputs.sport == 'nhl' || github.event.inputs.sport == 'all' }}
-       run: |
+        run: |
         if [ ! -f "nhl_player_stats.json" ]; then
           echo "nhl_player_stats.json ausente. Pulando modelo NHL."
           exit 0
