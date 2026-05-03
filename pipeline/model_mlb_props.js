@@ -292,6 +292,8 @@ for (const prop of props) {
     inefficientMarket,
     absentFilter: stats.usedAbsentFilter,
     absentToday: absentToday.length > 0 ? absentToday : undefined,
+    pinnacleId: prop.pinnacleId ?? null,
+    pinnacleSlug: prop.pinnacleSlug ?? null,
   });
 }
 

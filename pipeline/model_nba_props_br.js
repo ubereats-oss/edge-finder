@@ -369,6 +369,8 @@ for (const prop of props) {
     absentToday: absentToday.length > 0 ? classifyAbsents(absentToday, prop.player) : undefined,
     playerPosition: playerPositions[prop.player]?.position ?? null,
     formWarning: avg5 !== null && (bestSide === 'Over' ? avg5 < prop.line : avg5 > prop.line),
+    pinnacleId: prop.pinnacleId ?? null,
+    pinnacleSlug: prop.pinnacleSlug ?? null,
   });
 }
 

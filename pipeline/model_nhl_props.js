@@ -224,6 +224,8 @@ for (const prop of props) {
     contextGames: stats.contextGames,
     lowSample: stats.lowSample,
     inefficientMarket,
+    pinnacleId: prop.pinnacleId ?? null,
+    pinnacleSlug: prop.pinnacleSlug ?? null,
   });
 }
 
