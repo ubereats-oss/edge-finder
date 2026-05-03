@@ -13,6 +13,12 @@ const BATTER_KEYS  = ['hits', 'homeRuns'];
 const PITCHER_KEYS = ['strikeouts', 'hitsAllowed'];
 const ALL_STAT_KEYS = [...BATTER_KEYS, ...PITCHER_KEYS];
 
+// Aliases para campos que podem ter nomes alternativos no JSON
+// (ex: strikeouts salvo como 'k' ou 'so' em versões antigas do pipeline)
+const STAT_FIELD_ALIASES = {
+  strikeouts: ['strikeouts', 'k', 'so', 'strikeoutsThrown'],
+};
+
 // Temporadas: base = 2023+2024, walk-forward = 2025+2026
 const BASE_SEASONS = [2023, 2024];
 const WALK_SEASONS = [2025, 2026];
@@ -145,6 +151,8 @@ function calibrateWithTable(p, table) {
 // Retorna array de { playerName, stat, season, location, value, date, opponent, blowout, isExtraInnings, absentStarters }
 function extractEntries(playerStats) {
   const entries = [];
+  const soNonZero = new Set();
+
   for (const [playerName, playerData] of Object.entries(playerStats)) {
     for (const [seasonStr, seasonData] of Object.entries(playerData)) {
       const season = parseInt(seasonStr);
@@ -153,8 +161,15 @@ function extractEntries(playerStats) {
           const ctx = seasonData[gameType]?.[loc];
           if (!ctx) continue;
           for (const stat of ALL_STAT_KEYS) {
-            for (const entry of ctx[stat] || []) {
+            // Normaliza nome do campo: tenta aliases em ordem de prioridade
+            const aliases = STAT_FIELD_ALIASES[stat] || [stat];
+            const arr = aliases.reduce((found, alias) => found || ctx[alias], null) || [];
+
+            for (const entry of arr) {
               if (typeof entry !== 'object' || entry === null) continue;
+              if (stat === 'strikeouts' && entry.value > 0 && BASE_SEASONS.includes(season)) {
+                soNonZero.add(playerName);
+              }
               entries.push({
                 playerName,
                 stat,
@@ -173,6 +188,13 @@ function extractEntries(playerStats) {
       }
     }
   }
+
+  if (soNonZero.size === 0) {
+    console.warn('[AVISO] strikeouts: nenhum pitcher com valor > 0 nas temporadas base — label ESPN provavelmente "K", não "SO". Verifique get_mlb_player_stats.js.');
+  } else {
+    console.log(`[INFO] strikeouts base: ${soNonZero.size} pitchers com >= 1 jogo com K > 0`);
+  }
+
   return entries.sort((a, b) => a.date.localeCompare(b.date));
 }
 

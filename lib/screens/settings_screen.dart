@@ -10,8 +10,11 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final _controller = TextEditingController();
+  final _geminiController = TextEditingController();
   double _banca = 0;
   bool _saved = false;
+  bool _geminiSaved = false;
+  bool _geminiObscure = true;
 
   @override
   void initState() {
@@ -21,9 +24,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _load() {
     final value = PrefsService.getBanca();
+    final geminiKey = PrefsService.getGeminiKey();
     setState(() {
       _banca = value;
       _controller.text = value > 0 ? value.toStringAsFixed(2) : '';
+      _geminiController.text = geminiKey;
     });
   }
 
@@ -47,9 +52,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  void _saveGeminiKey() {
+    PrefsService.setGeminiKey(_geminiController.text.trim());
+    setState(() => _geminiSaved = true);
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _geminiSaved = false);
+    });
+  }
+
   @override
   void dispose() {
     _controller.dispose();
+    _geminiController.dispose();
     super.dispose();
   }
 
@@ -128,6 +142,80 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ),
+            // ── Gemini AI Key ─────────────────────────────────────────────
+            const SizedBox(height: 40),
+            const Text(
+              'GEMINI AI',
+              style: TextStyle(
+                  color: Color(0xFFAAAAAA),
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Chave gratuita em aistudio.google.com › Get API key',
+              style: TextStyle(color: Color(0xFF666666), fontSize: 12),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E1E2E),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF333355)),
+              ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _geminiController,
+                      obscureText: _geminiObscure,
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 14),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'AIzaSy...',
+                        hintStyle: TextStyle(color: Color(0xFF444455)),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      _geminiObscure
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: const Color(0xFF555577),
+                      size: 20,
+                    ),
+                    onPressed: () =>
+                        setState(() => _geminiObscure = !_geminiObscure),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _saveGeminiKey,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF7C4DFF),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(
+                  _geminiSaved ? '✓ Salvo' : 'Salvar chave Gemini',
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+            ),
+
             if (_banca > 0) ...[
               const SizedBox(height: 32),
               const Text(

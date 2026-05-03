@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import '../services/edge_evaluator_service.dart';
 import '../widgets/match_card.dart';
 import '../widgets/prop_card.dart';
 import '../widgets/props_filter_bar.dart';
 import '../widgets/last_updated_bar.dart';
 import '../widgets/status_bar.dart';
+import '../widgets/edge_evaluation_sheet.dart';
 
 class BasketballBrScreen extends StatefulWidget {
   const BasketballBrScreen({super.key});
@@ -24,6 +26,7 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
   String _status = '';
   double _minEdge = 0;
   String? _selectedProp;
+  String? _selectedTeam;
   bool _hideWarnings = false;
 
   static const _min15 = Duration(minutes: 15);
@@ -58,9 +61,11 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
     try {
       final h2h = await ApiService.fetchNbaResults();
       final props = await ApiService.fetchNbaBrProps();
+      final enriched = await EdgeEvaluatorService.enrichWithContext(props.data, 'nba');
+      final filtered = EdgeEvaluatorService.adaptiveFilter(enriched);
       setState(() {
         _h2hResults = h2h.data;
-        _propsResults = props.data;
+        _propsResults = filtered;
         _h2hUpdated = h2h.lastUpdated;
         _propsUpdated = props.lastUpdated;
       });
@@ -128,6 +133,21 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
     );
   }
 
+  void _showEvaluation() {
+    final valid = _propsResults.where(_jogoValido).toList();
+    if (valid.isEmpty) {
+      _showError('Sem props disponíveis para avaliar.');
+      return;
+    }
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) =>
+          EdgeEvaluationSheet(props: valid, sport: 'Basquete NBA Brasil'),
+    );
+  }
+
   void _showUpdateMenu() {
     showModalBottomSheet(
       context: context,
@@ -183,6 +203,16 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
       ..sort();
   }
 
+  List<String> get _availableTeams {
+    return _propsResults
+        .where(_jogoValido)
+        .map((p) => (p['team'] as String?) ?? '')
+        .where((team) => team.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+  }
+
   List<Map<String, dynamic>> get _filteredH2h {
     return _h2hResults.where(_jogoValido).toList();
   }
@@ -197,6 +227,9 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
         return false;
       }
       if (_selectedProp != null && p['prop'] != _selectedProp) {
+        return false;
+      }
+      if (_selectedTeam != null && p['team'] != _selectedTeam) {
         return false;
       }
       if (_hideWarnings && p['lowSample'] == true) {
@@ -226,6 +259,14 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.auto_awesome,
+                color: Color(0xFF7C4DFF)),
+            tooltip: 'Avaliar Edges',
+            onPressed: _loading || _propsResults.isEmpty
+                ? null
+                : _showEvaluation,
+          ),
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: _loading ? null : _loadAll,
@@ -293,10 +334,13 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
                     PropsFilterBar(
                       minEdge: _minEdge,
                       selectedProp: _selectedProp,
+                      selectedTeam: _selectedTeam,
                       hideWarnings: _hideWarnings,
                       availableProps: _availableProps,
+                      availableTeams: _availableTeams,
                       onEdgeChanged: (v) => setState(() => _minEdge = v),
                       onPropChanged: (v) => setState(() => _selectedProp = v),
+                      onTeamChanged: (v) => setState(() => _selectedTeam = v),
                       onHideWarningsChanged: (v) =>
                           setState(() => _hideWarnings = v),
                     ),

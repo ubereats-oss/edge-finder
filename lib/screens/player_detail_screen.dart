@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../widgets/bet_dialog.dart';
 import '../services/prefs_service.dart';
 
@@ -26,6 +27,24 @@ class PlayerDetailScreen extends StatelessWidget {
       return const Color(0xFFFFD600);
     }
     return const Color(0xFFFF1744);
+  }
+
+  static const _sportSlug = {
+    'basketball/nba': 'basketball/nba',
+    'baseball/mlb':   'baseball/mlb',
+    'hockey/nhl':     'hockey/nhl',
+  };
+
+  Future<void> _openPinnacle(Map<String, dynamic> prop) async {
+    final id = prop['pinnacleId'];
+    final slug = prop['pinnacleSlug'] as String?;
+    final sport = prop['sport'] as String? ?? 'basketball/nba';
+    if (id == null || slug == null) return;
+    final sportPath = _sportSlug[sport] ?? sport;
+    final uri = Uri.parse(
+      'https://pinnacle.bet.br/sportsbook/standard/$sportPath/$slug/$id',
+    );
+    if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   Color _propColor(String p) {
@@ -174,60 +193,87 @@ class PlayerDetailScreen extends StatelessWidget {
           const SizedBox(height: 16),
 
           // ── Edge e odds ───────────────────────────────────────────────────
-          GestureDetector(
-            onTap: () => showBetDialog(
-              context: context,
-              betData: prop,
-              title: player,
-              subtitle: '$side $line ${_propLabel(propKey)}',
-              kellyPct: kelly > 0 ? kelly : null,
-              oddsOver: side == 'Over' ? odds : null,
-              oddsUnder: side == 'Under' ? odds : null,
-              odds: odds,
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: edgeColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: edgeColor, width: 1.5),
             ),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: edgeColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: edgeColor, width: 1.5),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '$side $line · Edge: ${edge.toStringAsFixed(2)}%',
-                          style: TextStyle(
-                              color: edgeColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                        const SizedBox(height: 4),
-                        Text('@${odds.toStringAsFixed(2)}',
-                            style: TextStyle(
-                                color: edgeColor.withValues(alpha: 0.8),
-                                fontSize: 14)),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: edgeColor.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text('Registrar aposta',
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '$side $line · Edge: ${edge.toStringAsFixed(2)}%',
                         style: TextStyle(
                             color: edgeColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 12)),
+                            fontSize: 16),
+                      ),
+                      const SizedBox(height: 4),
+                      Text('@${odds.toStringAsFixed(2)}',
+                          style: TextStyle(
+                              color: edgeColor.withValues(alpha: 0.8),
+                              fontSize: 14)),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (prop['pinnacleId'] != null) ...[
+                      GestureDetector(
+                        onTap: () => _openPinnacle(prop),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1A237E).withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFF3949AB)),
+                          ),
+                          child: const Text('Pinnacle',
+                              style: TextStyle(
+                                  color: Color(0xFF7986CB),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12)),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    GestureDetector(
+                      onTap: () => showBetDialog(
+                        context: context,
+                        betData: prop,
+                        title: player,
+                        subtitle: '$side $line ${_propLabel(propKey)}',
+                        kellyPct: kelly > 0 ? kelly : null,
+                        oddsOver: (prop['oddsOver'] as num?)?.toDouble(),
+                        oddsUnder: (prop['oddsUnder'] as num?)?.toDouble(),
+                        odds: odds,
+                        modelProb: modelProb,
+                        originalLine: line,
+                        playerAvg: avg,
+                        playerStd: std,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: edgeColor.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text('Registrar aposta',
+                            style: TextStyle(
+                                color: edgeColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
 

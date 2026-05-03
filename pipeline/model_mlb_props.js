@@ -22,21 +22,21 @@ if (!Object.keys(injuriesToday).length) {
 const SEASON_WEIGHT = { 2023: 1, 2024: 2, 2025: 3, 2026: 4 };
 const MIN_GAMES_CONTEXT = 10;
 const INEFFICIENT_MARKET_EDGE = 20;
-const KELLY_FRACTION = 0.25;
+const KELLY_FRACTION = 0.15;
 
 // Calibração isotônica gerada por backtest_mlb_props.js
 const CALIB_TABLE = [
-  { raw: 0.500, cal: 0.518 },
-  { raw: 0.550, cal: 0.554 },
-  { raw: 0.600, cal: 0.603 },
-  { raw: 0.650, cal: 0.616 },
-  { raw: 0.700, cal: 0.663 },
-  { raw: 0.750, cal: 0.693 },
-  { raw: 0.800, cal: 0.734 },
-  { raw: 0.850, cal: 0.784 },
-  { raw: 0.900, cal: 0.827 },
-  { raw: 0.950, cal: 0.862 },
-  { raw: 1.000, cal: 0.901 },
+  { raw: 0.500, cal: 0.517 },
+  { raw: 0.550, cal: 0.537 },
+  { raw: 0.600, cal: 0.589 },
+  { raw: 0.650, cal: 0.604 },
+  { raw: 0.700, cal: 0.643 },
+  { raw: 0.750, cal: 0.680 },
+  { raw: 0.800, cal: 0.721 },
+  { raw: 0.850, cal: 0.772 },
+  { raw: 0.900, cal: 0.816 },
+  { raw: 0.950, cal: 0.849 },
+  { raw: 1.000, cal: 0.892 },
 ];
 
 function calibrate(p) {
@@ -192,7 +192,7 @@ function combineContexts(playerData, statKey, locations, absentToday) {
 
 const PROP_CONFIG = {
   hits:        { key: 'hits' },
-  homeRuns:    { key: 'homeRuns' },
+  // homeRuns desativado — ROI de 0.4% em 10.5k bets no backtest (inviável)
   strikeouts:  { key: 'strikeouts' },
   hitsAllowed: { key: 'hitsAllowed' },
 };
@@ -264,6 +264,7 @@ for (const prop of props) {
   const kellyCrit         = calcKelly(bestProb, bestOdds);
   const inefficientMarket = !stats.lowSample && edgePct >= INEFFICIENT_MARKET_EDGE;
 
+  if (edgePct < 15) { continue; }
   results.push({
     game: prop.game,
     commence_time: prop.commence_time,

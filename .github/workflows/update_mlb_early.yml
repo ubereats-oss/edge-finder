@@ -1,0 +1,83 @@
+name: Atualizar MLB (early)
+
+on:
+  schedule:
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mlb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - run: npm install axios firebase-admin
+
+      - name: Injetar chaves
+        run: |
+          node -e "
+          const keys = process.env.ODDS_API_KEYS.split(',');
+          const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
+          require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
+          "
+        env:
+          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+
+      - name: Restaurar stats MLB
+        run: |
+          git fetch origin data 2>/dev/null || true
+          git show origin/data:mlb_player_stats.json.gz > /tmp/mlb_ps.gz 2>/dev/null && \
+            gunzip -c /tmp/mlb_ps.gz > mlb_player_stats.json || true
+          for f in mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
+            git show origin/data:$f > $f 2>/dev/null || true
+          done
+          git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
+
+      - run: node pipeline/get_mlb_injuries.js
+      - run: node pipeline/get_mlb_player_teams.js
+      - run: node pipeline/get_mlb_odds.js
+      - run: node pipeline/model_mlb.js
+      - run: node pipeline/get_mlb_props.js
+      - run: node pipeline/model_mlb_props.js
+
+      - name: Sincronizar com Firestore
+        run: node pipeline/firebase_sync.js results
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Sincronizar apostas com Firestore
+        run: node pipeline/firebase_sync.js bets
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Salvar dados na branch data
+        run: |
+          mkdir -p /tmp/data-save
+          gzip -c mlb_player_stats.json > /tmp/data-save/mlb_player_stats.json.gz 2>/dev/null || true
+          for f in mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json bets.json; do
+            [ -f "$f" ] && cp "$f" /tmp/data-save/ || true
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin data 2>/dev/null || true
+          git checkout --orphan data-mlb-early-tmp
+          git rm -rf . --quiet
+          printf 'node_modules/\n' > .gitignore
+          cp /tmp/data-save/* . 2>/dev/null || true
+          # Preservar arquivos de outros esportes da branch data
+          for f in nba_player_stats.json.gz nba_player_team.json nba_injuries_today.json nba_rating.json nba_boxscores_cache.json nba_player_positions.json nhl_player_stats.json.gz nhl_player_team.json nfl_player_stats.json.gz nfl_player_team.json tennis_player_stats.json; do
+            git show origin/data:$f > $f 2>/dev/null || true
+          done
+          git add -A
+          git diff --staged --quiet && echo "Sem mudanças" || git commit -m "data-mlb-early: $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push origin HEAD:data --force

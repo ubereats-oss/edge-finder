@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import '../services/edge_evaluator_service.dart';
 import '../widgets/prop_card.dart';
 import '../widgets/props_filter_bar.dart';
 import '../widgets/last_updated_bar.dart';
@@ -43,8 +44,10 @@ class _HockeyScreenState extends State<HockeyScreen> {
     setState(() => _loading = true);
     try {
       final props = await ApiService.fetchNhlProps();
+      final enriched = await EdgeEvaluatorService.enrichWithContext(props.data, 'nhl');
+      final filtered = EdgeEvaluatorService.adaptiveFilter(enriched);
       setState(() {
-        _propsResults = props.data;
+        _propsResults = filtered;
         _propsUpdated = props.lastUpdated;
       });
     } catch (e) {

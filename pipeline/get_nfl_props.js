@@ -102,10 +102,24 @@ async function getNflProps() {
       }
       try {
         const data = await fetchEventProps(event.id);
-        const bookmaker = data.bookmakers?.[0];
-        if (!bookmaker) continue;
+        if (!data.bookmakers?.length) continue;
 
-        for (const market of bookmaker.markets) {
+        // Agrega a melhor odd Over e Under por mercado entre todas as casas disponíveis
+        const bestMarkets = {};
+        for (const bm of data.bookmakers) {
+          for (const mkt of (bm.markets ?? [])) {
+            if (!bestMarkets[mkt.key]) bestMarkets[mkt.key] = { key: mkt.key, bestOutcomes: {} };
+            for (const outcome of mkt.outcomes) {
+              const k = `${outcome.description}||${outcome.name}`;
+              if (!bestMarkets[mkt.key].bestOutcomes[k] ||
+                  outcome.price > bestMarkets[mkt.key].bestOutcomes[k].price) {
+                bestMarkets[mkt.key].bestOutcomes[k] = outcome;
+              }
+            }
+          }
+        }
+
+        for (const market of Object.values(bestMarkets)) {
           const propType = {
             player_pass_yds:      'passYards',
             player_pass_tds:      'passTDs',
@@ -116,7 +130,7 @@ async function getNflProps() {
           if (!propType) continue;
 
           const players = {};
-          for (const outcome of market.outcomes) {
+          for (const outcome of Object.values(market.bestOutcomes)) {
             const player = outcome.description;
             if (!players[player]) players[player] = {};
             players[player][outcome.name] = { price: outcome.price, line: outcome.point };

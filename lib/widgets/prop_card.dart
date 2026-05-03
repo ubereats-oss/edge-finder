@@ -125,6 +125,7 @@ class _PropCardState extends State<PropCard> {
     final lowSample = widget.prop['lowSample'] == true;
     final inefficientMarket = widget.prop['inefficientMarket'] == true;
     final lowMarginRatio = widget.prop['lowMarginRatio'] == true;
+    final formWarning = widget.prop['formWarning'] == true;
     final contextGames = widget.prop['contextGames'] as int? ?? 0;
     final valorKelly = _banca > 0 ? _banca * kelly / 100 : 0.0;
     final commenceTime =
@@ -277,6 +278,26 @@ class _PropCardState extends State<PropCard> {
                             '⚠️ Poucos jogos ($contextGames)',
                             style: const TextStyle(
                                 color: Color(0xFFFF6D00), fontSize: 10),
+                          ),
+                        ),
+                      ],
+                      if (formWarning) ...[
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFFFF1744).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: const Color(0xFFFF1744)
+                                    .withValues(alpha: 0.5)),
+                          ),
+                          child: const Text(
+                            '📉 Forma recente contra',
+                            style: TextStyle(
+                                color: Color(0xFFFF1744), fontSize: 10),
                           ),
                         ),
                       ],

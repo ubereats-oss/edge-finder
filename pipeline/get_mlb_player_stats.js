@@ -164,7 +164,7 @@ async function processEvents(allEvents, raw, teamGameDates) {
           const idxH  = labels.indexOf('H');
           const idxHR = labels.indexOf('HR');
           const idxIP = labels.indexOf('IP');
-          const idxSO = labels.indexOf('SO');
+          const idxSO = labels.indexOf('K') !== -1 ? labels.indexOf('K') : labels.indexOf('SO');
 
           for (const athlete of group.athletes || []) {
             const name = athlete.athlete?.displayName;

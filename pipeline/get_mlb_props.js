@@ -34,6 +34,32 @@ function markCurrentKeyExhausted() {
   exhaustedKeys.add(idx);
 }
 
+const ARCADIA_KEY = 'CmX2KcMrXuFmNg6YFbmTxE0y9CblvR';
+
+async function fetchPinnacleMatchups(leagueId) {
+  const url = `https://guest.api.arcadia.pinnacle.com/0.1/leagues/${leagueId}/matchups`;
+  const res = await axios.get(url, {
+    headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json', 'x-api-key': ARCADIA_KEY }
+  });
+  return res.data.filter(m => m.participants?.length === 2);
+}
+
+function findMatchupId(matchups, homeTeam, awayTeam) {
+  const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  for (const m of matchups) {
+    const names = m.participants.map(p => norm(p.name));
+    if (names.some(n => norm(homeTeam).includes(n.slice(0,6)) || n.includes(norm(homeTeam).slice(0,6))) &&
+        names.some(n => norm(awayTeam).includes(n.slice(0,6)) || n.includes(norm(awayTeam).slice(0,6)))) {
+      return m.id;
+    }
+  }
+  return null;
+}
+
+function toSlug(s) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
 const MARKETS = 'batter_hits,batter_home_runs,pitcher_strikeouts,pitcher_hits_allowed';
 const BOOKMAKER = 'pinnacle';
 const REGION = 'eu';
@@ -84,6 +110,14 @@ async function getMlbProps() {
     if (raw) playerTeam = JSON.parse(raw);
   } else {
     console.warn('mlb_player_team.json não encontrado — location não será preenchido.');
+  }
+
+  let pinnacleMatchups = [];
+  try {
+    pinnacleMatchups = await fetchPinnacleMatchups(246);
+    console.log(`Pinnacle matchups MLB: ${pinnacleMatchups.length}`);
+  } catch(e) {
+    console.warn('Arcadia API indisponível — pinnacleId não será preenchido:', e.message);
   }
 
   try {
@@ -149,6 +183,8 @@ async function getMlbProps() {
               line: sides.Over.line,
               oddsOver: sides.Over.price,
               oddsUnder: sides.Under.price,
+              pinnacleId: findMatchupId(pinnacleMatchups, event.home_team, event.away_team),
+              pinnacleSlug: `${toSlug(event.away_team)}-vs-${toSlug(event.home_team)}`,
             });
           }
         }

@@ -311,7 +311,8 @@ for (const prop of props) {
   if (!stats) { descartadosSemStats++; continue; }
   if (stats.std < 0.3) { descartadosSigmaBaixa++; continue; }
   const marginRatio = Math.abs(prop.line - stats.avg) / stats.std;
-  if (marginRatio < 0.75) continue;
+  if (marginRatio < 0.4) continue;
+  const lowMarginRatio = marginRatio < 0.75;
   if (stats.usedAbsentFilter) comFiltroAusentes++;
 
   const avg5  = calcRecentAvg(playerData, statKey, 5);
@@ -338,6 +339,7 @@ for (const prop of props) {
   const kellyCrit         = calcKelly(bestProb, bestOdds);
   const inefficientMarket = !stats.lowSample && edgePct >= INEFFICIENT_MARKET_EDGE;
 
+  if (edgePct < 10) { continue; }
   results.push({
     game: prop.game,
     commence_time: prop.commence_time,
@@ -362,9 +364,11 @@ for (const prop of props) {
     contextGames: stats.contextGames,
     lowSample: stats.lowSample,
     inefficientMarket,
+    lowMarginRatio,
     absentFilter: stats.usedAbsentFilter,
     absentToday: absentToday.length > 0 ? classifyAbsents(absentToday, prop.player) : undefined,
     playerPosition: playerPositions[prop.player]?.position ?? null,
+    formWarning: avg5 !== null && (bestSide === 'Over' ? avg5 < prop.line : avg5 > prop.line),
   });
 }
 
