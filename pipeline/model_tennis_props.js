@@ -20,13 +20,15 @@ const INEFFICIENT_MARKET_EDGE = 20;
 const KELLY_FRACTION = 0.25;
 
 const CALIB_TABLE = [
-  { raw: 0.519, cal: 0.504 },
-  { raw: 0.576, cal: 0.572 },
-  { raw: 0.625, cal: 0.608 },
-  { raw: 0.674, cal: 0.671 },
-  { raw: 0.723, cal: 0.720 },
-  { raw: 0.771, cal: 0.764 },
-  { raw: 0.816, cal: 0.811 },
+  { raw: 0.521, cal: 0.531 },
+  { raw: 0.578, cal: 0.534 },
+  { raw: 0.623, cal: 0.534 },
+  { raw: 0.675, cal: 0.539 },
+  { raw: 0.723, cal: 0.576 },
+  { raw: 0.771, cal: 0.587 },
+  { raw: 0.822, cal: 0.618 },
+  { raw: 0.871, cal: 0.625 },
+  { raw: 0.922, cal: 0.639 },
 ];
 
 function calibrate(p) {
@@ -177,6 +179,7 @@ for (const prop of props) {
   const kellyCrit         = calcKelly(bestProb, bestOdds);
   const inefficientMarket = !lowSample && edgePct >= INEFFICIENT_MARKET_EDGE;
 
+  if (edgePct < 5) { continue; }
   results.push({
     game: prop.game,
     commence_time: prop.commence_time,

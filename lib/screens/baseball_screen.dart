@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import '../services/edge_evaluator_service.dart';
 import '../widgets/match_card.dart';
 import '../widgets/mlb_prop_card.dart';
 import '../widgets/props_filter_bar.dart';
 import '../widgets/last_updated_bar.dart';
 import '../widgets/status_bar.dart';
+import '../widgets/edge_evaluation_sheet.dart';
 
 class BaseballScreen extends StatefulWidget {
   const BaseballScreen({super.key});
@@ -55,9 +57,11 @@ class _BaseballScreenState extends State<BaseballScreen>
     try {
       final h2h = await ApiService.fetchMlbResults();
       final props = await ApiService.fetchMlbProps();
+      final enriched = await EdgeEvaluatorService.enrichWithContext(props.data, 'mlb');
+      final filtered = EdgeEvaluatorService.adaptiveFilter(enriched);
       setState(() {
         _h2hResults = h2h.data;
-        _propsResults = props.data;
+        _propsResults = filtered;
         _h2hUpdated = h2h.lastUpdated;
         _propsUpdated = props.lastUpdated;
       });
@@ -119,6 +123,20 @@ class _BaseballScreenState extends State<BaseballScreen>
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(msg), backgroundColor: Colors.red),
+    );
+  }
+
+  void _showEvaluation() {
+    final valid = _propsResults.where(_jogoValido).toList();
+    if (valid.isEmpty) {
+      _showError('Sem props disponíveis para avaliar.');
+      return;
+    }
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => EdgeEvaluationSheet(props: valid, sport: 'Beisebol MLB'),
     );
   }
 
@@ -235,6 +253,14 @@ class _BaseballScreenState extends State<BaseballScreen>
         ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.auto_awesome,
+                color: Color(0xFF7C4DFF)),
+            tooltip: 'Avaliar Edges',
+            onPressed: _loading || _propsResults.isEmpty
+                ? null
+                : _showEvaluation,
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: _loading ? null : _loadAll,
           ),
@@ -299,10 +325,13 @@ class _BaseballScreenState extends State<BaseballScreen>
                     PropsFilterBar(
                       minEdge: _minEdge,
                       selectedProp: _selectedProp,
+                      selectedTeam: null,
                       hideWarnings: _hideWarnings,
                       availableProps: _availableProps,
+                      availableTeams: const [],
                       onEdgeChanged: (v) => setState(() => _minEdge = v),
                       onPropChanged: (v) => setState(() => _selectedProp = v),
+                      onTeamChanged: (_) {},
                       onHideWarningsChanged: (v) =>
                           setState(() => _hideWarnings = v),
                     ),

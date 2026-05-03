@@ -3,20 +3,26 @@ import 'package:flutter/material.dart';
 class PropsFilterBar extends StatelessWidget {
   final double minEdge;
   final String? selectedProp;
+  final String? selectedTeam;
   final bool hideWarnings;
   final List<String> availableProps;
+  final List<String> availableTeams;
   final ValueChanged<double> onEdgeChanged;
   final ValueChanged<String?> onPropChanged;
+  final ValueChanged<String?> onTeamChanged;
   final ValueChanged<bool> onHideWarningsChanged;
 
   const PropsFilterBar({
     super.key,
     required this.minEdge,
     required this.selectedProp,
+    required this.selectedTeam,
     required this.hideWarnings,
     required this.availableProps,
+    required this.availableTeams,
     required this.onEdgeChanged,
     required this.onPropChanged,
+    required this.onTeamChanged,
     required this.onHideWarningsChanged,
   });
 
@@ -121,11 +127,39 @@ class PropsFilterBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                     border: hideWarnings
                         ? Border.all(
-                            color: const Color(0xFFFF6D00).withValues(alpha: 0.5))
+                            color:
+                                const Color(0xFFFF6D00).withValues(alpha: 0.5))
                         : null,
                   ),
                   child: const Text('⚠️ Ocultar',
                       style: TextStyle(fontSize: 11, color: Color(0xFFAAAAAA))),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Text('Time:',
+                  style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 12)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _PropChip(
+                        label: 'Todos',
+                        selected: selectedTeam == null,
+                        onTap: () => onTeamChanged(null),
+                      ),
+                      ...availableTeams.map((team) => _PropChip(
+                            label: team,
+                            selected: selectedTeam == team,
+                            onTap: () => onTeamChanged(team),
+                          )),
+                    ],
+                  ),
                 ),
               ),
             ],

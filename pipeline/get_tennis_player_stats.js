@@ -48,57 +48,48 @@ async function processScoreboard(tour, startDate, endDate, raw) {
     return;
   }
 
-  const events = (res.data.events || []).filter(e => {
-    return e.competitions?.[0]?.status?.type?.completed;
-  });
-
-  for (const event of events) {
+  for (const event of (res.data.events || [])) {
     const surface = detectSurface(event);
-    const comp = event.competitions?.[0];
-    if (!comp) continue;
 
-    const competitors = comp.competitors || [];
-    if (competitors.length < 2) continue;
+    // Partidas ficam em event.groupings[].competitions[], não em event.competitions[]
+    for (const grouping of (event.groupings || [])) {
+      for (const comp of (grouping.competitions || [])) {
+        if (!comp.status?.type?.completed) continue;
 
-    const p1 = competitors[0]?.athlete?.displayName;
-    const p2 = competitors[1]?.athlete?.displayName;
-    if (!p1 || !p2) continue;
+        const competitors = comp.competitors || [];
+        if (competitors.length < 2) continue;
 
-    // Parse sets from linescores
-    const linescores = comp.linescores || [];
-    const p1Sets = linescores.filter((ls, i) => {
-      if (i % 2 !== 0) return false;
-      const p1Games = parseInt(ls.value) || 0;
-      const p2Games = parseInt(linescores[i + 1]?.value) || 0;
-      return p1Games > p2Games;
-    }).length;
-    const p2Sets = linescores.filter((ls, i) => {
-      if (i % 2 !== 0) return false;
-      const p1Games = parseInt(ls.value) || 0;
-      const p2Games = parseInt(linescores[i + 1]?.value) || 0;
-      return p2Games > p1Games;
-    }).length;
+        const c1 = competitors[0];
+        const c2 = competitors[1];
+        const p1 = c1?.athlete?.displayName;
+        const p2 = c2?.athlete?.displayName;
+        if (!p1 || !p2) continue;
 
-    let p1Games = 0, p2Games = 0;
-    for (let i = 0; i < linescores.length; i += 2) {
-      p1Games += parseInt(linescores[i]?.value) || 0;
-      if (linescores[i + 1]) p2Games += parseInt(linescores[i + 1]?.value) || 0;
-    }
+        // Linescores são por-competidor: cada entrada = um set jogado
+        const ls1 = c1.linescores || [];
+        const ls2 = c2.linescores || [];
 
-    const date = event.date || new Date().toISOString();
+        const p1Sets  = ls1.filter(ls => ls.winner).length;
+        const p2Sets  = ls2.filter(ls => ls.winner).length;
+        const p1Games = ls1.reduce((s, ls) => s + (parseInt(ls.value) || 0), 0);
+        const p2Games = ls2.reduce((s, ls) => s + (parseInt(ls.value) || 0), 0);
 
-    const alreadyP1 = (raw[p1]?.[surface]?.sets || []).some(e => e.date === date && e.opponent === p2);
-    if (!alreadyP1) {
-      const ctx1 = ensurePath(raw, p1, surface);
-      ctx1.sets.push({ value: p1Sets, date, opponent: p2 });
-      ctx1.games.push({ value: p1Games, date, opponent: p2 });
-    }
+        const date = comp.date || event.date || new Date().toISOString();
 
-    const alreadyP2 = (raw[p2]?.[surface]?.sets || []).some(e => e.date === date && e.opponent === p1);
-    if (!alreadyP2) {
-      const ctx2 = ensurePath(raw, p2, surface);
-      ctx2.sets.push({ value: p2Sets, date, opponent: p1 });
-      ctx2.games.push({ value: p2Games, date, opponent: p1 });
+        const alreadyP1 = (raw[p1]?.[surface]?.sets || []).some(e => e.date === date && e.opponent === p2);
+        if (!alreadyP1) {
+          const ctx1 = ensurePath(raw, p1, surface);
+          ctx1.sets.push({ value: p1Sets, date, opponent: p2 });
+          ctx1.games.push({ value: p1Games, date, opponent: p2 });
+        }
+
+        const alreadyP2 = (raw[p2]?.[surface]?.sets || []).some(e => e.date === date && e.opponent === p1);
+        if (!alreadyP2) {
+          const ctx2 = ensurePath(raw, p2, surface);
+          ctx2.sets.push({ value: p2Sets, date, opponent: p1 });
+          ctx2.games.push({ value: p2Games, date, opponent: p1 });
+        }
+      }
     }
   }
 }

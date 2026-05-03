@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import '../widgets/bet_dialog.dart';
 
 class AddLateBetScreen extends StatefulWidget {
   const AddLateBetScreen({super.key});
@@ -9,61 +8,51 @@ class AddLateBetScreen extends StatefulWidget {
   State<AddLateBetScreen> createState() => _AddLateBetScreenState();
 }
 
-class _AddLateBetScreenState extends State<AddLateBetScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _AddLateBetScreenState extends State<AddLateBetScreen> {
+  bool _isProp = true;
+  String _side = 'Over';
   DateTime _selectedDate = DateTime.now();
-  List<Map<String, dynamic>> _items = [];
   bool _loading = false;
-  String? _selectedGame;
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        _fetch();
-      }
-    });
-    _fetch();
-  }
+  final _gameCtrl = TextEditingController();
+  final _playerCtrl = TextEditingController();
+  final _lineCtrl = TextEditingController();
+  final _oddsCtrl = TextEditingController();
+  final _stakeCtrl = TextEditingController();
+  final _teamCtrl = TextEditingController();
+  final _bookmakerCtrl = TextEditingController();
+  final _modelProbCtrl = TextEditingController();
+
+  String _prop = 'points';
+
+  static const _propOptions = [
+    ('points', 'Pontos'),
+    ('rebounds', 'Rebotes'),
+    ('assists', 'Assistências'),
+    ('steals', 'Roubos'),
+    ('threes', 'Cestas de 3'),
+    ('hitsAllowed', 'Hits Permitidos'),
+  ];
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _gameCtrl.dispose();
+    _playerCtrl.dispose();
+    _lineCtrl.dispose();
+    _oddsCtrl.dispose();
+    _stakeCtrl.dispose();
+    _teamCtrl.dispose();
+    _bookmakerCtrl.dispose();
+    _modelProbCtrl.dispose();
     super.dispose();
   }
 
-  String get _dateStr {
-    final d = _selectedDate;
-    return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-  }
-
-  String get _type => _tabController.index == 0 ? 'h2h' : 'props';
-
-  Future<void> _fetch() async {
-    setState(() {
-      _loading = true;
-      _items = [];
-      _selectedGame = null;
-    });
-    try {
-      final data = await ApiService.fetchNbaHistory(_dateStr, _type);
-      setState(() => _items = data);
-    } catch (e) {
-      _showError(e.toString());
-    } finally {
-      setState(() => _loading = false);
-    }
-  }
-
   Future<void> _pickDate() async {
-    final picked = await showDatePicker(
+    final date = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2026, 1, 1),
-      lastDate: DateTime.now(),
+      initialDate: _selectedDate,
+      firstDate: DateTime(2024),
+      lastDate: DateTime.now().add(const Duration(days: 7)),
       builder: (ctx, child) => Theme(
         data: ThemeData.dark().copyWith(
           colorScheme: const ColorScheme.dark(primary: Color(0xFF00C853)),
@@ -71,9 +60,88 @@ class _AddLateBetScreenState extends State<AddLateBetScreen>
         child: child!,
       ),
     );
-    if (picked != null) {
-      setState(() => _selectedDate = picked);
-      _fetch();
+    if (date == null) return;
+    if (!mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_selectedDate),
+      builder: (ctx, child) => Theme(
+        data: ThemeData.dark().copyWith(
+          colorScheme: const ColorScheme.dark(primary: Color(0xFF00C853)),
+        ),
+        child: child!,
+      ),
+    );
+    setState(() {
+      _selectedDate = DateTime(
+        date.year, date.month, date.day,
+        time?.hour ?? _selectedDate.hour,
+        time?.minute ?? _selectedDate.minute,
+      );
+    });
+  }
+
+  Future<void> _submit() async {
+    final game = _gameCtrl.text.trim();
+    final odds = double.tryParse(_oddsCtrl.text.replaceAll(',', '.'));
+    final stake = double.tryParse(_stakeCtrl.text.replaceAll(',', '.'));
+
+    if (game.isEmpty || odds == null || stake == null) {
+      _showError('Preencha jogo, odds e valor.');
+      return;
+    }
+
+    if (_isProp) {
+      final player = _playerCtrl.text.trim();
+      final line = double.tryParse(_lineCtrl.text.replaceAll(',', '.'));
+      if (player.isEmpty || line == null) {
+        _showError('Preencha jogador e linha.');
+        return;
+      }
+    } else {
+      if (_teamCtrl.text.trim().isEmpty) {
+        _showError('Preencha o time apostado.');
+        return;
+      }
+    }
+
+    setState(() => _loading = true);
+    try {
+      final modelProb =
+          double.tryParse(_modelProbCtrl.text.replaceAll(',', '.')) ?? 0.0;
+      final impliedProb = odds > 0 ? (1 / odds * 100) : 0.0;
+      final edge = modelProb > 0 ? modelProb - impliedProb : 0.0;
+
+      final Map<String, dynamic> data = {
+        'type': _isProp ? 'prop' : 'h2h',
+        'game': game,
+        'commence_time': _selectedDate.toIso8601String(),
+        'odds': odds,
+        'stake': stake,
+        'modelProb': modelProb,
+        'impliedProb': impliedProb,
+        'edge': edge,
+        'kelly': 0.0,
+        if (_bookmakerCtrl.text.trim().isNotEmpty)
+          'bookmaker': _bookmakerCtrl.text.trim(),
+        if (_isProp) ...{
+          'player': _playerCtrl.text.trim(),
+          'prop': _prop,
+          'line': double.parse(
+              _lineCtrl.text.replaceAll(',', '.')),
+          'side': _side,
+        } else ...{
+          'team': _teamCtrl.text.trim(),
+        },
+      };
+
+      await ApiService.createBet(data);
+      if (!mounted) return;
+      Navigator.pop(context);
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -83,78 +151,9 @@ class _AddLateBetScreenState extends State<AddLateBetScreen>
     );
   }
 
-  List<String> get _games {
-    return _items
-        .map((i) => '${i['away_team']} x ${i['home_team']}')
-        .toSet()
-        .toList()
-      ..sort();
-  }
-
-  List<Map<String, dynamic>> get _filtered {
-    if (_selectedGame == null) {
-      return _items;
-    }
-    return _items.where((i) {
-      final game = '${i['away_team']} x ${i['home_team']}';
-      return game == _selectedGame;
-    }).toList();
-  }
-
-  String _propLabel(String p) {
-    const labels = {
-      'player_points': 'Pontos',
-      'player_rebounds': 'Rebotes',
-      'player_assists': 'Assistências',
-      'player_steals': 'Roubos',
-      'player_threes': 'Cestas de 3',
-    };
-    return labels[p] ?? p;
-  }
-
-  void _openH2H(Map<String, dynamic> item) {
-    final game = '${item['away_team']} x ${item['home_team']}';
-    showBetDialog(
-      context: context,
-      title: game,
-      subtitle: 'H2H · $_dateStr',
-      odds: item['odds_away'] as double?,
-      betData: {
-        'type': 'h2h',
-        'game': game,
-        'commence_time': item['commence_time'],
-        'edge': 0,
-        'kelly': 0,
-        'modelProb': 0,
-        'impliedProb': 0,
-      },
-    );
-  }
-
-  void _openProp(Map<String, dynamic> item) {
-    final game = '${item['away_team']} x ${item['home_team']}';
-    final prop = ((item['prop'] as String?) ?? '').replaceAll('player_', '');
-    showBetDialog(
-      context: context,
-      title: item['player'] as String,
-      subtitle:
-          '${item['line']} ${_propLabel((item['prop'] as String?) ?? '')}',
-      oddsOver: (item['oddsOver'] as num?)?.toDouble(),
-      oddsUnder: (item['oddsUnder'] as num?)?.toDouble(),
-      betData: {
-        'type': 'prop',
-        'sport': 'nba',
-        'player': item['player'],
-        'prop': prop,
-        'line': item['line'],
-        'game': game,
-        'commence_time': item['commence_time'],
-        'edge': 0,
-        'kelly': 0,
-        'modelProb': 0,
-        'impliedProb': 0,
-      },
-    );
+  String get _dateLabel {
+    final d = _selectedDate;
+    return '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}  ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -167,151 +166,294 @@ class _AddLateBetScreenState extends State<AddLateBetScreen>
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Aposta atrasada',
+        title: const Text('Registrar aposta',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: const Color(0xFF00C853),
-          labelColor: Colors.white,
-          unselectedLabelColor: const Color(0xFF888888),
-          tabs: const [Tab(text: 'H2H'), Tab(text: 'Props')],
-        ),
       ),
-      body: Column(
-        children: [
-          Container(
-            color: const Color(0xFF1A1A2E),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Row(
-              children: [
-                const Text('Data:',
-                    style: TextStyle(color: Color(0xFF888888), fontSize: 13)),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: _pickDate,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2A2A3E),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(_dateStr,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                        const SizedBox(width: 6),
-                        const Icon(Icons.calendar_today,
-                            color: Color(0xFF888888), size: 14),
-                      ],
-                    ),
+      body: _loading
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFF00C853)))
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Tipo
+                  _label('Tipo'),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      _TypeChip(
+                        label: 'Props',
+                        selected: _isProp,
+                        color: const Color(0xFF00C853),
+                        onTap: () => setState(() => _isProp = true),
+                      ),
+                      const SizedBox(width: 10),
+                      _TypeChip(
+                        label: 'H2H',
+                        selected: !_isProp,
+                        color: const Color(0xFF7C4DFF),
+                        onTap: () => setState(() => _isProp = false),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 12),
-                if (_games.isNotEmpty)
-                  Expanded(
+                  const SizedBox(height: 16),
+
+                  // Data e hora
+                  _label('Data e hora'),
+                  const SizedBox(height: 6),
+                  GestureDetector(
+                    onTap: _pickDate,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 13),
                       decoration: BoxDecoration(
                         color: const Color(0xFF2A2A3E),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.calendar_today,
+                              color: Color(0xFF888888), size: 16),
+                          const SizedBox(width: 10),
+                          Text(_dateLabel,
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Jogo
+                  _label('Jogo'),
+                  const SizedBox(height: 6),
+                  _Field(
+                    controller: _gameCtrl,
+                    hint: 'Ex: Portland Trail Blazers x San Antonio Spurs',
+                  ),
+                  const SizedBox(height: 16),
+
+                  // H2H: time apostado
+                  if (!_isProp) ...[
+                    _label('Time apostado'),
+                    const SizedBox(height: 6),
+                    _Field(
+                      controller: _teamCtrl,
+                      hint: 'Ex: San Antonio Spurs',
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // Props: jogador, prop, linha, lado
+                  if (_isProp) ...[
+                    _label('Jogador'),
+                    const SizedBox(height: 6),
+                    _Field(
+                      controller: _playerCtrl,
+                      hint: 'Ex: Jerami Grant',
+                    ),
+                    const SizedBox(height: 16),
+
+                    _label('Prop'),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2A2A3E),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String?>(
-                          value: _selectedGame,
+                        child: DropdownButton<String>(
+                          value: _prop,
                           isExpanded: true,
                           dropdownColor: const Color(0xFF2A2A3E),
                           style: const TextStyle(
-                              color: Colors.white, fontSize: 12),
-                          hint: const Text('Todos os jogos',
-                              style: TextStyle(
-                                  color: Color(0xFF888888), fontSize: 12)),
-                          items: [
-                            const DropdownMenuItem<String?>(
-                              value: null,
-                              child: Text('Todos os jogos',
-                                  style: TextStyle(color: Color(0xFF888888))),
-                            ),
-                            ..._games.map((g) => DropdownMenuItem<String?>(
-                                  value: g,
-                                  child:
-                                      Text(g, overflow: TextOverflow.ellipsis),
-                                )),
-                          ],
-                          onChanged: (v) => setState(() => _selectedGame = v),
+                              color: Colors.white, fontSize: 14),
+                          items: _propOptions
+                              .map((p) => DropdownMenuItem(
+                                    value: p.$1,
+                                    child: Text(p.$2),
+                                  ))
+                              .toList(),
+                          onChanged: (v) =>
+                              setState(() => _prop = v ?? _prop),
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _label('Linha'),
+                              const SizedBox(height: 6),
+                              _Field(
+                                controller: _lineCtrl,
+                                hint: '9.5',
+                                numeric: true,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _label('Lado'),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: ['Over', 'Under'].map((s) {
+                                  final sel = _side == s;
+                                  return Expanded(
+                                    child: GestureDetector(
+                                      onTap: () =>
+                                          setState(() => _side = s),
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            right: s == 'Over' ? 6 : 0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 13),
+                                        decoration: BoxDecoration(
+                                          color: sel
+                                              ? const Color(0xFF00C853)
+                                                  .withValues(alpha: 0.15)
+                                              : const Color(0xFF2A2A3E),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: sel
+                                                ? const Color(0xFF00C853)
+                                                : Colors.transparent,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(s,
+                                              style: TextStyle(
+                                                  color: sel
+                                                      ? const Color(
+                                                          0xFF00C853)
+                                                      : const Color(
+                                                          0xFF888888),
+                                                  fontWeight:
+                                                      FontWeight.bold,
+                                                  fontSize: 13)),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // Odds e Stake
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _label('Odds (decimal)'),
+                            const SizedBox(height: 6),
+                            _Field(
+                              controller: _oddsCtrl,
+                              hint: '1.98',
+                              numeric: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _label('Valor (R\$)'),
+                            const SizedBox(height: 6),
+                            _Field(
+                              controller: _stakeCtrl,
+                              hint: '50.00',
+                              numeric: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-              ],
-            ),
-          ),
-          if (_loading)
-            const LinearProgressIndicator(
-              backgroundColor: Color(0xFF1E1E2E),
-              color: Color(0xFF00C853),
-            ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                // H2H
-                _filtered.isEmpty && !_loading
-                    ? const Center(
-                        child: Text('Sem dados para esta data.',
-                            style: TextStyle(color: Color(0xFF666666))))
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(12),
-                        itemCount: _filtered.length,
-                        itemBuilder: (_, i) {
-                          final item = _filtered[i];
-                          final game =
-                              '${item['away_team']} x ${item['home_team']}';
-                          return _HistoryCard(
-                            title: game,
-                            subtitle:
-                                'Casa: @${item['odds_home']?.toStringAsFixed(2)}  ·  Fora: @${item['odds_away']?.toStringAsFixed(2)}',
-                            onTap: () => _openH2H(item),
-                          );
-                        },
+                  const SizedBox(height: 16),
+
+                  // Casa de apostas
+                  _label('Casa de apostas (opcional)'),
+                  const SizedBox(height: 6),
+                  _Field(
+                    controller: _bookmakerCtrl,
+                    hint: 'Ex: Pinnacle',
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Prob. modelo
+                  _label('Prob. do modelo % (opcional)'),
+                  const SizedBox(height: 6),
+                  _Field(
+                    controller: _modelProbCtrl,
+                    hint: '55.0',
+                    numeric: true,
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Botão
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00C853),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
-                // Props
-                _filtered.isEmpty && !_loading
-                    ? const Center(
-                        child: Text('Sem dados para esta data.',
-                            style: TextStyle(color: Color(0xFF666666))))
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(12),
-                        itemCount: _filtered.length,
-                        itemBuilder: (_, i) {
-                          final item = _filtered[i];
-                          return _HistoryCard(
-                            title: (item['player'] as String?) ?? '',
-                            subtitle:
-                                '${_propLabel((item['prop'] as String?) ?? '')} · Linha ${item['line']} · Over @${(item['oddsOver'] as num?)?.toStringAsFixed(2)} / Under @${(item['oddsUnder'] as num?)?.toStringAsFixed(2)}',
-                            onTap: () => _openProp(item),
-                          );
-                        },
-                      ),
-              ],
+                      child: const Text('Registrar aposta',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16)),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
     );
   }
+
+  Widget _label(String text) => Text(
+        text,
+        style: const TextStyle(color: Color(0xFF888888), fontSize: 12),
+      );
 }
 
-class _HistoryCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
+class _TypeChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final Color color;
   final VoidCallback onTap;
 
-  const _HistoryCard({
-    required this.title,
-    required this.subtitle,
+  const _TypeChip({
+    required this.label,
+    required this.selected,
+    required this.color,
     required this.onTap,
   });
 
@@ -320,26 +462,54 @@ class _HistoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.all(14),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E2E),
+          color: selected ? color.withValues(alpha: 0.15) : const Color(0xFF2A2A3E),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFF333355)),
+          border: Border.all(
+              color: selected ? color : Colors.transparent),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14)),
-            const SizedBox(height: 4),
-            Text(subtitle,
-                style: const TextStyle(color: Color(0xFF888888), fontSize: 12)),
-          ],
+        child: Text(label,
+            style: TextStyle(
+                color: selected ? color : const Color(0xFF888888),
+                fontWeight: FontWeight.bold,
+                fontSize: 14)),
+      ),
+    );
+  }
+}
+
+class _Field extends StatelessWidget {
+  final TextEditingController controller;
+  final String hint;
+  final bool numeric;
+
+  const _Field({
+    required this.controller,
+    required this.hint,
+    this.numeric = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      keyboardType: numeric
+          ? const TextInputType.numberWithOptions(decimal: true)
+          : TextInputType.text,
+      style: const TextStyle(color: Colors.white, fontSize: 14),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: const Color(0xFF2A2A3E),
+        hintText: hint,
+        hintStyle: const TextStyle(color: Color(0xFF555566), fontSize: 13),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
         ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
       ),
     );
   }

@@ -16,7 +16,7 @@ class SportSelectorScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF12121F),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,6 +35,37 @@ class SportSelectorScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const BetsScreen()),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E1E2E),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                            color: const Color(0xFF7C4DFF)
+                                .withValues(alpha: 0.5)),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.bar_chart,
+                              color: Color(0xFF7C4DFF), size: 18),
+                          SizedBox(width: 6),
+                          Text('Minhas Apostas',
+                              style: TextStyle(
+                                  color: Color(0xFF7C4DFF),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
                   IconButton(
                     icon: const Icon(Icons.settings,
                         color: Color(0xFF888888), size: 26),
@@ -155,36 +186,6 @@ class SportSelectorScreen extends StatelessWidget {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const FootballScreen()),
-                ),
-              ),
-              const SizedBox(height: 32),
-              GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const BetsScreen()),
-                ),
-                child: Container(
-                  width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E2E),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                        color: const Color(0xFF7C4DFF).withValues(alpha: 0.4)),
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.bar_chart, color: Color(0xFF7C4DFF), size: 22),
-                      SizedBox(width: 10),
-                      Text('Minhas Apostas',
-                          style: TextStyle(
-                              color: Color(0xFF7C4DFF),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16)),
-                    ],
-                  ),
                 ),
               ),
             ],

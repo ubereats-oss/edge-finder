@@ -47,4 +47,25 @@ class PrefsService {
       _prefs?.setString('custom_bookmakers', jsonEncode(list));
     }
   }
+
+  // ─── Migração de apostas ──────────────────────────────────────────────────
+
+  static bool getBetsMigrated() => _prefs?.getBool('bets_migrated') ?? false;
+  static void setBetsMigrated() => _prefs?.setBool('bets_migrated', true);
+
+  // ─── Gemini API Key ───────────────────────────────────────────────────────
+
+  static const _envGeminiKey = String.fromEnvironment(
+    'GEMINI_API_KEY',
+    defaultValue: 'AIzaSyAqHhpVvCZtIRu0Z9Cw8aYVVeBcCcTPYCI',
+  );
+
+  static String getGeminiKey() {
+    final saved = _prefs?.getString('gemini_api_key') ?? '';
+    return saved.isNotEmpty ? saved : _envGeminiKey;
+  }
+
+  static void setGeminiKey(String value) {
+    _prefs?.setString('gemini_api_key', value);
+  }
 }

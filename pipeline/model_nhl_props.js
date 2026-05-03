@@ -21,13 +21,16 @@ const INEFFICIENT_MARKET_EDGE = 20;
 const KELLY_FRACTION = 0.25;
 
 const CALIB_TABLE = [
-  { raw: 0.519, cal: 0.504 },
-  { raw: 0.576, cal: 0.572 },
-  { raw: 0.625, cal: 0.608 },
-  { raw: 0.674, cal: 0.671 },
-  { raw: 0.723, cal: 0.720 },
-  { raw: 0.771, cal: 0.764 },
-  { raw: 0.816, cal: 0.811 },
+  { raw: 0.521, cal: 0.435 },
+  { raw: 0.578, cal: 0.476 },
+  { raw: 0.623, cal: 0.525 },
+  { raw: 0.676, cal: 0.572 },
+  { raw: 0.724, cal: 0.608 },
+  { raw: 0.773, cal: 0.675 },
+  { raw: 0.824, cal: 0.709 },
+  { raw: 0.874, cal: 0.750 },
+  { raw: 0.924, cal: 0.803 },
+  { raw: 0.974, cal: 0.833 },
 ];
 
 function calibrate(p) {
@@ -142,7 +145,8 @@ const PROP_MAP = {
   goals:   'goals',
   assists:  'assists',
   points:   'points',
-  shots:    'shots',
+  // shots desativado — ROI de -4.76% no backtest (viés de mercado eficiente)
+  blocked: 'blocked',
 };
 
 if (!props.length) { console.log('nhl_props.json vazio.'); process.exit(0); }
@@ -195,6 +199,7 @@ for (const prop of props) {
   const kellyCrit         = calcKelly(bestProb, bestOdds);
   const inefficientMarket = !stats.lowSample && edgePct >= INEFFICIENT_MARKET_EDGE;
 
+  if (edgePct < 15) { continue; }
   results.push({
     game: prop.game,
     commence_time: prop.commence_time,

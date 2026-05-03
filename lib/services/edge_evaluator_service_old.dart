@@ -97,7 +97,7 @@ class EdgeEvaluatorService {
   // Floors absolutos — nunca relaxados (odds, kelly, edge mínimo absoluto, cs)
   static bool _absoluteFloors(Map<String, dynamic> p) {
     final odds = (p['odds'] as num?)?.toDouble() ?? 0;
-    if (odds < 1.20 || odds > 5.00) return false;
+    if (odds < 1.45 || odds > 2.40) return false;
     if (_kelly(p) < 2.0) return false;
     final edge = (p['edge'] as num?)?.toDouble() ?? 0;
     if (edge < 2.5) return false;
@@ -129,14 +129,6 @@ class EdgeEvaluatorService {
 
     if (_isStdOutlierAgainstBet(p) && !confirmed) return false;
 
-    final side = p['side'] as String? ?? 'Over';
-    final line = (p['line'] as num?)?.toDouble() ?? 0;
-    final avg5 = (p['playerAvg5'] as num?)?.toDouble();
-    final avg5ContradizLinha = avg5 != null &&
-        line > 0 &&
-        ((side == 'Over' && avg5 < line) || (side == 'Under' && avg5 > line));
-
-    if (avg5ContradizLinha) return confirmed && status == 'positive';
     return (edge >= 25 && _kelly(p) >= 8) ||
         (confirmed && status == 'positive');
   }
@@ -150,7 +142,6 @@ class EdgeEvaluatorService {
     bool relaxed(Map<String, dynamic> p) {
       if (!_absoluteFloors(p)) return false;
       if (!_passesContradiction(p)) return false;
-      if (p['lowSample'] == true) return false;
       final prob = (p['_probCalibrada'] as double?) ?? calibratedProb(p);
       if (prob < 0.52) return false;
       return true;
@@ -208,18 +199,13 @@ class EdgeEvaluatorService {
       probAdj = probAdj * 0.75;
     }
 
-    // Componentes normalizados em [0,1] antes de ponderar.
-    // Edge normalizado contra teto realista de 40% (edges >40% são raros e saturados).
-    final edgeNorm = (edge / 40).clamp(0.0, 1.0);
+    double s =
+        50 * probAdj + 30 * (edge / 30).clamp(0.0, 1.0) + 20 * consistencyScore;
 
-    // Pesos: 55% prob calibrada · 25% edge · 20% consistência estatística.
-    // Objetivo: priorizar alta prob de acerto com edge positivo confirmado.
-    double s = 55 * probAdj + 25 * edgeNorm + 20 * consistencyScore;
-
-    if (status == 'positive') s += 8;
-    if (status == 'negative') s -= 15;
-    if (cl == 2 && !confirmed) s -= 20;
-    if (lowSample) s -= 8;
+    if (status == 'positive') s += 10;
+    if (status == 'negative') s -= 20;
+    if (cl == 2 && !confirmed) s -= 25;
+    if (lowSample) s -= 10;
 
     return s.clamp(0.0, 100.0);
   }
@@ -238,34 +224,25 @@ class EdgeEvaluatorService {
     scored.sort((a, b) {
       final aNeg = (a['_contextStatus'] as String?) == 'negative' ? 1 : 0;
       final bNeg = (b['_contextStatus'] as String?) == 'negative' ? 1 : 0;
-      if (aNeg != bNeg) {
-        return aNeg.compareTo(bNeg); // linha 1: negative por último
-      }
+      if (aNeg != bNeg) return aNeg.compareTo(bNeg);
 
       final sCmp =
           (b['_scoreFinal'] as double).compareTo(a['_scoreFinal'] as double);
-      if (sCmp != 0) return sCmp; // linha 2: maior score primeiro
-
-      final aNorm = (a['_probNormSport'] as double?) ?? 0;
-      final bNorm = (b['_probNormSport'] as double?) ?? 0;
-      final normCmp = bNorm.compareTo(aNorm);
-      if (normCmp != 0) return normCmp; // linha 3: melhor dentro do esporte
+      if (sCmp != 0) return sCmp;
 
       final evCmp =
           (b['_evScore'] as double).compareTo(a['_evScore'] as double);
-      if (evCmp != 0) return evCmp; // linha 4: maior EV
+      if (evCmp != 0) return evCmp;
 
-      return _kelly(b).compareTo(_kelly(a)); // linha 5: maior Kelly
+      return _kelly(b).compareTo(_kelly(a));
     });
 
     // Validação final + cap
-    final isRelaxed = lastQualifiedCount < _minBets;
-    final minEdge = isRelaxed ? 1.5 : 2.5;
     final valid = scored.where((p) {
       final edge = (p['edge'] as num?)?.toDouble() ?? 0;
-      if (edge < minEdge || _kelly(p) < 2.0) return false;
+      if (edge < 2.5 || _kelly(p) < 2.0) return false;
       final odds = (p['odds'] as num?)?.toDouble() ?? 0;
-      if (odds < 1.20 || odds > 5.00) return false;
+      if (odds < 1.45 || odds > 2.40) return false;
       final cl = (p['_contradictionLevel'] as int?) ?? 0;
       if (cl == 2 && edge < 20) return false;
       return true;
@@ -274,6 +251,10 @@ class EdgeEvaluatorService {
     lastQualifiedCount = valid.length;
     return valid.take(_maxBets).toList();
   }
+
+  // Alias mantido para compatibilidade interna
+  static double _computeLocalScore(Map<String, dynamic> p) =>
+      _computeScoreFinal(p);
 
   static String generateLocalJustification(Map<String, dynamic> p) {
     final edge = (p['edge'] as num?)?.toDouble() ?? 0;
@@ -321,12 +302,6 @@ class EdgeEvaluatorService {
             '${side == 'Over' ? 'abaixo' : 'acima'} da linha '
             '${line.toStringAsFixed(1)} em ${pct5.toStringAsFixed(0)}%');
       }
-    }
-
-    // formWarning
-    final formWarning = p['formWarning'] == true;
-    if (formWarning) {
-      parts.add('⚠️ Forma recente contra a direção da aposta');
     }
 
     // 3. Tendência (avg5 vs avg10)
@@ -532,7 +507,7 @@ class EdgeEvaluatorService {
       final probFinal = (probCal + contextScore * 0.04).clamp(0.0, 1.0);
       final scoreStr = contextScore > 0 ? '+$contextScore' : '$contextScore';
       final contextConfirmed =
-          contextScore >= 1 && (injury != null || (teamSevere[playerTeam] ?? 0) > 0);
+          injury != null || (teamSevere[playerTeam] ?? 0) > 0;
       final contextStatus = contextScore >= 1
           ? 'positive'
           : contextScore <= -1
@@ -674,7 +649,7 @@ class EdgeEvaluatorService {
     final playerNames =
         top.map((p) => p['player'] as String).toSet().join(', ');
 
-    final promptText = '''Você é um especialista em apostas esportivas de $sport.
+    final prompt = '''Você é um especialista em apostas esportivas de $sport.
 
 ${newsSection}PROPS PARA ANÁLISE:
 ${jsonEncode(propsData)}
@@ -709,18 +684,14 @@ Retorne SOMENTE JSON:
       body: jsonEncode({
         'contents': [
           {
-            'role': 'user',
             'parts': [
-              {'text': promptText}
+              {'text': prompt}
             ]
           }
         ],
         'tools': [
           {'google_search': {}}
         ],
-        'tool_config': {
-          'function_calling_config': {'mode': 'ANY'},
-        },
         'generationConfig': {
           'temperature': 0.2,
           'maxOutputTokens': 4096,
@@ -826,7 +797,7 @@ Retorne SOMENTE JSON:
 
     // ORDENAÇÃO FINAL CORRETA
 
-    double get(Map m, String k) => (m[k] as num?)?.toDouble() ?? 0;
+    double _get(Map m, String k) => (m[k] as num?)?.toDouble() ?? 0;
 
     result.sort((a, b) {
       final aNeg = a['_aiContextStatus'] == 'negative';
@@ -835,18 +806,18 @@ Retorne SOMENTE JSON:
       // negative sempre por último
       if (aNeg != bNeg) return aNeg ? 1 : -1;
 
-      final aEv = get(a, 'edge') * get(a, '_probCalibrada');
-      final bEv = get(b, 'edge') * get(b, '_probCalibrada');
+      final aEv = _get(a, 'edge') * _get(a, '_probCalibrada');
+      final bEv = _get(b, 'edge') * _get(b, '_probCalibrada');
 
       if (aEv != bEv) return bEv.compareTo(aEv);
 
-      final aScore = get(a, '_scoreFinal');
-      final bScore = get(b, '_scoreFinal');
+      final aScore = _get(a, '_scoreFinal');
+      final bScore = _get(b, '_scoreFinal');
 
       if (aScore != bScore) return bScore.compareTo(aScore);
 
-      final aKelly = get(a, 'kelly');
-      final bKelly = get(b, 'kelly');
+      final aKelly = _get(a, 'kelly');
+      final bKelly = _get(b, 'kelly');
 
       return bKelly.compareTo(aKelly);
     });
