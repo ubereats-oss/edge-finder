@@ -207,7 +207,7 @@ async function processEvents(allEvents, raw) {
     } catch {
       // box score indisponível
     }
-    await sleep(120);
+    await sleep(50);
   }
 
   return total;
@@ -241,12 +241,16 @@ async function getPlayerStats() {
   }
 
   const lastDate = getLastProcessedDate(existing);
+  const playerCount = Object.keys(existing).length;
+  if (!lastDate && playerCount === 0 && fs.existsSync('nfl_player_stats.json')) {
+    console.warn('nfl_player_stats.json presente mas sem dados — pode indicar arquivo corrompido na branch data. Processando histórico completo (pode demorar).');
+  }
   let months;
 
   if (lastDate) {
     console.log(`Última data: ${lastDate}`);
     months = getIncrementalRange(lastDate);
-    console.log(`Incremental: ${months[0].start} → ${months[0].end}`);
+    console.log(`Incremental: ${months[0].start} → ${months[0].end} (range de ${Math.round((new Date(months[0].end) - new Date(months[0].start)) / 86400000)} dias)`);
   } else {
     console.log('Histórico completo NFL...');
     months = FULL_MONTHS;
