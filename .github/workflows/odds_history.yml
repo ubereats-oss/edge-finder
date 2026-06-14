@@ -1,32 +1,25 @@
 name: Histórico de Odds
-
 on:
   schedule:
     - cron: '0 19 * * *'
   workflow_dispatch:
-
 permissions:
   contents: write
-
 jobs:
   save-history:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repositório
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT }}
           persist-credentials: true
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-
       - name: Instalar dependências
         run: npm install axios firebase-admin
-
       - name: Injetar chaves de API
         run: |
           node -e "
@@ -42,7 +35,6 @@ jobs:
           "
         env:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
-
       - name: Restaurar histórico anterior
         run: |
           git fetch origin history 2>/dev/null && \
@@ -51,15 +43,12 @@ jobs:
           echo "Histórico restaurado" || \
           echo "Sem histórico anterior — primeira execução"
           mkdir -p odds_history
-
       - name: Executar coleta
         run: node pipeline/save_odds_history.js
-
       - name: Sincronizar histórico com Firestore
         run: node pipeline/firebase_sync.js history
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-
       - name: Empacotar e salvar na branch history
         run: |
           tar -czf /tmp/odds_history.tar.gz odds_history/
@@ -71,11 +60,3 @@ jobs:
           git add odds_history.tar.gz
           git commit -m "odds: $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push origin HEAD:history --force
-
-      - name: Acionar atualização do modelo
-        run: |
-          curl -s -X POST \
-            -H "Authorization: token ${{ secrets.GH_PAT }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/ubereats-oss/edge-finder/actions/workflows/update_model.yml/dispatches \
-            -d '{"ref":"main","inputs":{"sport":"all"}}'

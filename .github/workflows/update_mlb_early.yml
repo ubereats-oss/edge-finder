@@ -1,13 +1,8 @@
 name: Atualizar MLB (early)
-
 on:
-  schedule:
-    - cron: '0 11 * * *'
   workflow_dispatch:
-
 permissions:
   contents: write
-
 jobs:
   mlb:
     runs-on: ubuntu-latest
@@ -16,13 +11,10 @@ jobs:
         with:
           token: ${{ secrets.GH_PAT }}
           persist-credentials: true
-
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-
       - run: npm install axios firebase-admin
-
       - name: Injetar chaves
         run: |
           node -e "
@@ -32,7 +24,6 @@ jobs:
           "
         env:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
-
       - name: Restaurar stats MLB
         run: |
           git fetch origin data 2>/dev/null || true
@@ -42,24 +33,20 @@ jobs:
             git show origin/data:$f > $f 2>/dev/null || true
           done
           git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
-
       - run: node pipeline/get_mlb_injuries.js
       - run: node pipeline/get_mlb_player_teams.js
       - run: node pipeline/get_mlb_odds.js
       - run: node pipeline/model_mlb.js
       - run: node pipeline/get_mlb_props.js
       - run: node pipeline/model_mlb_props.js
-
       - name: Sincronizar com Firestore
         run: node pipeline/firebase_sync.js results
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-
       - name: Sincronizar apostas com Firestore
         run: node pipeline/firebase_sync.js bets
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-
       - name: Salvar dados na branch data
         run: |
           mkdir -p /tmp/data-save
