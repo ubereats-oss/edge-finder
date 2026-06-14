@@ -289,6 +289,7 @@ jobs:
         run: |
           git fetch origin data 2>/dev/null || true
           git show origin/data:tennis_player_stats.json > tennis_player_stats.json 2>/dev/null || true
+          git show origin/data:ranking.json > ranking.json 2>/dev/null || true
 
       - run: node pipeline/get_odds.js
       - run: node pipeline/model_prob.js
