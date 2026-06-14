@@ -35,10 +35,30 @@ function markCurrentKeyExhausted() {
 }
 
 const MARKETS = 'player_sets_won,player_games_won';
-const SPORTS  = ['tennis_atp', 'tennis_wta'];
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function getActiveTennisSports() {
+  for (let i = 0; i < API_KEYS.length; i++) {
+    const key = getNextValidKey();
+    if (!key) break;
+    try {
+      const res = await axios.get(`https://api.the-odds-api.com/v4/sports?apiKey=${key}`);
+      return res.data
+        .filter(s => s.group === 'Tennis' && s.active)
+        .map(s => ({ key: s.key, tour: s.key.startsWith('tennis_wta') ? 'WTA' : 'ATP' }));
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || '';
+      if (msg.toLowerCase().includes('quota')) {
+        markCurrentKeyExhausted();
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('Não foi possível listar esportes ativos — chaves esgotadas.');
 }
 
 async function fetchEvents(sport) {
@@ -77,7 +97,24 @@ async function fetchEventProps(sport, eventId) {
 async function getTennisProps() {
   const allProps = [];
 
-  for (const sport of SPORTS) {
+  let sports = [];
+  try {
+    sports = await getActiveTennisSports();
+  } catch (e) {
+    console.error('Erro ao listar esportes de tênis ativos:', e.message);
+    fs.writeFileSync('tennis_props.json', JSON.stringify([], null, 2));
+    return;
+  }
+
+  if (!sports.length) {
+    console.log('Nenhum torneio de tênis ativo no momento.');
+    fs.writeFileSync('tennis_props.json', JSON.stringify([], null, 2));
+    return;
+  }
+
+  console.log(`Torneios de tênis ativos: ${sports.map(s => s.key).join(', ')}`);
+
+  for (const { key: sport, tour } of sports) {
     try {
       const events = await fetchEvents(sport);
       if (!events.length) { console.log(`Sem jogos ${sport}.`); continue; }
@@ -132,7 +169,7 @@ async function getTennisProps() {
                 line: sides.Over.line,
                 oddsOver: sides.Over.price,
                 oddsUnder: sides.Under.price,
-                tour: sport === 'tennis_atp' ? 'ATP' : 'WTA',
+                tour,
               });
             }
           }

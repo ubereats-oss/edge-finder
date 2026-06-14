@@ -1,0 +1,39 @@
+name: Atualizar Ranking Tênis
+on:
+  schedule:
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+jobs:
+  ranking:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install axios
+      - run: node pipeline/get_tennis_ranking.js
+      - name: Salvar ranking na branch data
+        run: |
+          mkdir -p /tmp/data-save
+          cp ranking.json /tmp/data-save/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin data 2>/dev/null || true
+          git checkout --orphan data-ranking-tmp
+          git rm -rf . --quiet
+          printf 'node_modules/\n' > .gitignore
+          cp /tmp/data-save/* . 2>/dev/null || true
+          for f in bets.json mlb_injuries_today.json mlb_player_stats.json.gz mlb_player_team.json mlb_team_rating.json nba_boxscores_cache.json nba_injuries_today.json nba_player_positions.json nba_player_stats.json.gz nba_player_team.json nba_rating.json nfl_player_stats.json.gz nfl_player_team.json nhl_player_stats.json.gz nhl_player_team.json tennis_player_stats.json; do
+            git show origin/data:$f > $f 2>/dev/null || true
+          done
+          git add -A
+          git diff --staged --quiet && echo "Sem mudanças" || git commit -m "ranking: $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push origin HEAD:data --force
