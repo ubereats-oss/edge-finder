@@ -26,26 +26,52 @@ env:
 
 jobs:
 
-  # ── NBA ───────────────────────────────────────────────────────────────────
+  # ── NBA (out-jun) ──────────────────────────────────────────────────────────
   nba:
     if: >-
-      github.event_name == 'schedule' ||
-      github.event.inputs.sports == 'all' ||
-      github.event.inputs.sports == 'nba'
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'schedule' &&
+       (fromJSON('{"1":1,"2":1,"3":1,"4":1,"5":1,"6":1,"10":1,"11":1,"12":1}')[format('{0}', github.event.schedule)] != null ||
+        contains('01,02,03,04,05,06,10,11,12', format('{0}', steps.month.outputs.month))))
     runs-on: ubuntu-latest
     steps:
+      - name: Verificar mês (temporada NBA out-jun)
+        id: season
+        run: |
+          MONTH=$(date -u +%-m)
+          echo "month=$MONTH" >> $GITHUB_OUTPUT
+          if [[ "$MONTH" -ge 10 || "$MONTH" -le 4 ]]; then
+            echo "in_season=true" >> $GITHUB_OUTPUT
+          else
+            echo "in_season=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pular se fora de temporada
+        if: steps.season.outputs.in_season == 'false' && github.event_name == 'schedule'
+        run: echo "NBA fora de temporada (mai-set) — pulando." && exit 0
+
       - uses: actions/checkout@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           token: ${{ secrets.GH_PAT }}
           persist-credentials: true
 
       - uses: actions/setup-node@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           node-version: '24'
 
+      - uses: actions/cache@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
+        with:
+          path: ~/.npm
+          key: npm-axios-${{ runner.os }}
+
       - run: npm install axios
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
 
       - name: Injetar chaves
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
@@ -57,6 +83,7 @@ jobs:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
 
       - name: Restaurar stats NBA
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           git fetch origin data 2>/dev/null || true
           git show origin/data:nba_player_stats.json.gz > /tmp/nba_ps.gz 2>/dev/null && \
@@ -67,13 +94,20 @@ jobs:
           git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
 
       - run: node pipeline/get_nba_injuries.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/get_nba_player_teams.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/get_nba_props_br.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/model_nba_props_br.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/get_nba_odds.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/model_nba.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
 
       - name: Empacotar artefatos NBA
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p /tmp/nba-out
           gzip -c nba_player_stats.json > /tmp/nba-out/nba_player_stats.json.gz 2>/dev/null || true
@@ -82,31 +116,56 @@ jobs:
           done
 
       - uses: actions/upload-artifact@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           name: nba-out
           path: /tmp/nba-out/
           if-no-files-found: warn
 
-  # ── MLB ───────────────────────────────────────────────────────────────────
+  # ── MLB (mar-out) ──────────────────────────────────────────────────────────
   mlb:
     if: >-
-      github.event_name == 'schedule' ||
-      github.event.inputs.sports == 'all' ||
-      github.event.inputs.sports == 'mlb'
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
+      - name: Verificar mês (temporada MLB mar-out)
+        id: season
+        run: |
+          MONTH=$(date -u +%-m)
+          echo "month=$MONTH" >> $GITHUB_OUTPUT
+          if [[ "$MONTH" -ge 3 && "$MONTH" -le 10 ]]; then
+            echo "in_season=true" >> $GITHUB_OUTPUT
+          else
+            echo "in_season=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pular se fora de temporada
+        if: steps.season.outputs.in_season == 'false' && github.event_name == 'schedule'
+        run: echo "MLB fora de temporada (nov-fev) — pulando." && exit 0
+
       - uses: actions/checkout@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           token: ${{ secrets.GH_PAT }}
           persist-credentials: true
 
       - uses: actions/setup-node@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           node-version: '24'
 
+      - uses: actions/cache@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
+        with:
+          path: ~/.npm
+          key: npm-axios-${{ runner.os }}
+
       - run: npm install axios
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
 
       - name: Injetar chaves
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
@@ -117,6 +176,7 @@ jobs:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
 
       - name: Restaurar stats MLB
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           git fetch origin data 2>/dev/null || true
           git show origin/data:mlb_player_stats.json.gz > /tmp/mlb_ps.gz 2>/dev/null && \
@@ -126,13 +186,20 @@ jobs:
           done
 
       - run: node pipeline/get_mlb_injuries.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/get_mlb_player_teams.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/get_mlb_odds.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/model_mlb.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/get_mlb_props.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/model_mlb_props.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
 
       - name: Empacotar artefatos MLB
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p /tmp/mlb-out
           gzip -c mlb_player_stats.json > /tmp/mlb-out/mlb_player_stats.json.gz 2>/dev/null || true
@@ -141,31 +208,56 @@ jobs:
           done
 
       - uses: actions/upload-artifact@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           name: mlb-out
           path: /tmp/mlb-out/
           if-no-files-found: warn
 
-  # ── NHL ───────────────────────────────────────────────────────────────────
+  # ── NHL (out-jun) ──────────────────────────────────────────────────────────
   nhl:
     if: >-
-      github.event_name == 'schedule' ||
-      github.event.inputs.sports == 'all' ||
-      github.event.inputs.sports == 'nhl'
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
+      - name: Verificar mês (temporada NHL out-jun)
+        id: season
+        run: |
+          MONTH=$(date -u +%-m)
+          echo "month=$MONTH" >> $GITHUB_OUTPUT
+          if [[ "$MONTH" -ge 10 || "$MONTH" -le 6 ]]; then
+            echo "in_season=true" >> $GITHUB_OUTPUT
+          else
+            echo "in_season=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pular se fora de temporada
+        if: steps.season.outputs.in_season == 'false' && github.event_name == 'schedule'
+        run: echo "NHL fora de temporada (jul-set) — pulando." && exit 0
+
       - uses: actions/checkout@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           token: ${{ secrets.GH_PAT }}
           persist-credentials: true
 
       - uses: actions/setup-node@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           node-version: '24'
 
+      - uses: actions/cache@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
+        with:
+          path: ~/.npm
+          key: npm-axios-${{ runner.os }}
+
       - run: npm install axios
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
 
       - name: Injetar chaves
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
@@ -176,18 +268,32 @@ jobs:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
 
       - name: Restaurar stats NHL
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           git fetch origin data 2>/dev/null || true
-          git show origin/data:nhl_player_stats.json.gz > /tmp/nhl_ps.gz 2>/dev/null && \
-            gunzip -c /tmp/nhl_ps.gz > nhl_player_stats.json || true
+          if git show origin/data:nhl_player_stats.json.gz > /tmp/nhl_ps.gz 2>/dev/null; then
+            gunzip -c /tmp/nhl_ps.gz > nhl_player_stats.json 2>/dev/null || true
+            SIZE=$(wc -c < nhl_player_stats.json 2>/dev/null || echo 0)
+            if [ "$SIZE" -lt 1000 ]; then
+              echo "nhl_player_stats.json inválido após gunzip ($SIZE bytes) — removendo."
+              rm -f nhl_player_stats.json
+            else
+              echo "nhl_player_stats.json restaurado: $SIZE bytes"
+            fi
+          fi
           git show origin/data:nhl_player_team.json > nhl_player_team.json 2>/dev/null || true
 
       - run: node pipeline/get_nhl_player_teams.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/get_nhl_player_stats.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/get_nhl_props.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/model_nhl_props.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
 
       - name: Empacotar artefatos NHL
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p /tmp/nhl-out
           gzip -c nhl_player_stats.json > /tmp/nhl-out/nhl_player_stats.json.gz 2>/dev/null || true
@@ -196,31 +302,56 @@ jobs:
           done
 
       - uses: actions/upload-artifact@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           name: nhl-out
           path: /tmp/nhl-out/
           if-no-files-found: warn
 
-  # ── NFL ───────────────────────────────────────────────────────────────────
+  # ── NFL (set-fev) ──────────────────────────────────────────────────────────
   nfl:
     if: >-
-      github.event_name == 'schedule' ||
-      github.event.inputs.sports == 'all' ||
-      github.event.inputs.sports == 'nfl'
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
+      - name: Verificar mês (temporada NFL set-fev)
+        id: season
+        run: |
+          MONTH=$(date -u +%-m)
+          echo "month=$MONTH" >> $GITHUB_OUTPUT
+          if [[ "$MONTH" -ge 9 || "$MONTH" -le 2 ]]; then
+            echo "in_season=true" >> $GITHUB_OUTPUT
+          else
+            echo "in_season=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pular se fora de temporada
+        if: steps.season.outputs.in_season == 'false' && github.event_name == 'schedule'
+        run: echo "NFL fora de temporada (mar-ago) — pulando." && exit 0
+
       - uses: actions/checkout@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           token: ${{ secrets.GH_PAT }}
           persist-credentials: true
 
       - uses: actions/setup-node@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           node-version: '24'
 
+      - uses: actions/cache@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
+        with:
+          path: ~/.npm
+          key: npm-axios-${{ runner.os }}
+
       - run: npm install axios
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
 
       - name: Injetar chaves
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
@@ -231,6 +362,7 @@ jobs:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
 
       - name: Restaurar stats NFL
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           git fetch origin data 2>/dev/null || true
           git show origin/data:nfl_player_stats.json.gz > /tmp/nfl_ps.gz 2>/dev/null && \
@@ -238,11 +370,16 @@ jobs:
           git show origin/data:nfl_player_team.json > nfl_player_team.json 2>/dev/null || true
 
       - run: node pipeline/get_nfl_player_teams.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/get_nfl_player_stats.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/get_nfl_props.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
       - run: node pipeline/model_nfl_props.js
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
 
       - name: Empacotar artefatos NFL
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p /tmp/nfl-out
           gzip -c nfl_player_stats.json > /tmp/nfl-out/nfl_player_stats.json.gz 2>/dev/null || true
@@ -251,12 +388,13 @@ jobs:
           done
 
       - uses: actions/upload-artifact@v4
+        if: steps.season.outputs.in_season == 'true' || github.event_name == 'workflow_dispatch'
         with:
           name: nfl-out
           path: /tmp/nfl-out/
           if-no-files-found: warn
 
-  # ── TÊNIS ─────────────────────────────────────────────────────────────────
+  # ── TÊNIS (ano inteiro) ────────────────────────────────────────────────────
   tennis:
     if: >-
       github.event_name == 'schedule' ||
@@ -272,6 +410,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-axios-${{ runner.os }}
 
       - run: npm install axios
 
@@ -324,6 +467,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-firebase-${{ runner.os }}
 
       - run: npm install firebase-admin
 
@@ -382,7 +530,6 @@ jobs:
 
       - name: Salvar dados na branch data
         run: |
-          # Backup para /tmp antes de limpar o working tree
           mkdir -p /tmp/data-save
           for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json nhl_player_team.json nfl_player_team.json tennis_player_stats.json bets.json; do
             [ -f "$f" ] && cp "$f" /tmp/data-save/ || true
