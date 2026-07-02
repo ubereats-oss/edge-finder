@@ -26,18 +26,13 @@ jobs:
       - run: node pipeline/get_tennis_ranking.js
       - name: Salvar ranking na branch data
         run: |
-          mkdir -p /tmp/data-save
-          cp ranking.json /tmp/data-save/ 2>/dev/null || true
+          cp ranking.json /tmp/ranking.json
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin data 2>/dev/null || true
-          git checkout --orphan data-ranking-tmp
-          git rm -rf . --quiet
-          printf 'node_modules/\n' > .gitignore
-          cp /tmp/data-save/* . 2>/dev/null || true
-          for f in bets.json mlb_injuries_today.json mlb_player_stats.json.gz mlb_player_team.json mlb_team_rating.json nba_boxscores_cache.json nba_injuries_today.json nba_player_positions.json nba_player_stats.json.gz nba_player_team.json nba_rating.json nfl_player_stats.json.gz nfl_player_team.json nhl_player_stats.json.gz nhl_player_team.json tennis_player_stats.json; do
-            git show origin/data:$f > $f 2>/dev/null || true
-          done
-          git add -A
+          git checkout -b data-work origin/data --force 2>/dev/null || \
+            (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+          cp /tmp/ranking.json ranking.json
+          git add ranking.json
           git diff --staged --quiet && echo "Sem mudanças" || git commit -m "ranking: $(date -u '+%Y-%m-%d %H:%M') UTC"
-          git push origin HEAD:data --force
+          git push origin data-work:data
