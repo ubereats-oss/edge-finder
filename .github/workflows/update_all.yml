@@ -534,20 +534,18 @@ jobs:
 
       - name: Salvar dados na branch data
         run: |
-          mkdir -p /tmp/data-save
-          for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json nhl_player_team.json nfl_player_team.json tennis_player_stats.json bets.json; do
-            [ -f "$f" ] && cp "$f" /tmp/data-save/ || true
+          mkdir -p /tmp/to-save
+          for dir in /tmp/nba-out /tmp/mlb-out /tmp/nhl-out /tmp/nfl-out /tmp/tennis-out; do
+            [ -d "$dir" ] && cp "$dir"/* /tmp/to-save/ 2>/dev/null || true
           done
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan data-all-tmp
-          git rm -rf . --quiet
-          printf 'node_modules/\n' > .gitignore
-          cp /tmp/data-save/* . 2>/dev/null || true
-          git add .gitignore || true
-          for f in *.gz; do [ -f "$f" ] && git add "$f" || true; done
-          for f in nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json nhl_player_team.json nfl_player_team.json tennis_player_stats.json bets.json; do
+          git fetch origin data 2>/dev/null || true
+          git checkout -b data-work origin/data --force 2>/dev/null || \
+            (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+          cp /tmp/to-save/* . 2>/dev/null || true
+          for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json nhl_player_team.json nfl_player_team.json tennis_player_stats.json ranking.json bets.json; do
             [ -f "$f" ] && git add "$f" || true
           done
           git diff --staged --quiet && echo "Sem mudanças na branch data" || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
-          git push origin HEAD:data --force
+          git push origin data-work:data
