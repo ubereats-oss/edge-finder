@@ -1,16 +1,23 @@
 const fs = require('fs');
 
-if (!fs.existsSync('mlb_team_rating.json')) {
-  console.log('mlb_team_rating.json não encontrado — pulando modelo MLB H2H.');
-  process.exit(0);
-}
-if (!fs.existsSync('mlb_odds.json')) {
-  console.log('mlb_odds.json não encontrado — pulando modelo MLB H2H.');
-  process.exit(0);
+function readJsonSafe(file, fallback) {
+  if (!fs.existsSync(file)) return fallback;
+  const raw = fs.readFileSync(file, 'utf-8').trim();
+  if (!raw) return fallback;
+  try { return JSON.parse(raw); } catch { return fallback; }
 }
 
-const teamRating = JSON.parse(fs.readFileSync('mlb_team_rating.json'));
-const odds = JSON.parse(fs.readFileSync('mlb_odds.json'));
+const teamRating = readJsonSafe('mlb_team_rating.json', null);
+const odds = readJsonSafe('mlb_odds.json', null);
+
+if (!teamRating) {
+  console.log('mlb_team_rating.json não encontrado ou vazio — pulando modelo MLB H2H.');
+  process.exit(0);
+}
+if (!odds) {
+  console.log('mlb_odds.json não encontrado ou vazio — pulando modelo MLB H2H.');
+  process.exit(0);
+}
 
 const SEASON_WEIGHT = { 2023: 1, 2024: 2, 2025: 3, 2026: 4 };
 const CURRENT_SEASON = 2026;
