@@ -87,7 +87,7 @@ jobs:
           git show origin/data:nba_player_stats.json.gz > /tmp/nba_ps.gz 2>/dev/null && \
             gunzip -c /tmp/nba_ps.gz > nba_player_stats.json || true
           for f in nba_player_team.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json; do
-            git show origin/data:$f > $f 2>/dev/null || true
+            git show origin/data:$f > $f 2>/dev/null || rm -f $f
           done
           git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
 
@@ -180,7 +180,7 @@ jobs:
           git show origin/data:mlb_player_stats.json.gz > /tmp/mlb_ps.gz 2>/dev/null && \
             gunzip -c /tmp/mlb_ps.gz > mlb_player_stats.json || true
           for f in mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
-            git show origin/data:$f > $f 2>/dev/null || true
+            git show origin/data:$f > $f 2>/dev/null || rm -f $f
           done
 
       - run: node pipeline/get_mlb_injuries.js
