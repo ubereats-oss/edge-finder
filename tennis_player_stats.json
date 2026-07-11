@@ -52,6 +52,11 @@
           "value": 1,
           "date": "2026-05-19T08:40Z",
           "opponent": "Alexei Popyrin"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T08:00Z",
+          "opponent": "Hendrik Jebens"
         }
       ],
       "games": [
@@ -69,6 +74,11 @@
           "value": 17,
           "date": "2026-05-19T08:40Z",
           "opponent": "Alexei Popyrin"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-11T08:00Z",
+          "opponent": "Hendrik Jebens"
         }
       ]
     },
@@ -483,6 +493,22 @@
           "value": 7,
           "date": "2026-06-22T10:05Z",
           "opponent": "Clement Tabur"
+        }
+      ]
+    },
+    "hard": {
+      "sets": [
+        {
+          "value": 2,
+          "date": "2026-07-11T16:30Z",
+          "opponent": "Raul Brancaccio"
+        }
+      ],
+      "games": [
+        {
+          "value": 17,
+          "date": "2026-07-11T16:30Z",
+          "opponent": "Raul Brancaccio"
         }
       ]
     }
@@ -4525,6 +4551,11 @@
           "value": 1,
           "date": "2026-06-08T11:30Z",
           "opponent": "Martin Landaluce"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-11T09:30Z",
+          "opponent": "Thiago Monteiro"
         }
       ],
       "games": [
@@ -4547,6 +4578,11 @@
           "value": 14,
           "date": "2026-06-08T11:30Z",
           "opponent": "Martin Landaluce"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-11T09:30Z",
+          "opponent": "Thiago Monteiro"
         }
       ]
     },
@@ -4880,6 +4916,11 @@
           "value": 1,
           "date": "2026-03-31T14:55Z",
           "opponent": "Camilo Ugo Carabelli"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T13:00Z",
+          "opponent": "Anirudh Chandrasekar"
         }
       ],
       "games": [
@@ -4897,6 +4938,11 @@
           "value": 14,
           "date": "2026-03-31T14:55Z",
           "opponent": "Camilo Ugo Carabelli"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-11T13:00Z",
+          "opponent": "Anirudh Chandrasekar"
         }
       ]
     },
@@ -6925,6 +6971,11 @@
           "value": 1,
           "date": "2026-05-07T11:00Z",
           "opponent": "Alexander Blockx"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T11:30Z",
+          "opponent": "Patrick Zahraj"
         }
       ],
       "games": [
@@ -6937,6 +6988,11 @@
           "value": 10,
           "date": "2026-05-07T11:00Z",
           "opponent": "Alexander Blockx"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-11T11:30Z",
+          "opponent": "Patrick Zahraj"
         }
       ]
     },
@@ -12387,6 +12443,11 @@
           "value": 1,
           "date": "2026-06-10T09:10Z",
           "opponent": "Kamil Majchrzak"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-11T11:00Z",
+          "opponent": "Dylan Dietrich"
         }
       ],
       "games": [
@@ -12419,6 +12480,11 @@
           "value": 17,
           "date": "2026-06-10T09:10Z",
           "opponent": "Kamil Majchrzak"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-11T11:00Z",
+          "opponent": "Dylan Dietrich"
         }
       ]
     },
@@ -20555,6 +20621,11 @@
           "value": 0,
           "date": "2026-06-20T13:00Z",
           "opponent": "Zachary Svajda"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T08:00Z",
+          "opponent": "Edas Butvilas"
         }
       ],
       "games": [
@@ -20597,6 +20668,11 @@
           "value": 6,
           "date": "2026-06-20T13:00Z",
           "opponent": "Zachary Svajda"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-11T08:00Z",
+          "opponent": "Edas Butvilas"
         }
       ]
     }
@@ -20618,6 +20694,11 @@
           "value": 0,
           "date": "2026-04-13T11:15Z",
           "opponent": "Gabriel Diallo"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T12:30Z",
+          "opponent": "Manas Dhamne"
         }
       ],
       "games": [
@@ -20635,6 +20716,11 @@
           "value": 3,
           "date": "2026-04-13T11:15Z",
           "opponent": "Gabriel Diallo"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-11T12:30Z",
+          "opponent": "Manas Dhamne"
         }
       ]
     },
@@ -51123,6 +51209,11 @@
           "value": 0,
           "date": "2026-05-20T18:20Z",
           "opponent": "Alexander Bublik"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-11T08:00Z",
+          "opponent": "Marc-Andrea Huesler"
         }
       ],
       "games": [
@@ -51145,6 +51236,11 @@
           "value": 7,
           "date": "2026-05-20T18:20Z",
           "opponent": "Alexander Bublik"
+        },
+        {
+          "value": 7,
+          "date": "2026-07-11T08:00Z",
+          "opponent": "Marc-Andrea Huesler"
         }
       ]
     },
@@ -62309,6 +62405,22 @@
           "opponent": "Daniel Evans"
         }
       ]
+    },
+    "hard": {
+      "sets": [
+        {
+          "value": 2,
+          "date": "2026-07-11T16:30Z",
+          "opponent": "Marc Majdandzic"
+        }
+      ],
+      "games": [
+        {
+          "value": 12,
+          "date": "2026-07-11T16:30Z",
+          "opponent": "Marc Majdandzic"
+        }
+      ]
     }
   },
   "Nicolas Mejia": {
@@ -65056,6 +65168,11 @@
           "value": 0,
           "date": "2026-06-02T15:10Z",
           "opponent": "Viola Turini"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T14:35Z",
+          "opponent": "Maria Rentoumi"
         }
       ],
       "games": [
@@ -65073,6 +65190,11 @@
           "value": 5,
           "date": "2026-06-02T15:10Z",
           "opponent": "Viola Turini"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-11T14:35Z",
+          "opponent": "Maria Rentoumi"
         }
       ]
     },
