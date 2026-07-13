@@ -62,6 +62,11 @@
           "value": 2,
           "date": "2026-07-12T09:00Z",
           "opponent": "Marc-Andrea Huesler"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T10:15Z",
+          "opponent": "Jurij Rodionov"
         }
       ],
       "games": [
@@ -89,6 +94,11 @@
           "value": 13,
           "date": "2026-07-12T09:00Z",
           "opponent": "Marc-Andrea Huesler"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-13T10:15Z",
+          "opponent": "Jurij Rodionov"
         }
       ]
     },
@@ -876,6 +886,16 @@
           "value": 3,
           "date": "2026-06-30T11:55Z",
           "opponent": "Pablo Llamas Ruiz"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T12:15Z",
+          "opponent": "Kamil Majchrzak"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-04T10:05Z",
+          "opponent": "Alex de Minaur"
         }
       ],
       "games": [
@@ -883,6 +903,16 @@
           "value": 18,
           "date": "2026-06-30T11:55Z",
           "opponent": "Pablo Llamas Ruiz"
+        },
+        {
+          "value": 26,
+          "date": "2026-07-02T12:15Z",
+          "opponent": "Kamil Majchrzak"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-04T10:05Z",
+          "opponent": "Alex de Minaur"
         }
       ]
     }
@@ -1381,6 +1411,11 @@
           "value": 3,
           "date": "2026-07-01T10:10Z",
           "opponent": "Ignacio Buse"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-03T13:40Z",
+          "opponent": "Jannik Sinner"
         }
       ],
       "games": [
@@ -1393,6 +1428,11 @@
           "value": 18,
           "date": "2026-07-01T10:10Z",
           "opponent": "Ignacio Buse"
+        },
+        {
+          "value": 11,
+          "date": "2026-07-03T13:40Z",
+          "opponent": "Jannik Sinner"
         }
       ]
     }
@@ -2234,6 +2274,11 @@
           "value": 3,
           "date": "2026-06-30T12:50Z",
           "opponent": "Jack Pinnington Jones"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T12:40Z",
+          "opponent": "Jan-Lennard Struff"
         }
       ],
       "games": [
@@ -2241,6 +2286,11 @@
           "value": 20,
           "date": "2026-06-30T12:50Z",
           "opponent": "Jack Pinnington Jones"
+        },
+        {
+          "value": 31,
+          "date": "2026-07-02T12:40Z",
+          "opponent": "Jan-Lennard Struff"
         }
       ]
     }
@@ -3154,6 +3204,11 @@
           "value": 3,
           "date": "2026-06-30T13:45Z",
           "opponent": "Mackenzie McDonald"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Taylor Fritz"
         }
       ],
       "games": [
@@ -3161,6 +3216,11 @@
           "value": 21,
           "date": "2026-06-30T13:45Z",
           "opponent": "Mackenzie McDonald"
+        },
+        {
+          "value": 9,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Taylor Fritz"
         }
       ]
     }
@@ -4049,6 +4109,11 @@
           "value": 3,
           "date": "2026-07-01T10:05Z",
           "opponent": "SoonWoo Kwon"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-03T13:55Z",
+          "opponent": "Hubert Hurkacz"
         }
       ],
       "games": [
@@ -4061,6 +4126,11 @@
           "value": 19,
           "date": "2026-07-01T10:05Z",
           "opponent": "SoonWoo Kwon"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-03T13:55Z",
+          "opponent": "Hubert Hurkacz"
         }
       ]
     }
@@ -4464,6 +4534,16 @@
           "value": 3,
           "date": "2026-07-01T14:05Z",
           "opponent": "Terence Atmane"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T16:35Z",
+          "opponent": "Jan Choinski"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T17:15Z",
+          "opponent": "Alexander Bublik"
         }
       ],
       "games": [
@@ -4471,6 +4551,16 @@
           "value": 23,
           "date": "2026-07-01T14:05Z",
           "opponent": "Terence Atmane"
+        },
+        {
+          "value": 23,
+          "date": "2026-07-02T16:35Z",
+          "opponent": "Jan Choinski"
+        },
+        {
+          "value": 27,
+          "date": "2026-07-04T17:15Z",
+          "opponent": "Alexander Bublik"
         }
       ]
     }
@@ -4681,6 +4771,11 @@
           "value": 0,
           "date": "2026-05-04T10:10Z",
           "opponent": "Jan Choinski"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-13T16:05Z",
+          "opponent": "Luca Van Assche"
         }
       ],
       "games": [
@@ -4703,6 +4798,11 @@
           "value": 9,
           "date": "2026-05-04T10:10Z",
           "opponent": "Jan Choinski"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-13T16:05Z",
+          "opponent": "Luca Van Assche"
         }
       ]
     },
@@ -4946,6 +5046,11 @@
           "value": 2,
           "date": "2026-07-12T10:30Z",
           "opponent": "Vitaliy Sachko"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-13T12:55Z",
+          "opponent": "Raphael Collignon"
         }
       ],
       "games": [
@@ -4973,6 +5078,11 @@
           "value": 12,
           "date": "2026-07-12T10:30Z",
           "opponent": "Vitaliy Sachko"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-13T12:55Z",
+          "opponent": "Raphael Collignon"
         }
       ]
     },
@@ -5456,6 +5566,11 @@
           "value": 1,
           "date": "2026-06-22T10:10Z",
           "opponent": "Jack Pinnington Jones"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T16:30Z",
+          "opponent": "Kyrian Jacquet"
         }
       ],
       "games": [
@@ -5533,6 +5648,11 @@
           "value": 15,
           "date": "2026-06-22T10:10Z",
           "opponent": "Jack Pinnington Jones"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T16:30Z",
+          "opponent": "Kyrian Jacquet"
         }
       ]
     },
@@ -5731,6 +5851,11 @@
           "value": 1,
           "date": "2026-05-04T15:00Z",
           "opponent": "Pablo Llamas Ruiz"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T14:05Z",
+          "opponent": "Damir Dzumhur"
         }
       ],
       "games": [
@@ -5753,6 +5878,11 @@
           "value": 10,
           "date": "2026-05-04T15:00Z",
           "opponent": "Pablo Llamas Ruiz"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-13T14:05Z",
+          "opponent": "Damir Dzumhur"
         }
       ]
     },
@@ -6108,6 +6238,11 @@
           "value": 3,
           "date": "2026-06-30T11:35Z",
           "opponent": "Matteo Arnaldi"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T13:05Z",
+          "opponent": "Marcos Giron"
         }
       ],
       "games": [
@@ -6115,6 +6250,11 @@
           "value": 22,
           "date": "2026-06-30T11:35Z",
           "opponent": "Matteo Arnaldi"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-02T13:05Z",
+          "opponent": "Marcos Giron"
         }
       ]
     }
@@ -6308,6 +6448,11 @@
           "value": 3,
           "date": "2026-06-30T10:10Z",
           "opponent": "Giovanni Mpetshi Perricard"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T14:55Z",
+          "opponent": "Karen Khachanov"
         }
       ],
       "games": [
@@ -6315,6 +6460,11 @@
           "value": 25,
           "date": "2026-06-30T10:10Z",
           "opponent": "Giovanni Mpetshi Perricard"
+        },
+        {
+          "value": 11,
+          "date": "2026-07-02T14:55Z",
+          "opponent": "Karen Khachanov"
         }
       ]
     }
@@ -6628,6 +6778,11 @@
           "value": 3,
           "date": "2026-06-30T10:05Z",
           "opponent": "Alejandro Tabilo"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T12:15Z",
+          "opponent": "Zachary Svajda"
         }
       ],
       "games": [
@@ -6635,6 +6790,11 @@
           "value": 20,
           "date": "2026-06-30T10:05Z",
           "opponent": "Alejandro Tabilo"
+        },
+        {
+          "value": 22,
+          "date": "2026-07-02T12:15Z",
+          "opponent": "Zachary Svajda"
         }
       ]
     }
@@ -7412,6 +7572,16 @@
           "value": 3,
           "date": "2026-06-30T16:30Z",
           "opponent": "Stan Wawrinka"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T14:15Z",
+          "opponent": "Arthur Fils"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T17:20Z",
+          "opponent": "Grigor Dimitrov"
         }
       ],
       "games": [
@@ -7419,6 +7589,16 @@
           "value": 27,
           "date": "2026-06-30T16:30Z",
           "opponent": "Stan Wawrinka"
+        },
+        {
+          "value": 22,
+          "date": "2026-07-02T14:15Z",
+          "opponent": "Arthur Fils"
+        },
+        {
+          "value": 23,
+          "date": "2026-07-04T17:20Z",
+          "opponent": "Grigor Dimitrov"
         }
       ]
     }
@@ -8000,6 +8180,11 @@
           "value": 0,
           "date": "2026-05-16T09:00Z",
           "opponent": "Max Schoenhaus"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T16:05Z",
+          "opponent": "Dusan Lajovic"
         }
       ],
       "games": [
@@ -8027,6 +8212,11 @@
           "value": 6,
           "date": "2026-05-16T09:00Z",
           "opponent": "Max Schoenhaus"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-13T16:05Z",
+          "opponent": "Dusan Lajovic"
         }
       ]
     },
@@ -8332,6 +8522,16 @@
           "value": 3,
           "date": "2026-06-29T10:05Z",
           "opponent": "Felix Gill"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T12:30Z",
+          "opponent": "Pablo Carreno Busta"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-03T12:40Z",
+          "opponent": "Shintaro Mochizuki"
         }
       ],
       "games": [
@@ -8339,6 +8539,16 @@
           "value": 19,
           "date": "2026-06-29T10:05Z",
           "opponent": "Felix Gill"
+        },
+        {
+          "value": 22,
+          "date": "2026-07-02T12:30Z",
+          "opponent": "Pablo Carreno Busta"
+        },
+        {
+          "value": 20,
+          "date": "2026-07-03T12:40Z",
+          "opponent": "Shintaro Mochizuki"
         }
       ]
     }
@@ -9789,6 +9999,11 @@
           "value": 0,
           "date": "2026-06-07T09:00Z",
           "opponent": "Sho Shimabukuro"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-13T10:15Z",
+          "opponent": "Clement Tabur"
         }
       ],
       "games": [
@@ -9811,6 +10026,11 @@
           "value": 9,
           "date": "2026-06-07T09:00Z",
           "opponent": "Sho Shimabukuro"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-13T10:15Z",
+          "opponent": "Clement Tabur"
         }
       ]
     },
@@ -10156,6 +10376,11 @@
           "value": 3,
           "date": "2026-07-01T11:30Z",
           "opponent": "Daniel Altmaier"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T16:10Z",
+          "opponent": "Jiri Lehecka"
         }
       ],
       "games": [
@@ -10163,6 +10388,11 @@
           "value": 22,
           "date": "2026-07-01T11:30Z",
           "opponent": "Daniel Altmaier"
+        },
+        {
+          "value": 9,
+          "date": "2026-07-02T16:10Z",
+          "opponent": "Jiri Lehecka"
         }
       ]
     }
@@ -10349,6 +10579,11 @@
           "value": 0,
           "date": "2026-03-31T09:30Z",
           "opponent": "Daniel Merida"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T08:35Z",
+          "opponent": "Lorenzo Sonego"
         }
       ],
       "games": [
@@ -10361,6 +10596,11 @@
           "value": 4,
           "date": "2026-03-31T09:30Z",
           "opponent": "Daniel Merida"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-13T08:35Z",
+          "opponent": "Lorenzo Sonego"
         }
       ]
     },
@@ -11748,6 +11988,11 @@
           "value": 0,
           "date": "2026-06-23T10:05Z",
           "opponent": "Vit Kopriva"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T14:05Z",
+          "opponent": "Henrique Rocha"
         }
       ],
       "games": [
@@ -11795,6 +12040,11 @@
           "value": 7,
           "date": "2026-06-23T10:05Z",
           "opponent": "Vit Kopriva"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T14:05Z",
+          "opponent": "Henrique Rocha"
         }
       ]
     },
@@ -12030,6 +12280,11 @@
           "value": 3,
           "date": "2026-06-30T17:10Z",
           "opponent": "Vit Kopriva"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T16:35Z",
+          "opponent": "Frances Tiafoe"
         }
       ],
       "games": [
@@ -12037,6 +12292,11 @@
           "value": 19,
           "date": "2026-06-30T17:10Z",
           "opponent": "Vit Kopriva"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-02T16:35Z",
+          "opponent": "Frances Tiafoe"
         }
       ]
     }
@@ -12585,6 +12845,11 @@
           "value": 3,
           "date": "2026-06-30T11:25Z",
           "opponent": "Ben Shelton"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Arthur Fery"
         }
       ],
       "games": [
@@ -12607,6 +12872,11 @@
           "value": 28,
           "date": "2026-06-30T11:25Z",
           "opponent": "Ben Shelton"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Arthur Fery"
         }
       ]
     }
@@ -13630,6 +13900,11 @@
           "value": 2,
           "date": "2026-06-30T11:55Z",
           "opponent": "Benjamin Bonzi"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Lorenzo Sonego"
         }
       ],
       "games": [
@@ -13637,6 +13912,11 @@
           "value": 21,
           "date": "2026-06-30T11:55Z",
           "opponent": "Benjamin Bonzi"
+        },
+        {
+          "value": 27,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Lorenzo Sonego"
         }
       ]
     }
@@ -13800,6 +14080,11 @@
           "value": 3,
           "date": "2026-06-30T10:10Z",
           "opponent": "Titouan Droguet"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Alex de Minaur"
         }
       ],
       "games": [
@@ -13807,6 +14092,11 @@
           "value": 18,
           "date": "2026-06-30T10:10Z",
           "opponent": "Titouan Droguet"
+        },
+        {
+          "value": 7,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Alex de Minaur"
         }
       ]
     }
@@ -14590,6 +14880,26 @@
           "value": 3,
           "date": "2026-06-29T14:10Z",
           "opponent": "Sebastian Baez"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T12:40Z",
+          "opponent": "Brandon Nakashima"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-03T13:15Z",
+          "opponent": "Daniil Medvedev"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-05T15:45Z",
+          "opponent": "Hubert Hurkacz"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-07T12:05Z",
+          "opponent": "Jannik Sinner"
         }
       ],
       "games": [
@@ -14597,6 +14907,26 @@
           "value": 26,
           "date": "2026-06-29T14:10Z",
           "opponent": "Sebastian Baez"
+        },
+        {
+          "value": 31,
+          "date": "2026-07-02T12:40Z",
+          "opponent": "Brandon Nakashima"
+        },
+        {
+          "value": 21,
+          "date": "2026-07-03T13:15Z",
+          "opponent": "Daniil Medvedev"
+        },
+        {
+          "value": 27,
+          "date": "2026-07-05T15:45Z",
+          "opponent": "Hubert Hurkacz"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-07T12:05Z",
+          "opponent": "Jannik Sinner"
         }
       ]
     }
@@ -15428,6 +15758,11 @@
           "value": 0,
           "date": "2026-06-25T13:30Z",
           "opponent": "Fabian Marozsan"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T10:50Z",
+          "opponent": "Kilian Feldbausch"
         }
       ],
       "games": [
@@ -15465,6 +15800,11 @@
           "value": 7,
           "date": "2026-06-25T13:30Z",
           "opponent": "Fabian Marozsan"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T10:50Z",
+          "opponent": "Kilian Feldbausch"
         }
       ]
     },
@@ -15889,6 +16229,11 @@
           "value": 3,
           "date": "2026-07-01T10:05Z",
           "opponent": "Learner Tien"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-03T14:55Z",
+          "opponent": "Alejandro Davidovich Fokina"
         }
       ],
       "games": [
@@ -15901,6 +16246,11 @@
           "value": 25,
           "date": "2026-07-01T10:05Z",
           "opponent": "Learner Tien"
+        },
+        {
+          "value": 11,
+          "date": "2026-07-03T14:55Z",
+          "opponent": "Alejandro Davidovich Fokina"
         }
       ]
     }
@@ -16362,6 +16712,16 @@
           "value": 3,
           "date": "2026-06-30T13:40Z",
           "opponent": "Billy Harris"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T14:55Z",
+          "opponent": "Yannick Hanfmann"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T12:10Z",
+          "opponent": "Flavio Cobolli"
         }
       ],
       "games": [
@@ -16369,6 +16729,16 @@
           "value": 23,
           "date": "2026-06-30T13:40Z",
           "opponent": "Billy Harris"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-02T14:55Z",
+          "opponent": "Yannick Hanfmann"
+        },
+        {
+          "value": 23,
+          "date": "2026-07-04T12:10Z",
+          "opponent": "Flavio Cobolli"
         }
       ]
     }
@@ -16527,6 +16897,11 @@
           "value": 3,
           "date": "2026-07-01T13:10Z",
           "opponent": "Martin Damm"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-03T12:35Z",
+          "opponent": "Novak Djokovic"
         }
       ],
       "games": [
@@ -16539,6 +16914,11 @@
           "value": 19,
           "date": "2026-07-01T13:10Z",
           "opponent": "Martin Damm"
+        },
+        {
+          "value": 21,
+          "date": "2026-07-03T12:35Z",
+          "opponent": "Novak Djokovic"
         }
       ]
     }
@@ -16912,6 +17292,16 @@
           "value": 3,
           "date": "2026-06-30T12:50Z",
           "opponent": "Ugo Humbert"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T11:45Z",
+          "opponent": "Jaime Faria"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T13:10Z",
+          "opponent": "Arthur Fery"
         }
       ],
       "games": [
@@ -16919,6 +17309,16 @@
           "value": 26,
           "date": "2026-06-30T12:50Z",
           "opponent": "Ugo Humbert"
+        },
+        {
+          "value": 23,
+          "date": "2026-07-02T11:45Z",
+          "opponent": "Jaime Faria"
+        },
+        {
+          "value": 29,
+          "date": "2026-07-04T13:10Z",
+          "opponent": "Arthur Fery"
         }
       ]
     }
@@ -17192,6 +17592,21 @@
           "value": 3,
           "date": "2026-06-30T17:05Z",
           "opponent": "Alexei Popyrin"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T16:10Z",
+          "opponent": "Alex Molcan"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-04T14:00Z",
+          "opponent": "Jaume Munar"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-07T14:55Z",
+          "opponent": "Alexander Zverev"
         }
       ],
       "games": [
@@ -17199,6 +17614,21 @@
           "value": 18,
           "date": "2026-06-30T17:05Z",
           "opponent": "Alexei Popyrin"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-02T16:10Z",
+          "opponent": "Alex Molcan"
+        },
+        {
+          "value": 22,
+          "date": "2026-07-04T14:00Z",
+          "opponent": "Jaume Munar"
+        },
+        {
+          "value": 21,
+          "date": "2026-07-07T14:55Z",
+          "opponent": "Alexander Zverev"
         }
       ]
     }
@@ -17342,6 +17772,11 @@
           "value": 3,
           "date": "2026-06-29T14:30Z",
           "opponent": "Hugo Gaston"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-01T18:50Z",
+          "opponent": "Novak Djokovic"
         }
       ],
       "games": [
@@ -17349,6 +17784,11 @@
           "value": 18,
           "date": "2026-06-29T14:30Z",
           "opponent": "Hugo Gaston"
+        },
+        {
+          "value": 9,
+          "date": "2026-07-01T18:50Z",
+          "opponent": "Novak Djokovic"
         }
       ]
     }
@@ -17887,6 +18327,11 @@
           "value": 3,
           "date": "2026-07-01T13:55Z",
           "opponent": "Jesper de Jong"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-03T10:10Z",
+          "opponent": "Roman Safiullin"
         }
       ],
       "games": [
@@ -17899,6 +18344,11 @@
           "value": 19,
           "date": "2026-07-01T13:55Z",
           "opponent": "Jesper de Jong"
+        },
+        {
+          "value": 9,
+          "date": "2026-07-03T10:10Z",
+          "opponent": "Roman Safiullin"
         }
       ]
     }
@@ -18230,6 +18680,26 @@
           "value": 3,
           "date": "2026-07-01T11:40Z",
           "opponent": "Mariano Navone"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T14:25Z",
+          "opponent": "James Duckworth"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-04T12:10Z",
+          "opponent": "Karen Khachanov"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-06T12:10Z",
+          "opponent": "Alex de Minaur"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-08T14:10Z",
+          "opponent": "Arthur Fery"
         }
       ],
       "games": [
@@ -18237,6 +18707,26 @@
           "value": 21,
           "date": "2026-07-01T11:40Z",
           "opponent": "Mariano Navone"
+        },
+        {
+          "value": 23,
+          "date": "2026-07-02T14:25Z",
+          "opponent": "James Duckworth"
+        },
+        {
+          "value": 25,
+          "date": "2026-07-04T12:10Z",
+          "opponent": "Karen Khachanov"
+        },
+        {
+          "value": 20,
+          "date": "2026-07-06T12:10Z",
+          "opponent": "Alex de Minaur"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-08T14:10Z",
+          "opponent": "Arthur Fery"
         }
       ]
     }
@@ -18375,6 +18865,16 @@
           "value": 3,
           "date": "2026-07-01T10:05Z",
           "opponent": "Sebastian Ofner"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-03T13:55Z",
+          "opponent": "Tommy Paul"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-05T15:45Z",
+          "opponent": "Jan-Lennard Struff"
         }
       ],
       "games": [
@@ -18387,6 +18887,16 @@
           "value": 19,
           "date": "2026-07-01T10:05Z",
           "opponent": "Sebastian Ofner"
+        },
+        {
+          "value": 24,
+          "date": "2026-07-03T13:55Z",
+          "opponent": "Tommy Paul"
+        },
+        {
+          "value": 26,
+          "date": "2026-07-05T15:45Z",
+          "opponent": "Jan-Lennard Struff"
         }
       ]
     }
@@ -18470,6 +18980,21 @@
           "value": 3,
           "date": "2026-06-30T16:55Z",
           "opponent": "Dane Sweeny"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T16:35Z",
+          "opponent": "Jakub Mensik"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-04T17:20Z",
+          "opponent": "Matteo Berrettini"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-06T15:20Z",
+          "opponent": "Arthur Fery"
         }
       ],
       "games": [
@@ -18477,6 +19002,21 @@
           "value": 20,
           "date": "2026-06-30T16:55Z",
           "opponent": "Dane Sweeny"
+        },
+        {
+          "value": 24,
+          "date": "2026-07-02T16:35Z",
+          "opponent": "Jakub Mensik"
+        },
+        {
+          "value": 26,
+          "date": "2026-07-04T17:20Z",
+          "opponent": "Matteo Berrettini"
+        },
+        {
+          "value": 27,
+          "date": "2026-07-06T15:20Z",
+          "opponent": "Arthur Fery"
         }
       ]
     }
@@ -18695,6 +19235,31 @@
           "value": 3,
           "date": "2026-07-01T12:35Z",
           "opponent": "Nuno Borges"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-03T13:40Z",
+          "opponent": "Jenson Brooksby"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-05T18:20Z",
+          "opponent": "Shintaro Mochizuki"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-07T12:05Z",
+          "opponent": "Jan-Lennard Struff"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-10T15:20Z",
+          "opponent": "Novak Djokovic"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-12T15:05Z",
+          "opponent": "Alexander Zverev"
         }
       ],
       "games": [
@@ -18707,6 +19272,31 @@
           "value": 20,
           "date": "2026-07-01T12:35Z",
           "opponent": "Nuno Borges"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-03T13:40Z",
+          "opponent": "Jenson Brooksby"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-05T18:20Z",
+          "opponent": "Shintaro Mochizuki"
+        },
+        {
+          "value": 20,
+          "date": "2026-07-07T12:05Z",
+          "opponent": "Jan-Lennard Struff"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-10T15:20Z",
+          "opponent": "Novak Djokovic"
+        },
+        {
+          "value": 25,
+          "date": "2026-07-12T15:05Z",
+          "opponent": "Alexander Zverev"
         }
       ]
     }
@@ -19524,6 +20114,21 @@
           "value": 3,
           "date": "2026-06-30T12:45Z",
           "opponent": "Thanasi Kokkinakis"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T17:05Z",
+          "opponent": "Kyrian Jacquet"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-04T17:15Z",
+          "opponent": "Frances Tiafoe"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-06T17:10Z",
+          "opponent": "Taylor Fritz"
         }
       ],
       "games": [
@@ -19531,6 +20136,21 @@
           "value": 28,
           "date": "2026-06-30T12:45Z",
           "opponent": "Thanasi Kokkinakis"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-02T17:05Z",
+          "opponent": "Kyrian Jacquet"
+        },
+        {
+          "value": 28,
+          "date": "2026-07-04T17:15Z",
+          "opponent": "Frances Tiafoe"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-06T17:10Z",
+          "opponent": "Taylor Fritz"
         }
       ]
     }
@@ -19764,6 +20384,21 @@
           "value": 3,
           "date": "2026-06-30T11:30Z",
           "opponent": "Roman Andres Burruchaga"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Adrian Mannarino"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-04T10:05Z",
+          "opponent": "Zachary Svajda"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-06T12:10Z",
+          "opponent": "Flavio Cobolli"
         }
       ],
       "games": [
@@ -19771,6 +20406,21 @@
           "value": 19,
           "date": "2026-06-30T11:30Z",
           "opponent": "Roman Andres Burruchaga"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Adrian Mannarino"
+        },
+        {
+          "value": 23,
+          "date": "2026-07-04T10:05Z",
+          "opponent": "Zachary Svajda"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-06T12:10Z",
+          "opponent": "Flavio Cobolli"
         }
       ]
     }
@@ -19959,6 +20609,11 @@
           "value": 3,
           "date": "2026-07-01T13:10Z",
           "opponent": "Daniel Merida"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-03T13:15Z",
+          "opponent": "Jan-Lennard Struff"
         }
       ],
       "games": [
@@ -19971,6 +20626,11 @@
           "value": 22,
           "date": "2026-07-01T13:10Z",
           "opponent": "Daniel Merida"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-03T13:15Z",
+          "opponent": "Jan-Lennard Struff"
         }
       ]
     }
@@ -20274,6 +20934,36 @@
           "value": 3,
           "date": "2026-06-30T15:05Z",
           "opponent": "Alexander Blockx"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T14:05Z",
+          "opponent": "Valentin Royer"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-04T14:10Z",
+          "opponent": "Marcos Giron"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-07T14:55Z",
+          "opponent": "Jiri Lehecka"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-08T14:25Z",
+          "opponent": "Taylor Fritz"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-10T12:35Z",
+          "opponent": "Arthur Fery"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-12T15:05Z",
+          "opponent": "Jannik Sinner"
         }
       ],
       "games": [
@@ -20281,6 +20971,36 @@
           "value": 26,
           "date": "2026-06-30T15:05Z",
           "opponent": "Alexander Blockx"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-02T14:05Z",
+          "opponent": "Valentin Royer"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-04T14:10Z",
+          "opponent": "Marcos Giron"
+        },
+        {
+          "value": 23,
+          "date": "2026-07-07T14:55Z",
+          "opponent": "Jiri Lehecka"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-08T14:25Z",
+          "opponent": "Taylor Fritz"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-10T12:35Z",
+          "opponent": "Arthur Fery"
+        },
+        {
+          "value": 20,
+          "date": "2026-07-12T15:05Z",
+          "opponent": "Jannik Sinner"
         }
       ]
     }
@@ -20489,6 +21209,21 @@
           "value": 3,
           "date": "2026-07-01T16:45Z",
           "opponent": "Dino Prizmic"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-03T18:10Z",
+          "opponent": "Michael Zheng"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-05T14:45Z",
+          "opponent": "Alejandro Davidovich Fokina"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-07T16:35Z",
+          "opponent": "Novak Djokovic"
         }
       ],
       "games": [
@@ -20501,6 +21236,21 @@
           "value": 20,
           "date": "2026-07-01T16:45Z",
           "opponent": "Dino Prizmic"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-03T18:10Z",
+          "opponent": "Michael Zheng"
+        },
+        {
+          "value": 31,
+          "date": "2026-07-05T14:45Z",
+          "opponent": "Alejandro Davidovich Fokina"
+        },
+        {
+          "value": 28,
+          "date": "2026-07-07T16:35Z",
+          "opponent": "Novak Djokovic"
         }
       ]
     }
@@ -21020,6 +21770,31 @@
           "value": 3,
           "date": "2026-06-30T11:40Z",
           "opponent": "Damir Dzumhur"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Otto Virtanen"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-04T13:10Z",
+          "opponent": "Zizou Bergs"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-06T15:20Z",
+          "opponent": "Grigor Dimitrov"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-08T14:10Z",
+          "opponent": "Flavio Cobolli"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-10T12:35Z",
+          "opponent": "Alexander Zverev"
         }
       ],
       "games": [
@@ -21027,6 +21802,31 @@
           "value": 21,
           "date": "2026-06-30T11:40Z",
           "opponent": "Damir Dzumhur"
+        },
+        {
+          "value": 24,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Otto Virtanen"
+        },
+        {
+          "value": 25,
+          "date": "2026-07-04T13:10Z",
+          "opponent": "Zizou Bergs"
+        },
+        {
+          "value": 27,
+          "date": "2026-07-06T15:20Z",
+          "opponent": "Grigor Dimitrov"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-08T14:10Z",
+          "opponent": "Flavio Cobolli"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-10T12:35Z",
+          "opponent": "Alexander Zverev"
         }
       ]
     }
@@ -21360,6 +22160,11 @@
           "value": 1,
           "date": "2026-06-29T10:05Z",
           "opponent": "Denis Shapovalov"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T12:30Z",
+          "opponent": "Rafael Jodar"
         }
       ],
       "games": [
@@ -21367,6 +22172,11 @@
           "value": 13,
           "date": "2026-06-29T10:05Z",
           "opponent": "Denis Shapovalov"
+        },
+        {
+          "value": 22,
+          "date": "2026-07-02T12:30Z",
+          "opponent": "Rafael Jodar"
         }
       ]
     }
@@ -21566,6 +22376,11 @@
           "value": 0,
           "date": "2026-06-22T17:50Z",
           "opponent": "Zizou Bergs"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T15:35Z",
+          "opponent": "Dominic Stricker"
         }
       ],
       "games": [
@@ -21603,6 +22418,11 @@
           "value": 6,
           "date": "2026-06-22T17:50Z",
           "opponent": "Zizou Bergs"
+        },
+        {
+          "value": 6,
+          "date": "2026-07-13T15:35Z",
+          "opponent": "Dominic Stricker"
         }
       ]
     },
@@ -21648,6 +22468,16 @@
           "value": 3,
           "date": "2026-06-30T13:15Z",
           "opponent": "Francisco Cerundolo"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T14:00Z",
+          "opponent": "Jacob Fearnley"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-04T14:00Z",
+          "opponent": "Jiri Lehecka"
         }
       ],
       "games": [
@@ -21655,6 +22485,16 @@
           "value": 18,
           "date": "2026-06-30T13:15Z",
           "opponent": "Francisco Cerundolo"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-02T14:00Z",
+          "opponent": "Jacob Fearnley"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-04T14:00Z",
+          "opponent": "Jiri Lehecka"
         }
       ]
     }
@@ -21706,6 +22546,11 @@
           "value": 1,
           "date": "2026-06-23T11:40Z",
           "opponent": "Miomir Kecmanovic"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T08:35Z",
+          "opponent": "Joel Josef Schwaerzler"
         }
       ],
       "games": [
@@ -21753,6 +22598,11 @@
           "value": 16,
           "date": "2026-06-23T11:40Z",
           "opponent": "Miomir Kecmanovic"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T08:35Z",
+          "opponent": "Joel Josef Schwaerzler"
         }
       ]
     },
@@ -21798,6 +22648,16 @@
           "value": 3,
           "date": "2026-06-30T14:35Z",
           "opponent": "Tomas Martin Etcheverry"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Gabriel Diallo"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-04T16:40Z",
+          "opponent": "Taylor Fritz"
         }
       ],
       "games": [
@@ -21805,6 +22665,16 @@
           "value": 25,
           "date": "2026-06-30T14:35Z",
           "opponent": "Tomas Martin Etcheverry"
+        },
+        {
+          "value": 30,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Gabriel Diallo"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-04T16:40Z",
+          "opponent": "Taylor Fritz"
         }
       ]
     }
@@ -22128,6 +22998,11 @@
           "value": 3,
           "date": "2026-06-30T15:15Z",
           "opponent": "Raphael Collignon"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T14:15Z",
+          "opponent": "Matteo Berrettini"
         }
       ],
       "games": [
@@ -22135,6 +23010,11 @@
           "value": 19,
           "date": "2026-06-30T15:15Z",
           "opponent": "Raphael Collignon"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-02T14:15Z",
+          "opponent": "Matteo Berrettini"
         }
       ]
     }
@@ -22527,6 +23407,11 @@
           "value": 3,
           "date": "2026-06-30T10:05Z",
           "opponent": "Sho Shimabukuro"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T11:45Z",
+          "opponent": "Zizou Bergs"
         }
       ],
       "games": [
@@ -22549,6 +23434,11 @@
           "value": 25,
           "date": "2026-06-30T10:05Z",
           "opponent": "Sho Shimabukuro"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-02T11:45Z",
+          "opponent": "Zizou Bergs"
         }
       ]
     }
@@ -22876,6 +23766,11 @@
           "value": 3,
           "date": "2026-06-30T10:05Z",
           "opponent": "Harry Wendelken"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T14:05Z",
+          "opponent": "Alexander Zverev"
         }
       ],
       "games": [
@@ -22883,6 +23778,11 @@
           "value": 22,
           "date": "2026-06-30T10:05Z",
           "opponent": "Harry Wendelken"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-02T14:05Z",
+          "opponent": "Alexander Zverev"
         }
       ]
     }
@@ -23036,6 +23936,16 @@
           "value": 3,
           "date": "2026-06-30T14:50Z",
           "opponent": "Corentin Moutet"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T13:05Z",
+          "opponent": "Quentin Halys"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-04T14:10Z",
+          "opponent": "Alexander Zverev"
         }
       ],
       "games": [
@@ -23043,6 +23953,16 @@
           "value": 23,
           "date": "2026-06-30T14:50Z",
           "opponent": "Corentin Moutet"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-02T13:05Z",
+          "opponent": "Quentin Halys"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-04T14:10Z",
+          "opponent": "Alexander Zverev"
         }
       ]
     }
@@ -23231,6 +24151,16 @@
           "value": 3,
           "date": "2026-07-01T12:05Z",
           "opponent": "Fabian Marozsan"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-03T14:55Z",
+          "opponent": "Marton Fucsovics"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-05T14:45Z",
+          "opponent": "Felix Auger-Aliassime"
         }
       ],
       "games": [
@@ -23243,6 +24173,16 @@
           "value": 18,
           "date": "2026-07-01T12:05Z",
           "opponent": "Fabian Marozsan"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-03T14:55Z",
+          "opponent": "Marton Fucsovics"
+        },
+        {
+          "value": 24,
+          "date": "2026-07-05T14:45Z",
+          "opponent": "Felix Auger-Aliassime"
         }
       ]
     }
@@ -23396,6 +24336,11 @@
           "value": 3,
           "date": "2026-06-30T13:40Z",
           "opponent": "Toby Samuel"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T16:35Z",
+          "opponent": "Grigor Dimitrov"
         }
       ],
       "games": [
@@ -23403,6 +24348,11 @@
           "value": 27,
           "date": "2026-06-30T13:40Z",
           "opponent": "Toby Samuel"
+        },
+        {
+          "value": 20,
+          "date": "2026-07-02T16:35Z",
+          "opponent": "Grigor Dimitrov"
         }
       ]
     }
@@ -24091,6 +25041,11 @@
           "value": 2,
           "date": "2026-07-01T15:00Z",
           "opponent": "Katerina Siniakova"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-03T15:55Z",
+          "opponent": "Barbora Krejcikova"
         }
       ],
       "games": [
@@ -24103,6 +25058,11 @@
           "value": 12,
           "date": "2026-07-01T15:00Z",
           "opponent": "Katerina Siniakova"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-03T15:55Z",
+          "opponent": "Barbora Krejcikova"
         }
       ]
     }
@@ -24501,6 +25461,11 @@
           "value": 1,
           "date": "2026-06-20T11:30Z",
           "opponent": "Ayla Aksu"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T12:05Z",
+          "opponent": "Victoria Jimenez Kasintseva"
         }
       ],
       "games": [
@@ -24603,6 +25568,11 @@
           "value": 16,
           "date": "2026-06-20T11:30Z",
           "opponent": "Ayla Aksu"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T12:05Z",
+          "opponent": "Victoria Jimenez Kasintseva"
         }
       ]
     }
@@ -24681,6 +25651,11 @@
           "value": 0,
           "date": "2026-06-02T11:10Z",
           "opponent": "Chloe Paquet"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T09:05Z",
+          "opponent": "Erika Andreeva"
         }
       ],
       "games": [
@@ -24703,6 +25678,11 @@
           "value": 8,
           "date": "2026-06-02T11:10Z",
           "opponent": "Chloe Paquet"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-13T09:05Z",
+          "opponent": "Erika Andreeva"
         }
       ]
     }
@@ -25220,6 +26200,11 @@
           "value": 2,
           "date": "2026-07-08T12:30Z",
           "opponent": "Maria Lourdes Carle"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-10T12:15Z",
+          "opponent": "Aurora Zantedeschi"
         }
       ],
       "games": [
@@ -25317,6 +26302,11 @@
           "value": 13,
           "date": "2026-07-08T12:30Z",
           "opponent": "Maria Lourdes Carle"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-10T12:15Z",
+          "opponent": "Aurora Zantedeschi"
         }
       ]
     },
@@ -25326,6 +26316,11 @@
           "value": 2,
           "date": "2026-06-30T14:20Z",
           "opponent": "Yuliia Starodubtseva"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T13:20Z",
+          "opponent": "Marta Kostyuk"
         }
       ],
       "games": [
@@ -25333,6 +26328,11 @@
           "value": 18,
           "date": "2026-06-30T14:20Z",
           "opponent": "Yuliia Starodubtseva"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-02T13:20Z",
+          "opponent": "Marta Kostyuk"
         }
       ]
     }
@@ -25810,6 +26810,16 @@
           "value": 2,
           "date": "2026-07-09T15:35Z",
           "opponent": "Francesca Jones"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-10T15:35Z",
+          "opponent": "Alice Tubello"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-11T14:35Z",
+          "opponent": "Mayar Sherif"
         }
       ],
       "games": [
@@ -25867,6 +26877,16 @@
           "value": 14,
           "date": "2026-07-09T15:35Z",
           "opponent": "Francesca Jones"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-10T15:35Z",
+          "opponent": "Alice Tubello"
+        },
+        {
+          "value": 11,
+          "date": "2026-07-11T14:35Z",
+          "opponent": "Mayar Sherif"
         }
       ]
     },
@@ -25891,6 +26911,11 @@
           "value": 2,
           "date": "2026-06-30T14:10Z",
           "opponent": "Veronika Erjavec"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Daria Snigur"
         }
       ],
       "games": [
@@ -25913,6 +26938,11 @@
           "value": 17,
           "date": "2026-06-30T14:10Z",
           "opponent": "Veronika Erjavec"
+        },
+        {
+          "value": 7,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Daria Snigur"
         }
       ]
     }
@@ -26715,6 +27745,11 @@
           "value": 1,
           "date": "2026-06-13T16:30Z",
           "opponent": "Viktorija Golubic"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T16:15Z",
+          "opponent": "Victoria Bosio"
         }
       ],
       "games": [
@@ -26777,6 +27812,11 @@
           "value": 16,
           "date": "2026-06-13T16:30Z",
           "opponent": "Viktorija Golubic"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-13T16:15Z",
+          "opponent": "Victoria Bosio"
         }
       ]
     },
@@ -26941,6 +27981,11 @@
           "value": 2,
           "date": "2026-06-30T10:05Z",
           "opponent": "Katie Boulter"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Marie Bouzkova"
         }
       ],
       "games": [
@@ -26963,6 +28008,11 @@
           "value": 12,
           "date": "2026-06-30T10:05Z",
           "opponent": "Katie Boulter"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Marie Bouzkova"
         }
       ]
     }
@@ -27255,6 +28305,21 @@
           "value": 2,
           "date": "2026-07-09T15:05Z",
           "opponent": "Kylie Collins"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-10T17:50Z",
+          "opponent": "Elizabeth Mandlik"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T16:20Z",
+          "opponent": "Greet Minnen"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-12T17:05Z",
+          "opponent": "Tatjana Maria"
         }
       ],
       "games": [
@@ -27357,6 +28422,21 @@
           "value": 12,
           "date": "2026-07-09T15:05Z",
           "opponent": "Kylie Collins"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-10T17:50Z",
+          "opponent": "Elizabeth Mandlik"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-11T16:20Z",
+          "opponent": "Greet Minnen"
+        },
+        {
+          "value": 6,
+          "date": "2026-07-12T17:05Z",
+          "opponent": "Tatjana Maria"
         }
       ]
     },
@@ -27781,6 +28861,11 @@
           "value": 0,
           "date": "2026-06-06T15:05Z",
           "opponent": "Maria Timofeeva"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T12:15Z",
+          "opponent": "Anna Bondar"
         }
       ],
       "games": [
@@ -27823,6 +28908,11 @@
           "value": 7,
           "date": "2026-06-06T15:05Z",
           "opponent": "Maria Timofeeva"
+        },
+        {
+          "value": 9,
+          "date": "2026-07-13T12:15Z",
+          "opponent": "Anna Bondar"
         }
       ]
     }
@@ -28201,6 +29291,11 @@
           "value": 2,
           "date": "2026-07-09T16:35Z",
           "opponent": "Carolyn Ansari"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-09T21:05Z",
+          "opponent": "Greet Minnen"
         }
       ],
       "games": [
@@ -28273,6 +29368,11 @@
           "value": 12,
           "date": "2026-07-09T16:35Z",
           "opponent": "Carolyn Ansari"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-09T21:05Z",
+          "opponent": "Greet Minnen"
         }
       ]
     }
@@ -28361,6 +29461,11 @@
           "value": 0,
           "date": "2026-07-08T09:05Z",
           "opponent": "Yulia Putintseva"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T08:35Z",
+          "opponent": "Ren Yufei"
         }
       ],
       "games": [
@@ -28393,6 +29498,11 @@
           "value": 9,
           "date": "2026-07-08T09:05Z",
           "opponent": "Yulia Putintseva"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T08:35Z",
+          "opponent": "Ren Yufei"
         }
       ]
     }
@@ -28605,6 +29715,16 @@
           "value": 2,
           "date": "2026-07-08T22:20Z",
           "opponent": "Carol Zhao"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-09T20:00Z",
+          "opponent": "Anna Rogers"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-10T19:00Z",
+          "opponent": "Tatjana Maria"
         }
       ],
       "games": [
@@ -28637,6 +29757,16 @@
           "value": 12,
           "date": "2026-07-08T22:20Z",
           "opponent": "Carol Zhao"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-09T20:00Z",
+          "opponent": "Anna Rogers"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-10T19:00Z",
+          "opponent": "Tatjana Maria"
         }
       ]
     },
@@ -29051,6 +30181,11 @@
           "value": 2,
           "date": "2026-07-12T07:05Z",
           "opponent": "Cristiana Nicoleta Todoni"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T10:20Z",
+          "opponent": "Zhibek Kulambayeva"
         }
       ],
       "games": [
@@ -29113,6 +30248,11 @@
           "value": 12,
           "date": "2026-07-12T07:05Z",
           "opponent": "Cristiana Nicoleta Todoni"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T10:20Z",
+          "opponent": "Zhibek Kulambayeva"
         }
       ]
     }
@@ -29476,6 +30616,16 @@
           "value": 2,
           "date": "2026-06-30T16:05Z",
           "opponent": "Elina Svitolina"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Leolia Jeanjean"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-04T11:55Z",
+          "opponent": "Ashlyn Krueger"
         }
       ],
       "games": [
@@ -29483,6 +30633,16 @@
           "value": 13,
           "date": "2026-06-30T16:05Z",
           "opponent": "Elina Svitolina"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Leolia Jeanjean"
+        },
+        {
+          "value": 5,
+          "date": "2026-07-04T11:55Z",
+          "opponent": "Ashlyn Krueger"
         }
       ]
     }
@@ -30109,6 +31269,11 @@
           "value": 0,
           "date": "2026-06-02T13:10Z",
           "opponent": "Kayla Day"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T12:30Z",
+          "opponent": "Carol Young Suh Lee"
         }
       ],
       "games": [
@@ -30171,6 +31336,11 @@
           "value": 8,
           "date": "2026-06-02T13:10Z",
           "opponent": "Kayla Day"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T12:30Z",
+          "opponent": "Carol Young Suh Lee"
         }
       ]
     },
@@ -30804,6 +31974,11 @@
           "value": 2,
           "date": "2026-07-12T10:45Z",
           "opponent": "Emily Seibold"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T09:20Z",
+          "opponent": "Irina Fetecau"
         }
       ],
       "games": [
@@ -30861,6 +32036,11 @@
           "value": 12,
           "date": "2026-07-12T10:45Z",
           "opponent": "Emily Seibold"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T09:20Z",
+          "opponent": "Irina Fetecau"
         }
       ]
     }
@@ -32406,6 +33586,21 @@
           "value": 2,
           "date": "2026-07-09T15:05Z",
           "opponent": "Katherine Sebov"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-10T19:00Z",
+          "opponent": "Lucrezia Stefanini"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T15:05Z",
+          "opponent": "Mananchaya Sawangkaew"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-12T17:05Z",
+          "opponent": "Katie Volynets"
         }
       ],
       "games": [
@@ -32543,6 +33738,21 @@
           "value": 12,
           "date": "2026-07-09T15:05Z",
           "opponent": "Katherine Sebov"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-10T19:00Z",
+          "opponent": "Lucrezia Stefanini"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-11T15:05Z",
+          "opponent": "Mananchaya Sawangkaew"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-12T17:05Z",
+          "opponent": "Katie Volynets"
         }
       ]
     },
@@ -32651,6 +33861,11 @@
           "value": 1,
           "date": "2026-06-13T16:30Z",
           "opponent": "Katarzyna Kawa"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T12:05Z",
+          "opponent": "Alina Charaeva"
         }
       ],
       "games": [
@@ -32703,6 +33918,11 @@
           "value": 13,
           "date": "2026-06-13T16:30Z",
           "opponent": "Katarzyna Kawa"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-13T12:05Z",
+          "opponent": "Alina Charaeva"
         }
       ]
     },
@@ -32866,6 +34086,11 @@
           "value": 1,
           "date": "2026-07-07T15:35Z",
           "opponent": "Clara Burel"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T14:40Z",
+          "opponent": "Nadia Podoroska"
         }
       ],
       "games": [
@@ -32973,6 +34198,11 @@
           "value": 9,
           "date": "2026-07-07T15:35Z",
           "opponent": "Clara Burel"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-13T14:40Z",
+          "opponent": "Nadia Podoroska"
         }
       ]
     },
@@ -33366,6 +34596,11 @@
           "value": 0,
           "date": "2026-06-19T13:50Z",
           "opponent": "Emma Navarro"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T14:35Z",
+          "opponent": "Zheng Qinwen"
         }
       ],
       "games": [
@@ -33453,6 +34688,11 @@
           "value": 8,
           "date": "2026-06-19T13:50Z",
           "opponent": "Emma Navarro"
+        },
+        {
+          "value": 6,
+          "date": "2026-07-13T14:35Z",
+          "opponent": "Zheng Qinwen"
         }
       ]
     },
@@ -33467,6 +34707,11 @@
           "value": 2,
           "date": "2026-07-01T12:20Z",
           "opponent": "Dayana Yastremska"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-03T12:40Z",
+          "opponent": "Jessica Pegula"
         }
       ],
       "games": [
@@ -33479,6 +34724,11 @@
           "value": 18,
           "date": "2026-07-01T12:20Z",
           "opponent": "Dayana Yastremska"
+        },
+        {
+          "value": 4,
+          "date": "2026-07-03T12:40Z",
+          "opponent": "Jessica Pegula"
         }
       ]
     }
@@ -33726,6 +34976,11 @@
           "value": 1,
           "date": "2026-07-06T11:25Z",
           "opponent": "Rebeka Masarova"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T09:00Z",
+          "opponent": "Elena Ruxandra Bertea"
         }
       ],
       "games": [
@@ -33773,6 +35028,11 @@
           "value": 17,
           "date": "2026-07-06T11:25Z",
           "opponent": "Rebeka Masarova"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-13T09:00Z",
+          "opponent": "Elena Ruxandra Bertea"
         }
       ]
     },
@@ -34192,6 +35452,11 @@
           "value": 2,
           "date": "2026-06-30T12:20Z",
           "opponent": "Iryna Shymanovich"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T17:05Z",
+          "opponent": "Jasmine Paolini"
         }
       ],
       "games": [
@@ -34199,6 +35464,11 @@
           "value": 14,
           "date": "2026-06-30T12:20Z",
           "opponent": "Iryna Shymanovich"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-02T17:05Z",
+          "opponent": "Jasmine Paolini"
         }
       ]
     }
@@ -34326,6 +35596,11 @@
           "value": 1,
           "date": "2026-06-15T11:30Z",
           "opponent": "Emma Navarro"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T12:15Z",
+          "opponent": "Sara Sorribes Tormo"
         }
       ],
       "games": [
@@ -34393,6 +35668,11 @@
           "value": 12,
           "date": "2026-06-15T11:30Z",
           "opponent": "Emma Navarro"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T12:15Z",
+          "opponent": "Sara Sorribes Tormo"
         }
       ]
     },
@@ -34496,6 +35776,11 @@
           "value": 0,
           "date": "2026-06-13T09:05Z",
           "opponent": "Barbora Krejcikova"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T14:25Z",
+          "opponent": "Mai Hontama"
         }
       ],
       "games": [
@@ -34523,6 +35808,11 @@
           "value": 9,
           "date": "2026-06-13T09:05Z",
           "opponent": "Barbora Krejcikova"
+        },
+        {
+          "value": 9,
+          "date": "2026-07-13T14:25Z",
+          "opponent": "Mai Hontama"
         }
       ]
     },
@@ -35152,6 +36442,11 @@
           "value": 2,
           "date": "2026-06-30T18:30Z",
           "opponent": "Simona Waltert"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T17:45Z",
+          "opponent": "Linda Noskova"
         }
       ],
       "games": [
@@ -35159,6 +36454,11 @@
           "value": 12,
           "date": "2026-06-30T18:30Z",
           "opponent": "Simona Waltert"
+        },
+        {
+          "value": 11,
+          "date": "2026-07-02T17:45Z",
+          "opponent": "Linda Noskova"
         }
       ]
     }
@@ -35772,6 +37072,11 @@
           "value": 2,
           "date": "2026-06-30T13:05Z",
           "opponent": "Alina Korneeva"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T17:10Z",
+          "opponent": "Sorana Cirstea"
         }
       ],
       "games": [
@@ -35779,6 +37084,11 @@
           "value": 12,
           "date": "2026-06-30T13:05Z",
           "opponent": "Alina Korneeva"
+        },
+        {
+          "value": 7,
+          "date": "2026-07-02T17:10Z",
+          "opponent": "Sorana Cirstea"
         }
       ]
     }
@@ -37151,6 +38461,11 @@
           "value": 2,
           "date": "2026-07-01T10:05Z",
           "opponent": "Janice Tjen"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-03T12:05Z",
+          "opponent": "Naomi Osaka"
         }
       ],
       "games": [
@@ -37163,6 +38478,11 @@
           "value": 18,
           "date": "2026-07-01T10:05Z",
           "opponent": "Janice Tjen"
+        },
+        {
+          "value": 4,
+          "date": "2026-07-03T12:05Z",
+          "opponent": "Naomi Osaka"
         }
       ]
     }
@@ -37896,6 +39216,21 @@
           "value": 2,
           "date": "2026-06-30T16:35Z",
           "opponent": "Renata Zarazua"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T12:10Z",
+          "opponent": "Maya Joint"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T12:35Z",
+          "opponent": "Iga Swiatek"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-06T12:35Z",
+          "opponent": "Jasmine Paolini"
         }
       ],
       "games": [
@@ -37903,6 +39238,21 @@
           "value": 12,
           "date": "2026-06-30T16:35Z",
           "opponent": "Renata Zarazua"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-02T12:10Z",
+          "opponent": "Maya Joint"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-04T12:35Z",
+          "opponent": "Iga Swiatek"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-06T12:35Z",
+          "opponent": "Jasmine Paolini"
         }
       ]
     }
@@ -38046,6 +39396,11 @@
           "value": 2,
           "date": "2026-06-30T10:05Z",
           "opponent": "Anhelina Kalinina"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T14:50Z",
+          "opponent": "Maria Sakkari"
         }
       ],
       "games": [
@@ -38053,6 +39408,11 @@
           "value": 17,
           "date": "2026-06-30T10:05Z",
           "opponent": "Anhelina Kalinina"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-02T14:50Z",
+          "opponent": "Maria Sakkari"
         }
       ]
     }
@@ -39816,6 +41176,11 @@
           "value": 2,
           "date": "2026-06-30T10:05Z",
           "opponent": "Tereza Valentova"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T12:35Z",
+          "opponent": "Iga Swiatek"
         }
       ],
       "games": [
@@ -39823,6 +41188,11 @@
           "value": 12,
           "date": "2026-06-30T10:05Z",
           "opponent": "Tereza Valentova"
+        },
+        {
+          "value": 4,
+          "date": "2026-07-02T12:35Z",
+          "opponent": "Iga Swiatek"
         }
       ]
     }
@@ -39935,6 +41305,11 @@
           "value": 0,
           "date": "2026-07-09T09:05Z",
           "opponent": "Jeline Vandromme"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T17:05Z",
+          "opponent": "Elizara Yaneva"
         }
       ],
       "games": [
@@ -39987,6 +41362,11 @@
           "value": 1,
           "date": "2026-07-09T09:05Z",
           "opponent": "Jeline Vandromme"
+        },
+        {
+          "value": 5,
+          "date": "2026-07-13T17:05Z",
+          "opponent": "Elizara Yaneva"
         }
       ]
     },
@@ -39996,6 +41376,11 @@
           "value": 2,
           "date": "2026-06-30T15:15Z",
           "opponent": "Sinja Kraus"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Emma Navarro"
         }
       ],
       "games": [
@@ -40003,6 +41388,11 @@
           "value": 13,
           "date": "2026-06-30T15:15Z",
           "opponent": "Sinja Kraus"
+        },
+        {
+          "value": 11,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Emma Navarro"
         }
       ]
     }
@@ -40126,6 +41516,11 @@
           "value": 2,
           "date": "2026-06-30T10:05Z",
           "opponent": "Petra Marcinko"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T14:05Z",
+          "opponent": "Amanda Anisimova"
         }
       ],
       "games": [
@@ -40133,6 +41528,11 @@
           "value": 13,
           "date": "2026-06-30T10:05Z",
           "opponent": "Petra Marcinko"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-02T14:05Z",
+          "opponent": "Amanda Anisimova"
         }
       ]
     }
@@ -40381,6 +41781,21 @@
           "value": 2,
           "date": "2026-06-30T17:05Z",
           "opponent": "Donna Vekic"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T11:55Z",
+          "opponent": "Mariam Bolkvadze"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T11:55Z",
+          "opponent": "Daria Snigur"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-06T10:05Z",
+          "opponent": "Marta Kostyuk"
         }
       ],
       "games": [
@@ -40403,6 +41818,21 @@
           "value": 16,
           "date": "2026-06-30T17:05Z",
           "opponent": "Donna Vekic"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-02T11:55Z",
+          "opponent": "Mariam Bolkvadze"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-04T11:55Z",
+          "opponent": "Daria Snigur"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-06T10:05Z",
+          "opponent": "Marta Kostyuk"
         }
       ]
     }
@@ -41096,6 +42526,11 @@
           "value": 2,
           "date": "2026-06-30T15:10Z",
           "opponent": "Elena-Gabriela Ruse"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T17:30Z",
+          "opponent": "Elena Rybakina"
         }
       ],
       "games": [
@@ -41103,6 +42538,11 @@
           "value": 13,
           "date": "2026-06-30T15:10Z",
           "opponent": "Elena-Gabriela Ruse"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T17:30Z",
+          "opponent": "Elena Rybakina"
         }
       ]
     }
@@ -41391,6 +42831,16 @@
           "value": 2,
           "date": "2026-07-01T16:40Z",
           "opponent": "Wang Xinyu"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-03T10:05Z",
+          "opponent": "Anna Kalinskaya"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-05T19:35Z",
+          "opponent": "Coco Gauff"
         }
       ],
       "games": [
@@ -41403,6 +42853,16 @@
           "value": 13,
           "date": "2026-07-01T16:40Z",
           "opponent": "Wang Xinyu"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-03T10:05Z",
+          "opponent": "Anna Kalinskaya"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-05T19:35Z",
+          "opponent": "Coco Gauff"
         }
       ]
     }
@@ -42186,6 +43646,11 @@
           "value": 2,
           "date": "2026-06-30T17:10Z",
           "opponent": "Eva Lys"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Liudmila Samsonova"
         }
       ],
       "games": [
@@ -42193,6 +43658,11 @@
           "value": 13,
           "date": "2026-06-30T17:10Z",
           "opponent": "Eva Lys"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Liudmila Samsonova"
         }
       ]
     }
@@ -42356,6 +43826,16 @@
           "value": 2,
           "date": "2026-06-30T12:35Z",
           "opponent": "Taylor Townsend"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T12:35Z",
+          "opponent": "Karolina Pliskova"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-04T12:35Z",
+          "opponent": "Alexandra Eala"
         }
       ],
       "games": [
@@ -42363,6 +43843,16 @@
           "value": 14,
           "date": "2026-06-30T12:35Z",
           "opponent": "Taylor Townsend"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-02T12:35Z",
+          "opponent": "Karolina Pliskova"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-04T12:35Z",
+          "opponent": "Alexandra Eala"
         }
       ]
     }
@@ -42586,6 +44076,21 @@
           "value": 2,
           "date": "2026-06-30T10:05Z",
           "opponent": "Talia Gibson"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Tyra Caterina Grant"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T10:10Z",
+          "opponent": "Liudmila Samsonova"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-06T11:50Z",
+          "opponent": "Elise Mertens"
         }
       ],
       "games": [
@@ -42593,6 +44098,21 @@
           "value": 15,
           "date": "2026-06-30T10:05Z",
           "opponent": "Talia Gibson"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Tyra Caterina Grant"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-04T10:10Z",
+          "opponent": "Liudmila Samsonova"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-06T11:50Z",
+          "opponent": "Elise Mertens"
         }
       ]
     }
@@ -42771,6 +44291,11 @@
           "value": 2,
           "date": "2026-07-01T13:40Z",
           "opponent": "Diane Parry"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-03T10:05Z",
+          "opponent": "Belinda Bencic"
         }
       ],
       "games": [
@@ -42783,6 +44308,11 @@
           "value": 16,
           "date": "2026-07-01T13:40Z",
           "opponent": "Diane Parry"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-03T10:05Z",
+          "opponent": "Belinda Bencic"
         }
       ]
     }
@@ -42886,6 +44416,26 @@
           "value": 2,
           "date": "2026-06-30T10:05Z",
           "opponent": "Robin Montgomery"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T17:05Z",
+          "opponent": "Viktorija Golubic"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T13:05Z",
+          "opponent": "Maria Sakkari"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-06T12:35Z",
+          "opponent": "Alexandra Eala"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-08T12:35Z",
+          "opponent": "Marta Kostyuk"
         }
       ],
       "games": [
@@ -42893,6 +44443,26 @@
           "value": 13,
           "date": "2026-06-30T10:05Z",
           "opponent": "Robin Montgomery"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-02T17:05Z",
+          "opponent": "Viktorija Golubic"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-04T13:05Z",
+          "opponent": "Maria Sakkari"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-06T12:35Z",
+          "opponent": "Alexandra Eala"
+        },
+        {
+          "value": 5,
+          "date": "2026-07-08T12:35Z",
+          "opponent": "Marta Kostyuk"
         }
       ]
     }
@@ -43061,6 +44631,16 @@
           "value": 2,
           "date": "2026-07-01T12:05Z",
           "opponent": "McCartney Kessler"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-03T16:15Z",
+          "opponent": "Jelena Ostapenko"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-05T16:30Z",
+          "opponent": "Naomi Osaka"
         }
       ],
       "games": [
@@ -43073,6 +44653,16 @@
           "value": 13,
           "date": "2026-07-01T12:05Z",
           "opponent": "McCartney Kessler"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-03T16:15Z",
+          "opponent": "Jelena Ostapenko"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-05T16:30Z",
+          "opponent": "Naomi Osaka"
         }
       ]
     }
@@ -43471,6 +45061,21 @@
           "value": 2,
           "date": "2026-07-01T10:05Z",
           "opponent": "Anastasia Gasanova"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-03T12:05Z",
+          "opponent": "Daria Kasatkina"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-05T16:30Z",
+          "opponent": "Aryna Sabalenka"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-07T15:10Z",
+          "opponent": "Karolina Muchova"
         }
       ],
       "games": [
@@ -43483,6 +45088,21 @@
           "value": 12,
           "date": "2026-07-01T10:05Z",
           "opponent": "Anastasia Gasanova"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-03T12:05Z",
+          "opponent": "Daria Kasatkina"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-05T16:30Z",
+          "opponent": "Aryna Sabalenka"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-07T15:10Z",
+          "opponent": "Karolina Muchova"
         }
       ]
     }
@@ -43681,6 +45301,16 @@
           "value": 2,
           "date": "2026-07-01T15:50Z",
           "opponent": "Tatjana Maria"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-03T12:10Z",
+          "opponent": "Ekaterina Alexandrova"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-05T12:05Z",
+          "opponent": "Jessica Pegula"
         }
       ],
       "games": [
@@ -43693,6 +45323,16 @@
           "value": 12,
           "date": "2026-07-01T15:50Z",
           "opponent": "Tatjana Maria"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-03T12:10Z",
+          "opponent": "Ekaterina Alexandrova"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-05T12:05Z",
+          "opponent": "Jessica Pegula"
         }
       ]
     }
@@ -44569,6 +46209,11 @@
           "value": 1,
           "date": "2026-06-15T10:40Z",
           "opponent": "Zheng Qinwen"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T16:45Z",
+          "opponent": "Polina Kudermetova"
         }
       ],
       "games": [
@@ -44601,6 +46246,11 @@
           "value": 16,
           "date": "2026-06-15T10:40Z",
           "opponent": "Zheng Qinwen"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T16:45Z",
+          "opponent": "Polina Kudermetova"
         }
       ]
     },
@@ -44610,6 +46260,16 @@
           "value": 2,
           "date": "2026-06-30T10:00Z",
           "opponent": "Clara Tauson"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T14:50Z",
+          "opponent": "Kamilla Rakhimova"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-04T13:05Z",
+          "opponent": "Jasmine Paolini"
         }
       ],
       "games": [
@@ -44617,6 +46277,16 @@
           "value": 12,
           "date": "2026-06-30T10:00Z",
           "opponent": "Clara Tauson"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-02T14:50Z",
+          "opponent": "Kamilla Rakhimova"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-04T13:05Z",
+          "opponent": "Jasmine Paolini"
         }
       ]
     }
@@ -44699,6 +46369,11 @@
           "value": 1,
           "date": "2026-06-24T10:50Z",
           "opponent": "Clara Tauson"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T14:35Z",
+          "opponent": "Jessica Bouzas Maneiro"
         }
       ],
       "games": [
@@ -44741,6 +46416,11 @@
           "value": 13,
           "date": "2026-06-24T10:50Z",
           "opponent": "Clara Tauson"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T14:35Z",
+          "opponent": "Jessica Bouzas Maneiro"
         }
       ]
     },
@@ -44910,6 +46590,16 @@
           "value": 2,
           "date": "2026-06-30T17:10Z",
           "opponent": "Polina Kudermetova"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Diana Shnaider"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-04T10:10Z",
+          "opponent": "Marie Bouzkova"
         }
       ],
       "games": [
@@ -44917,6 +46607,16 @@
           "value": 12,
           "date": "2026-06-30T17:10Z",
           "opponent": "Polina Kudermetova"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Diana Shnaider"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-04T10:10Z",
+          "opponent": "Marie Bouzkova"
         }
       ]
     }
@@ -45090,6 +46790,26 @@
           "value": 2,
           "date": "2026-06-30T15:20Z",
           "opponent": "Laura Siegemund"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T16:10Z",
+          "opponent": "Maria Timofeeva"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T12:05Z",
+          "opponent": "Elena Rybakina"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-06T11:50Z",
+          "opponent": "Marie Bouzkova"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-08T12:05Z",
+          "opponent": "Linda Noskova"
         }
       ],
       "games": [
@@ -45097,6 +46817,26 @@
           "value": 12,
           "date": "2026-06-30T15:20Z",
           "opponent": "Laura Siegemund"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-02T16:10Z",
+          "opponent": "Maria Timofeeva"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-04T12:05Z",
+          "opponent": "Elena Rybakina"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-06T11:50Z",
+          "opponent": "Marie Bouzkova"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-08T12:05Z",
+          "opponent": "Linda Noskova"
         }
       ]
     }
@@ -45280,6 +47020,16 @@
           "value": 2,
           "date": "2026-06-30T14:15Z",
           "opponent": "Lois Boisson"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T17:30Z",
+          "opponent": "Catherine McNally"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-04T12:05Z",
+          "opponent": "Elise Mertens"
         }
       ],
       "games": [
@@ -45287,6 +47037,16 @@
           "value": 13,
           "date": "2026-06-30T14:15Z",
           "opponent": "Lois Boisson"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-02T17:30Z",
+          "opponent": "Catherine McNally"
+        },
+        {
+          "value": 7,
+          "date": "2026-07-04T12:05Z",
+          "opponent": "Elise Mertens"
         }
       ]
     }
@@ -45475,6 +47235,11 @@
           "value": 2,
           "date": "2026-07-01T10:05Z",
           "opponent": "Antonia Ruzic"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-03T16:15Z",
+          "opponent": "Aryna Sabalenka"
         }
       ],
       "games": [
@@ -45487,6 +47252,11 @@
           "value": 12,
           "date": "2026-07-01T10:05Z",
           "opponent": "Antonia Ruzic"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-03T16:15Z",
+          "opponent": "Aryna Sabalenka"
         }
       ]
     }
@@ -45720,6 +47490,16 @@
           "value": 2,
           "date": "2026-06-30T16:45Z",
           "opponent": "Sara Bejlek"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T17:10Z",
+          "opponent": "Kimberly Birrell"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-04T14:25Z",
+          "opponent": "Linda Noskova"
         }
       ],
       "games": [
@@ -45727,6 +47507,16 @@
           "value": 13,
           "date": "2026-06-30T16:45Z",
           "opponent": "Sara Bejlek"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-02T17:10Z",
+          "opponent": "Kimberly Birrell"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-04T14:25Z",
+          "opponent": "Linda Noskova"
         }
       ]
     }
@@ -45920,6 +47710,36 @@
           "value": 2,
           "date": "2026-06-30T17:10Z",
           "opponent": "Ella Seidel"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T17:45Z",
+          "opponent": "Camila Osorio"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T14:25Z",
+          "opponent": "Sorana Cirstea"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-06T15:10Z",
+          "opponent": "Madison Keys"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-08T12:05Z",
+          "opponent": "Elise Mertens"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-09T15:45Z",
+          "opponent": "Marta Kostyuk"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T15:05Z",
+          "opponent": "Karolina Muchova"
         }
       ],
       "games": [
@@ -45927,6 +47747,36 @@
           "value": 12,
           "date": "2026-06-30T17:10Z",
           "opponent": "Ella Seidel"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-02T17:45Z",
+          "opponent": "Camila Osorio"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-04T14:25Z",
+          "opponent": "Sorana Cirstea"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-06T15:10Z",
+          "opponent": "Madison Keys"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-08T12:05Z",
+          "opponent": "Elise Mertens"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-09T15:45Z",
+          "opponent": "Marta Kostyuk"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-11T15:05Z",
+          "opponent": "Karolina Muchova"
         }
       ]
     }
@@ -46064,6 +47914,31 @@
           "value": 2,
           "date": "2026-06-30T17:30Z",
           "opponent": "Nadia Podoroska"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T13:20Z",
+          "opponent": "Anna Blinkova"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T10:05Z",
+          "opponent": "Emma Navarro"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-06T10:05Z",
+          "opponent": "Ashlyn Krueger"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-08T12:35Z",
+          "opponent": "Jasmine Paolini"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-09T15:45Z",
+          "opponent": "Linda Noskova"
         }
       ],
       "games": [
@@ -46071,6 +47946,31 @@
           "value": 12,
           "date": "2026-06-30T17:30Z",
           "opponent": "Nadia Podoroska"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-02T13:20Z",
+          "opponent": "Anna Blinkova"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-04T10:05Z",
+          "opponent": "Emma Navarro"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-06T10:05Z",
+          "opponent": "Ashlyn Krueger"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-08T12:35Z",
+          "opponent": "Jasmine Paolini"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-09T15:45Z",
+          "opponent": "Linda Noskova"
         }
       ]
     },
@@ -46305,6 +48205,26 @@
           "value": 2,
           "date": "2026-07-01T14:10Z",
           "opponent": "Solana Sierra"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-03T16:20Z",
+          "opponent": "Claire Liu"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-05T19:35Z",
+          "opponent": "Belinda Bencic"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-07T12:35Z",
+          "opponent": "Jessica Pegula"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-09T12:35Z",
+          "opponent": "Karolina Muchova"
         }
       ],
       "games": [
@@ -46317,6 +48237,26 @@
           "value": 16,
           "date": "2026-07-01T14:10Z",
           "opponent": "Solana Sierra"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-03T16:20Z",
+          "opponent": "Claire Liu"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-05T19:35Z",
+          "opponent": "Belinda Bencic"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-07T12:35Z",
+          "opponent": "Jessica Pegula"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-09T12:35Z",
+          "opponent": "Karolina Muchova"
         }
       ]
     }
@@ -46609,6 +48549,21 @@
           "value": 2,
           "date": "2026-07-01T15:40Z",
           "opponent": "Sara Sorribes Tormo"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-03T12:40Z",
+          "opponent": "Jessica Bouzas Maneiro"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-05T12:05Z",
+          "opponent": "Iva Jovic"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-07T12:35Z",
+          "opponent": "Coco Gauff"
         }
       ],
       "games": [
@@ -46621,6 +48576,21 @@
           "value": 13,
           "date": "2026-07-01T15:40Z",
           "opponent": "Sara Sorribes Tormo"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-03T12:40Z",
+          "opponent": "Jessica Bouzas Maneiro"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-05T12:05Z",
+          "opponent": "Iva Jovic"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-07T12:35Z",
+          "opponent": "Coco Gauff"
         }
       ]
     }
@@ -46774,6 +48744,11 @@
           "value": 3,
           "date": "2026-06-30T11:30Z",
           "opponent": "Alex Michelsen"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T14:00Z",
+          "opponent": "Jaume Munar"
         }
       ],
       "games": [
@@ -46781,6 +48756,11 @@
           "value": 25,
           "date": "2026-06-30T11:30Z",
           "opponent": "Alex Michelsen"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-02T14:00Z",
+          "opponent": "Jaume Munar"
         }
       ]
     }
@@ -46854,6 +48834,16 @@
           "value": 3,
           "date": "2026-07-01T14:40Z",
           "opponent": "Ethan Quinn"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-03T12:40Z",
+          "opponent": "Rafael Jodar"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-05T18:20Z",
+          "opponent": "Jannik Sinner"
         }
       ],
       "games": [
@@ -46881,6 +48871,16 @@
           "value": 20,
           "date": "2026-07-01T14:40Z",
           "opponent": "Ethan Quinn"
+        },
+        {
+          "value": 20,
+          "date": "2026-07-03T12:40Z",
+          "opponent": "Rafael Jodar"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-05T18:20Z",
+          "opponent": "Jannik Sinner"
         }
       ]
     }
@@ -47164,6 +49164,31 @@
           "value": 3,
           "date": "2026-06-29T17:55Z",
           "opponent": "Wu Yibing"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-01T18:50Z",
+          "opponent": "Stefanos Tsitsipas"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-03T12:35Z",
+          "opponent": "Arthur Rinderknech"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-05T12:40Z",
+          "opponent": "Roman Safiullin"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-07T16:35Z",
+          "opponent": "Felix Auger-Aliassime"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-10T15:20Z",
+          "opponent": "Jannik Sinner"
         }
       ],
       "games": [
@@ -47171,6 +49196,31 @@
           "value": 23,
           "date": "2026-06-29T17:55Z",
           "opponent": "Wu Yibing"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-01T18:50Z",
+          "opponent": "Stefanos Tsitsipas"
+        },
+        {
+          "value": 21,
+          "date": "2026-07-03T12:35Z",
+          "opponent": "Arthur Rinderknech"
+        },
+        {
+          "value": 22,
+          "date": "2026-07-05T12:40Z",
+          "opponent": "Roman Safiullin"
+        },
+        {
+          "value": 29,
+          "date": "2026-07-07T16:35Z",
+          "opponent": "Felix Auger-Aliassime"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-10T15:20Z",
+          "opponent": "Jannik Sinner"
         }
       ]
     }
@@ -47645,6 +49695,11 @@
           "value": 2,
           "date": "2026-07-12T14:05Z",
           "opponent": "Madison Sieg"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T14:35Z",
+          "opponent": "Marianne Argyrokastriti"
         }
       ],
       "games": [
@@ -47717,6 +49772,11 @@
           "value": 12,
           "date": "2026-07-12T14:05Z",
           "opponent": "Madison Sieg"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T14:35Z",
+          "opponent": "Marianne Argyrokastriti"
         }
       ]
     },
@@ -48168,6 +50228,21 @@
           "value": 2,
           "date": "2026-07-08T15:35Z",
           "opponent": "Amandine Hesse"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-10T10:30Z",
+          "opponent": "Alicia Herrero Linana"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T14:35Z",
+          "opponent": "Leolia Jeanjean"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-12T13:30Z",
+          "opponent": "Jeline Vandromme"
         }
       ],
       "games": [
@@ -48255,6 +50330,21 @@
           "value": 13,
           "date": "2026-07-08T15:35Z",
           "opponent": "Amandine Hesse"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-10T10:30Z",
+          "opponent": "Alicia Herrero Linana"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-11T14:35Z",
+          "opponent": "Leolia Jeanjean"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-12T13:30Z",
+          "opponent": "Jeline Vandromme"
         }
       ]
     },
@@ -49233,6 +51323,16 @@
           "value": 2,
           "date": "2026-07-01T15:35Z",
           "opponent": "Mirra Andreeva"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-03T15:55Z",
+          "opponent": "Nikola Bartunkova"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-05T12:40Z",
+          "opponent": "Karolina Muchova"
         }
       ],
       "games": [
@@ -49245,6 +51345,16 @@
           "value": 17,
           "date": "2026-07-01T15:35Z",
           "opponent": "Mirra Andreeva"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-03T15:55Z",
+          "opponent": "Nikola Bartunkova"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-05T12:40Z",
+          "opponent": "Karolina Muchova"
         }
       ]
     }
@@ -50144,6 +52254,11 @@
           "value": 1,
           "date": "2026-06-16T15:15Z",
           "opponent": "Karolina Pliskova"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T16:00Z",
+          "opponent": "Viktoria Morvayova"
         }
       ],
       "games": [
@@ -50191,6 +52306,11 @@
           "value": 14,
           "date": "2026-06-16T15:15Z",
           "opponent": "Karolina Pliskova"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T16:00Z",
+          "opponent": "Viktoria Morvayova"
         }
       ]
     },
@@ -50446,6 +52566,11 @@
           "value": 2,
           "date": "2026-06-30T18:30Z",
           "opponent": "Serena Williams"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T12:10Z",
+          "opponent": "Alexandra Eala"
         }
       ],
       "games": [
@@ -50453,6 +52578,11 @@
           "value": 18,
           "date": "2026-06-30T18:30Z",
           "opponent": "Serena Williams"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-02T12:10Z",
+          "opponent": "Alexandra Eala"
         }
       ]
     }
@@ -50631,6 +52761,31 @@
           "value": 2,
           "date": "2026-07-01T12:30Z",
           "opponent": "Zhang Shuai"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-03T16:30Z",
+          "opponent": "Mananchaya Sawangkaew"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-05T12:40Z",
+          "opponent": "Barbora Krejcikova"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-07T15:10Z",
+          "opponent": "Naomi Osaka"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-09T12:35Z",
+          "opponent": "Coco Gauff"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-11T15:05Z",
+          "opponent": "Linda Noskova"
         }
       ],
       "games": [
@@ -50643,6 +52798,31 @@
           "value": 12,
           "date": "2026-07-01T12:30Z",
           "opponent": "Zhang Shuai"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-03T16:30Z",
+          "opponent": "Mananchaya Sawangkaew"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-05T12:40Z",
+          "opponent": "Barbora Krejcikova"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-07T15:10Z",
+          "opponent": "Naomi Osaka"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-09T12:35Z",
+          "opponent": "Coco Gauff"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-11T15:05Z",
+          "opponent": "Linda Noskova"
         }
       ]
     }
@@ -50896,6 +53076,21 @@
           "value": 2,
           "date": "2026-06-30T10:05Z",
           "opponent": "Kayla Day"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T12:05Z",
+          "opponent": "Katie Swan"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-04T15:15Z",
+          "opponent": "Amanda Anisimova"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-06T15:10Z",
+          "opponent": "Linda Noskova"
         }
       ],
       "games": [
@@ -50903,6 +53098,21 @@
           "value": 18,
           "date": "2026-06-30T10:05Z",
           "opponent": "Kayla Day"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-02T12:05Z",
+          "opponent": "Katie Swan"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-04T15:15Z",
+          "opponent": "Amanda Anisimova"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-06T15:10Z",
+          "opponent": "Linda Noskova"
         }
       ]
     }
@@ -51051,6 +53261,11 @@
           "value": 2,
           "date": "2026-07-01T16:50Z",
           "opponent": "Lanlana Tararudee"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-03T12:10Z",
+          "opponent": "Iva Jovic"
         }
       ],
       "games": [
@@ -51063,6 +53278,11 @@
           "value": 14,
           "date": "2026-07-01T16:50Z",
           "opponent": "Lanlana Tararudee"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-03T12:10Z",
+          "opponent": "Iva Jovic"
         }
       ]
     }
@@ -51276,6 +53496,16 @@
           "value": 2,
           "date": "2026-06-30T14:35Z",
           "opponent": "Paula Badosa"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Oksana Selekhmeteva"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-04T10:05Z",
+          "opponent": "Marta Kostyuk"
         }
       ],
       "games": [
@@ -51283,6 +53513,16 @@
           "value": 17,
           "date": "2026-06-30T14:35Z",
           "opponent": "Paula Badosa"
+        },
+        {
+          "value": 15,
+          "date": "2026-07-02T10:05Z",
+          "opponent": "Oksana Selekhmeteva"
+        },
+        {
+          "value": 9,
+          "date": "2026-07-04T10:05Z",
+          "opponent": "Marta Kostyuk"
         }
       ]
     }
@@ -51470,6 +53710,11 @@
           "value": 3,
           "date": "2026-06-30T15:40Z",
           "opponent": "Tallon Griekspoor"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T14:25Z",
+          "opponent": "Flavio Cobolli"
         }
       ],
       "games": [
@@ -51477,6 +53722,11 @@
           "value": 23,
           "date": "2026-06-30T15:40Z",
           "opponent": "Tallon Griekspoor"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-02T14:25Z",
+          "opponent": "Flavio Cobolli"
         }
       ]
     }
@@ -51523,6 +53773,11 @@
           "value": 1,
           "date": "2026-06-22T13:15Z",
           "opponent": "Juan Manuel Cerundolo"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T12:55Z",
+          "opponent": "Timofey Skatov"
         }
       ],
       "games": [
@@ -51565,6 +53820,11 @@
           "value": 16,
           "date": "2026-06-22T13:15Z",
           "opponent": "Juan Manuel Cerundolo"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-13T12:55Z",
+          "opponent": "Timofey Skatov"
         }
       ]
     },
@@ -51750,6 +54010,26 @@
           "value": 3,
           "date": "2026-06-30T12:05Z",
           "opponent": "Dusan Lajovic"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Patrick Kypson"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-04T16:40Z",
+          "opponent": "Lorenzo Sonego"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-06T17:10Z",
+          "opponent": "Alexander Bublik"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-08T14:25Z",
+          "opponent": "Alexander Zverev"
         }
       ],
       "games": [
@@ -51757,6 +54037,26 @@
           "value": 18,
           "date": "2026-06-30T12:05Z",
           "opponent": "Dusan Lajovic"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-02T10:10Z",
+          "opponent": "Patrick Kypson"
+        },
+        {
+          "value": 23,
+          "date": "2026-07-04T16:40Z",
+          "opponent": "Lorenzo Sonego"
+        },
+        {
+          "value": 19,
+          "date": "2026-07-06T17:10Z",
+          "opponent": "Alexander Bublik"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-08T14:25Z",
+          "opponent": "Alexander Zverev"
         }
       ]
     }
@@ -52280,6 +54580,11 @@
           "value": 1,
           "date": "2026-06-16T13:20Z",
           "opponent": "Anastasia Kulikova"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T14:25Z",
+          "opponent": "Magda Linette"
         }
       ],
       "games": [
@@ -52287,6 +54592,11 @@
           "value": 13,
           "date": "2026-06-16T13:20Z",
           "opponent": "Anastasia Kulikova"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T14:25Z",
+          "opponent": "Magda Linette"
         }
       ]
     }
@@ -52425,6 +54735,11 @@
           "value": 2,
           "date": "2026-07-12T09:25Z",
           "opponent": "Eva Maria Ionescu"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T08:05Z",
+          "opponent": "Georgina Garcia Perez"
         }
       ],
       "games": [
@@ -52467,6 +54782,11 @@
           "value": 12,
           "date": "2026-07-12T09:25Z",
           "opponent": "Eva Maria Ionescu"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T08:05Z",
+          "opponent": "Georgina Garcia Perez"
         }
       ]
     }
@@ -52524,6 +54844,11 @@
           "value": 0,
           "date": "2026-06-13T18:20Z",
           "opponent": "Zeynep Sonmez"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T16:45Z",
+          "opponent": "Kyoka Okamura"
         }
       ],
       "games": [
@@ -52561,6 +54886,11 @@
           "value": 4,
           "date": "2026-06-13T18:20Z",
           "opponent": "Zeynep Sonmez"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T16:45Z",
+          "opponent": "Kyoka Okamura"
         }
       ]
     },
@@ -53580,6 +55910,11 @@
           "value": 1,
           "date": "2026-05-05T10:55Z",
           "opponent": "Xinran Sun"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-13T14:05Z",
+          "opponent": "Deborah Chiesa"
         }
       ],
       "games": [
@@ -53587,6 +55922,11 @@
           "value": 14,
           "date": "2026-05-05T10:55Z",
           "opponent": "Xinran Sun"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T14:05Z",
+          "opponent": "Deborah Chiesa"
         }
       ]
     }
@@ -53855,6 +56195,11 @@
           "value": 0,
           "date": "2026-06-20T15:50Z",
           "opponent": "Mayar Sherif"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T17:05Z",
+          "opponent": "Oksana Selekhmeteva"
         }
       ],
       "games": [
@@ -53897,6 +56242,11 @@
           "value": 6,
           "date": "2026-06-20T15:50Z",
           "opponent": "Mayar Sherif"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T17:05Z",
+          "opponent": "Oksana Selekhmeteva"
         }
       ]
     }
@@ -53970,6 +56320,11 @@
           "value": 0,
           "date": "2026-06-04T14:45Z",
           "opponent": "Nikola Bartunkova"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T14:30Z",
+          "opponent": "Irem Kurt"
         }
       ],
       "games": [
@@ -54007,6 +56362,11 @@
           "value": 10,
           "date": "2026-06-04T14:45Z",
           "opponent": "Nikola Bartunkova"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-13T14:30Z",
+          "opponent": "Irem Kurt"
         }
       ]
     }
@@ -54258,6 +56618,11 @@
           "value": 0,
           "date": "2026-06-16T14:30Z",
           "opponent": "Hannah Klugman"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T16:30Z",
+          "opponent": "Mina Hodzic"
         }
       ],
       "games": [
@@ -54285,6 +56650,11 @@
           "value": 6,
           "date": "2026-06-16T14:30Z",
           "opponent": "Hannah Klugman"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-13T16:30Z",
+          "opponent": "Mina Hodzic"
         }
       ]
     },
@@ -54573,6 +56943,11 @@
           "value": 0,
           "date": "2026-04-20T10:35Z",
           "opponent": "Varvara Lepchenko"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T12:30Z",
+          "opponent": "Hanne Vandewinkel"
         }
       ],
       "games": [
@@ -54605,6 +56980,11 @@
           "value": 6,
           "date": "2026-04-20T10:35Z",
           "opponent": "Varvara Lepchenko"
+        },
+        {
+          "value": 6,
+          "date": "2026-07-13T12:30Z",
+          "opponent": "Hanne Vandewinkel"
         }
       ]
     },
@@ -54694,6 +57074,11 @@
           "value": 0,
           "date": "2026-06-12T15:50Z",
           "opponent": "Mary Stoiana"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T15:40Z",
+          "opponent": "Bai Zhuoxuan"
         }
       ],
       "games": [
@@ -54721,6 +57106,11 @@
           "value": 6,
           "date": "2026-06-12T15:50Z",
           "opponent": "Mary Stoiana"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T15:40Z",
+          "opponent": "Bai Zhuoxuan"
         }
       ]
     }
@@ -54824,6 +57214,11 @@
           "value": 1,
           "date": "2026-07-06T09:05Z",
           "opponent": "Irene Burillo"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T15:25Z",
+          "opponent": "Alice Rame"
         }
       ],
       "games": [
@@ -54871,6 +57266,11 @@
           "value": 13,
           "date": "2026-07-06T09:05Z",
           "opponent": "Irene Burillo"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T15:25Z",
+          "opponent": "Alice Rame"
         }
       ]
     }
@@ -54959,6 +57359,11 @@
           "value": 1,
           "date": "2026-05-06T10:30Z",
           "opponent": "Polina Kudermetova"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T17:00Z",
+          "opponent": "Susan Bandecchi"
         }
       ],
       "games": [
@@ -54971,6 +57376,11 @@
           "value": 16,
           "date": "2026-05-06T10:30Z",
           "opponent": "Polina Kudermetova"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T17:00Z",
+          "opponent": "Susan Bandecchi"
         }
       ]
     }
@@ -55068,6 +57478,21 @@
           "value": 2,
           "date": "2026-07-09T18:10Z",
           "opponent": "Mei Yamaguchi"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-09T21:05Z",
+          "opponent": "Darja Vidmanova"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-10T20:15Z",
+          "opponent": "Madison Brengle"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-11T16:20Z",
+          "opponent": "Katie Volynets"
         }
       ],
       "games": [
@@ -55125,6 +57550,21 @@
           "value": 13,
           "date": "2026-07-09T18:10Z",
           "opponent": "Mei Yamaguchi"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-09T21:05Z",
+          "opponent": "Darja Vidmanova"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-10T20:15Z",
+          "opponent": "Madison Brengle"
+        },
+        {
+          "value": 5,
+          "date": "2026-07-11T16:20Z",
+          "opponent": "Katie Volynets"
         }
       ]
     },
@@ -55378,6 +57818,11 @@
           "value": 2,
           "date": "2026-07-09T17:40Z",
           "opponent": "Iryna Shymanovich"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-10T15:05Z",
+          "opponent": "Mananchaya Sawangkaew"
         }
       ],
       "games": [
@@ -55445,6 +57890,11 @@
           "value": 15,
           "date": "2026-07-09T17:40Z",
           "opponent": "Iryna Shymanovich"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-10T15:05Z",
+          "opponent": "Mananchaya Sawangkaew"
         }
       ]
     }
@@ -56286,6 +58736,11 @@
           "value": 1,
           "date": "2026-06-19T12:40Z",
           "opponent": "Alina Charaeva"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T17:00Z",
+          "opponent": "Anastasia Gasanova"
         }
       ],
       "games": [
@@ -56323,6 +58778,11 @@
           "value": 14,
           "date": "2026-06-19T12:40Z",
           "opponent": "Alina Charaeva"
+        },
+        {
+          "value": 10,
+          "date": "2026-07-13T17:00Z",
+          "opponent": "Anastasia Gasanova"
         }
       ]
     }
@@ -57558,6 +60018,16 @@
           "value": 2,
           "date": "2026-07-08T20:10Z",
           "opponent": "Momoko Kobori"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-09T18:55Z",
+          "opponent": "Reese Brantmeier"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-10T17:50Z",
+          "opponent": "Katie Volynets"
         }
       ],
       "games": [
@@ -57585,6 +60055,16 @@
           "value": 12,
           "date": "2026-07-08T20:10Z",
           "opponent": "Momoko Kobori"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-09T18:55Z",
+          "opponent": "Reese Brantmeier"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-10T17:50Z",
+          "opponent": "Katie Volynets"
         }
       ]
     }
@@ -57808,6 +60288,21 @@
           "value": 2,
           "date": "2026-07-09T09:05Z",
           "opponent": "Oksana Selekhmeteva"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-10T09:05Z",
+          "opponent": "Francesca Curmi"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-11T12:35Z",
+          "opponent": "Aurora Zantedeschi"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-12T13:30Z",
+          "opponent": "Mayar Sherif"
         }
       ],
       "games": [
@@ -57845,6 +60340,21 @@
           "value": 12,
           "date": "2026-07-09T09:05Z",
           "opponent": "Oksana Selekhmeteva"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-10T09:05Z",
+          "opponent": "Francesca Curmi"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-11T12:35Z",
+          "opponent": "Aurora Zantedeschi"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-12T13:30Z",
+          "opponent": "Mayar Sherif"
         }
       ]
     }
@@ -58001,6 +60511,11 @@
           "value": 2,
           "date": "2026-07-12T13:45Z",
           "opponent": "Maria Sara Popa"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T10:35Z",
+          "opponent": "Ipek Oz"
         }
       ],
       "games": [
@@ -58033,6 +60548,11 @@
           "value": 12,
           "date": "2026-07-12T13:45Z",
           "opponent": "Maria Sara Popa"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T10:35Z",
+          "opponent": "Ipek Oz"
         }
       ]
     },
@@ -58062,6 +60582,11 @@
           "value": 2,
           "date": "2026-07-01T11:30Z",
           "opponent": "Zeynep Sonmez"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-03T16:20Z",
+          "opponent": "Coco Gauff"
         }
       ],
       "games": [
@@ -58089,6 +60614,11 @@
           "value": 13,
           "date": "2026-07-01T11:30Z",
           "opponent": "Zeynep Sonmez"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-03T16:20Z",
+          "opponent": "Coco Gauff"
         }
       ]
     }
@@ -59624,6 +62154,16 @@
           "value": 2,
           "date": "2026-07-12T15:40Z",
           "opponent": "Maia Ilinca Burcescu"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T12:05Z",
+          "opponent": "Alevtina Ibragimova"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-13T17:15Z",
+          "opponent": "Clara Burel"
         }
       ],
       "games": [
@@ -59701,6 +62241,16 @@
           "value": 16,
           "date": "2026-07-12T15:40Z",
           "opponent": "Maia Ilinca Burcescu"
+        },
+        {
+          "value": 7,
+          "date": "2026-07-13T12:05Z",
+          "opponent": "Alevtina Ibragimova"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-13T17:15Z",
+          "opponent": "Clara Burel"
         }
       ]
     }
@@ -59753,6 +62303,11 @@
           "value": 2,
           "date": "2026-06-30T13:10Z",
           "opponent": "Beatriz Haddad Maia"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T16:10Z",
+          "opponent": "Elise Mertens"
         }
       ],
       "games": [
@@ -59775,6 +62330,11 @@
           "value": 12,
           "date": "2026-06-30T13:10Z",
           "opponent": "Beatriz Haddad Maia"
+        },
+        {
+          "value": 9,
+          "date": "2026-07-02T16:10Z",
+          "opponent": "Elise Mertens"
         }
       ]
     },
@@ -60463,6 +63023,11 @@
           "value": 0,
           "date": "2026-07-05T09:05Z",
           "opponent": "Liv Boulard"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T16:45Z",
+          "opponent": "Maria Sakkari"
         }
       ],
       "games": [
@@ -60555,6 +63120,11 @@
           "value": 10,
           "date": "2026-07-05T09:05Z",
           "opponent": "Liv Boulard"
+        },
+        {
+          "value": 6,
+          "date": "2026-07-13T16:45Z",
+          "opponent": "Maria Sakkari"
         }
       ]
     }
@@ -60962,6 +63532,11 @@
           "value": 1,
           "date": "2026-07-09T15:35Z",
           "opponent": "Leolia Jeanjean"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T08:40Z",
+          "opponent": "Dalila Spiteri"
         }
       ],
       "games": [
@@ -61019,6 +63594,11 @@
           "value": 15,
           "date": "2026-07-09T15:35Z",
           "opponent": "Leolia Jeanjean"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T08:40Z",
+          "opponent": "Dalila Spiteri"
         }
       ]
     },
@@ -61416,6 +63996,16 @@
           "value": 2,
           "date": "2026-06-30T10:05Z",
           "opponent": "Lina Gjorcheska"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-02T14:05Z",
+          "opponent": "Sofia Kenin"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-04T15:15Z",
+          "opponent": "Madison Keys"
         }
       ],
       "games": [
@@ -61423,6 +64013,16 @@
           "value": 12,
           "date": "2026-06-30T10:05Z",
           "opponent": "Lina Gjorcheska"
+        },
+        {
+          "value": 17,
+          "date": "2026-07-02T14:05Z",
+          "opponent": "Sofia Kenin"
+        },
+        {
+          "value": 11,
+          "date": "2026-07-04T15:15Z",
+          "opponent": "Madison Keys"
         }
       ]
     },
@@ -61827,6 +64427,11 @@
           "value": 2,
           "date": "2026-07-08T10:50Z",
           "opponent": "Caroline Werner"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-10T15:35Z",
+          "opponent": "Leolia Jeanjean"
         }
       ],
       "games": [
@@ -61879,6 +64484,11 @@
           "value": 12,
           "date": "2026-07-08T10:50Z",
           "opponent": "Caroline Werner"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-10T15:35Z",
+          "opponent": "Leolia Jeanjean"
         }
       ]
     }
@@ -61956,6 +64566,11 @@
           "value": 3,
           "date": "2026-07-01T11:30Z",
           "opponent": "Nicolas Mejia"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-03T18:10Z",
+          "opponent": "Felix Auger-Aliassime"
         }
       ],
       "games": [
@@ -61983,6 +64598,11 @@
           "value": 25,
           "date": "2026-07-01T11:30Z",
           "opponent": "Nicolas Mejia"
+        },
+        {
+          "value": 9,
+          "date": "2026-07-03T18:10Z",
+          "opponent": "Felix Auger-Aliassime"
         }
       ]
     }
@@ -63029,6 +65649,11 @@
           "value": 3,
           "date": "2026-06-30T13:05Z",
           "opponent": "Vilius Gaubas"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T17:05Z",
+          "opponent": "Alexander Bublik"
         }
       ],
       "games": [
@@ -63051,6 +65676,27 @@
           "value": 19,
           "date": "2026-06-30T13:05Z",
           "opponent": "Vilius Gaubas"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-02T17:05Z",
+          "opponent": "Alexander Bublik"
+        }
+      ]
+    },
+    "hard": {
+      "sets": [
+        {
+          "value": 0,
+          "date": "2026-07-13T16:30Z",
+          "opponent": "Marco Trungelliti"
+        }
+      ],
+      "games": [
+        {
+          "value": 5,
+          "date": "2026-07-13T16:30Z",
+          "opponent": "Marco Trungelliti"
         }
       ]
     }
@@ -63164,6 +65810,16 @@
           "value": 3,
           "date": "2026-07-01T13:00Z",
           "opponent": "Botic Van De Zandschulp"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-03T10:10Z",
+          "opponent": "Joao Fonseca"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-05T12:40Z",
+          "opponent": "Novak Djokovic"
         }
       ],
       "games": [
@@ -63191,6 +65847,16 @@
           "value": 26,
           "date": "2026-07-01T13:00Z",
           "opponent": "Botic Van De Zandschulp"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-03T10:10Z",
+          "opponent": "Joao Fonseca"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-05T12:40Z",
+          "opponent": "Novak Djokovic"
         }
       ]
     }
@@ -63763,6 +66429,11 @@
           "value": 0,
           "date": "2026-06-15T14:00Z",
           "opponent": "Rebeka Masarova"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T10:35Z",
+          "opponent": "Mia Ristic"
         }
       ],
       "games": [
@@ -63785,6 +66456,11 @@
           "value": 5,
           "date": "2026-06-15T14:00Z",
           "opponent": "Rebeka Masarova"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-13T10:35Z",
+          "opponent": "Mia Ristic"
         }
       ]
     },
@@ -64152,6 +66828,11 @@
           "value": 2,
           "date": "2026-07-01T10:05Z",
           "opponent": "Alycia Parks"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-03T16:30Z",
+          "opponent": "Karolina Muchova"
         }
       ],
       "games": [
@@ -64179,6 +66860,11 @@
           "value": 13,
           "date": "2026-07-01T10:05Z",
           "opponent": "Alycia Parks"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-03T16:30Z",
+          "opponent": "Karolina Muchova"
         }
       ]
     },
@@ -64228,6 +66914,16 @@
           "value": 2,
           "date": "2026-07-09T17:05Z",
           "opponent": "Lea Ma"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-10T15:05Z",
+          "opponent": "Mary Stoiana"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-11T15:05Z",
+          "opponent": "Tatjana Maria"
         }
       ],
       "games": [
@@ -64275,6 +66971,16 @@
           "value": 12,
           "date": "2026-07-09T17:05Z",
           "opponent": "Lea Ma"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-10T15:05Z",
+          "opponent": "Mary Stoiana"
+        },
+        {
+          "value": 3,
+          "date": "2026-07-11T15:05Z",
+          "opponent": "Tatjana Maria"
         }
       ]
     }
@@ -64581,6 +67287,11 @@
           "value": 0,
           "date": "2026-05-09T06:05Z",
           "opponent": "En-Shuo Liang"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T15:40Z",
+          "opponent": "Tatiana Prozorova"
         }
       ],
       "games": [
@@ -64603,6 +67314,11 @@
           "value": 11,
           "date": "2026-05-09T06:05Z",
           "opponent": "En-Shuo Liang"
+        },
+        {
+          "value": 4,
+          "date": "2026-07-13T15:40Z",
+          "opponent": "Tatiana Prozorova"
         }
       ]
     }
@@ -64681,6 +67397,11 @@
           "value": 0,
           "date": "2026-05-18T13:15Z",
           "opponent": "Anna Bondar"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T14:35Z",
+          "opponent": "Dalila Jakupovic"
         }
       ],
       "games": [
@@ -64703,6 +67424,11 @@
           "value": 1,
           "date": "2026-05-18T13:15Z",
           "opponent": "Anna Bondar"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-13T14:35Z",
+          "opponent": "Dalila Jakupovic"
         }
       ]
     }
@@ -64729,6 +67455,11 @@
           "value": 2,
           "date": "2026-06-30T16:25Z",
           "opponent": "Ajla Tomljanovic"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T11:55Z",
+          "opponent": "Ashlyn Krueger"
         }
       ],
       "games": [
@@ -64751,6 +67482,11 @@
           "value": 14,
           "date": "2026-06-30T16:25Z",
           "opponent": "Ajla Tomljanovic"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-02T11:55Z",
+          "opponent": "Ashlyn Krueger"
         }
       ]
     },
@@ -65040,6 +67776,11 @@
           "value": 2,
           "date": "2026-06-30T10:05Z",
           "opponent": "Irina-Camelia Begu"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-02T12:05Z",
+          "opponent": "Madison Keys"
         }
       ],
       "games": [
@@ -65047,6 +67788,11 @@
           "value": 12,
           "date": "2026-06-30T10:05Z",
           "opponent": "Irina-Camelia Begu"
+        },
+        {
+          "value": 5,
+          "date": "2026-07-02T12:05Z",
+          "opponent": "Madison Keys"
         }
       ]
     },
@@ -65964,6 +68710,11 @@
           "value": 1,
           "date": "2026-06-17T16:05Z",
           "opponent": "Tiantsoa Rakotomanga Rajaonah"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T10:35Z",
+          "opponent": "Mia Pohankova"
         }
       ],
       "games": [
@@ -66031,6 +68782,11 @@
           "value": 11,
           "date": "2026-06-17T16:05Z",
           "opponent": "Tiantsoa Rakotomanga Rajaonah"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T10:35Z",
+          "opponent": "Mia Pohankova"
         }
       ]
     }
@@ -66193,6 +68949,11 @@
           "value": 1,
           "date": "2026-06-16T13:25Z",
           "opponent": "Jennifer Ruggeri"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-13T09:00Z",
+          "opponent": "Julia Grabher"
         }
       ],
       "games": [
@@ -66225,6 +68986,11 @@
           "value": 11,
           "date": "2026-06-16T13:25Z",
           "opponent": "Jennifer Ruggeri"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-13T09:00Z",
+          "opponent": "Julia Grabher"
         }
       ]
     }
@@ -66490,6 +69256,11 @@
           "value": 2,
           "date": "2026-07-12T07:05Z",
           "opponent": "Lisa Zaar"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T10:20Z",
+          "opponent": "Leyre Romero Gormaz"
         }
       ],
       "games": [
@@ -66527,6 +69298,11 @@
           "value": 13,
           "date": "2026-07-12T07:05Z",
           "opponent": "Lisa Zaar"
+        },
+        {
+          "value": 5,
+          "date": "2026-07-13T10:20Z",
+          "opponent": "Leyre Romero Gormaz"
         }
       ]
     }
@@ -66626,6 +69402,11 @@
           "value": 2,
           "date": "2026-07-12T11:05Z",
           "opponent": "Ilay Yoruk"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-13T10:05Z",
+          "opponent": "Weronika Falkowska"
         }
       ],
       "games": [
@@ -66663,6 +69444,11 @@
           "value": 12,
           "date": "2026-07-12T11:05Z",
           "opponent": "Ilay Yoruk"
+        },
+        {
+          "value": 8,
+          "date": "2026-07-13T10:05Z",
+          "opponent": "Weronika Falkowska"
         }
       ]
     }
@@ -66953,6 +69739,11 @@
           "value": 0,
           "date": "2026-07-07T09:05Z",
           "opponent": "Mayar Sherif"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-13T11:50Z",
+          "opponent": "Ekaterina Perelygina"
         }
       ],
       "games": [
@@ -67015,6 +69806,11 @@
           "value": 6,
           "date": "2026-07-07T09:05Z",
           "opponent": "Mayar Sherif"
+        },
+        {
+          "value": 13,
+          "date": "2026-07-13T11:50Z",
+          "opponent": "Ekaterina Perelygina"
         }
       ]
     }
@@ -67066,6 +69862,11 @@
           "value": 2,
           "date": "2026-07-12T09:05Z",
           "opponent": "Karina Kovalchuk"
+        },
+        {
+          "value": 1,
+          "date": "2026-07-13T16:15Z",
+          "opponent": "Veronika Erjavec"
         }
       ],
       "games": [
@@ -67113,6 +69914,11 @@
           "value": 12,
           "date": "2026-07-12T09:05Z",
           "opponent": "Karina Kovalchuk"
+        },
+        {
+          "value": 14,
+          "date": "2026-07-13T16:15Z",
+          "opponent": "Veronika Erjavec"
         }
       ]
     }
@@ -67252,6 +70058,11 @@
           "value": 1,
           "date": "2026-06-16T10:20Z",
           "opponent": "Mia Ristic"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T14:05Z",
+          "opponent": "Lina Gjorcheska"
         }
       ],
       "games": [
@@ -67279,6 +70090,11 @@
           "value": 15,
           "date": "2026-06-16T10:20Z",
           "opponent": "Mia Ristic"
+        },
+        {
+          "value": 18,
+          "date": "2026-07-13T14:05Z",
+          "opponent": "Lina Gjorcheska"
         }
       ]
     }
@@ -67393,6 +70209,11 @@
           "value": 0,
           "date": "2026-06-17T08:35Z",
           "opponent": "Luisina Giovannini"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-13T14:05Z",
+          "opponent": "Kajsa Rinaldo Persson"
         }
       ],
       "games": [
@@ -67425,6 +70246,69 @@
           "value": 4,
           "date": "2026-06-17T08:35Z",
           "opponent": "Luisina Giovannini"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-13T14:05Z",
+          "opponent": "Kajsa Rinaldo Persson"
+        }
+      ]
+    }
+  },
+  "Alicia Herrero Linana": {
+    "hard": {
+      "sets": [
+        {
+          "value": 2,
+          "date": "2026-07-05T09:05Z",
+          "opponent": "Dune Vaissaud"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-06T09:05Z",
+          "opponent": "Lucie Nguyen Tan"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-07T12:45Z",
+          "opponent": "Elina Avanesyan"
+        },
+        {
+          "value": 2,
+          "date": "2026-07-09T10:30Z",
+          "opponent": "Clara Burel"
+        },
+        {
+          "value": 0,
+          "date": "2026-07-10T10:30Z",
+          "opponent": "Mayar Sherif"
+        }
+      ],
+      "games": [
+        {
+          "value": 17,
+          "date": "2026-07-05T09:05Z",
+          "opponent": "Dune Vaissaud"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-06T09:05Z",
+          "opponent": "Lucie Nguyen Tan"
+        },
+        {
+          "value": 12,
+          "date": "2026-07-07T12:45Z",
+          "opponent": "Elina Avanesyan"
+        },
+        {
+          "value": 16,
+          "date": "2026-07-09T10:30Z",
+          "opponent": "Clara Burel"
+        },
+        {
+          "value": 5,
+          "date": "2026-07-10T10:30Z",
+          "opponent": "Mayar Sherif"
         }
       ]
     }
