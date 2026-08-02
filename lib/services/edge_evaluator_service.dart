@@ -37,6 +37,7 @@ class EdgeEvaluatorService {
 
   static const int _minBets = 15;
   static const int _maxBets = 20;
+  static const int _minPoolForRelaxed = 10;
 
   static double _kelly(Map<String, dynamic> p) {
     final stored = (p['kelly'] as num?)?.toDouble();
@@ -157,7 +158,9 @@ class EdgeEvaluatorService {
     }
 
     var result = props.where(full).toList();
-    if (result.length < _minBets) result = props.where(relaxed).toList();
+    if (result.length < _minBets && props.length > _minPoolForRelaxed) {
+      result = props.where(relaxed).toList();
+    }
     lastQualifiedCount = result.length;
     return result;
   }
