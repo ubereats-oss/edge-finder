@@ -1,3 +1,5 @@
+import 'dart:html' as html; // ignore: avoid_web_libraries_in_flutter
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/bet_dialog.dart';
@@ -29,22 +31,34 @@ class PlayerDetailScreen extends StatelessWidget {
     return const Color(0xFFFF1744);
   }
 
-  static const _sportSlug = {
-    'basketball/nba': 'basketball/nba',
-    'baseball/mlb':   'baseball/mlb',
-    'hockey/nhl':     'hockey/nhl',
-  };
-
   Future<void> _openPinnacle(Map<String, dynamic> prop) async {
     final id = prop['pinnacleId'];
     final slug = prop['pinnacleSlug'] as String?;
-    final sport = prop['sport'] as String? ?? 'basketball/nba';
     if (id == null || slug == null) return;
-    final sportPath = _sportSlug[sport] ?? sport;
+
+    final sportRaw = (prop['sport'] as String? ?? '').toLowerCase();
+    String sportPath;
+    if (sportRaw.contains('basket') || sportRaw.contains('nba')) {
+      sportPath = 'basketball/nba';
+    } else if (sportRaw.contains('base') || sportRaw.contains('mlb')) {
+      sportPath = 'baseball/mlb';
+    } else if (sportRaw.contains('hock') || sportRaw.contains('nhl')) {
+      sportPath = 'hockey/nhl';
+    } else if (sportRaw.contains('tennis') || sportRaw.contains('tênis')) {
+      sportPath = 'tennis';
+    } else {
+      sportPath = 'basketball/nba';
+    }
+
     final uri = Uri.parse(
       'https://pinnacle.bet.br/sportsbook/standard/$sportPath/$slug/$id',
     );
-    if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (kIsWeb) {
+      // No Flutter Web, externalApplication abre na mesma aba — forçar nova aba
+      html.window.open(uri.toString(), '_blank');
+    } else {
+      if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   Color _propColor(String p) {

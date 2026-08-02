@@ -1,1 +1,0 @@
-repomix --config repomix_config_pipeline.json

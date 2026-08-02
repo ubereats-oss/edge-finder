@@ -53,7 +53,9 @@ async function fetchPinnacleMatchups(leagueId) {
 function findMatchupId(matchups, homeTeam, awayTeam) {
   const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
   for (const m of matchups) {
+    if (!m.participants || m.participants.length !== 2) continue;
     const names = m.participants.map(p => norm(p.name));
+    if (names.includes('over') || names.includes('under')) continue;
     if (names.some(n => norm(homeTeam).includes(n.slice(0,6)) || n.includes(norm(homeTeam).slice(0,6))) &&
         names.some(n => norm(awayTeam).includes(n.slice(0,6)) || n.includes(norm(awayTeam).slice(0,6)))) {
       return m.id;

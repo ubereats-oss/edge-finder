@@ -20,7 +20,6 @@ const SYNC_MAP = [
   { file: 'nba_results.json',          col: 'results', doc: 'nba_h2h' },
   { file: 'nba_props_results.json',    col: 'results', doc: 'nba_props' },
   { file: 'nba_props_br_results.json', col: 'results', doc: 'nba_props_br' },
-  { file: 'mlb_results.json',          col: 'results', doc: 'mlb_h2h' },
   { file: 'mlb_props_results.json',    col: 'results', doc: 'mlb_props' },
   { file: 'nhl_props_results.json',    col: 'results', doc: 'nhl_props' },
   { file: 'nfl_props_results.json',    col: 'results', doc: 'nfl_props' },

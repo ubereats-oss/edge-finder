@@ -13,6 +13,7 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
   String _side = 'Over';
   DateTime _selectedDate = DateTime.now();
   bool _loading = false;
+  bool _isVirtual = false;
 
   final _gameCtrl = TextEditingController();
   final _playerCtrl = TextEditingController();
@@ -122,6 +123,7 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
         'impliedProb': impliedProb,
         'edge': edge,
         'kelly': 0.0,
+        'virtual': _isVirtual,
         if (_bookmakerCtrl.text.trim().isNotEmpty)
           'bookmaker': _bookmakerCtrl.text.trim(),
         if (_isProp) ...{
@@ -409,6 +411,49 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
                     controller: _modelProbCtrl,
                     hint: '55.0',
                     numeric: true,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Virtual
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _isVirtual
+                          ? const Color(0xFF00B0FF).withValues(alpha: 0.1)
+                          : const Color(0xFF2A2A3E),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: _isVirtual
+                            ? const Color(0xFF00B0FF).withValues(alpha: 0.5)
+                            : Colors.transparent,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Aposta virtual',
+                                style: TextStyle(
+                                    color: _isVirtual
+                                        ? const Color(0xFF00B0FF)
+                                        : Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14)),
+                            const Text('Contabilidade separada',
+                                style: TextStyle(
+                                    color: Color(0xFF888888), fontSize: 11)),
+                          ],
+                        ),
+                        Switch(
+                          value: _isVirtual,
+                          onChanged: (v) => setState(() => _isVirtual = v),
+                          activeThumbColor: const Color(0xFF00B0FF),
+                          activeTrackColor: const Color(0xFF00B0FF).withValues(alpha: 0.4),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 28),
 

@@ -1,43 +1,68 @@
-# Edge Finder — Claude Code Context
+# Edge Finder
 
-## Stack
-- Flutter (Web/Android/iOS) + Firebase Firestore (`odds-app-edge`, `southAmericaEast`)
-- Node.js pipeline + GitHub Actions (`ubereats-oss/edge-finder`)
-- The Odds API (19 chaves rotacionadas, reset dia 1 de cada mês)
+## Sobre o projeto
+App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges) comparando odds entre casas. Integra pipeline Node.js que coleta odds/props de NBA, MLB, NHL, Tênis via APIs e calcula modelos de probabilidade. GitHub Actions automatiza coleta diária, backtesting e atualização de dados para Firestore.
 
-## Regras de código
-- Fences: `~~~` nunca backticks
-- Flutter: `const` obrigatório em decorators estáticos; `withValues` não `withOpacity`
-- Todo texto do app em Português Brasileiro
-- Git push: one-liner Node.js lendo `GITHUB_TOKEN` do `.env`
-- Nunca usar `cd` sem necessidade; comandos nunca com quebra de linha
+## Mapa do projeto
 
-## Arquitetura
-- `pipeline/` — scripts Node.js de coleta e modelo
-- `lib/screens/` — telas Flutter
-- `lib/services/api_service.dart` — leitura do Firestore via REST
-- `lib/widgets/` — componentes reutilizáveis
-- Branch `data` — JSONs persistidos (ratings, stats, teams, bets)
-- Branch `history` — odds_history.tar.gz acumulado diariamente
+### Telas (lib/screens/)
+- `sport_selector_screen.dart` — seletor inicial de esportes
+- `basketball_screen.dart`, `basketball_br_screen.dart` — partidas NBA e basquete BR
+- `baseball_screen.dart` — partidas MLB
+- `hockey_screen.dart` — partidas NHL
+- `football_screen.dart` — partidas futebol
+- `tennis_screen.dart` — partidas tênis
+- `mix_screen.dart` — resultados consolidados múltiplos esportes
+- `bets_screen.dart` — histórico de apostas
+- `bet_planner_screen.dart` — planejador de apostas
+- `add_late_bet_screen.dart` — adicionar apostas tardias
+- `player_detail_screen.dart` — detalhes e estatísticas de jogador
+- `settings_screen.dart` — configurações e preferências
 
-## Firestore (`results/`)
-- `nba_h2h` ← `nba_results.json`
-- `nba_props` ← `nba_props_results.json`
-- `nba_props_br` ← `nba_props_br_results.json`
-- `mlb_h2h` ← `mlb_results.json`
-- `mlb_props` ← `mlb_props_results.json`
-- `tennis` ← `model_results.json`
+### Serviços (lib/services/)
+- `api_service.dart` — integração com Firestore REST e GitHub Actions
+- `edge_evaluator_service.dart` — cálculo de edges (prob. vs odds)
+- `prefs_service.dart` — persistência local (shared_preferences)
 
-## Workflows
-- `update_model.yml` — sports: `nba_br`, `nba`, `mlb`, `tennis`, `all`
-- `odds_history.yml` — roda 19h UTC diariamente
-- `update_player_stats.yml` — roda 10h UTC diariamente
+### Widgets (lib/widgets/)
+- `match_card.dart` — card de partida
+- `prop_card.dart`, `mlb_prop_card.dart` — cards de prop
+- `edge_evaluation_sheet.dart` — avaliação de edge e probabilidades
+- `bet_dialog.dart` — diálogo criar/editar aposta
+- `props_filter_bar.dart` — filtro de props por critérios
+- `status_bar.dart`, `last_updated_bar.dart` — barras de status/atualização
 
-## Arquivos críticos na branch `data`
-`nba_rating.json`, `nba_player_team.json`, `nba_injuries_today.json`, `nba_boxscores_cache.json`, `mlb_team_rating.json`, `mlb_player_team.json`, `mlb_injuries_today.json`, `bets.json`, `nba_player_stats.json.gz`, `mlb_player_stats.json.gz`
+### Utilitários (lib/utils/)
+- `file_saver.dart`, `file_saver_*.dart` — exportar PDF/Excel multiplataforma
 
-## Regras de resposta
-- Nunca perguntar o que acabou de ser pedido — executar
-- Nunca afirmar sem certeza absoluta
-- Nunca repetir diagnósticos já feitos
-- Números de linha sempre referentes ao arquivo real, nunca ao repomix
+### Pipeline Node.js (pipeline/)
+- **Coleta odds**: `get_nba_odds.js`, `get_mlb_odds.js`, `get_nhl_props.js`, `get_tennis_props.js`
+- **Coleta props**: `get_nba_props.js`, `get_nba_props_br.js`, `get_mlb_props.js`
+- **Modelos**: `model_nba.js`, `model_mlb.js`, `model_nhl_props.js`, `model_tennis_props.js`
+- **Dados jogadores**: `get_*_player_teams.js`, `get_*_player_stats.js`, `get_*_injuries.js`
+- **Análise**: `backtest_*_props.js`, `model_prob.js`
+- **Sincronização**: `firebase_sync.js`, `save_odds_history.js`, `get_tennis_ranking.js`
+
+### Backend
+- `functions/` — Cloud Functions Firebase
+
+## Comandos
+
+### Flutter
+- `flutter pub get` — baixar dependências
+- `flutter analyze` — análise estática (lint)
+- `flutter test` — executar testes
+- `flutter build web` — build para web
+- `flutter run` — rodar em dispositivo/emulador
+
+### Node.js
+- `npm install` — instalar dependências
+- `node pipeline/<script>.js` — executar script específico
+
+## Regras de implementação
+- Ao alterar um componente, função ou modelo, localizar e atualizar TODOS os pontos de uso no projeto.
+- Seguir o estilo visual e os padrões já existentes nas telas — nunca introduzir padrão novo sem ser pedido.
+- Fazer apenas o que foi pedido: não refatorar, renomear ou "melhorar" código fora do escopo da tarefa. Pode corrigir warnings do analyze se for rodado
+- NÃO rodar `flutter analyze`, nem deploy, nem commit, ne push — quem roda é o usuário, para economizar tokens. Só rodar se for explicitamente pedido. Sempre avisar se precisar fazer deploy e indicar o comando completo
+- Respostas curtas: reportar o que foi feito em poucas linhas, sem explicar o código.
+- Ao criar, mover ou remover telas/arquivos principais, atualizar a seção "Mapa do projeto" deste CLAUDE.md.

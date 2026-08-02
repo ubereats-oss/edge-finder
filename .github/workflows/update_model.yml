@@ -16,7 +16,6 @@ on:
           - tennis
           - nhl
           - nfl
-          - tennis_props
           - all
 
 permissions:
@@ -48,6 +47,7 @@ jobs:
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
+          keys.forEach(k => console.log('::add-mask::' + k.trim()));
           const lines = [];
           keys.forEach((k, i) => {
             const name = i === 0 ? 'ODDS_API_KEY' : 'ODDS_API_KEY_' + (i + 1);
@@ -79,7 +79,7 @@ jobs:
             gunzip -c /tmp/mlb_player_stats.json.gz > mlb_player_stats.json && \
             echo "mlb_player_stats.json restaurado: $(wc -c < mlb_player_stats.json) bytes" || \
             echo "mlb_player_stats.json não encontrado — modelo usará stats vazios"
-          for f in nba_player_team.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
+          for f in nba_player_team.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json; do
             git show origin/data:$f > $f 2>/dev/null && echo "Restaurado: $f" || echo "Não encontrado: $f"
           done
           git show origin/data:bets.json > bets.json 2>/dev/null && echo "bets.json restaurado" || echo '[]' > bets.json
@@ -119,14 +119,6 @@ jobs:
       - name: Atualizar times MLB
         if: ${{ github.event.inputs.sport == 'mlb' || github.event.inputs.sport == 'all' }}
         run: node pipeline/get_mlb_player_teams.js
-
-      - name: Atualizar odds MLB
-        if: ${{ github.event.inputs.sport == 'mlb' || github.event.inputs.sport == 'all' }}
-        run: node pipeline/get_mlb_odds.js
-
-      - name: Rodar modelo MLB
-        if: ${{ github.event.inputs.sport == 'mlb' || github.event.inputs.sport == 'all' }}
-        run: node pipeline/model_mlb.js
 
       - name: Atualizar props MLB
         if: ${{ github.event.inputs.sport == 'mlb' || github.event.inputs.sport == 'all' }}
@@ -180,18 +172,6 @@ jobs:
         if: ${{ github.event.inputs.sport == 'nfl' || github.event.inputs.sport == 'all' }}
         run: node pipeline/model_nfl_props.js
 
-      - name: Buscar props Tênis (player)
-        if: ${{ github.event.inputs.sport == 'tennis_props' || github.event.inputs.sport == 'all' }}
-        run: node pipeline/get_tennis_player_stats.js
-
-      - name: Buscar odds props Tênis
-        if: ${{ github.event.inputs.sport == 'tennis_props' || github.event.inputs.sport == 'all' }}
-        run: node pipeline/get_tennis_props.js
-
-      - name: Rodar modelo Tênis Props
-        if: ${{ github.event.inputs.sport == 'tennis_props' || github.event.inputs.sport == 'all' }}
-        run: node pipeline/model_tennis_props.js
-
       - name: Sincronizar resultados com Firestore
         run: node pipeline/firebase_sync.js results
         env:
@@ -218,7 +198,7 @@ jobs:
           cp /tmp/nhl_player_stats.json.gz . 2>/dev/null || true
           cp /tmp/nfl_player_stats.json.gz . 2>/dev/null || true
           rm -f nba_player_stats.json mlb_player_stats.json nhl_player_stats.json nfl_player_stats.json
-          for f in nba_player_team.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json bets.json; do
+          for f in nba_player_team.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json bets.json; do
             cp $f . 2>/dev/null || true
           done
           git add -A

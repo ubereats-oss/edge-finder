@@ -68,4 +68,14 @@ class PrefsService {
   static void setGeminiKey(String value) {
     _prefs?.setString('gemini_api_key', value);
   }
+
+  // ─── Caminho raiz do projeto ──────────────────────────────────────────────
+
+  static String getProjectRootPath() {
+    return _prefs?.getString('project_root_path') ?? '';
+  }
+
+  static void setProjectRootPath(String value) {
+    _prefs?.setString('project_root_path', value);
+  }
 }

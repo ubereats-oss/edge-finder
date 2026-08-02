@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../services/edge_evaluator_service.dart';
-import '../widgets/match_card.dart';
 import '../widgets/mlb_prop_card.dart';
 import '../widgets/props_filter_bar.dart';
 import '../widgets/last_updated_bar.dart';
@@ -15,12 +14,8 @@ class BaseballScreen extends StatefulWidget {
   State<BaseballScreen> createState() => _BaseballScreenState();
 }
 
-class _BaseballScreenState extends State<BaseballScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  List<Map<String, dynamic>> _h2hResults = [];
+class _BaseballScreenState extends State<BaseballScreen> {
   List<Map<String, dynamic>> _propsResults = [];
-  DateTime? _h2hUpdated;
   DateTime? _propsUpdated;
   bool _loading = false;
   String _status = '';
@@ -42,27 +37,17 @@ class _BaseballScreenState extends State<BaseballScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     _loadAll();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   Future<void> _loadAll() async {
     setState(() => _loading = true);
     try {
-      final h2h = await ApiService.fetchMlbResults();
       final props = await ApiService.fetchMlbProps();
       final enriched = await EdgeEvaluatorService.enrichWithContext(props.data, 'mlb');
       final filtered = EdgeEvaluatorService.adaptiveFilter(enriched);
       setState(() {
-        _h2hResults = h2h.data;
         _propsResults = filtered;
-        _h2hUpdated = h2h.lastUpdated;
         _propsUpdated = props.lastUpdated;
       });
     } catch (e) {
@@ -195,10 +180,6 @@ class _BaseballScreenState extends State<BaseballScreen>
       ..sort();
   }
 
-  List<Map<String, dynamic>> get _filteredH2h {
-    return _h2hResults.where(_jogoValido).toList();
-  }
-
   List<Map<String, dynamic>> get _filteredProps {
     return _propsResults.where((p) {
       if (!_jogoValido(p)) return false;
@@ -265,13 +246,6 @@ class _BaseballScreenState extends State<BaseballScreen>
             onPressed: _loading ? null : _loadAll,
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: const Color(0xFF00C853),
-          labelColor: Colors.white,
-          unselectedLabelColor: const Color(0xFF888888),
-          tabs: const [Tab(text: 'H2H'), Tab(text: 'Props')],
-        ),
       ),
       body: Column(
         children: [
@@ -281,74 +255,42 @@ class _BaseballScreenState extends State<BaseballScreen>
               backgroundColor: Color(0xFF1E1E2E),
               color: Color(0xFF00C853),
             ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
+          LastUpdatedBar(lastUpdated: _propsUpdated),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: const Color(0xFF00C853).withValues(alpha: 0.08),
+            child: const Row(
               children: [
-                Column(
-                  children: [
-                    LastUpdatedBar(lastUpdated: _h2hUpdated),
-                    Expanded(
-                      child: _filteredH2h.isEmpty && !_loading
-                          ? const _EmptyState(
-                              msg:
-                                  'Sem jogos disponíveis.\nAtualize para buscar.')
-                          : ListView.builder(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              itemCount: _filteredH2h.length,
-                              itemBuilder: (_, i) =>
-                                  MatchCard(match: _filteredH2h[i]),
-                            ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    LastUpdatedBar(lastUpdated: _propsUpdated),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      color: const Color(0xFF00C853).withValues(alpha: 0.08),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.filter_alt,
-                              color: Color(0xFF00C853), size: 14),
-                          SizedBox(width: 6),
-                          Text(
-                            'Odds Pinnacle · Executável na Pinnacle e bet365',
-                            style: TextStyle(
-                                color: Color(0xFF00C853), fontSize: 11),
-                          ),
-                        ],
-                      ),
-                    ),
-                    PropsFilterBar(
-                      minEdge: _minEdge,
-                      selectedProp: _selectedProp,
-                      selectedTeam: null,
-                      hideWarnings: _hideWarnings,
-                      availableProps: _availableProps,
-                      availableTeams: const [],
-                      onEdgeChanged: (v) => setState(() => _minEdge = v),
-                      onPropChanged: (v) => setState(() => _selectedProp = v),
-                      onTeamChanged: (_) {},
-                      onHideWarningsChanged: (v) =>
-                          setState(() => _hideWarnings = v),
-                    ),
-                    Expanded(
-                      child: _filteredProps.isEmpty && !_loading
-                          ? const _EmptyState(
-                              msg:
-                                  'Sem props disponíveis.\nAtualize ou aguarde a abertura dos mercados.')
-                          : ListView(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              children: _buildPropsList(),
-                            ),
-                    ),
-                  ],
+                Icon(Icons.filter_alt, color: Color(0xFF00C853), size: 14),
+                SizedBox(width: 6),
+                Text(
+                  'Odds Pinnacle · Executável na Pinnacle e bet365',
+                  style: TextStyle(color: Color(0xFF00C853), fontSize: 11),
                 ),
               ],
             ),
+          ),
+          PropsFilterBar(
+            minEdge: _minEdge,
+            selectedProp: _selectedProp,
+            selectedTeam: null,
+            hideWarnings: _hideWarnings,
+            availableProps: _availableProps,
+            availableTeams: const [],
+            onEdgeChanged: (v) => setState(() => _minEdge = v),
+            onPropChanged: (v) => setState(() => _selectedProp = v),
+            onTeamChanged: (_) {},
+            onHideWarningsChanged: (v) => setState(() => _hideWarnings = v),
+          ),
+          Expanded(
+            child: _filteredProps.isEmpty && !_loading
+                ? const _EmptyState(
+                    msg:
+                        'Sem props disponíveis.\nAtualize ou aguarde a abertura dos mercados.')
+                : ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    children: _buildPropsList(),
+                  ),
           ),
         ],
       ),
