@@ -53,6 +53,7 @@ Future<void> showBetDialog({
 
   double? _recalcEdge;
   double? _recalcKelly;
+  bool _isVirtual = false;
 
   void _recalculate([StateSetter? setState]) {
     final oddsVal = double.tryParse(oddsController.text.replaceAll(',', '.'));
@@ -314,6 +315,21 @@ Future<void> showBetDialog({
                   ),
                 ],
                 const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Aposta virtual',
+                        style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                    Switch(
+                      value: _isVirtual,
+                      onChanged: (v) => setState(() => _isVirtual = v),
+                      activeThumbColor: const Color(0xFF00B0FF),
+                      activeTrackColor: const Color(0xFF00B0FF).withValues(alpha: 0.4),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 const Text('Casa de aposta',
                     style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
                 const SizedBox(height: 6),
@@ -392,6 +408,7 @@ Future<void> showBetDialog({
                     'odds': oddsVal2 ?? betData['odds'],
                     'side': hasSides ? selectedSide : betData['side'],
                     'bookmaker': selectedBookmaker ?? '',
+                    'virtual': _isVirtual,
                   });
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(

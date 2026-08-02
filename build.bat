@@ -1,1 +1,0 @@
-flutter build apk --debug --split-per-abi && move /Y build\app\outputs\flutter-apk\app-arm64-v8a-debug.apk build\app\outputs\flutter-apk\odds.apk && echo APK gerado: odds.apk

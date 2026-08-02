@@ -73,6 +73,7 @@ jobs:
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
+          keys.forEach(k => console.log('::add-mask::' + k.trim()));
           const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
           require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
           console.log('Chaves injetadas:',keys.length);
@@ -119,6 +120,7 @@ jobs:
           name: nba-out
           path: /tmp/nba-out/
           if-no-files-found: warn
+          retention-days: 1
 
   # ── MLB (mar-out) ──────────────────────────────────────────────────────────
   mlb:
@@ -167,6 +169,7 @@ jobs:
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
+          keys.forEach(k => console.log('::add-mask::' + k.trim()));
           const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
           require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
           "
@@ -179,17 +182,13 @@ jobs:
           git fetch origin data 2>/dev/null || true
           git show origin/data:mlb_player_stats.json.gz > /tmp/mlb_ps.gz 2>/dev/null && \
             gunzip -c /tmp/mlb_ps.gz > mlb_player_stats.json || true
-          for f in mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
+          for f in mlb_player_team.json mlb_injuries_today.json; do
             git show origin/data:$f > $f 2>/dev/null || rm -f $f
           done
 
       - run: node pipeline/get_mlb_injuries.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
       - run: node pipeline/get_mlb_player_teams.js
-        if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
-      - run: node pipeline/get_mlb_odds.js
-        if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
-      - run: node pipeline/model_mlb.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
       - run: node pipeline/get_mlb_props.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
@@ -201,7 +200,7 @@ jobs:
         run: |
           mkdir -p /tmp/mlb-out
           gzip -c mlb_player_stats.json > /tmp/mlb-out/mlb_player_stats.json.gz 2>/dev/null || true
-          for f in mlb_props_results.json mlb_results.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
+          for f in mlb_props_results.json mlb_player_team.json mlb_injuries_today.json; do
             [ -f "$f" ] && cp "$f" /tmp/mlb-out/ || true
           done
 
@@ -211,6 +210,7 @@ jobs:
           name: mlb-out
           path: /tmp/mlb-out/
           if-no-files-found: warn
+          retention-days: 1
 
   # ── NHL (out-mai) ──────────────────────────────────────────────────────────
   nhl:
@@ -259,6 +259,7 @@ jobs:
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
+          keys.forEach(k => console.log('::add-mask::' + k.trim()));
           const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
           require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
           "
@@ -304,6 +305,7 @@ jobs:
           name: nhl-out
           path: /tmp/nhl-out/
           if-no-files-found: warn
+          retention-days: 1
 
   # ── NFL (set-fev) ──────────────────────────────────────────────────────────
   nfl:
@@ -352,6 +354,7 @@ jobs:
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
+          keys.forEach(k => console.log('::add-mask::' + k.trim()));
           const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
           require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
           "
@@ -397,6 +400,7 @@ jobs:
           name: nfl-out
           path: /tmp/nfl-out/
           if-no-files-found: warn
+          retention-days: 1
 
   # ── TÊNIS (ano inteiro) ────────────────────────────────────────────────────
   tennis:
@@ -426,6 +430,7 @@ jobs:
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
+          keys.forEach(k => console.log('::add-mask::' + k.trim()));
           const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
           require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
           "
@@ -435,19 +440,15 @@ jobs:
       - name: Restaurar stats Tênis
         run: |
           git fetch origin data 2>/dev/null || true
-          git show origin/data:tennis_player_stats.json > tennis_player_stats.json 2>/dev/null || true
           git show origin/data:ranking.json > ranking.json 2>/dev/null || true
 
       - run: node pipeline/get_odds.js
       - run: node pipeline/model_prob.js
-      - run: node pipeline/get_tennis_player_stats.js
-      - run: node pipeline/get_tennis_props.js
-      - run: node pipeline/model_tennis_props.js
 
       - name: Empacotar artefatos Tênis
         run: |
           mkdir -p /tmp/tennis-out
-          for f in model_results.json tennis_props_results.json tennis_player_stats.json; do
+          for f in model_results.json; do
             [ -f "$f" ] && cp "$f" /tmp/tennis-out/ || true
           done
 
@@ -456,6 +457,7 @@ jobs:
           name: tennis-out
           path: /tmp/tennis-out/
           if-no-files-found: warn
+          retention-days: 1
 
   # ── SALVAR DADOS (após todos os jobs) ─────────────────────────────────────
   save-data:
@@ -544,7 +546,7 @@ jobs:
           git checkout -b data-work origin/data --force 2>/dev/null || \
             (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
           cp /tmp/to-save/* . 2>/dev/null || true
-          for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json nhl_player_team.json nfl_player_team.json tennis_player_stats.json ranking.json bets.json; do
+          for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json; do
             [ -f "$f" ] && git add "$f" || true
           done
           git diff --staged --quiet && echo "Sem mudanças na branch data" || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"

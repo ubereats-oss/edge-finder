@@ -194,7 +194,7 @@ const PROP_CONFIG = {
   hits:        { key: 'hits' },
   // homeRuns desativado — ROI de 0.4% em 10.5k bets no backtest (inviável)
   strikeouts:  { key: 'strikeouts' },
-  hitsAllowed: { key: 'hitsAllowed' },
+  // hitsAllowed desativado — WR 0% em resultados reais; modelo não captura oponente
 };
 
 if (!props.length) { console.log('mlb_props.json vazio — sem props disponíveis.'); process.exit(0); }
@@ -244,6 +244,7 @@ for (const prop of props) {
 
   const marginRatio = Math.abs(prop.line - stats.avg) / stats.std;
   if (marginRatio < 0.75) continue;
+  if (prop.prop === 'strikeouts' && marginRatio < 1.0) continue;
 
   if (stats.usedAbsentFilter) comFiltroAusentes++;
 

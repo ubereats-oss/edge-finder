@@ -23,6 +23,7 @@ jobs:
         run: |
           node -e "
           const keys = process.env.ODDS_API_KEYS.split(',');
+          keys.forEach(k => console.log('::add-mask::' + k.trim()));
           const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
           require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
           "
@@ -33,14 +34,12 @@ jobs:
           git fetch origin data 2>/dev/null || true
           git show origin/data:mlb_player_stats.json.gz > /tmp/mlb_ps.gz 2>/dev/null && \
             gunzip -c /tmp/mlb_ps.gz > mlb_player_stats.json || true
-          for f in mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
+          for f in mlb_player_team.json mlb_injuries_today.json; do
             git show origin/data:$f > $f 2>/dev/null || true
           done
           git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
       - run: node pipeline/get_mlb_injuries.js
       - run: node pipeline/get_mlb_player_teams.js
-      - run: node pipeline/get_mlb_odds.js
-      - run: node pipeline/model_mlb.js
       - run: node pipeline/get_mlb_props.js
       - run: node pipeline/model_mlb_props.js
       - name: Sincronizar com Firestore
@@ -55,7 +54,7 @@ jobs:
         run: |
           mkdir -p /tmp/data-save
           gzip -c mlb_player_stats.json > /tmp/data-save/mlb_player_stats.json.gz 2>/dev/null || true
-          for f in mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json bets.json; do
+          for f in mlb_player_team.json mlb_injuries_today.json bets.json; do
             [ -f "$f" ] && cp "$f" /tmp/data-save/ || true
           done
           git config user.name "github-actions[bot]"

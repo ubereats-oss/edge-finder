@@ -117,16 +117,12 @@ class ApiService {
       _fetchFirestore('results', 'nba_props');
   static Future<FetchResult> fetchNbaBrProps() =>
       _fetchFirestore('results', 'nba_props_br');
-  static Future<FetchResult> fetchMlbResults() =>
-      _fetchFirestore('results', 'mlb_h2h');
   static Future<FetchResult> fetchMlbProps() =>
       _fetchFirestore('results', 'mlb_props');
   static Future<FetchResult> fetchNhlProps() =>
       _fetchFirestore('results', 'nhl_props');
   static Future<FetchResult> fetchNflProps() =>
       _fetchFirestore('results', 'nfl_props');
-  static Future<FetchResult> fetchTennisProps() =>
-      _fetchFirestore('results', 'tennis_props');
 
   static Future<FetchResult> _safeFetch(Future<FetchResult> f) async {
     try {
@@ -137,13 +133,12 @@ class ApiService {
   }
 
   static Future<FetchResult> fetchAllProps() async {
-    const sportLabels = ['NBA 🏀', 'MLB ⚾', 'NHL 🏒', 'NFL 🏈', 'Tênis 🎾'];
+    const sportLabels = ['NBA 🏀', 'MLB ⚾', 'NHL 🏒', 'NFL 🏈'];
     final results = await Future.wait([
       _safeFetch(fetchNbaBrProps()),
       _safeFetch(fetchMlbProps()),
       _safeFetch(fetchNhlProps()),
       _safeFetch(fetchNflProps()),
-      _safeFetch(fetchTennisProps()),
     ]);
 
     final allData = <Map<String, dynamic>>[];
@@ -300,6 +295,133 @@ class ApiService {
   }
 
   // ── Resolução de apostas via ESPN ──────────────────────────────────────────
+
+  // Detecta o caminho ESPN correto a partir do campo 'sport' salvo na aposta
+  // ou, como fallback, pelo nome da prop.
+  static String _espnSportPath(Map<String, dynamic> bet) {
+    final sportLabel = (bet['sport'] as String? ?? '').toLowerCase();
+    if (sportLabel.contains('nhl') || sportLabel.contains('hock')) return 'hockey/nhl';
+    if (sportLabel.contains('mlb') || sportLabel.contains('base')) return 'baseball/mlb';
+    if (sportLabel.contains('nba') || sportLabel.contains('basket')) return 'basketball/nba';
+    final prop = bet['prop'] as String? ?? '';
+    if (prop == 'hitsAllowed') return 'baseball/mlb';
+    if (prop == 'shots' || prop == 'goals') return 'hockey/nhl';
+    return 'basketball/nba';
+  }
+
+  static const _nbaStatKeys = <String, String>{
+    'points': 'points',
+    'rebounds': 'rebounds',
+    'assists': 'assists',
+    'steals': 'steals',
+    'threes': 'threePointFieldGoalsMade-threePointFieldGoalsAttempted',
+  };
+
+  static const _nhlStatKeys = <String, String>{
+    'shots': 'shots',
+    'goals': 'goals',
+    'assists': 'assists',
+    'points': 'points',
+  };
+
+  static const _mlbStatKeys = <String, String>{
+    'hitsAllowed': 'hits',
+  };
+
+  // Abreviações ESPN (campo 'labels') usadas como fallback quando 'keys' falha.
+  static const _espnLabelFallback = <String, String>{
+    'points': 'PTS',
+    'rebounds': 'REB',
+    'assists': 'AST',
+    'steals': 'STL',
+    'threes': '3PM',
+    'shots': 'SOG',
+    'goals': 'G',
+    'hits': 'H',
+    'hitsAllowed': 'H',
+  };
+
+  static Map<String, String> _statKeysForSport(String sportPath) {
+    if (sportPath == 'hockey/nhl') return _nhlStatKeys;
+    if (sportPath == 'baseball/mlb') return _mlbStatKeys;
+    return _nbaStatKeys;
+  }
+
+  // Extrai o valor da stat de um boxscore ESPN.
+  // Tenta primeiro o campo 'keys' (nomes completos), depois 'labels' (abreviações).
+  static double? _extractStatFromBoxscore(
+      Map<String, dynamic> sum,
+      String prop,
+      String statKey,
+      String playerLastName,
+      {bool pitchingOnly = false, String? extraLabel}) {
+    final players = sum['boxscore']?['players'] as List? ?? [];
+    for (final team in players) {
+      for (final group in (team['statistics'] as List? ?? [])) {
+        final keys = (group['keys'] as List?)?.cast<String>() ?? [];
+        if (pitchingOnly) {
+          final labels = (group['labels'] as List?)?.cast<String>() ?? [];
+          final hasPitching = keys.contains('inningsPitched') ||
+              keys.contains('ip') ||
+              labels.contains('IP');
+          if (!hasPitching) continue;
+        }
+        var colIdx = keys.indexOf(statKey);
+        if (colIdx == -1) {
+          final labels = (group['labels'] as List?)?.cast<String>() ?? [];
+          final labelKey = _espnLabelFallback[prop] ?? '';
+          if (labelKey.isNotEmpty) colIdx = labels.indexOf(labelKey);
+          if (colIdx == -1 && extraLabel != null) colIdx = labels.indexOf(extraLabel);
+          if (colIdx == -1) continue;
+        }
+        for (final athlete in (group['athletes'] as List? ?? [])) {
+          final name =
+              (athlete['athlete']['displayName'] as String).toLowerCase();
+          if (name.contains(playerLastName)) {
+            final statStr =
+                (athlete['stats'] as List)[colIdx] as String? ?? '0';
+            return double.tryParse(statStr.split('-').first) ?? 0;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  // Busca o evento ESPN para o jogo, tentando data principal, dia anterior
+  // e, para NBA, o grupo de playoffs (groups=46).
+  static Future<Map<String, dynamic>?> _findEspnEvent(
+      String sport, String dateStr, String dateStrPrev, String t1, String t2) async {
+    bool matches(dynamic e) {
+      final competitors =
+          (e['competitions'] as List).first['competitors'] as List;
+      final names =
+          competitors.map((c) => c['team']['displayName'] as String).toList();
+      return names.any((n) => n.contains(t1)) &&
+          names.any((n) => n.contains(t2));
+    }
+
+    Future<List> fetchEvents(String url) async {
+      final res = await http.get(Uri.parse(url));
+      if (res.statusCode != 200) return [];
+      return (jsonDecode(res.body) as Map<String, dynamic>)['events'] as List? ?? [];
+    }
+
+    final base = 'https://site.api.espn.com/apis/site/v2/sports/$sport/scoreboard';
+    for (final date in [dateStr, dateStrPrev]) {
+      var events = await fetchEvents('$base?dates=$date');
+      var ev = events.firstWhere(matches, orElse: () => null);
+      if (ev != null) return ev as Map<String, dynamic>;
+      // Fallback playoffs NBA
+      if (sport == 'basketball/nba') {
+        events = await fetchEvents('$base?dates=$date&groups=46');
+        ev = events.firstWhere(matches, orElse: () => null);
+        if (ev != null) return ev as Map<String, dynamic>;
+      }
+    }
+    return null;
+  }
+
   static Future<Map<String, dynamic>> _resolveViaEspn(
       Map<String, dynamic> bet) async {
     final commenceTime = bet['commence_time'] as String?;
@@ -312,37 +434,11 @@ class ApiService {
     final dtPrev = dt.subtract(const Duration(days: 1));
     final dateStrPrev =
         '${dtPrev.year}${dtPrev.month.toString().padLeft(2, '0')}${dtPrev.day.toString().padLeft(2, '0')}';
-    final prop = bet['prop'] as String? ?? '';
-    final sport = prop == 'hitsAllowed' ? 'baseball/mlb' : 'basketball/nba';
-    final sbRes = await http.get(Uri.parse(
-        'https://site.api.espn.com/apis/site/v2/sports/$sport/scoreboard?dates=$dateStr'));
-    if (sbRes.statusCode != 200) {
-      throw Exception('Erro ao buscar scoreboard ESPN');
-    }
-    var sb = jsonDecode(sbRes.body) as Map<String, dynamic>;
-    var events = sb['events'] as List? ?? [];
-    if (events.isEmpty) {
-      final sbRes2 = await http.get(Uri.parse(
-          'https://site.api.espn.com/apis/site/v2/sports/$sport/scoreboard?dates=$dateStrPrev'));
-      if (sbRes2.statusCode == 200) {
-        sb = jsonDecode(sbRes2.body) as Map<String, dynamic>;
-        events = sb['events'] as List? ?? [];
-      }
-    }
+    final sport = _espnSportPath(bet);
     final gameParts = (bet['game'] as String? ?? '').split(' x ');
     final t1 = gameParts.isNotEmpty ? gameParts[0].split(' ').last : '';
     final t2 = gameParts.length > 1 ? gameParts[1].split(' ').last : '';
-    final event = events.firstWhere(
-      (e) {
-        final competitors =
-            (e['competitions'] as List).first['competitors'] as List;
-        final names =
-            competitors.map((c) => c['team']['displayName'] as String).toList();
-        return names.any((n) => n.contains(t1)) &&
-            names.any((n) => n.contains(t2));
-      },
-      orElse: () => null,
-    );
+    final event = await _findEspnEvent(sport, dateStr, dateStrPrev, t1, t2);
     if (event == null) {
       throw Exception('Jogo não encontrado no ESPN');
     }
@@ -384,44 +480,23 @@ class ApiService {
       throw Exception('Erro ao buscar box score ESPN');
     }
     final sum = jsonDecode(sumRes.body) as Map<String, dynamic>;
-    const nbaStatMap = {
-      'points': 'points',
-      'rebounds': 'rebounds',
-      'assists': 'assists',
-      'steals': 'steals',
-      'threes': 'threePointFieldGoalsMade-threePointFieldGoalsAttempted',
-    };
-    // Para MLB: 'hits' no grupo de pitching (identificado por 'inningsPitched')
-    const mlbStatMap = {
-      'hitsAllowed': 'hits',
-    };
+    final prop = bet['prop'] as String? ?? '';
     final isMlb = sport == 'baseball/mlb';
-    final statMap = isMlb ? mlbStatMap : nbaStatMap;
+    final statMap = _statKeysForSport(sport);
     final statKey = statMap[prop] ?? prop;
     final playerLastName =
         (bet['player'] as String? ?? '').split(' ').last.toLowerCase();
-    double? realValue;
-    final players = sum['boxscore']?['players'] as List? ?? [];
-    for (final team in players) {
-      for (final group in (team['statistics'] as List? ?? [])) {
-        final keys = (group['keys'] as List?)?.cast<String>() ?? [];
-        // Para MLB, restringe ao grupo de pitching (contém 'inningsPitched')
-        if (isMlb && !keys.contains('inningsPitched')) continue;
-        final colIdx = keys.indexOf(statKey);
-        if (colIdx == -1) continue;
-        for (final athlete in (group['athletes'] as List? ?? [])) {
-          final name =
-              (athlete['athlete']['displayName'] as String).toLowerCase();
-          if (name.contains(playerLastName)) {
-            final statStr =
-                (athlete['stats'] as List)[colIdx] as String? ?? '0';
-            realValue = double.tryParse(statStr.split('-').first) ?? 0;
-          }
-        }
-      }
+    double? realValue = _extractStatFromBoxscore(
+        sum, prop, statKey, playerLastName, pitchingOnly: isMlb);
+    // ESPN NHL não tem coluna direta de points — calcula como goals + assists
+    if (realValue == null && sport == 'hockey/nhl' && prop == 'points') {
+      final g = _extractStatFromBoxscore(sum, 'goals', 'goals', playerLastName, extraLabel: 'G');
+      final a = _extractStatFromBoxscore(sum, 'assists', 'assists', playerLastName, extraLabel: 'A');
+      if (g != null || a != null) realValue = (g ?? 0) + (a ?? 0);
     }
+    // Jogador DNP (lesão/ausência) — Pinnacle anula a aposta
     if (realValue == null) {
-      throw Exception('Stat não encontrada no ESPN');
+      return {'realValue': 0, 'won': false, 'profit': 0.0, 'voided': true};
     }
     final side = bet['side'] as String? ?? 'Over';
     final line = (bet['line'] as num).toDouble();
@@ -477,32 +552,11 @@ class ApiService {
     final dtPrev2 = dtLocal.subtract(const Duration(days: 1));
     final dateStrPrev2 =
         '${dtPrev2.year}${dtPrev2.month.toString().padLeft(2, '0')}${dtPrev2.day.toString().padLeft(2, '0')}';
-    final sbRes = await http.get(Uri.parse(
-        'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=$dateStr'));
-    if (sbRes.statusCode != 200) {
-      throw Exception('Erro ao buscar scoreboard ESPN');
-    }
-    var sb = jsonDecode(sbRes.body) as Map<String, dynamic>;
-    var events = sb['events'] as List? ?? [];
-    if (events.isEmpty) {
-      final sbRes2 = await http.get(Uri.parse(
-          'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=$dateStrPrev2'));
-      if (sbRes2.statusCode == 200) {
-        sb = jsonDecode(sbRes2.body) as Map<String, dynamic>;
-        events = sb['events'] as List? ?? [];
-      }
-    }
+    final sport = _espnSportPath(bet);
     final gameParts = (bet['game'] as String? ?? '').split(' x ');
     final t1 = gameParts.isNotEmpty ? gameParts[0].split(' ').last : '';
     final t2 = gameParts.length > 1 ? gameParts[1].split(' ').last : '';
-    final event = events.firstWhere((e) {
-      final competitors =
-          (e['competitions'] as List).first['competitors'] as List;
-      final names =
-          competitors.map((c) => c['team']['displayName'] as String).toList();
-      return names.any((n) => n.contains(t1)) &&
-          names.any((n) => n.contains(t2));
-    }, orElse: () => null);
+    final event = await _findEspnEvent(sport, dateStr, dateStrPrev2, t1, t2);
     if (event == null) throw Exception('Jogo não encontrado no ESPN');
     final comp = (event['competitions'] as List).first;
     final statusType = comp['status']?['type'] as Map<String, dynamic>?;
@@ -510,23 +564,47 @@ class ApiService {
     final state = statusType?['state'] as String? ?? 'pre';
     final clock = comp['status']?['displayClock'] as String? ?? '';
     final period = comp['status']?['period'] as int? ?? 0;
+    final isNhl = sport == 'hockey/nhl';
+    final isMlb = sport == 'baseball/mlb';
     String timeInfo;
     if (completed) {
       timeInfo = 'Encerrado';
     } else if (state == 'in') {
-      final clockParts = clock.split(':');
-      final clockSecs = clockParts.length == 2
-          ? (int.tryParse(clockParts[0]) ?? 0) * 60 +
-              (int.tryParse(clockParts[1]) ?? 0)
-          : 0;
-      final quartersLeft = 4 - period;
-      final totalSecsLeft = quartersLeft * 12 * 60 + clockSecs;
-      final totalMins = totalSecsLeft ~/ 60;
-      final totalSecs = totalSecsLeft % 60;
-      final totalStr =
-          '${totalMins.toString().padLeft(2, '0')}:${totalSecs.toString().padLeft(2, '0')}';
-      timeInfo =
-          'Q$period — $clock restantes\n$totalStr restantes para o final da partida';
+      if (isMlb) {
+        timeInfo = 'Entrada ${period > 0 ? period : "?"}';
+      } else if (isNhl) {
+        final periodLabel = period <= 3
+            ? 'P$period'
+            : (period == 4 ? 'Prorrogação' : 'Shootout');
+        final clockParts = clock.split(':');
+        final clockSecs = clockParts.length == 2
+            ? (int.tryParse(clockParts[0]) ?? 0) * 60 +
+                (int.tryParse(clockParts[1]) ?? 0)
+            : 0;
+        final periodsLeft = period < 3 ? 3 - period : 0;
+        final totalSecsLeft = periodsLeft * 20 * 60 + clockSecs;
+        final totalMins = totalSecsLeft ~/ 60;
+        final totalSecs = totalSecsLeft % 60;
+        final totalStr =
+            '${totalMins.toString().padLeft(2, '0')}:${totalSecs.toString().padLeft(2, '0')}';
+        timeInfo = period <= 3
+            ? '$periodLabel — $clock restantes\n$totalStr restantes para o fim do tempo'
+            : '$periodLabel — $clock restantes';
+      } else {
+        final clockParts = clock.split(':');
+        final clockSecs = clockParts.length == 2
+            ? (int.tryParse(clockParts[0]) ?? 0) * 60 +
+                (int.tryParse(clockParts[1]) ?? 0)
+            : 0;
+        final quartersLeft = 4 - period;
+        final totalSecsLeft = quartersLeft * 12 * 60 + clockSecs;
+        final totalMins = totalSecsLeft ~/ 60;
+        final totalSecs = totalSecsLeft % 60;
+        final totalStr =
+            '${totalMins.toString().padLeft(2, '0')}:${totalSecs.toString().padLeft(2, '0')}';
+        timeInfo =
+            'Q$period — $clock restantes\n$totalStr restantes para o final da partida';
+      }
     } else {
       timeInfo = 'Não iniciado';
     }
@@ -539,20 +617,14 @@ class ApiService {
       };
     }
     final sumRes = await http.get(Uri.parse(
-        'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${event['id']}'));
+        'https://site.api.espn.com/apis/site/v2/sports/$sport/summary?event=${event['id']}'));
     if (sumRes.statusCode != 200) {
       throw Exception('Erro ao buscar box score ESPN');
     }
     final sum = jsonDecode(sumRes.body) as Map<String, dynamic>;
-    const statMap = {
-      'points': 'points',
-      'rebounds': 'rebounds',
-      'assists': 'assists',
-      'steals': 'steals',
-      'threes': 'threePointFieldGoalsMade-threePointFieldGoalsAttempted',
-    };
-    final statKey =
-        statMap[bet['prop'] as String? ?? ''] ?? (bet['prop'] as String? ?? '');
+    final prop = bet['prop'] as String? ?? '';
+    final statMap = _statKeysForSport(sport);
+    final statKey = statMap[prop] ?? prop;
     final playerLastName =
         (bet['player'] as String? ?? '').split(' ').last.toLowerCase();
     double? realValue;
@@ -560,8 +632,21 @@ class ApiService {
     for (final team in (sum['boxscore']?['players'] as List? ?? [])) {
       for (final grp in (team['statistics'] as List? ?? [])) {
         final keys = (grp['keys'] as List?)?.cast<String>() ?? [];
-        final colIdx = keys.indexOf(statKey);
-        if (colIdx == -1) continue;
+        if (isMlb) {
+          final labels = (grp['labels'] as List?)?.cast<String>() ?? [];
+          final hasPitching = keys.contains('inningsPitched') ||
+              keys.contains('ip') ||
+              labels.contains('IP');
+          if (!hasPitching) continue;
+        }
+        var colIdx = keys.indexOf(statKey);
+        if (colIdx == -1) {
+          final labels = (grp['labels'] as List?)?.cast<String>() ?? [];
+          final labelKey = _espnLabelFallback[prop] ?? '';
+          if (labelKey.isNotEmpty) colIdx = labels.indexOf(labelKey);
+          if (colIdx == -1 && isNhl && prop == 'assists') colIdx = labels.indexOf('A');
+          if (colIdx == -1) continue;
+        }
         for (final athlete in (grp['athletes'] as List? ?? [])) {
           final name =
               (athlete['athlete']['displayName'] as String).toLowerCase();
@@ -569,15 +654,25 @@ class ApiService {
             final statStr =
                 (athlete['stats'] as List)[colIdx] as String? ?? '0';
             realValue = double.tryParse(statStr.split('-').first) ?? 0;
-            final minIdx = keys.indexOf('minutes');
+            final minKey = isNhl ? 'timeOnIce' : 'minutes';
+            final minIdx = keys.indexOf(minKey);
             if (minIdx != -1) {
               minutesPlayed = int.tryParse(
-                      (athlete['stats'] as List)[minIdx] as String? ?? '0') ??
+                      ((athlete['stats'] as List)[minIdx] as String? ?? '0')
+                          .split(':')
+                          .first) ??
                   0;
             }
           }
         }
       }
+    }
+    // ESPN NHL não tem coluna direta de points — calcula como goals + assists
+    if (realValue == null && isNhl && prop == 'points') {
+      final boxsum = {'boxscore': sum['boxscore']};
+      final g = _extractStatFromBoxscore(boxsum, 'goals', 'goals', playerLastName, extraLabel: 'G');
+      final a = _extractStatFromBoxscore(boxsum, 'assists', 'assists', playerLastName, extraLabel: 'A');
+      if (g != null || a != null) realValue = (g ?? 0) + (a ?? 0);
     }
     return {
       'state': state,
@@ -737,7 +832,6 @@ class ApiService {
       'mlb/run-props-model': 'mlb',
       'nhl/update-props': 'nhl',
       'nfl/update-props': 'nfl',
-      'tennis/update-props': 'tennis_props',
     };
     final sport = sportMap[path] ?? 'all';
     await triggerUpdate(sport);

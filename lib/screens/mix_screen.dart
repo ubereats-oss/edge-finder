@@ -25,7 +25,7 @@ class _MixScreenState extends State<MixScreen> {
   bool _hideWarnings = false;
   DateTime? _selectedDate;
 
-  static const _sports = ['Todos', 'NBA', 'MLB', 'NHL', 'NFL', 'Tênis'];
+  static const _sports = ['Todos', 'NBA', 'MLB', 'NHL', 'NFL'];
   static const _min15 = Duration(minutes: 15);
 
   bool _jogoValido(Map<String, dynamic> item) {
@@ -126,6 +126,433 @@ class _MixScreenState extends State<MixScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) => EdgeEvaluationSheet(props: top, sport: 'Mix de Apostas'),
     );
+  }
+
+  Future<void> _registrarTodasApostas() async {
+    final props = _filtered;
+    if (props.isEmpty) {
+      _showError('Sem props disponíveis para registrar.');
+      return;
+    }
+
+    int step = 0;
+    bool isVirtual = false;
+    bool valoresIguais = true;
+    final globalStakeController = TextEditingController();
+    final stakeControllers =
+        List.generate(props.length, (_) => TextEditingController());
+    List<double>? confirmedStakes;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlg) {
+          Widget buildContent() {
+            if (step == 0) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${props.length} apostas serão registradas com os lados e odds recomendados.',
+                    style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setDlg(() => isVirtual = false),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            decoration: BoxDecoration(
+                              color: !isVirtual
+                                  ? const Color(0xFF00C853).withValues(alpha: 0.15)
+                                  : const Color(0xFF2A2A3E),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: !isVirtual ? const Color(0xFF00C853) : Colors.transparent,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(Icons.attach_money,
+                                    color: !isVirtual ? const Color(0xFF00C853) : const Color(0xFF666666)),
+                                const SizedBox(height: 4),
+                                Text('Real',
+                                    style: TextStyle(
+                                        color: !isVirtual ? const Color(0xFF00C853) : const Color(0xFF888888),
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setDlg(() => isVirtual = true),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            decoration: BoxDecoration(
+                              color: isVirtual
+                                  ? const Color(0xFF00B0FF).withValues(alpha: 0.15)
+                                  : const Color(0xFF2A2A3E),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: isVirtual ? const Color(0xFF00B0FF) : Colors.transparent,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(Icons.visibility,
+                                    color: isVirtual ? const Color(0xFF00B0FF) : const Color(0xFF666666)),
+                                const SizedBox(height: 4),
+                                Text('Virtual',
+                                    style: TextStyle(
+                                        color: isVirtual ? const Color(0xFF00B0FF) : const Color(0xFF888888),
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            } else if (step == 1) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'As apostas terão valores iguais ou diferentes?',
+                    style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setDlg(() => valoresIguais = true),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            decoration: BoxDecoration(
+                              color: valoresIguais
+                                  ? const Color(0xFFFFD600).withValues(alpha: 0.15)
+                                  : const Color(0xFF2A2A3E),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: valoresIguais ? const Color(0xFFFFD600) : Colors.transparent,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(Icons.format_align_center,
+                                    color: valoresIguais ? const Color(0xFFFFD600) : const Color(0xFF666666)),
+                                const SizedBox(height: 4),
+                                Text('Iguais',
+                                    style: TextStyle(
+                                        color: valoresIguais ? const Color(0xFFFFD600) : const Color(0xFF888888),
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setDlg(() => valoresIguais = false),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            decoration: BoxDecoration(
+                              color: !valoresIguais
+                                  ? const Color(0xFF7C4DFF).withValues(alpha: 0.15)
+                                  : const Color(0xFF2A2A3E),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: !valoresIguais ? const Color(0xFF7C4DFF) : Colors.transparent,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(Icons.tune,
+                                    color: !valoresIguais ? const Color(0xFF7C4DFF) : const Color(0xFF666666)),
+                                const SizedBox(height: 4),
+                                Text('Diferentes',
+                                    style: TextStyle(
+                                        color: !valoresIguais ? const Color(0xFF7C4DFF) : const Color(0xFF888888),
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            } else {
+              if (valoresIguais) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Valor para cada uma das ${props.length} apostas:',
+                      style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: globalStakeController,
+                      autofocus: true,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A3E),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        prefixText: 'R\$ ',
+                        prefixStyle: const TextStyle(color: Color(0xFF888888)),
+                        hintText: '0,00',
+                        hintStyle: const TextStyle(color: Color(0xFF555566)),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return SizedBox(
+                  width: double.maxFinite,
+                  height: 360,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Valor por aposta (deixe 0 para pular):',
+                          style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
+                        ),
+                        const SizedBox(height: 12),
+                        ...List.generate(props.length, (i) {
+                          final p = props[i];
+                          final player = (p['player'] as String?) ??
+                              (p['home_team'] as String?) ??
+                              'Aposta ${i + 1}';
+                          final propType = p['prop_type'] as String? ?? '';
+                          final line = p['line'];
+                          final side = (p['side'] as String?) ?? 'Over';
+                          final edge = (p['edge'] as num?)?.toDouble() ?? 0;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        player,
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: edge >= 5
+                                            ? const Color(0xFF00C853).withValues(alpha: 0.2)
+                                            : const Color(0xFFFFD600).withValues(alpha: 0.2),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        '${edge.toStringAsFixed(1)}%',
+                                        style: TextStyle(
+                                          color: edge >= 5 ? const Color(0xFF00C853) : const Color(0xFFFFD600),
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  '$side $line $propType',
+                                  style: const TextStyle(color: Color(0xFF888888), fontSize: 11),
+                                ),
+                                const SizedBox(height: 4),
+                                TextField(
+                                  controller: stakeControllers[i],
+                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: const Color(0xFF2A2A3E),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    prefixText: 'R\$ ',
+                                    prefixStyle: const TextStyle(color: Color(0xFF888888)),
+                                    hintText: '0,00',
+                                    hintStyle: const TextStyle(color: Color(0xFF555566)),
+                                    isDense: true,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                );
+              }
+            }
+          }
+
+          final isLastStep = step == 2;
+          return AlertDialog(
+            backgroundColor: const Color(0xFF1E1E2E),
+            title: Row(
+              children: [
+                const Icon(Icons.playlist_add_check, color: Color(0xFFFFD600), size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    step == 0
+                        ? 'Registrar ${props.length} Apostas'
+                        : step == 1
+                            ? 'Valores das Apostas'
+                            : valoresIguais
+                                ? 'Valor por Aposta'
+                                : 'Valores Individuais',
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+            content: buildContent(),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancelar', style: TextStyle(color: Color(0xFF888888))),
+              ),
+              if (step > 0)
+                TextButton(
+                  onPressed: () => setDlg(() => step--),
+                  child: const Text('Voltar', style: TextStyle(color: Color(0xFF888888))),
+                ),
+              ElevatedButton(
+                onPressed: () {
+                  if (!isLastStep) {
+                    setDlg(() => step++);
+                    return;
+                  }
+                  List<double> stakes;
+                  if (valoresIguais) {
+                    final v = double.tryParse(
+                        globalStakeController.text.replaceAll(',', '.'));
+                    if (v == null || v <= 0) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Informe um valor válido.'),
+                            backgroundColor: Colors.red),
+                      );
+                      return;
+                    }
+                    stakes = List.filled(props.length, v);
+                  } else {
+                    stakes = stakeControllers
+                        .map((c) => double.tryParse(c.text.replaceAll(',', '.')) ?? 0.0)
+                        .toList();
+                    if (stakes.every((s) => s <= 0)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Informe ao menos um valor.'),
+                            backgroundColor: Colors.red),
+                      );
+                      return;
+                    }
+                  }
+                  confirmedStakes = stakes;
+                  Navigator.pop(ctx);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isLastStep ? const Color(0xFF00C853) : const Color(0xFF7C4DFF),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: Text(
+                  isLastStep ? 'Registrar ${props.length} apostas' : 'Próximo',
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    if (confirmedStakes != null) {
+      await _submitAllBets(props, confirmedStakes!, isVirtual);
+    }
+  }
+
+  Future<void> _submitAllBets(
+      List<Map<String, dynamic>> props, List<double> stakes, bool isVirtual) async {
+    int success = 0;
+    int failed = 0;
+    final bookmaker = PrefsService.getLastBookmaker() ?? '';
+
+    for (var i = 0; i < props.length; i++) {
+      final stake = stakes[i];
+      if (stake <= 0) continue;
+      final p = props[i];
+      final side = (p['side'] as String?) ?? 'Over';
+      double? odds;
+      if (side == 'Over' && p['oddsOver'] != null) {
+        odds = (p['oddsOver'] as num).toDouble();
+      } else if (side == 'Under' && p['oddsUnder'] != null) {
+        odds = (p['oddsUnder'] as num).toDouble();
+      } else if (p['odds'] != null) {
+        odds = (p['odds'] as num).toDouble();
+      }
+
+      try {
+        await ApiService.createBet({
+          ...p,
+          'stake': stake,
+          'odds': odds ?? (p['odds'] is num ? (p['odds'] as num).toDouble() : null),
+          'side': side,
+          'bookmaker': bookmaker,
+          'virtual': isVirtual,
+        });
+        success++;
+      } catch (_) {
+        failed++;
+      }
+    }
+
+    if (mounted) {
+      final msg = failed == 0
+          ? '$success apostas registradas com sucesso!'
+          : '$success registradas, $failed com erro.';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg),
+          backgroundColor: failed == 0 ? const Color(0xFF00C853) : const Color(0xFFFF6D00),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    }
   }
 
   List<Map<String, dynamic>> get _filtered {
@@ -236,12 +663,27 @@ class _MixScreenState extends State<MixScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _loading ? null : _load,
-        backgroundColor: const Color(0xFFFFD600),
-        icon: const Icon(Icons.shuffle, color: Colors.black),
-        label: const Text('Atualizar',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton.extended(
+            heroTag: 'registrar_todas',
+            onPressed: _loading || _filtered.isEmpty ? null : _registrarTodasApostas,
+            backgroundColor: const Color(0xFF7C4DFF),
+            icon: const Icon(Icons.playlist_add_check, color: Colors.white),
+            label: const Text('Registrar todas',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton.extended(
+            heroTag: 'atualizar',
+            onPressed: _loading ? null : _load,
+            backgroundColor: const Color(0xFFFFD600),
+            icon: const Icon(Icons.shuffle, color: Colors.black),
+            label: const Text('Atualizar',
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
     );
   }

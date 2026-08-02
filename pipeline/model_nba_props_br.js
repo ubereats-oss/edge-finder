@@ -311,7 +311,7 @@ for (const prop of props) {
   if (!stats) { descartadosSemStats++; continue; }
   if (stats.std < 0.3) { descartadosSigmaBaixa++; continue; }
   const marginRatio = Math.abs(prop.line - stats.avg) / stats.std;
-  if (marginRatio < 0.4) continue;
+  if (marginRatio < 0.5) continue;
   const lowMarginRatio = marginRatio < 0.75;
   if (stats.usedAbsentFilter) comFiltroAusentes++;
 
