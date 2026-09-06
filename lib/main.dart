@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'screens/sport_selector_screen.dart';
 import 'services/prefs_service.dart';
 
-const _firebaseOptions = FirebaseOptions(
+const _webFirebaseOptions = FirebaseOptions(
   apiKey: 'AIzaSyBUUedKi0Y7kX4AzRBxOTuUQQeiqURXt2Y',
   authDomain: 'odds-app-edge.firebaseapp.com',
   projectId: 'odds-app-edge',
@@ -13,6 +14,22 @@ const _firebaseOptions = FirebaseOptions(
   appId: '1:29716291623:web:de831afee353ceb74fae02',
   measurementId: 'G-L4C5879SXP',
 );
+
+const _iosFirebaseOptions = FirebaseOptions(
+  apiKey: 'AIzaSyCN5w82G4mHmvsTp7z-hQOWA_oxjIi_Z2Y',
+  projectId: 'odds-app-edge',
+  storageBucket: 'odds-app-edge.firebasestorage.app',
+  messagingSenderId: '29716291623',
+  appId: '1:29716291623:ios:53bb74856196019b4fae02',
+  iosBundleId: 'com.salles.odds',
+);
+
+FirebaseOptions get _firebaseOptions {
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
+    return _iosFirebaseOptions;
+  }
+  return _webFirebaseOptions;
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
