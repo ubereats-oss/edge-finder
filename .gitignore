@@ -5,6 +5,8 @@ node_modules/
 *.json
 !package.json
 !package-lock.json
+!ios/Runner/Assets.xcassets/**/Contents.json
+!web/manifest.json
 
 # Histórico de odds (grande demais para Git)
 odds_history/
