@@ -176,6 +176,7 @@ async function getMlbProps() {
             }
 
             allProps.push({
+              eventId: event.id,
               game: `${event.home_team} x ${event.away_team}`,
               commence_time: event.commence_time,
               player,
@@ -185,6 +186,7 @@ async function getMlbProps() {
               line: sides.Over.line,
               oddsOver: sides.Over.price,
               oddsUnder: sides.Under.price,
+              bookmaker: bookmaker.key,
               pinnacleId: findMatchupId(pinnacleMatchups, event.home_team, event.away_team),
               pinnacleSlug: `${toSlug(event.away_team)}-vs-${toSlug(event.home_team)}`,
             });

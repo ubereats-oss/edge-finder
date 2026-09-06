@@ -1,4 +1,11 @@
 const fs = require('fs');
+const ledger = require('./model_ledger');
+const calibration = require('./calibration');
+const riskGuards = require('./risk_guards');
+const riskConfig = require('./risk_config');
+
+const ESPORTE = 'basketball/nba';
+const RUN_ID = new Date().toISOString();
 
 const playerStats = JSON.parse(fs.readFileSync('nba_player_stats.json'));
 const props = JSON.parse(fs.readFileSync('nba_props.json'));
@@ -7,50 +14,6 @@ const SEASON_WEIGHT = { 2024: 1, 2025: 2, 2026: 3 };
 const MIN_GAMES_CONTEXT = 10;
 const INEFFICIENT_MARKET_EDGE = 20;
 const KELLY_FRACTION = 0.25;
-
-// ── Calibração isotônica (derivada do backtest walk-forward) ───────────────────
-// Tabela: probabilidade bruta (mid do bucket) → taxa real observada
-// Fonte: backtest_nba_props.js sobre temporada 2025-26
-const CALIB_TABLE = [
-  { raw: 0.525, cal: 0.500 },
-  { raw: 0.575, cal: 0.534 },
-  { raw: 0.625, cal: 0.577 },
-  { raw: 0.675, cal: 0.618 },
-  { raw: 0.725, cal: 0.655 },
-  { raw: 0.775, cal: 0.687 },
-  { raw: 0.825, cal: 0.721 },
-  { raw: 0.875, cal: 0.760 },
-  { raw: 0.925, cal: 0.813 },
-  { raw: 0.975, cal: 0.818 },
-];
-
-// Interpola linearmente na tabela; fora do range usa extrapolação linear das bordas
-function calibrate(p) {
-  // Para prob < 0.5: calibrar o complemento e retornar complemento
-  if (p < 0.5) return 1 - calibrate(1 - p);
-
-  const n = CALIB_TABLE.length;
-  if (p <= CALIB_TABLE[0].raw) {
-    // Extrapolação abaixo: inclinação da primeira aresta
-    const slope = (CALIB_TABLE[1].cal - CALIB_TABLE[0].cal) /
-                  (CALIB_TABLE[1].raw - CALIB_TABLE[0].raw);
-    return Math.min(1, Math.max(0, CALIB_TABLE[0].cal + slope * (p - CALIB_TABLE[0].raw)));
-  }
-  if (p >= CALIB_TABLE[n - 1].raw) {
-    // Extrapolação acima: inclinação da última aresta
-    const slope = (CALIB_TABLE[n - 1].cal - CALIB_TABLE[n - 2].cal) /
-                  (CALIB_TABLE[n - 1].raw - CALIB_TABLE[n - 2].raw);
-    return Math.min(1, Math.max(0, CALIB_TABLE[n - 1].cal + slope * (p - CALIB_TABLE[n - 1].raw)));
-  }
-  // Interpolação linear entre os dois pontos adjacentes
-  for (let i = 0; i < n - 1; i++) {
-    if (p >= CALIB_TABLE[i].raw && p <= CALIB_TABLE[i + 1].raw) {
-      const t = (p - CALIB_TABLE[i].raw) / (CALIB_TABLE[i + 1].raw - CALIB_TABLE[i].raw);
-      return CALIB_TABLE[i].cal + t * (CALIB_TABLE[i + 1].cal - CALIB_TABLE[i].cal);
-    }
-  }
-  return p;
-}
 
 // ── Distribuição normal ────────────────────────────────────────────────────────
 
@@ -72,11 +35,11 @@ function normalCDF(x, mu, sigma) {
 function probOverRaw(mu, sigma, line) { return 1 - normalCDF(line, mu, sigma); }
 function probUnderRaw(mu, sigma, line) { return normalCDF(line, mu, sigma); }
 
-function calcKelly(p, odd) {
+function calcKelly(p, odd, stakeFraction = 1) {
   const b = odd - 1;
   const q = 1 - p;
   const kelly = (p * b - q) / b;
-  return Math.max(0, parseFloat((kelly * KELLY_FRACTION * 100).toFixed(2)));
+  return Math.max(0, parseFloat((kelly * KELLY_FRACTION * stakeFraction * 100).toFixed(2)));
 }
 
 // ── Stats ──────────────────────────────────────────────────────────────────────
@@ -155,7 +118,7 @@ const MIN_15 = 15 * 60 * 1000;
 let descartadosSemStats = 0;
 let descartadosSigmaBaixa = 0;
 let descartadosJogoBloqueado = 0;
-const results = [];
+const candidates = [];
 
 for (const prop of props) {
   const commence = new Date(prop.commence_time).getTime();
@@ -176,51 +139,101 @@ for (const prop of props) {
   if (stats.std < 0.3) { descartadosSigmaBaixa++; continue; }
 
   // Probabilidades brutas da distribuição normal
-  const pOverRaw  = probOverRaw(stats.avg, stats.std, prop.line);
-  const pUnderRaw = probUnderRaw(stats.avg, stats.std, prop.line);
-
-  // Probabilidades calibradas (corrigem superstimativa sistemática)
-  const pOver  = calibrate(pOverRaw);
-  const pUnder = calibrate(pUnderRaw);
+  const rawOver  = probOverRaw(stats.avg, stats.std, prop.line);
+  const rawUnder = probUnderRaw(stats.avg, stats.std, prop.line);
 
   const impliedOver  = 1 / prop.oddsOver;
   const impliedUnder = 1 / prop.oddsUnder;
 
-  const edgeOver  = pOver  - impliedOver;
-  const edgeUnder = pUnder - impliedUnder;
+  const calibOver  = calibration.calibrate({ esporte: ESPORTE, market: prop.prop, rawProb: rawOver,  impliedProb: impliedOver });
+  const calibUnder = calibration.calibrate({ esporte: ESPORTE, market: prop.prop, rawProb: rawUnder, impliedProb: impliedUnder });
 
-  const bestSide  = edgeOver >= edgeUnder ? 'Over' : 'Under';
-  const bestEdge  = edgeOver >= edgeUnder ? edgeOver : edgeUnder;
-  const bestProb  = edgeOver >= edgeUnder ? pOver : pUnder;
-  const bestOdds  = edgeOver >= edgeUnder ? prop.oddsOver : prop.oddsUnder;
+  const edgeOver  = calibOver.calibratedProb  - impliedOver;
+  const edgeUnder = calibUnder.calibratedProb - impliedUnder;
+
+  const overIsBest  = edgeOver >= edgeUnder;
+  const bestSide    = overIsBest ? 'Over' : 'Under';
+  const bestCalib   = overIsBest ? calibOver : calibUnder;
+  const bestRawProb = overIsBest ? rawOver : rawUnder;
+  const bestOdds    = overIsBest ? prop.oddsOver : prop.oddsUnder;
+  const bestEdge    = overIsBest ? edgeOver : edgeUnder;
 
   const edgePct        = parseFloat((bestEdge * 100).toFixed(2));
-  const kellyCrit      = calcKelly(bestProb, bestOdds);
+  const kellyCrit      = calcKelly(bestCalib.calibratedProb, bestOdds, bestCalib.stakeFraction);
   const inefficientMarket = !stats.lowSample && edgePct >= INEFFICIENT_MARKET_EDGE;
 
-  results.push({
-    game: prop.game,
-    commence_time: prop.commence_time,
-    player: prop.player,
-    prop: prop.prop,
-    location: prop.location,
-    line: prop.line,
-    playerAvg: stats.avg,
-    playerStd: stats.std,
-    side: bestSide,
-    modelProb: parseFloat((bestProb * 100).toFixed(1)),
-    impliedProb: parseFloat(((1 / bestOdds) * 100).toFixed(1)),
-    edge: edgePct,
-    odds: bestOdds,
-    kelly: kellyCrit,
-    totalGames: stats.totalGames,
-    contextGames: stats.contextGames,
-    lowSample: stats.lowSample,
-    inefficientMarket,
+  const segmentDisabled = riskConfig.isSegmentDisabled(ESPORTE, prop.prop);
+  const edgeTooHigh     = edgePct > riskConfig.EDGE_CAP_PCT;
+
+  let published = !segmentDisabled && !edgeTooHigh;
+  let rejectionReason = null;
+  if (segmentDisabled) rejectionReason = ledger.REJECTION_REASONS.SEGMENTO_DESABILITADO;
+  else if (edgeTooHigh) rejectionReason = ledger.REJECTION_REASONS.GUARDA_EDGE_MAXIMO;
+
+  candidates.push({
+    prop, stats, bestSide, bestOdds, bestEdge, edgePct, kellyCrit,
+    bestRawProb, bestCalib, inefficientMarket, published, rejectionReason,
+    game: prop.game, player: prop.player,
   });
 }
 
-console.log(`Props processadas: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Jogo bloqueado: ${descartadosJogoBloqueado}`);
+riskGuards.applyGameGuards(candidates);
+
+const results = [];
+for (const c of candidates) {
+  ledger.recordEvaluation({
+    esporte: ESPORTE,
+    eventId: c.prop.eventId ?? `${c.prop.game}|${c.prop.commence_time}`,
+    game: c.prop.game,
+    commenceTime: c.prop.commence_time,
+    player: c.prop.player,
+    market: c.prop.prop,
+    line: c.prop.line,
+    side: c.bestSide,
+    modelProb: parseFloat((c.bestCalib.calibratedProb * 100).toFixed(1)),
+    rawProb: parseFloat((c.bestRawProb * 100).toFixed(1)),
+    odds: c.bestOdds,
+    bookmaker: c.prop.bookmaker ?? null,
+    edge: c.edgePct,
+    kelly: c.kellyCrit,
+    published: c.published,
+    rejectionReason: c.rejectionReason,
+    segmentState: c.bestCalib.segmentState,
+    sampleSize: c.bestCalib.sampleSize,
+    runId: RUN_ID,
+  });
+
+  if (!c.published) continue;
+  results.push({
+    game: c.prop.game,
+    commence_time: c.prop.commence_time,
+    player: c.prop.player,
+    prop: c.prop.prop,
+    location: c.prop.location,
+    line: c.prop.line,
+    playerAvg: c.stats.avg,
+    playerStd: c.stats.std,
+    side: c.bestSide,
+    modelProb: parseFloat((c.bestCalib.calibratedProb * 100).toFixed(1)),
+    rawProb: parseFloat((c.bestRawProb * 100).toFixed(1)),
+    impliedProb: parseFloat(((1 / c.bestOdds) * 100).toFixed(1)),
+    edge: c.edgePct,
+    odds: c.bestOdds,
+    kelly: c.kellyCrit,
+    totalGames: c.stats.totalGames,
+    contextGames: c.stats.contextGames,
+    lowSample: c.stats.lowSample,
+    inefficientMarket: c.inefficientMarket,
+    segmentState: c.bestCalib.segmentState,
+    sampleSize: c.bestCalib.sampleSize,
+  });
+}
+
+const descartadosGuardas = candidates.filter(c => !c.published && c.rejectionReason).length;
+console.log(`Props processadas: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Jogo bloqueado: ${descartadosJogoBloqueado} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
+
+const ledgerSummary = ledger.flush();
+console.log(`Histórico de indicações (NBA): ${ledgerSummary.partitionsSaved} partição(ões) atualizada(s), ${ledgerSummary.duplicatesInRun} indicação(ões) duplicada(s) na mesma execução.`);
 
 results.sort((a, b) => b.edge - a.edge);
 

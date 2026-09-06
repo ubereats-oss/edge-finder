@@ -1,5 +1,13 @@
 const fs = require('fs');
 const path = require('path');
+const ledger = require('./model_ledger');
+const calibration = require('./calibration');
+const riskGuards = require('./risk_guards');
+const riskConfig = require('./risk_config');
+
+const ESPORTE = 'basketball/nba';
+const RUN_ID = new Date().toISOString();
+const MIN_EDGE_PCT = 10;
 
 function readJsonSafe(file, fallback) {
   if (!fs.existsSync(file)) return fallback;
@@ -53,39 +61,6 @@ function classifyAbsents(absentToday, playerName) {
   });
 }
 
-// ── Calibração isotônica ───────────────────────────────────────────────────────
-const CALIB_TABLE = [
-  { raw: 0.519, cal: 0.504 },
-  { raw: 0.576, cal: 0.572 },
-  { raw: 0.625, cal: 0.608 },
-  { raw: 0.674, cal: 0.671 },
-  { raw: 0.723, cal: 0.720 },
-  { raw: 0.771, cal: 0.764 },
-  { raw: 0.816, cal: 0.811 },
-];
-
-function calibrate(p) {
-  if (p < 0.5) return 1 - calibrate(1 - p);
-  const n = CALIB_TABLE.length;
-  if (p <= CALIB_TABLE[0].raw) {
-    const slope = (CALIB_TABLE[1].cal - CALIB_TABLE[0].cal) /
-                  (CALIB_TABLE[1].raw - CALIB_TABLE[0].raw);
-    return Math.min(1, Math.max(0, CALIB_TABLE[0].cal + slope * (p - CALIB_TABLE[0].raw)));
-  }
-  if (p >= CALIB_TABLE[n - 1].raw) {
-    const slope = (CALIB_TABLE[n - 1].cal - CALIB_TABLE[n - 2].cal) /
-                  (CALIB_TABLE[n - 1].raw - CALIB_TABLE[n - 2].raw);
-    return Math.min(1, Math.max(0, CALIB_TABLE[n - 1].cal + slope * (p - CALIB_TABLE[n - 1].raw)));
-  }
-  for (let i = 0; i < n - 1; i++) {
-    if (p >= CALIB_TABLE[i].raw && p <= CALIB_TABLE[i + 1].raw) {
-      const t = (p - CALIB_TABLE[i].raw) / (CALIB_TABLE[i + 1].raw - CALIB_TABLE[i].raw);
-      return CALIB_TABLE[i].cal + t * (CALIB_TABLE[i + 1].cal - CALIB_TABLE[i].cal);
-    }
-  }
-  return p;
-}
-
 function erf(x) {
   const sign = x >= 0 ? 1 : -1;
   x = Math.abs(x);
@@ -104,11 +79,11 @@ function normalCDF(x, mu, sigma) {
 function probOverRaw(mu, sigma, line) { return 1 - normalCDF(line, mu, sigma); }
 function probUnderRaw(mu, sigma, line) { return normalCDF(line, mu, sigma); }
 
-function calcKelly(p, odd) {
+function calcKelly(p, odd, stakeFraction = 1) {
   const b = odd - 1;
   const q = 1 - p;
   const kelly = (p * b - q) / b;
-  return Math.max(0, parseFloat((kelly * KELLY_FRACTION * 100).toFixed(2)));
+  return Math.max(0, parseFloat((kelly * KELLY_FRACTION * stakeFraction * 100).toFixed(2)));
 }
 
 function getAbsentToday(teamName) {
@@ -276,7 +251,7 @@ let descartadosSemStats = 0;
 let descartadosSigmaBaixa = 0;
 let descartadosJogoBloqueado = 0;
 let comFiltroAusentes = 0;
-const results = [];
+const candidates = [];
 
 for (const prop of props) {
   const commence = new Date(prop.commence_time).getTime();
@@ -318,63 +293,115 @@ for (const prop of props) {
   const avg5  = calcRecentAvg(playerData, statKey, 5);
   const avg10 = calcRecentAvg(playerData, statKey, 10);
 
-  const pOverRaw  = probOverRaw(stats.avg, stats.std, prop.line);
-  const pUnderRaw = probUnderRaw(stats.avg, stats.std, prop.line);
-
-  const pOver  = calibrate(pOverRaw);
-  const pUnder = calibrate(pUnderRaw);
+  const rawOver  = probOverRaw(stats.avg, stats.std, prop.line);
+  const rawUnder = probUnderRaw(stats.avg, stats.std, prop.line);
 
   const impliedOver  = 1 / prop.oddsOver;
   const impliedUnder = 1 / prop.oddsUnder;
 
-  const edgeOver  = pOver  - impliedOver;
-  const edgeUnder = pUnder - impliedUnder;
+  const calibOver  = calibration.calibrate({ esporte: ESPORTE, market: prop.prop, rawProb: rawOver,  impliedProb: impliedOver });
+  const calibUnder = calibration.calibrate({ esporte: ESPORTE, market: prop.prop, rawProb: rawUnder, impliedProb: impliedUnder });
 
-  const bestSide  = edgeOver >= edgeUnder ? 'Over' : 'Under';
-  const bestEdge  = edgeOver >= edgeUnder ? edgeOver : edgeUnder;
-  const bestProb  = edgeOver >= edgeUnder ? pOver : pUnder;
-  const bestOdds  = edgeOver >= edgeUnder ? prop.oddsOver : prop.oddsUnder;
+  const edgeOver  = calibOver.calibratedProb  - impliedOver;
+  const edgeUnder = calibUnder.calibratedProb - impliedUnder;
+
+  const overIsBest  = edgeOver >= edgeUnder;
+  const bestSide    = overIsBest ? 'Over' : 'Under';
+  const bestCalib   = overIsBest ? calibOver : calibUnder;
+  const bestRawProb = overIsBest ? rawOver : rawUnder;
+  const bestOdds    = overIsBest ? prop.oddsOver : prop.oddsUnder;
+  const bestEdge    = overIsBest ? edgeOver : edgeUnder;
 
   const edgePct           = parseFloat((bestEdge * 100).toFixed(2));
-  const kellyCrit         = calcKelly(bestProb, bestOdds);
+  const kellyCrit         = calcKelly(bestCalib.calibratedProb, bestOdds, bestCalib.stakeFraction);
   const inefficientMarket = !stats.lowSample && edgePct >= INEFFICIENT_MARKET_EDGE;
 
-  if (edgePct < 10) { continue; }
-  results.push({
-    game: prop.game,
-    commence_time: prop.commence_time,
-    player: prop.player,
-    prop: prop.prop,
-    location: prop.location,
-    line: prop.line,
-    playerAvg: stats.avg,
-    playerStd: stats.std,
-    playerAvg5: avg5,
-    playerAvg10: avg10,
-    playerTeam: playerTeamMap[prop.player] ?? null,
-    side: bestSide,
-    modelProb: parseFloat((bestProb * 100).toFixed(1)),
-    impliedProb: parseFloat(((1 / bestOdds) * 100).toFixed(1)),
-    edge: edgePct,
-    odds: bestOdds,
-    oddsOver: prop.oddsOver,
-    oddsUnder: prop.oddsUnder,
-    kelly: kellyCrit,
-    totalGames: stats.totalGames,
-    contextGames: stats.contextGames,
-    lowSample: stats.lowSample,
-    inefficientMarket,
-    lowMarginRatio,
-    absentFilter: stats.usedAbsentFilter,
-    absentToday: absentToday.length > 0 ? classifyAbsents(absentToday, prop.player) : undefined,
-    playerPosition: playerPositions[prop.player]?.position ?? null,
-    formWarning: avg5 !== null && (bestSide === 'Over' ? avg5 < prop.line : avg5 > prop.line),
-    pinnacleId: prop.pinnacleId ?? null,
-    pinnacleSlug: prop.pinnacleSlug ?? null,
+  const segmentDisabled = riskConfig.isSegmentDisabled(ESPORTE, prop.prop);
+  const passedMinEdge   = edgePct >= MIN_EDGE_PCT;
+  const edgeTooHigh     = edgePct > riskConfig.EDGE_CAP_PCT;
+
+  let published = passedMinEdge && !segmentDisabled && !edgeTooHigh;
+  let rejectionReason = null;
+  if (!passedMinEdge) rejectionReason = ledger.REJECTION_REASONS.EDGE_ABAIXO_LIMIAR;
+  else if (segmentDisabled) rejectionReason = ledger.REJECTION_REASONS.SEGMENTO_DESABILITADO;
+  else if (edgeTooHigh) rejectionReason = ledger.REJECTION_REASONS.GUARDA_EDGE_MAXIMO;
+
+  candidates.push({
+    prop, stats, avg5, avg10, absentToday, lowMarginRatio, bestSide, bestOdds, bestEdge, edgePct, kellyCrit,
+    bestRawProb, bestCalib, inefficientMarket, published, rejectionReason,
+    game: prop.game, player: prop.player,
   });
 }
 
-console.log(`Props processadas: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Jogo bloqueado: ${descartadosJogoBloqueado} | Filtro ausentes: ${comFiltroAusentes}`);
+riskGuards.applyGameGuards(candidates);
+
+const results = [];
+for (const c of candidates) {
+  ledger.recordEvaluation({
+    esporte: ESPORTE,
+    eventId: c.prop.eventId ?? `${c.prop.game}|${c.prop.commence_time}`,
+    game: c.prop.game,
+    commenceTime: c.prop.commence_time,
+    player: c.prop.player,
+    market: c.prop.prop,
+    line: c.prop.line,
+    side: c.bestSide,
+    modelProb: parseFloat((c.bestCalib.calibratedProb * 100).toFixed(1)),
+    rawProb: parseFloat((c.bestRawProb * 100).toFixed(1)),
+    odds: c.bestOdds,
+    bookmaker: c.prop.bookmaker ?? null,
+    edge: c.edgePct,
+    kelly: c.kellyCrit,
+    published: c.published,
+    rejectionReason: c.rejectionReason,
+    segmentState: c.bestCalib.segmentState,
+    sampleSize: c.bestCalib.sampleSize,
+    runId: RUN_ID,
+  });
+
+  if (!c.published) continue;
+  results.push({
+    game: c.prop.game,
+    commence_time: c.prop.commence_time,
+    player: c.prop.player,
+    prop: c.prop.prop,
+    location: c.prop.location,
+    line: c.prop.line,
+    playerAvg: c.stats.avg,
+    playerStd: c.stats.std,
+    playerAvg5: c.avg5,
+    playerAvg10: c.avg10,
+    playerTeam: playerTeamMap[c.prop.player] ?? null,
+    side: c.bestSide,
+    modelProb: parseFloat((c.bestCalib.calibratedProb * 100).toFixed(1)),
+    rawProb: parseFloat((c.bestRawProb * 100).toFixed(1)),
+    impliedProb: parseFloat(((1 / c.bestOdds) * 100).toFixed(1)),
+    edge: c.edgePct,
+    odds: c.bestOdds,
+    oddsOver: c.prop.oddsOver,
+    oddsUnder: c.prop.oddsUnder,
+    kelly: c.kellyCrit,
+    totalGames: c.stats.totalGames,
+    contextGames: c.stats.contextGames,
+    lowSample: c.stats.lowSample,
+    inefficientMarket: c.inefficientMarket,
+    segmentState: c.bestCalib.segmentState,
+    sampleSize: c.bestCalib.sampleSize,
+    lowMarginRatio: c.lowMarginRatio,
+    absentFilter: c.stats.usedAbsentFilter,
+    absentToday: c.absentToday.length > 0 ? classifyAbsents(c.absentToday, c.prop.player) : undefined,
+    playerPosition: playerPositions[c.prop.player]?.position ?? null,
+    formWarning: c.avg5 !== null && (c.bestSide === 'Over' ? c.avg5 < c.prop.line : c.avg5 > c.prop.line),
+    pinnacleId: c.prop.pinnacleId ?? null,
+    pinnacleSlug: c.prop.pinnacleSlug ?? null,
+  });
+}
+
+const descartadosGuardas = candidates.filter(c => !c.published && c.rejectionReason && c.rejectionReason !== ledger.REJECTION_REASONS.EDGE_ABAIXO_LIMIAR).length;
+console.log(`Props processadas: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Jogo bloqueado: ${descartadosJogoBloqueado} | Filtro ausentes: ${comFiltroAusentes} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
+
+const ledgerSummary = ledger.flush();
+console.log(`Histórico de indicações (NBA BR): ${ledgerSummary.partitionsSaved} partição(ões) atualizada(s), ${ledgerSummary.duplicatesInRun} indicação(ões) duplicada(s) na mesma execução.`);
 
 results.sort((a, b) => b.edge - a.edge);
 

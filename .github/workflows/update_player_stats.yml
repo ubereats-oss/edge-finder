@@ -55,15 +55,18 @@ jobs:
 
       - name: Salvar stats na branch data
         run: |
-          gzip -c nba_player_stats.json > /tmp/nba_player_stats.json.gz
-          gzip -c mlb_player_stats.json > /tmp/mlb_player_stats.json.gz 2>/dev/null || true
+          cp .github/scripts/save_stats_gz.sh /tmp/save_stats_gz.sh
+          gzip -n -c nba_player_stats.json > /tmp/nba_player_stats.json.gz
+          gzip -n -c mlb_player_stats.json > /tmp/mlb_player_stats.json.gz 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin data 2>/dev/null || true
           git checkout -b data-work origin/data --force 2>/dev/null || \
             (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
-          cp /tmp/nba_player_stats.json.gz .
-          cp /tmp/mlb_player_stats.json.gz . 2>/dev/null || true
+          for f in /tmp/nba_player_stats.json.gz /tmp/mlb_player_stats.json.gz; do
+            [ -f "$f" ] || continue
+            bash /tmp/save_stats_gz.sh "$(basename "$f" _player_stats.json.gz)" "$f" "$(basename "$f")"
+          done
           for f in nba_player_stats.json.gz mlb_player_stats.json.gz; do
             [ -f "$f" ] && git add "$f" || true
           done

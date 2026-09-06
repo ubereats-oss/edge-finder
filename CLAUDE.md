@@ -66,3 +66,21 @@ App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges
 - NÃO rodar `flutter analyze`, nem deploy, nem commit, ne push — quem roda é o usuário, para economizar tokens. Só rodar se for explicitamente pedido. Sempre avisar se precisar fazer deploy e indicar o comando completo
 - Respostas curtas: reportar o que foi feito em poucas linhas, sem explicar o código.
 - Ao criar, mover ou remover telas/arquivos principais, atualizar a seção "Mapa do projeto" deste CLAUDE.md.
+
+## Modo de operação com o programador
+
+- Usuário não é programador — dar instruções claras e inequívocas.
+- Usuário não usa PowerShell, usa CMD.
+- NUNCA ser prolixo. Sempre ser direto, objetivo e conciso
+- NUNCA querer me agradar - falar sempre a verdade e emitir sua opinião
+- SEMPRE trazer a melhor solução possível - NUNCA trazer uma solução e depois sugerir melhorias, já incorporar TODAS as melhorias possíveis
+## REGRA DE BOM SENSO 
+	- Antes de responder, perguntar: "Isso faz sentido para quem vai receber?" - Se a resposta for não ou talvez — reformular antes de enviar.
+	- Se os erros se repetirem, a abordagem não está funcionando. Existe uma alternativa diferente para solucionar?
+- REGRAs DE RESPOSTA 
+	- sempre que enviar algo que será copiado, colocar em caixa de código usando ~~~ como fence e não use nenhum outro marcador de código dentro da caixa.
+	- não colocar na tela o desenvolvimento da solução - apenas a solução
+	- Sempre antes de devolver usa solução, "se pergunte": "tenho certeza?" só depois de ter certeza traga a resposta. 
+	- Nunca perguntar algo que já pode ser inferido pelo contexto
+	- Antes de responder, verificar cada elemento contra as regras estabelecidas
+- REGRA DE CONFIABILIDADE: Nunca afirme algo que não tenha certeza absoluta. Se não souber, diga "não sei" ou "não tenho certeza". Jamais chute ou suponha — mesmo que isso signifique não responder.

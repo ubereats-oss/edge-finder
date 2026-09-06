@@ -91,6 +91,8 @@ jobs:
             git show origin/data:$f > $f 2>/dev/null || rm -f $f
           done
           git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
+          mkdir -p odds_history
+          git checkout origin/data -- 'odds_history/basketball_nba_model_br_*.json' 'odds_history/model_ledger_nba_*.json' 2>/dev/null || true
 
       - run: node pipeline/get_nba_injuries.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nba'
@@ -109,9 +111,13 @@ jobs:
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nba'
         run: |
           mkdir -p /tmp/nba-out
-          gzip -c nba_player_stats.json > /tmp/nba-out/nba_player_stats.json.gz 2>/dev/null || true
+          gzip -n -c nba_player_stats.json > /tmp/nba-out/nba_player_stats.json.gz 2>/dev/null || true
           for f in nba_props_br_results.json nba_results.json nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json bets.json; do
             [ -f "$f" ] && cp "$f" /tmp/nba-out/ || true
+          done
+          mkdir -p /tmp/nba-out/odds_history
+          for f in odds_history/basketball_nba_model_br_*.json odds_history/model_ledger_nba_*.json; do
+            [ -f "$f" ] && cp "$f" /tmp/nba-out/odds_history/ || true
           done
 
       - uses: actions/upload-artifact@v4
@@ -185,6 +191,8 @@ jobs:
           for f in mlb_player_team.json mlb_injuries_today.json; do
             git show origin/data:$f > $f 2>/dev/null || rm -f $f
           done
+          mkdir -p odds_history
+          git checkout origin/data -- 'odds_history/baseball_mlb_model_*.json' 'odds_history/model_ledger_mlb_*.json' 2>/dev/null || true
 
       - run: node pipeline/get_mlb_injuries.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
@@ -199,9 +207,13 @@ jobs:
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
         run: |
           mkdir -p /tmp/mlb-out
-          gzip -c mlb_player_stats.json > /tmp/mlb-out/mlb_player_stats.json.gz 2>/dev/null || true
+          gzip -n -c mlb_player_stats.json > /tmp/mlb-out/mlb_player_stats.json.gz 2>/dev/null || true
           for f in mlb_props_results.json mlb_player_team.json mlb_injuries_today.json; do
             [ -f "$f" ] && cp "$f" /tmp/mlb-out/ || true
+          done
+          mkdir -p /tmp/mlb-out/odds_history
+          for f in odds_history/baseball_mlb_model_*.json odds_history/model_ledger_mlb_*.json; do
+            [ -f "$f" ] && cp "$f" /tmp/mlb-out/odds_history/ || true
           done
 
       - uses: actions/upload-artifact@v4
@@ -280,6 +292,8 @@ jobs:
             rm -f nhl_player_stats.json
           fi
           git show origin/data:nhl_player_team.json > nhl_player_team.json 2>/dev/null || true
+          mkdir -p odds_history
+          git checkout origin/data -- 'odds_history/hockey_nhl_model_*.json' 'odds_history/model_ledger_nhl_*.json' 2>/dev/null || true
 
       - run: node pipeline/get_nhl_player_teams.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nhl'
@@ -294,9 +308,13 @@ jobs:
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nhl'
         run: |
           mkdir -p /tmp/nhl-out
-          gzip -c nhl_player_stats.json > /tmp/nhl-out/nhl_player_stats.json.gz 2>/dev/null || true
+          gzip -n -c nhl_player_stats.json > /tmp/nhl-out/nhl_player_stats.json.gz 2>/dev/null || true
           for f in nhl_props_results.json nhl_player_team.json; do
             [ -f "$f" ] && cp "$f" /tmp/nhl-out/ || true
+          done
+          mkdir -p /tmp/nhl-out/odds_history
+          for f in odds_history/hockey_nhl_model_*.json odds_history/model_ledger_nhl_*.json; do
+            [ -f "$f" ] && cp "$f" /tmp/nhl-out/odds_history/ || true
           done
 
       - uses: actions/upload-artifact@v4
@@ -375,6 +393,8 @@ jobs:
             rm -f nfl_player_stats.json
           fi
           git show origin/data:nfl_player_team.json > nfl_player_team.json 2>/dev/null || true
+          mkdir -p odds_history
+          git checkout origin/data -- 'odds_history/football_nfl_model_*.json' 'odds_history/model_ledger_nfl_*.json' 2>/dev/null || true
 
       - run: node pipeline/get_nfl_player_teams.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nfl'
@@ -389,9 +409,13 @@ jobs:
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nfl'
         run: |
           mkdir -p /tmp/nfl-out
-          gzip -c nfl_player_stats.json > /tmp/nfl-out/nfl_player_stats.json.gz 2>/dev/null || true
+          gzip -n -c nfl_player_stats.json > /tmp/nfl-out/nfl_player_stats.json.gz 2>/dev/null || true
           for f in nfl_props_results.json nfl_player_team.json; do
             [ -f "$f" ] && cp "$f" /tmp/nfl-out/ || true
+          done
+          mkdir -p /tmp/nfl-out/odds_history
+          for f in odds_history/football_nfl_model_*.json odds_history/model_ledger_nfl_*.json; do
+            [ -f "$f" ] && cp "$f" /tmp/nfl-out/odds_history/ || true
           done
 
       - uses: actions/upload-artifact@v4
@@ -518,8 +542,12 @@ jobs:
 
       - name: Copiar artefatos para diretório de trabalho
         run: |
+          mkdir -p odds_history
           for dir in /tmp/nba-out /tmp/mlb-out /tmp/nhl-out /tmp/nfl-out /tmp/tennis-out; do
-            [ -d "$dir" ] && cp "$dir"/* . 2>/dev/null || true
+            if [ -d "$dir" ]; then
+              cp "$dir"/* . 2>/dev/null || true
+              [ -d "$dir/odds_history" ] && cp "$dir"/odds_history/*.json odds_history/ 2>/dev/null || true
+            fi
           done
           git fetch origin data 2>/dev/null || true
           git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
@@ -536,17 +564,28 @@ jobs:
 
       - name: Salvar dados na branch data
         run: |
-          mkdir -p /tmp/to-save
+          cp .github/scripts/save_stats_gz.sh /tmp/save_stats_gz.sh
+          mkdir -p /tmp/to-save /tmp/to-save/odds_history
           for dir in /tmp/nba-out /tmp/mlb-out /tmp/nhl-out /tmp/nfl-out /tmp/tennis-out; do
-            [ -d "$dir" ] && cp "$dir"/* /tmp/to-save/ 2>/dev/null || true
+            if [ -d "$dir" ]; then
+              cp "$dir"/* /tmp/to-save/ 2>/dev/null || true
+              [ -d "$dir/odds_history" ] && cp "$dir"/odds_history/*.json /tmp/to-save/odds_history/ 2>/dev/null || true
+            fi
           done
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin data 2>/dev/null || true
           git checkout -b data-work origin/data --force 2>/dev/null || \
             (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+          mkdir -p odds_history
+          for f in /tmp/to-save/*.gz; do
+            [ -f "$f" ] || continue
+            bash /tmp/save_stats_gz.sh "$(basename "$f" _player_stats.json.gz)" "$f" "$(basename "$f")"
+          done
+          rm -f /tmp/to-save/*.gz
           cp /tmp/to-save/* . 2>/dev/null || true
-          for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json; do
+          cp /tmp/to-save/odds_history/*.json odds_history/ 2>/dev/null || true
+          for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json odds_history/*.json; do
             [ -f "$f" ] && git add "$f" || true
           done
           git diff --staged --quiet && echo "Sem mudanças na branch data" || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
