@@ -56,8 +56,10 @@ jobs:
             (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
           mkdir -p odds_history
           cp /tmp/odds_history_out/* odds_history/ 2>/dev/null || true
+          cp /tmp/odds_history_out/.legacy_apostas_imported.json odds_history/ 2>/dev/null || true
           for f in odds_history/*.json; do
             [ -f "$f" ] && git add "$f" || true
           done
+          [ -f odds_history/.legacy_apostas_imported.json ] && git add odds_history/.legacy_apostas_imported.json || true
           git diff --staged --quiet && echo "Sem mudanças" || git commit -m "ledger: importação histórico legado $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push origin data-work:data
