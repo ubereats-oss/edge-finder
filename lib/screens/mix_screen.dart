@@ -17,6 +17,9 @@ class MixScreen extends StatefulWidget {
 
 class _MixScreenState extends State<MixScreen> {
   List<Map<String, dynamic>> _allProps = [];
+  // Props publicadas ANTES do filtro de qualidade (adaptiveFilter/rankLocal)
+  // — guardado só pra diagnosticar a causa da lista vazia (ver _buildEmptyState).
+  List<Map<String, dynamic>> _prePisoProps = [];
   DateTime? _lastUpdated;
   bool _loading = false;
   String _status = '';
@@ -55,6 +58,7 @@ class _MixScreenState extends State<MixScreen> {
       final ranked = EdgeEvaluatorService.rankLocal(normalized);
       setState(() {
         _allProps = ranked;
+        _prePisoProps = normalized;
         _lastUpdated = result.lastUpdated;
         _status = '';
       });
@@ -555,6 +559,56 @@ class _MixScreenState extends State<MixScreen> {
     }
   }
 
+  // Esporte + data (sem edge mínimo nem "ocultar ⚠️") — usado tanto pra
+  // escopar o pool pré-piso do diagnóstico quanto pra saber se a lista só
+  // está vazia por causa do filtro de edge/aviso do próprio usuário.
+  bool _matchesSportAndDate(Map<String, dynamic> p) {
+    if (_selectedSport != 'Todos') {
+      final sport = (p['sport'] as String? ?? '');
+      if (!sport.contains(_selectedSport)) return false;
+    }
+    if (_selectedDate != null) {
+      final raw = p['commence_time'] as String?;
+      if (raw == null) return false;
+      final dt = DateTime.tryParse(raw)?.toLocal();
+      if (dt == null) return false;
+      if (dt.year != _selectedDate!.year ||
+          dt.month != _selectedDate!.month ||
+          dt.day != _selectedDate!.day) return false;
+    }
+    return true;
+  }
+
+  /// Mensagem de lista vazia: diferencia "controle de risco ainda em
+  /// calibração inicial" (causa real, não é bug nem filtro) dos demais casos
+  /// (sem dados, erro, ou o próprio usuário filtrou tudo).
+  Widget _buildEmptyState() {
+    // Já passou pelo piso de qualidade e sobrou algo pro esporte/data atual —
+    // a lista só está vazia por causa do "Edge mín" ou "Ocultar ⚠️" do usuário.
+    final scopeAfterFloor = _allProps.where(_matchesSportAndDate);
+    if (scopeAfterFloor.isNotEmpty) {
+      return const _EmptyState(
+          msg: 'Sem props disponíveis.\nAjuste os filtros ou atualize.');
+    }
+
+    final pool = _prePisoProps.where(_matchesSportAndDate).toList();
+    final diag = EdgeEvaluatorService.diagnoseEmptyPool(pool);
+    if (diag.allDueToSampleKelly) {
+      final escopo = _selectedSport == 'Todos' ? 'Os esportes' : _selectedSport;
+      return _EmptyState(
+        icon: Icons.hourglass_top,
+        msg: '$escopo ainda em calibração inicial.\n'
+            '${pool.length} indicação(ões) avaliada(s) hoje, mas o controle de '
+            'risco reduz a aposta sugerida enquanto o segmento acumula amostra '
+            '(${diag.maxSampleSize}/${diag.minSampleToCalibrate} resultados apurados). '
+            'Nenhuma atingiu o piso mínimo de Kelly ainda.',
+      );
+    }
+
+    return const _EmptyState(
+        msg: 'Sem props disponíveis.\nAjuste os filtros ou atualize.');
+  }
+
   List<Map<String, dynamic>> get _filtered {
     return _allProps
         .where((p) {
@@ -647,9 +701,7 @@ class _MixScreenState extends State<MixScreen> {
           _buildFilters(),
           Expanded(
             child: _filtered.isEmpty && !_loading
-                ? const _EmptyState(
-                    msg:
-                        'Sem props disponíveis.\nAjuste os filtros ou atualize.')
+                ? _buildEmptyState()
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     itemCount: _filtered.length,
@@ -856,14 +908,27 @@ class _MixScreenState extends State<MixScreen> {
 
 class _EmptyState extends StatelessWidget {
   final String msg;
-  const _EmptyState({required this.msg});
+  final IconData? icon;
+  const _EmptyState({required this.msg, this.icon});
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(msg,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Color(0xFF666666), fontSize: 15)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, color: const Color(0xFF666666), size: 36),
+              const SizedBox(height: 12),
+            ],
+            Text(msg,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Color(0xFF666666), fontSize: 15)),
+          ],
+        ),
+      ),
     );
   }
 }

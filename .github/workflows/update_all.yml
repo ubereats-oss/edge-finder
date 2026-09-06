@@ -510,6 +510,7 @@ jobs:
         with:
           name: nba-out
           path: /tmp/nba-out/
+          if-no-artifact-found: ignore
         continue-on-error: true
 
       - name: Baixar artefatos MLB
@@ -517,6 +518,7 @@ jobs:
         with:
           name: mlb-out
           path: /tmp/mlb-out/
+          if-no-artifact-found: ignore
         continue-on-error: true
 
       - name: Baixar artefatos NHL
@@ -524,6 +526,7 @@ jobs:
         with:
           name: nhl-out
           path: /tmp/nhl-out/
+          if-no-artifact-found: ignore
         continue-on-error: true
 
       - name: Baixar artefatos NFL
@@ -531,6 +534,7 @@ jobs:
         with:
           name: nfl-out
           path: /tmp/nfl-out/
+          if-no-artifact-found: ignore
         continue-on-error: true
 
       - name: Baixar artefatos Tênis
@@ -538,6 +542,7 @@ jobs:
         with:
           name: tennis-out
           path: /tmp/tennis-out/
+          if-no-artifact-found: ignore
         continue-on-error: true
 
       - name: Copiar artefatos para diretório de trabalho
