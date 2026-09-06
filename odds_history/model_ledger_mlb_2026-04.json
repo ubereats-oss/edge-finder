@@ -1,0 +1,39 @@
+[
+  {
+    "_key": "Atlanta Braves x Miami Marlins|20260414|Reynaldo Lopez|hitsAllowed|4.5|Under",
+    "esporte": "baseball/mlb",
+    "eventId": "Atlanta Braves x Miami Marlins|20260414",
+    "game": "Atlanta Braves x Miami Marlins",
+    "commenceTime": "2026-04-14T00:00:00Z",
+    "player": "Reynaldo Lopez",
+    "market": "hitsAllowed",
+    "line": 4.5,
+    "side": "Under",
+    "modelProb": null,
+    "rawProb": null,
+    "odds": 2.11,
+    "bookmaker": null,
+    "edge": null,
+    "kelly": null,
+    "published": null,
+    "rejectionReason": null,
+    "segmentState": null,
+    "sampleSize": null,
+    "runId": "import_legacy_apostas",
+    "evaluatedAt": "2026-09-06T17:49:41.245Z",
+    "firstEvaluatedAt": "2026-09-06T17:49:41.245Z",
+    "result": {
+      "status": "perdeu",
+      "valorReal": 1,
+      "apuradoEm": null
+    },
+    "resolutionAttempts": 0,
+    "resolutionStatus": "resolvido",
+    "source": "import_apostas_com_resultados",
+    "hasModelProb": false,
+    "validForCalibration": true,
+    "invalidReason": null,
+    "closingOdds": null,
+    "clv": null
+  }
+]
