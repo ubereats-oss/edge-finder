@@ -7,6 +7,7 @@ import 'football_screen.dart';
 import 'mix_screen.dart';
 import 'settings_screen.dart';
 import 'bets_screen.dart';
+import 'model_performance_screen.dart';
 
 class SportSelectorScreen extends StatelessWidget {
   const SportSelectorScreen({super.key});
@@ -63,6 +64,17 @@ class SportSelectorScreen extends StatelessWidget {
                                   fontSize: 13)),
                         ],
                       ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  IconButton(
+                    icon: const Icon(Icons.insights,
+                        color: Color(0xFF888888), size: 26),
+                    tooltip: 'Desempenho do Modelo',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const ModelPerformanceScreen()),
                     ),
                   ),
                   const SizedBox(width: 4),

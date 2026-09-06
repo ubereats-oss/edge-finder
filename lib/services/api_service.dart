@@ -16,6 +16,12 @@ class FetchResult {
   const FetchResult({required this.data, this.lastUpdated});
 }
 
+class ModelReportResult {
+  final List<Map<String, dynamic>> rows;
+  final DateTime? generatedAt;
+  const ModelReportResult({required this.rows, this.generatedAt});
+}
+
 class ApiService {
   // ── Token Firebase Auth ────────────────────────────────────────────────────
   static Future<String> _authToken() async {
@@ -123,6 +129,42 @@ class ApiService {
       _fetchFirestore('results', 'nhl_props');
   static Future<FetchResult> fetchNflProps() =>
       _fetchFirestore('results', 'nfl_props');
+
+  // ── Relatório de desempenho do modelo ──────────────────────────────────────
+  // Documento 'summary' + continuação em 'summary_p1', 'summary_p2'... quando
+  // o relatório não coube num documento só (mesmo padrão de odds_history).
+  static Future<ModelReportResult> fetchModelReport() async {
+    final rows = <Map<String, dynamic>>[];
+    DateTime? generatedAt;
+    for (int i = -1; i < 20; i++) {
+      final docId = i == -1 ? 'summary' : 'summary_p$i';
+      final url = '$_firestoreBase/model_report/$docId';
+      final res = await http.get(Uri.parse(url));
+      if (res.statusCode != 200) {
+        if (i == -1) {
+          // Nenhum relatório sincronizado ainda.
+          return const ModelReportResult(rows: []);
+        }
+        break;
+      }
+      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      final fields = body['fields'] as Map<String, dynamic>?;
+      if (fields == null) break;
+
+      if (i == -1) {
+        final genStr = fields['generatedAt']?['stringValue'] as String?;
+        if (genStr != null) generatedAt = DateTime.tryParse(genStr);
+      }
+
+      final dataField = fields['data'];
+      final values = dataField?['arrayValue']?['values'] as List? ?? [];
+      for (final item in values) {
+        rows.add(_firestoreToMap(
+            item['mapValue']?['fields'] as Map<String, dynamic>? ?? {}));
+      }
+    }
+    return ModelReportResult(rows: rows, generatedAt: generatedAt);
+  }
 
   static Future<FetchResult> _safeFetch(Future<FetchResult> f) async {
     try {

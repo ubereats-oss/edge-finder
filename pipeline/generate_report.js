@@ -7,7 +7,9 @@
 // fora da taxa de acerto, igual já é feito no resto do sistema.
 //
 // Uso: node pipeline/generate_report.js
-// Grava odds_history/relatorio_desempenho.md
+// Grava odds_history/relatorio_desempenho.md (leitura humana, texto pronto)
+// e odds_history/relatorio_desempenho.json (dado estruturado — é esse que
+// pipeline/firebase_sync.js report sincroniza pro app ler).
 
 const fs = require('fs');
 const path = require('path');
@@ -15,6 +17,7 @@ const ledger = require('./model_ledger');
 const riskConfig = require('./risk_config');
 
 const OUT_FILE = path.join(ledger.HISTORY_DIR, 'relatorio_desempenho.md');
+const OUT_JSON = path.join(ledger.HISTORY_DIR, 'relatorio_desempenho.json');
 const EDGE_BUCKET_SIZE = 5; // %
 
 function edgeBucket(edgePct) {
@@ -88,36 +91,44 @@ function main() {
     const faltamParaCalibrar = Math.max(0, riskConfig.MIN_SAMPLE_TO_CALIBRATE - sampleSize);
 
     rows.push({
-      esporte, market, bucket,
+      esporte, market,
+      edgeBucket: bucket,
       nResolvidasValidas: entries.length,
       nBinarias: winLoss.length,
-      winRateReal, winRateModelo, roi, clvMedio,
+      winRateReal: winRateReal === null ? null : parseFloat(winRateReal.toFixed(1)),
+      winRateModelo: winRateModelo === null ? null : parseFloat(winRateModelo.toFixed(1)),
+      roi: roi === null ? null : parseFloat(roi.toFixed(1)),
+      clvMedio: clvMedio === null ? null : parseFloat(clvMedio.toFixed(2)),
+      clvComOdd: comClv.length,
       semClv: entries.length - comClv.length,
       segmentState, sampleSize, faltamParaCalibrar,
     });
   }
 
-  rows.sort((a, b) => a.esporte.localeCompare(b.esporte) || a.market.localeCompare(b.market) || a.bucket.localeCompare(b.bucket));
+  rows.sort((a, b) => a.esporte.localeCompare(b.esporte) || a.market.localeCompare(b.market) || a.edgeBucket.localeCompare(b.edgeBucket));
+
+  const generatedAt = new Date().toISOString();
 
   const fmt = (n, d = 1) => n === null || n === undefined ? '—' : n.toFixed(d);
   const lines = [];
   lines.push('# Relatório de desempenho — histórico central de indicações');
   lines.push('');
-  lines.push(`Gerado em: ${new Date().toISOString()}`);
+  lines.push(`Gerado em: ${generatedAt}`);
   lines.push('');
   lines.push('Só inclui indicações publicadas, resolvidas e válidas para calibração (mesmo critério da calibração — NHL pré-correção da agregação de odds fica de fora, por exemplo). Push e cancelado entram no lucro/ROI mas não na taxa de acerto.');
   lines.push('');
   lines.push('| Esporte | Mercado | Faixa de edge | Nº resolvidas válidas | Taxa de acerto real | Taxa prevista pelo modelo | ROI | CLV médio | Estado do segmento | Faltam p/ calibrar |');
   lines.push('|---|---|---|---|---|---|---|---|---|---|');
   for (const r of rows) {
-    const clvCell = r.clvMedio === null ? '—' : `${fmt(r.clvMedio)}% (${r.nResolvidasValidas - r.semClv}/${r.nResolvidasValidas} com odd de fechamento)`;
-    lines.push(`| ${r.esporte} | ${r.market} | ${r.bucket} | ${r.nResolvidasValidas} | ${fmt(r.winRateReal)}% (${r.nBinarias} decididas) | ${fmt(r.winRateModelo)}% | ${r.roi === null ? '—' : fmt(r.roi) + '%'} | ${clvCell} | ${r.segmentState} | ${r.faltamParaCalibrar} |`);
+    const clvCell = r.clvMedio === null ? '—' : `${fmt(r.clvMedio)}% (${r.clvComOdd}/${r.nResolvidasValidas} com odd de fechamento)`;
+    lines.push(`| ${r.esporte} | ${r.market} | ${r.edgeBucket} | ${r.nResolvidasValidas} | ${fmt(r.winRateReal)}% (${r.nBinarias} decididas) | ${fmt(r.winRateModelo)}% | ${r.roi === null ? '—' : fmt(r.roi) + '%'} | ${clvCell} | ${r.segmentState} | ${r.faltamParaCalibrar} |`);
   }
   if (!rows.length) lines.push('| _sem dados ainda_ | | | | | | | | | |');
 
   if (!fs.existsSync(ledger.HISTORY_DIR)) fs.mkdirSync(ledger.HISTORY_DIR, { recursive: true });
   fs.writeFileSync(OUT_FILE, lines.join('\n') + '\n');
-  console.log(`Relatório salvo em ${OUT_FILE} — ${rows.length} grupo(s) esporte+mercado+faixa de edge.`);
+  fs.writeFileSync(OUT_JSON, JSON.stringify({ generatedAt, rows }, null, 2));
+  console.log(`Relatório salvo em ${OUT_FILE} e ${OUT_JSON} — ${rows.length} grupo(s) esporte+mercado+faixa de edge.`);
 }
 
 main();

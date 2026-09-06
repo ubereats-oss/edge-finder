@@ -123,6 +123,48 @@ async function syncOddsHistory() {
   console.log(`  ✅ odds_history → Firestore (${synced} documentos)`);
 }
 
+// Relatório de desempenho do modelo (odds_history/relatorio_desempenho.json)
+// → coleção model_report, doc 'summary' (+ 'summary_p1', 'summary_p2'... se
+// não couber num documento só). Cada execução SUBSTITUI a anterior por
+// inteiro — sem acumular histórico de relatórios — e remove chunks extras
+// que sobraram de uma execução anterior com mais linhas que a atual.
+async function syncReport() {
+  const filePath = path.join(ROOT, 'odds_history', 'relatorio_desempenho.json');
+  if (!fs.existsSync(filePath)) {
+    console.log('  Pulando relatório de desempenho — relatorio_desempenho.json não encontrado (rode generate_report.js primeiro)');
+    return;
+  }
+
+  const CHUNK = 200;
+  const MAX_CHUNKS_TO_CHECK = 20; // generoso o bastante pra nunca faltar limpeza
+
+  try {
+    const { generatedAt, rows } = JSON.parse(fs.readFileSync(filePath));
+    const chunks = [];
+    for (let i = 0; i < rows.length; i += CHUNK) chunks.push(rows.slice(i, i + CHUNK));
+    if (!chunks.length) chunks.push([]); // sem linhas ainda — grava o doc mesmo assim, com data:[]
+
+    for (let i = 0; i < chunks.length; i++) {
+      const docId = i === 0 ? 'summary' : `summary_p${i}`;
+      await db.collection('model_report').doc(docId).set({
+        data: chunks[i],
+        generatedAt,
+        lastUpdated: generatedAt,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+
+    // Remove chunks de uma execução anterior que não existem mais nesta.
+    for (let i = chunks.length; i < MAX_CHUNKS_TO_CHECK; i++) {
+      await db.collection('model_report').doc(`summary_p${i}`).delete().catch(() => {});
+    }
+
+    console.log(`  ✅ relatorio_desempenho.json → model_report (${rows.length} linha(s) em ${chunks.length} documento(s))`);
+  } catch (e) {
+    console.error('  ❌ Erro ao sincronizar relatório de desempenho:', e.message);
+  }
+}
+
 async function main() {
   console.log('Iniciando sincronização com Firestore...\n');
 
@@ -132,6 +174,7 @@ async function main() {
   if (syncType === 'all' || syncType === 'results') await syncAll();
   if (syncType === 'all' || syncType === 'bets') await syncBets();
   if (syncType === 'all' || syncType === 'history') await syncOddsHistory();
+  if (syncType === 'all' || syncType === 'report') await syncReport();
 
   if (['nhl', 'nfl', 'tennis_props'].includes(syncType)) {
     const fileMap = {
