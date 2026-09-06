@@ -31,6 +31,13 @@ jobs:
         with:
           node-version: '24'
 
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-firebase-${{ runner.os }}
+
+      - run: npm install firebase-admin
+
       - name: Restaurar histórico central da branch data
         run: |
           git fetch origin data 2>/dev/null || true
@@ -46,11 +53,17 @@ jobs:
       - name: Gerar relatório de desempenho
         run: node pipeline/generate_report.js
 
+      - name: Sincronizar relatório de desempenho com Firestore
+        run: node pipeline/firebase_sync.js report
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
       - name: Salvar histórico central atualizado na branch data
         run: |
           mkdir -p /tmp/odds_history_out
           cp odds_history/model_ledger_*.json /tmp/odds_history_out/ 2>/dev/null || true
           cp odds_history/relatorio_desempenho.md /tmp/odds_history_out/ 2>/dev/null || true
+          cp odds_history/relatorio_desempenho.json /tmp/odds_history_out/ 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin data 2>/dev/null || true
