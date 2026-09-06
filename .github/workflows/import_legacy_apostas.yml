@@ -1,0 +1,63 @@
+name: Importar Histórico Legado de Apostas
+
+# Importação única do histórico manual (apostas_com_resultados.json) pro
+# histórico central de indicações — precisa rodar em produção porque a
+# apuração (settle_model_ledger.yml) só encontra partições na branch de
+# dados, e a importação nunca tinha sido persistida lá antes.
+#
+# Só roda quando disparado manualmente, e mesmo assim só importa de verdade
+# na primeira vez: pipeline/import_legacy_apostas.js grava um marcador em
+# odds_history/.legacy_apostas_imported.json e pula a importação se ele já
+# existir — então disparar este workflow de novo por engano não duplica nada.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Restaurar histórico legado e ledger da branch data
+        run: |
+          git fetch origin data 2>/dev/null || true
+          git show origin/data:apostas_com_resultados.json > apostas_com_resultados.json 2>/dev/null || true
+          mkdir -p odds_history
+          git checkout origin/data -- 'odds_history/model_ledger_*.json' 'odds_history/.legacy_apostas_imported.json' 2>/dev/null || true
+
+      - name: Importar histórico legado (pula se já importado)
+        run: node pipeline/import_legacy_apostas.js
+
+      - name: Salvar histórico central na branch data
+        run: |
+          mkdir -p /tmp/odds_history_out
+          cp odds_history/model_ledger_*.json /tmp/odds_history_out/ 2>/dev/null || true
+          cp odds_history/.legacy_apostas_imported.json /tmp/odds_history_out/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin data 2>/dev/null || true
+          git checkout -b data-work origin/data --force 2>/dev/null || \
+            (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+          mkdir -p odds_history
+          cp /tmp/odds_history_out/* odds_history/ 2>/dev/null || true
+          for f in odds_history/*.json; do
+            [ -f "$f" ] && git add "$f" || true
+          done
+          git diff --staged --quiet && echo "Sem mudanças" || git commit -m "ledger: importação histórico legado $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push origin data-work:data

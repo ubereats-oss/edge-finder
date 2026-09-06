@@ -6,6 +6,11 @@
 // pra ficarem de fora da calibração e das estatísticas de acerto por
 // segmento, mas continuam visíveis no histórico geral.
 //
+// Importação única: depois de rodar com sucesso, grava um marcador em
+// odds_history/.legacy_apostas_imported.json. Em qualquer execução
+// seguinte (inclusive se o workflow for disparado de novo por engano),
+// vê o marcador e sai sem reimportar nada.
+//
 // Uso: node pipeline/import_legacy_apostas.js
 
 const fs = require('fs');
@@ -13,6 +18,7 @@ const path = require('path');
 const ledger = require('./model_ledger');
 
 const LEGACY_FILE = path.join(__dirname, '..', 'apostas_com_resultados.json');
+const MARKER_FILE = path.join(ledger.HISTORY_DIR, '.legacy_apostas_imported.json');
 
 function toIsoDate(yyyymmdd) {
   if (!yyyymmdd || yyyymmdd.length !== 8) return null;
@@ -31,6 +37,12 @@ function toResult(entry) {
 }
 
 function main() {
+  if (fs.existsSync(MARKER_FILE)) {
+    const marker = JSON.parse(fs.readFileSync(MARKER_FILE, 'utf-8'));
+    console.log(`Histórico legado já foi importado em ${marker.importedAt} (${marker.importadas} registro(s)) — pulando, não reimporta.`);
+    return;
+  }
+
   if (!fs.existsSync(LEGACY_FILE)) {
     console.log('apostas_com_resultados.json não encontrado — nada a importar.');
     return;
@@ -81,6 +93,15 @@ function main() {
 
   const summary = ledger.flush();
   console.log(`Importadas: ${importadas} | sem dado suficiente: ${semData} | partições atualizadas: ${summary.partitionsSaved} | duplicadas: ${summary.duplicatesInRun}`);
+
+  if (!fs.existsSync(ledger.HISTORY_DIR)) fs.mkdirSync(ledger.HISTORY_DIR, { recursive: true });
+  fs.writeFileSync(MARKER_FILE, JSON.stringify({
+    importedAt: new Date().toISOString(),
+    importadas,
+    semData,
+    sourceFile: 'apostas_com_resultados.json',
+  }, null, 2));
+  console.log(`Marcador gravado em ${MARKER_FILE} — próximas execuções vão pular a importação.`);
 }
 
 main();
