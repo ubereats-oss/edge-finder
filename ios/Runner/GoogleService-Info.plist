@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.odds-app</string>
+	<string>com.salles.odds</string>
 	<key>PROJECT_ID</key>
 	<string>odds-app-edge</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:29716291623:ios:db18d314a1c5c9f54fae02</string>
+	<string>1:29716291623:ios:53bb74856196019b4fae02</string>
 </dict>
 </plist>
