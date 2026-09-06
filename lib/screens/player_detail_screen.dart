@@ -1,9 +1,9 @@
-import 'dart:html' as html; // ignore: avoid_web_libraries_in_flutter
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/bet_dialog.dart';
 import '../services/prefs_service.dart';
+import '../utils/url_opener.dart';
 
 class PlayerDetailScreen extends StatelessWidget {
   final Map<String, dynamic> prop;
@@ -55,7 +55,7 @@ class PlayerDetailScreen extends StatelessWidget {
     );
     if (kIsWeb) {
       // No Flutter Web, externalApplication abre na mesma aba — forçar nova aba
-      html.window.open(uri.toString(), '_blank');
+      openInNewTab(uri.toString());
     } else {
       if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
