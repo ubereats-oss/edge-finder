@@ -1,6 +1,19 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+/// Resultado de [EdgeEvaluatorService.diagnoseEmptyPool] — usado pela tela
+/// pra decidir a mensagem de lista vazia sem duplicar a lógica dos pisos.
+class EmptyPoolDiagnosis {
+  final bool allDueToSampleKelly;
+  final int maxSampleSize;
+  final int minSampleToCalibrate;
+  const EmptyPoolDiagnosis({
+    required this.allDueToSampleKelly,
+    required this.maxSampleSize,
+    required this.minSampleToCalibrate,
+  });
+}
+
 class EdgeEvaluatorService {
   // ── Algoritmo Local ───────────────────────────────────────────────────────
 
@@ -95,15 +108,34 @@ class EdgeEvaluatorService {
 
   static int lastQualifiedCount = 0;
 
-  // Floors absolutos — nunca relaxados (odds, kelly, edge mínimo absoluto, cs)
-  static bool _absoluteFloors(Map<String, dynamic> p) {
+  // Pisos absolutos — nunca relaxados. Valores inalterados, só nomeados pra
+  // reaproveitar em diagnoseEmptyPool() (mensagem de lista vazia) sem
+  // duplicar os números.
+  static const double _kellyFloorPct = 2.0;
+  static const double _edgeFloorPct = 2.5;
+
+  // Nº mínimo de resultados apurados por segmento (esporte+mercado) pra sair
+  // de "em_amostra" — espelha pipeline/risk_config.js MIN_SAMPLE_TO_CALIBRATE.
+  // Usado só pra exibir progresso ao usuário na mensagem de lista vazia; não
+  // participa de nenhum cálculo de risco ou filtro.
+  static const int _minSampleToCalibrateDisplay = 30;
+
+  // Floors absolutos exceto Kelly — usado por _absoluteFloors e por
+  // diagnoseEmptyPool pra isolar se o Kelly foi o único motivo do descarte.
+  static bool _passesFloorsExceptKelly(Map<String, dynamic> p) {
     final odds = (p['odds'] as num?)?.toDouble() ?? 0;
     if (odds < 1.20 || odds > 5.00) return false;
-    if (_kelly(p) < 2.0) return false;
     final edge = (p['edge'] as num?)?.toDouble() ?? 0;
-    if (edge < 2.5) return false;
+    if (edge < _edgeFloorPct) return false;
     final cs = (p['_contextScore'] as int?) ?? 0;
     if (cs <= -2) return false;
+    return true;
+  }
+
+  // Floors absolutos — nunca relaxados (odds, kelly, edge mínimo absoluto, cs)
+  static bool _absoluteFloors(Map<String, dynamic> p) {
+    if (!_passesFloorsExceptKelly(p)) return false;
+    if (_kelly(p) < _kellyFloorPct) return false;
     return true;
   }
 
@@ -225,6 +257,45 @@ class EdgeEvaluatorService {
     if (lowSample) s -= 8;
 
     return s.clamp(0.0, 100.0);
+  }
+
+  /// Diagnóstico pra tela decidir a mensagem de lista vazia: verifica se a
+  /// causa foi exclusivamente o piso mínimo de Kelly em segmentos ainda em
+  /// fase de amostra (controle de risco reduzindo a aposta sugerida) — não
+  /// altera nem consulta nenhum piso além dos já existentes, só leitura.
+  ///
+  /// `pool` deve ser a lista de props publicadas ANTES do filtro de
+  /// qualidade (adaptiveFilter/rankLocal), já escopada pelos filtros de
+  /// esporte/data da tela (mas sem aplicar edge mínimo do usuário nem
+  /// piso de Kelly).
+  static EmptyPoolDiagnosis diagnoseEmptyPool(List<Map<String, dynamic>> pool) {
+    if (pool.isEmpty) {
+      return const EmptyPoolDiagnosis(
+        allDueToSampleKelly: false,
+        maxSampleSize: 0,
+        minSampleToCalibrate: _minSampleToCalibrateDisplay,
+      );
+    }
+    var maxSampleSize = 0;
+    var everyoneInAmostra = true;
+    var someClearedExceptKelly = false;
+    for (final p in pool) {
+      final segmentState = p['segmentState'] as String?;
+      final sampleSize = (p['sampleSize'] as num?)?.toInt() ?? 0;
+      if (segmentState != 'em_amostra') {
+        everyoneInAmostra = false;
+      } else if (sampleSize > maxSampleSize) {
+        maxSampleSize = sampleSize;
+      }
+      if (_passesFloorsExceptKelly(p) && _kelly(p) < _kellyFloorPct) {
+        someClearedExceptKelly = true;
+      }
+    }
+    return EmptyPoolDiagnosis(
+      allDueToSampleKelly: everyoneInAmostra && someClearedExceptKelly,
+      maxSampleSize: maxSampleSize,
+      minSampleToCalibrate: _minSampleToCalibrateDisplay,
+    );
   }
 
   static List<Map<String, dynamic>> rankLocal(
