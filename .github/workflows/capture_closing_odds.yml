@@ -1,0 +1,76 @@
+name: Capturar Odd de Fechamento
+
+# Roda com frequência pra pegar cada evento o mais perto possível do início
+# (janela de captura: até 2h antes, até 10min depois — ver
+# pipeline/capture_closing_odds.js). Indicações fora da janela numa execução
+# são pegas na execução seguinte, enquanto o evento ainda não começou.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-axios-${{ runner.os }}
+
+      - run: npm install axios
+
+      - name: Injetar chaves
+        run: |
+          node -e "
+          const keys = process.env.ODDS_API_KEYS.split(',');
+          keys.forEach(k => console.log('::add-mask::' + k.trim()));
+          const lines = keys.map((k,i) => (i===0?'ODDS_API_KEY':'ODDS_API_KEY_'+(i+1))+'='+k.trim());
+          require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n')+'\n');
+          "
+        env:
+          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+
+      - name: Restaurar histórico central da branch data
+        run: |
+          git fetch origin data 2>/dev/null || true
+          mkdir -p odds_history
+          git checkout origin/data -- 'odds_history/model_ledger_*.json' 2>/dev/null || true
+
+      - name: Capturar odds de fechamento e calcular CLV
+        run: node pipeline/capture_closing_odds.js
+
+      - name: Salvar histórico central atualizado na branch data
+        run: |
+          mkdir -p /tmp/odds_history_out
+          cp odds_history/model_ledger_*.json /tmp/odds_history_out/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin data 2>/dev/null || true
+          git checkout -b data-work origin/data --force 2>/dev/null || \
+            (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+          mkdir -p odds_history
+          cp /tmp/odds_history_out/*.json odds_history/ 2>/dev/null || true
+          for f in odds_history/*.json; do
+            [ -f "$f" ] && git add "$f" || true
+          done
+          git diff --staged --quiet && echo "Sem mudanças" || git commit -m "closing-odds: $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push origin data-work:data

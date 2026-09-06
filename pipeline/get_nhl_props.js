@@ -130,6 +130,7 @@ async function getNhlProps() {
 
     console.log(`Jogos NHL encontrados: ${events.length}`);
     const allProps = [];
+    let descartadosLinhaDivergente = 0;
 
     for (const event of events) {
       if (exhaustedKeys.size >= API_KEYS.length) {
@@ -140,16 +141,19 @@ async function getNhlProps() {
         const data = await fetchEventProps(event.id);
         if (!data.bookmakers?.length) continue;
 
-        // Agrega a melhor odd Over e Under por mercado entre todas as casas disponíveis
+        // Agrega a melhor odd por mercado, jogador e linha. Over e Under só formam
+        // um prop quando pertencem à mesma linha; casas que cotam linhas diferentes
+        // para o mesmo jogador geram props independentes, nunca misturados.
         const bestMarkets = {};
         for (const bm of data.bookmakers) {
           for (const mkt of (bm.markets ?? [])) {
             if (!bestMarkets[mkt.key]) bestMarkets[mkt.key] = { key: mkt.key, bestOutcomes: {} };
             for (const outcome of mkt.outcomes) {
-              const k = `${outcome.description}||${outcome.name}`;
+              if (outcome.point === undefined || outcome.point === null) continue; // linha ausente
+              const k = `${outcome.description}||${outcome.point}||${outcome.name}`;
               if (!bestMarkets[mkt.key].bestOutcomes[k] ||
                   outcome.price > bestMarkets[mkt.key].bestOutcomes[k].price) {
-                bestMarkets[mkt.key].bestOutcomes[k] = outcome;
+                bestMarkets[mkt.key].bestOutcomes[k] = { ...outcome, bookmaker: bm.key };
               }
             }
           }
@@ -164,33 +168,40 @@ async function getNhlProps() {
           }[market.key];
           if (!propType) continue;
 
-          const players = {};
+          // jogador -> linha -> { Over, Under }
+          const playerLines = {};
           for (const outcome of Object.values(market.bestOutcomes)) {
             const player = outcome.description;
-            if (!players[player]) players[player] = {};
-            players[player][outcome.name] = { price: outcome.price, line: outcome.point };
+            if (!playerLines[player]) playerLines[player] = {};
+            if (!playerLines[player][outcome.point]) playerLines[player][outcome.point] = {};
+            playerLines[player][outcome.point][outcome.name] = { price: outcome.price, line: outcome.point, bookmaker: outcome.bookmaker };
           }
 
-          for (const [player, sides] of Object.entries(players)) {
-            if (!sides.Over || !sides.Under) continue;
-            const team = playerTeam[player];
-            let location = 'unknown';
-            if (team) {
-              if (team === event.home_team) location = 'home';
-              else if (team === event.away_team) location = 'away';
+          for (const [player, lines] of Object.entries(playerLines)) {
+            for (const sides of Object.values(lines)) {
+              if (!sides.Over || !sides.Under) { descartadosLinhaDivergente++; continue; }
+              const team = playerTeam[player];
+              let location = 'unknown';
+              if (team) {
+                if (team === event.home_team) location = 'home';
+                else if (team === event.away_team) location = 'away';
+              }
+              allProps.push({
+                eventId: event.id,
+                game: `${event.home_team} x ${event.away_team}`,
+                commence_time: event.commence_time,
+                player,
+                prop: propType,
+                location,
+                line: sides.Over.line,
+                oddsOver: sides.Over.price,
+                oddsUnder: sides.Under.price,
+                bookmakerOver: sides.Over.bookmaker,
+                bookmakerUnder: sides.Under.bookmaker,
+                pinnacleId: findMatchupId(pinnacleMatchups, event.home_team, event.away_team),
+                pinnacleSlug: `${toSlug(event.away_team)}-vs-${toSlug(event.home_team)}`,
+              });
             }
-            allProps.push({
-              game: `${event.home_team} x ${event.away_team}`,
-              commence_time: event.commence_time,
-              player,
-              prop: propType,
-              location,
-              line: sides.Over.line,
-              oddsOver: sides.Over.price,
-              oddsUnder: sides.Under.price,
-              pinnacleId: findMatchupId(pinnacleMatchups, event.home_team, event.away_team),
-              pinnacleSlug: `${toSlug(event.away_team)}-vs-${toSlug(event.home_team)}`,
-            });
           }
         }
 
@@ -203,6 +214,7 @@ async function getNhlProps() {
 
     fs.writeFileSync('nhl_props.json', JSON.stringify(allProps, null, 2));
     console.log(`Props NHL salvas: ${allProps.length} entradas.`);
+    console.log(`Descartados por divergência de linha (NHL): ${descartadosLinhaDivergente}`);
   } catch (e) {
     console.error('Erro ao buscar props NHL:', e.response?.data || e.message);
   }

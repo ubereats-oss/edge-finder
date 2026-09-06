@@ -1,0 +1,31 @@
+name: Verificar retenção de artefatos
+
+# Proteção contra regressão: entre jun/2026 e ago/2026 a cota de Actions
+# storage da conta estourou porque artefatos ficavam sem retention-days
+# configurado (padrão do GitHub: até 90 dias). Em 02/08/2026 isso foi
+# corrigido pra 1 dia em todo step de upload de artefato. Esta verificação
+# roda em toda alteração de arquivo de workflow pra pegar qualquer novo step
+# de upload de artefato sem retenção (ou com retenção maior que 1 dia) antes
+# que o problema volte de forma silenciosa.
+
+on:
+  push:
+    paths:
+      - '.github/workflows/**'
+      - '.github/scripts/check_artifact_retention.js'
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/scripts/check_artifact_retention.js'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verificar retention-days em steps de upload de artefato
+        run: node .github/scripts/check_artifact_retention.js

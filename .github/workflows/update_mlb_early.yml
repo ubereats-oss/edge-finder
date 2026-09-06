@@ -52,22 +52,25 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       - name: Salvar dados na branch data
         run: |
+          cp .github/scripts/save_stats_gz.sh /tmp/save_stats_gz.sh
           mkdir -p /tmp/data-save
-          gzip -c mlb_player_stats.json > /tmp/data-save/mlb_player_stats.json.gz 2>/dev/null || true
+          gzip -n -c mlb_player_stats.json > /tmp/data-save/mlb_player_stats.json.gz 2>/dev/null || true
           for f in mlb_player_team.json mlb_injuries_today.json bets.json; do
             [ -f "$f" ] && cp "$f" /tmp/data-save/ || true
           done
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin data 2>/dev/null || true
-          git checkout --orphan data-mlb-early-tmp
-          git rm -rf . --quiet
-          printf 'node_modules/\n' > .gitignore
-          cp /tmp/data-save/* . 2>/dev/null || true
-          # Preservar arquivos de outros esportes da branch data
-          for f in nba_player_stats.json.gz nba_player_team.json nba_injuries_today.json nba_rating.json nba_boxscores_cache.json nba_player_positions.json nhl_player_stats.json.gz nhl_player_team.json nfl_player_stats.json.gz nfl_player_team.json tennis_player_stats.json; do
-            git show origin/data:$f > $f 2>/dev/null || true
+          git checkout -b data-work origin/data --force 2>/dev/null || \
+            (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+          for f in /tmp/data-save/*.gz; do
+            [ -f "$f" ] || continue
+            bash /tmp/save_stats_gz.sh "$(basename "$f" _player_stats.json.gz)" "$f" "$(basename "$f")"
           done
-          git add -A
+          rm -f /tmp/data-save/*.gz
+          cp /tmp/data-save/* . 2>/dev/null || true
+          for f in mlb_player_stats.json.gz mlb_player_team.json mlb_injuries_today.json bets.json; do
+            [ -f "$f" ] && git add "$f" || true
+          done
           git diff --staged --quiet && echo "Sem mudanças" || git commit -m "data-mlb-early: $(date -u '+%Y-%m-%d %H:%M') UTC"
-          git push origin HEAD:data --force
+          git push origin data-work:data

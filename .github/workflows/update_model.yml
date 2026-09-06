@@ -184,24 +184,29 @@ jobs:
 
       - name: Salvar dados na branch data
         run: |
-          gzip -c nba_player_stats.json > /tmp/nba_player_stats.json.gz 2>/dev/null || true
-          gzip -c mlb_player_stats.json > /tmp/mlb_player_stats.json.gz 2>/dev/null || true
-          gzip -c nhl_player_stats.json > /tmp/nhl_player_stats.json.gz 2>/dev/null || true
-          gzip -c nfl_player_stats.json > /tmp/nfl_player_stats.json.gz 2>/dev/null || true
+          cp .github/scripts/save_stats_gz.sh /tmp/save_stats_gz.sh
+          mkdir -p /tmp/to-save
+          gzip -n -c nba_player_stats.json > /tmp/to-save/nba_player_stats.json.gz 2>/dev/null || true
+          gzip -n -c mlb_player_stats.json > /tmp/to-save/mlb_player_stats.json.gz 2>/dev/null || true
+          gzip -n -c nhl_player_stats.json > /tmp/to-save/nhl_player_stats.json.gz 2>/dev/null || true
+          gzip -n -c nfl_player_stats.json > /tmp/to-save/nfl_player_stats.json.gz 2>/dev/null || true
+          for f in nba_player_team.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json bets.json; do
+            [ -f "$f" ] && cp "$f" /tmp/to-save/ || true
+          done
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin data 2>/dev/null || true
-          git checkout --orphan data-tmp
-          git rm -rf . --quiet
-          cp /tmp/nba_player_stats.json.gz . 2>/dev/null || true
-          cp /tmp/mlb_player_stats.json.gz . 2>/dev/null || true
-          cp /tmp/nhl_player_stats.json.gz . 2>/dev/null || true
-          cp /tmp/nfl_player_stats.json.gz . 2>/dev/null || true
-          rm -f nba_player_stats.json mlb_player_stats.json nhl_player_stats.json nfl_player_stats.json
-          for f in nba_player_team.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json bets.json; do
-            cp $f . 2>/dev/null || true
+          git checkout -b data-work origin/data --force 2>/dev/null || \
+            (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+          for f in /tmp/to-save/*.gz; do
+            [ -f "$f" ] || continue
+            bash /tmp/save_stats_gz.sh "$(basename "$f" _player_stats.json.gz)" "$f" "$(basename "$f")"
           done
-          git add -A
-          git diff --staged --quiet && echo "Sem mudanças" || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
-          git push origin HEAD:data --force
+          rm -f /tmp/to-save/*.gz
+          cp /tmp/to-save/* . 2>/dev/null || true
+          for f in *.gz nba_player_team.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json bets.json; do
+            [ -f "$f" ] && git add "$f" || true
+          done
+          git diff --staged --quiet && echo "Sem mudanças na branch data" || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push origin data-work:data
 
