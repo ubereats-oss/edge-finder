@@ -608,7 +608,7 @@ jobs:
               node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history
             fi
 
-            for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json odds_history/*.json; do
+            for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json odds_history/model_ledger_*.json; do
               [ -f "$f" ] && git add "$f" || true
             done
             if git diff --staged --quiet; then

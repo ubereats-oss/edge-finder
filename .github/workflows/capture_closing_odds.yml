@@ -160,7 +160,7 @@ jobs:
             else
               node /tmp/ledger_scripts/reapply_ledger_changes.js closing-odds /tmp/odds_history_out
             fi
-            for f in odds_history/*.json; do
+            for f in odds_history/model_ledger_*.json; do
               [ -f "$f" ] && git add "$f" || true
             done
             if git diff --staged --quiet; then
