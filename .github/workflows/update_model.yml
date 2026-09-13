@@ -69,6 +69,12 @@ jobs:
           mkdir -p odds_history
 
       - name: Restaurar dados da branch data
+        # Inclui o histórico central (odds_history/model_ledger_*.json) —
+        # sem isso, os modelos partiam do que "Restaurar histórico anterior"
+        # deixou (extração de um tarball antigo da branch history, sem
+        # relação com o ledger atual) em vez do que já está acumulado na
+        # branch data, e a gravação seguinte substituía o histórico real
+        # por essa base incompleta.
         run: |
           git fetch origin data 2>/dev/null || echo "Branch data não existe ainda"
           git show origin/data:nba_player_stats.json.gz > /tmp/nba_player_stats.json.gz 2>/dev/null && \
@@ -83,6 +89,10 @@ jobs:
             git show origin/data:$f > $f 2>/dev/null && echo "Restaurado: $f" || echo "Não encontrado: $f"
           done
           git show origin/data:bets.json > bets.json 2>/dev/null && echo "bets.json restaurado" || echo '[]' > bets.json
+          mkdir -p odds_history
+          git checkout origin/data -- 'odds_history/model_ledger_*.json' 2>/dev/null && \
+            echo "Histórico central restaurado: $(ls odds_history/model_ledger_*.json 2>/dev/null | wc -l) partição(ões)" || \
+            echo "Histórico central não encontrado na branch data"
 
       - name: Atualizar injuries (NBA)
         if: ${{ github.event.inputs.sport == 'nba_br' || github.event.inputs.sport == 'nba' || github.event.inputs.sport == 'all' }}
