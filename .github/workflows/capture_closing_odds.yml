@@ -141,8 +141,9 @@ jobs:
         # odd de fechamento já existente) — repete com espera crescente
         # antes de desistir. Ver pipeline/reapply_ledger_changes.js.
         run: |
-          mkdir -p /tmp/odds_history_out
+          mkdir -p /tmp/odds_history_out /tmp/ledger_scripts
           cp odds_history/model_ledger_*.json /tmp/odds_history_out/ 2>/dev/null || true
+          cp pipeline/reapply_ledger_changes.js pipeline/model_ledger.js /tmp/ledger_scripts/
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -155,9 +156,9 @@ jobs:
               (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
             mkdir -p odds_history
             if [ "$attempt" -gt 1 ]; then
-              node pipeline/reapply_ledger_changes.js closing-odds /tmp/odds_history_out --retry
+              node /tmp/ledger_scripts/reapply_ledger_changes.js closing-odds /tmp/odds_history_out --retry
             else
-              node pipeline/reapply_ledger_changes.js closing-odds /tmp/odds_history_out
+              node /tmp/ledger_scripts/reapply_ledger_changes.js closing-odds /tmp/odds_history_out
             fi
             for f in odds_history/*.json; do
               [ -f "$f" ] && git add "$f" || true
