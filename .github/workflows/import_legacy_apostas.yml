@@ -72,10 +72,22 @@ jobs:
             else
               node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/odds_history_out
             fi
-            for f in odds_history/model_ledger_*.json; do
-              [ -f "$f" ] && git add "$f" || true
+            odds_history_patterns=(model_ledger_*.json .legacy_apostas_imported.json)
+            included_patterns=()
+            for pattern in "${odds_history_patterns[@]}"; do
+              matched=false
+              for f in odds_history/$pattern; do
+                [ -f "$f" ] || continue
+                git add "$f"
+                matched=true
+              done
+              [ "$matched" = true ] && included_patterns+=("$pattern")
             done
-            [ -f odds_history/.legacy_apostas_imported.json ] && git add odds_history/.legacy_apostas_imported.json || true
+            if [ ${#included_patterns[@]} -gt 0 ]; then
+              echo "[histórico central] padrões incluídos no commit: ${included_patterns[*]}"
+            else
+              echo "[histórico central] nenhum arquivo de odds_history nesta execução."
+            fi
             if git diff --staged --quiet; then
               echo "Sem mudanças"
               break

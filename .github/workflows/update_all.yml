@@ -608,9 +608,25 @@ jobs:
               node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history
             fi
 
-            for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json odds_history/model_ledger_*.json; do
+            odds_history_patterns=(model_ledger_*.json basketball_nba_model_br_*.json baseball_mlb_model_*.json hockey_nhl_model_*.json football_nfl_model_*.json)
+            included_patterns=()
+            for pattern in "${odds_history_patterns[@]}"; do
+              matched=false
+              for f in odds_history/$pattern; do
+                [ -f "$f" ] || continue
+                git add "$f"
+                matched=true
+              done
+              [ "$matched" = true ] && included_patterns+=("$pattern")
+            done
+            for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json; do
               [ -f "$f" ] && git add "$f" || true
             done
+            if [ ${#included_patterns[@]} -gt 0 ]; then
+              echo "[histórico central] padrões incluídos no commit: ${included_patterns[*]}"
+            else
+              echo "[histórico central] nenhum arquivo de odds_history nesta execução."
+            fi
             if git diff --staged --quiet; then
               echo "Sem mudanças na branch data"
               break
