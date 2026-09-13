@@ -46,6 +46,16 @@ function getNextKey() {
 const CAPTURE_WINDOW_BEFORE_MS = 2 * 60 * 60 * 1000; // até 2h antes do início
 const CAPTURE_WINDOW_AFTER_MS  = 10 * 60 * 1000;      // até 10min depois (mercado pode suspender exatamente na hora)
 
+// Independência em relação à pontualidade do agendador: se o evento mais
+// próximo começa em menos de WAIT_MAX_MS, a execução espera (sleep) dentro
+// do próprio job até TARGET_LEAD_MS antes do início, em vez de capturar de
+// imediato — assim a odd fica perto do fechamento real mesmo que o job em si
+// tenha disparado atrasado. Indicações com mais de WAIT_MAX_MS de folga
+// continuam indo pro fluxo de captura imediata de sempre (ficam pra próxima
+// execução, dentro da janela de 2h).
+const WAIT_MAX_MS    = 40 * 60 * 1000; // teto de espera por execução
+const TARGET_LEAD_MS = 3 * 60 * 1000;  // alvo: capturar ~3min antes do início
+
 const SPORTS = [
   { esporte: 'basketball/nba', apiSport: 'basketball_nba', markets: { points: 'player_points', rebounds: 'player_rebounds', assists: 'player_assists', steals: 'player_steals', threes: 'player_threes' } },
   { esporte: 'baseball/mlb',   apiSport: 'baseball_mlb',   markets: { hits: 'batter_hits', strikeouts: 'pitcher_strikeouts', hitsAllowed: 'pitcher_hits_allowed' } },
@@ -126,6 +136,9 @@ async function captureSport({ esporte, apiSport, markets }) {
         entry.clv = computeClv(entry.odds, price);
         capturadas++;
         changed = true;
+        const commence = new Date(entry.commenceTime).getTime();
+        const minutosAntes = Math.round((commence - Date.now()) / 60000);
+        console.log(`  [${esporte}] captura: ${entry.player} ${entry.market} ${entry.side} ${entry.line} — odd de fechamento obtida ${minutosAntes}min antes do início do evento.`);
       }
     }
 
@@ -139,6 +152,32 @@ async function captureSport({ esporte, apiSport, markets }) {
   return { capturadas, semJanela, semOddDisponivel, partitionsChanged };
 }
 
+// Varre todas as indicações pendentes (sem odd de fechamento ainda) dos
+// esportes alvo e devolve o commenceTime do evento mais cedo entre os que
+// precisam de espera: já dentro de WAIT_MAX_MS, mas ainda longe demais do
+// TARGET_LEAD_MS pra capturar agora. Eventos já iniciados (delta < 0) ou com
+// mais de WAIT_MAX_MS de folga não entram aqui — seguem o fluxo de sempre.
+function findEarliestWaitTarget(targets, now) {
+  let earliestCommence = null;
+  for (const { esporte, markets } of targets) {
+    for (const file of ledger.listPartitions(esporte)) {
+      const entries = ledger.loadPartitionFile(file);
+      for (const entry of entries) {
+        if (entry.resolutionStatus !== ledger.RESOLUTION_STATUS.PENDENTE) continue;
+        if (entry.closingOdds !== null && entry.closingOdds !== undefined) continue;
+        if (!markets[entry.market]) continue;
+
+        const commence = new Date(entry.commenceTime).getTime();
+        if (isNaN(commence)) continue;
+        const delta = commence - now;
+        if (delta < 0 || delta > WAIT_MAX_MS || delta <= TARGET_LEAD_MS) continue;
+        if (earliestCommence === null || commence < earliestCommence) earliestCommence = commence;
+      }
+    }
+  }
+  return earliestCommence;
+}
+
 async function main() {
   if (!API_KEYS.length) {
     console.error('Nenhuma chave ODDS_API_KEY encontrada — abortando.');
@@ -146,6 +185,21 @@ async function main() {
   }
   const requested = process.argv.slice(2).map(s => s.toLowerCase());
   const targets = requested.length ? SPORTS.filter(s => requested.some(r => s.esporte.includes(r))) : SPORTS;
+
+  // Não capturar de imediato se o evento mais próximo ainda não chegou no
+  // alvo de "poucos minutos antes do início" — espera aqui dentro do job
+  // (sem chamar a API-de-odds nesse meio tempo) e só então segue pra
+  // captura de verdade, que nesse momento pega tudo que já estiver dentro
+  // da janela (o alvo original e qualquer outro que tenha entrado na janela
+  // durante a espera).
+  const earliestCommence = findEarliestWaitTarget(targets, Date.now());
+  if (earliestCommence !== null) {
+    const waitMs = Math.max(0, Math.min(earliestCommence - TARGET_LEAD_MS - Date.now(), WAIT_MAX_MS));
+    if (waitMs > 0) {
+      console.log(`[espera] evento mais próximo às ${new Date(earliestCommence).toISOString()} — aguardando ${Math.round(waitMs / 60000)}min pra capturar mais perto do início.`);
+      await sleep(waitMs);
+    }
+  }
 
   const totals = { capturadas: 0, semJanela: 0, semOddDisponivel: 0, partitionsChanged: 0 };
   for (const sport of targets) {
