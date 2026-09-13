@@ -41,9 +41,12 @@ name: Capturar Odd de Fechamento
 # atual (~960min/mês) é o preço real de cobrir os jogos, não desperdício.
 on:
   schedule:
-    - cron: '*/30 16-23 * * *'
-    - cron: '*/30 0-5 * * *'
-    - cron: '0 6,9,12,15 * * *'
+    # Minutos fora de :00/:30 de propósito — esses são os mais concorridos na
+    # fila de cron do GitHub Actions e sofrem mais atraso. Mesmo intervalo de
+    # 30min e mesmas bandas de horário, só deslocado pra minuto 7/37.
+    - cron: '7,37 16-23 * * *'
+    - cron: '7,37 0-5 * * *'
+    - cron: '7 6,9,12,15 * * *'
   workflow_dispatch:
 
 permissions:
@@ -130,18 +133,50 @@ jobs:
 
       - name: Salvar histórico central atualizado na branch data
         if: steps.gate.outputs.has_event == 'true'
+        # Espera dentro do job (capture_closing_odds.js) pode fazer duas
+        # execuções ficarem ativas ao mesmo tempo e tentarem gravar em
+        # sequência próxima. Se o push for rejeitado porque a branch data
+        # avançou, recarrega o estado mais recente e reaplica só a
+        # closingOdds/clv desta execução por cima dele (nunca sobrescreve
+        # odd de fechamento já existente) — repete com espera crescente
+        # antes de desistir. Ver pipeline/reapply_ledger_changes.js.
         run: |
           mkdir -p /tmp/odds_history_out
           cp odds_history/model_ledger_*.json /tmp/odds_history_out/ 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin data 2>/dev/null || true
-          git checkout -b data-work origin/data --force 2>/dev/null || \
-            (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
-          mkdir -p odds_history
-          cp /tmp/odds_history_out/*.json odds_history/ 2>/dev/null || true
-          for f in odds_history/*.json; do
-            [ -f "$f" ] && git add "$f" || true
+
+          attempt=1
+          max_attempts=6
+          delay=10
+          while true; do
+            git fetch origin data 2>/dev/null || true
+            git checkout -B data-work origin/data --force 2>/dev/null || \
+              (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+            mkdir -p odds_history
+            if [ "$attempt" -gt 1 ]; then
+              node pipeline/reapply_ledger_changes.js closing-odds /tmp/odds_history_out --retry
+            else
+              node pipeline/reapply_ledger_changes.js closing-odds /tmp/odds_history_out
+            fi
+            for f in odds_history/*.json; do
+              [ -f "$f" ] && git add "$f" || true
+            done
+            if git diff --staged --quiet; then
+              echo "Sem mudanças"
+              break
+            fi
+            git commit -m "closing-odds: $(date -u '+%Y-%m-%d %H:%M') UTC"
+            if git push origin data-work:data; then
+              [ "$attempt" -gt 1 ] && echo "[recuperação] gravação concluída após $attempt tentativa(s)."
+              break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "Falha ao gravar histórico central na branch data após $max_attempts tentativas." >&2
+              exit 1
+            fi
+            echo "[recuperação] push rejeitado (branch data avançou) — tentativa $attempt/$max_attempts, nova tentativa em ${delay}s."
+            sleep "$delay"
+            delay=$((delay * 2))
+            attempt=$((attempt + 1))
           done
-          git diff --staged --quiet && echo "Sem mudanças" || git commit -m "closing-odds: $(date -u '+%Y-%m-%d %H:%M') UTC"
-          git push origin data-work:data

@@ -568,30 +568,63 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Salvar dados na branch data
+        # Se o push for rejeitado porque a branch data avançou (ex.: uma
+        # execução de capture_closing_odds.js gravou no meio tempo),
+        # recarrega o estado mais recente e reaplica só o histórico de
+        # indicações desta execução por cima dele, preservando
+        # closingOdds/clv que já existam — repete com espera crescente
+        # antes de desistir. Ver pipeline/reapply_ledger_changes.js.
         run: |
           cp .github/scripts/save_stats_gz.sh /tmp/save_stats_gz.sh
-          mkdir -p /tmp/to-save /tmp/to-save/odds_history
+          mkdir -p /tmp/to-save /tmp/to-save/odds_history /tmp/to-save-gz
           for dir in /tmp/nba-out /tmp/mlb-out /tmp/nhl-out /tmp/nfl-out /tmp/tennis-out; do
             if [ -d "$dir" ]; then
               cp "$dir"/* /tmp/to-save/ 2>/dev/null || true
               [ -d "$dir/odds_history" ] && cp "$dir"/odds_history/*.json /tmp/to-save/odds_history/ 2>/dev/null || true
             fi
           done
+          mv /tmp/to-save/*.gz /tmp/to-save-gz/ 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin data 2>/dev/null || true
-          git checkout -b data-work origin/data --force 2>/dev/null || \
-            (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
-          mkdir -p odds_history
-          for f in /tmp/to-save/*.gz; do
-            [ -f "$f" ] || continue
-            bash /tmp/save_stats_gz.sh "$(basename "$f" _player_stats.json.gz)" "$f" "$(basename "$f")"
+
+          attempt=1
+          max_attempts=6
+          delay=10
+          while true; do
+            git fetch origin data 2>/dev/null || true
+            git checkout -B data-work origin/data --force 2>/dev/null || \
+              (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+            mkdir -p odds_history
+
+            for f in /tmp/to-save-gz/*.gz; do
+              [ -f "$f" ] || continue
+              bash /tmp/save_stats_gz.sh "$(basename "$f" _player_stats.json.gz)" "$f" "$(basename "$f")"
+            done
+            cp /tmp/to-save/* . 2>/dev/null || true
+            if [ "$attempt" -gt 1 ]; then
+              node pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history --retry
+            else
+              node pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history
+            fi
+
+            for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json odds_history/*.json; do
+              [ -f "$f" ] && git add "$f" || true
+            done
+            if git diff --staged --quiet; then
+              echo "Sem mudanças na branch data"
+              break
+            fi
+            git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
+            if git push origin data-work:data; then
+              [ "$attempt" -gt 1 ] && echo "[recuperação] gravação concluída após $attempt tentativa(s)."
+              break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "Falha ao gravar dados na branch data após $max_attempts tentativas." >&2
+              exit 1
+            fi
+            echo "[recuperação] push rejeitado (branch data avançou) — tentativa $attempt/$max_attempts, nova tentativa em ${delay}s."
+            sleep "$delay"
+            delay=$((delay * 2))
+            attempt=$((attempt + 1))
           done
-          rm -f /tmp/to-save/*.gz
-          cp /tmp/to-save/* . 2>/dev/null || true
-          cp /tmp/to-save/odds_history/*.json odds_history/ 2>/dev/null || true
-          for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json odds_history/*.json; do
-            [ -f "$f" ] && git add "$f" || true
-          done
-          git diff --staged --quiet && echo "Sem mudanças na branch data" || git commit -m "data: $(date -u '+%Y-%m-%d %H:%M') UTC"
-          git push origin data-work:data
