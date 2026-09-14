@@ -22,9 +22,13 @@
     "runId": "import_legacy_apostas",
     "evaluatedAt": "2026-09-06T17:51:28.985Z",
     "firstEvaluatedAt": "2026-09-06T17:51:28.985Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-14T19:41:36.163Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "import_apostas_com_resultados",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -55,9 +59,13 @@
     "runId": "import_legacy_apostas",
     "evaluatedAt": "2026-09-06T17:51:28.985Z",
     "firstEvaluatedAt": "2026-09-06T17:51:28.985Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 3,
+      "apuradoEm": "2026-09-14T19:41:36.903Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "import_apostas_com_resultados",
     "hasModelProb": false,
     "validForCalibration": false,
