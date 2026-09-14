@@ -31,7 +31,7 @@ const SPORTS_WITH_PROPS = new Set([
   'basketball_nba',
 ]);
 
-const HISTORY_DIR    = path.join(__dirname, '..', 'odds_history');
+const HISTORY_DIR    = path.join(__dirname, '..', 'odds_snapshots');
 const KEY_STATE_FILE = path.join(HISTORY_DIR, '_key_state.json');
 const PROPS_MARKETS  = 'player_points,player_rebounds,player_assists,player_steals,player_threes';
 

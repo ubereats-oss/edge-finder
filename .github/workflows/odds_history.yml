@@ -40,13 +40,24 @@ jobs:
         env:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
       - name: Restaurar histórico anterior
+        # Histórico de odds (h2h/props) fica em odds_snapshots/, separado de
+        # odds_history/ (histórico central de indicações). Tarball antigo
+        # ainda empacotado com a pasta odds_history/ por dentro: migra o
+        # conteúdo pra odds_snapshots/ antes de seguir — só acontece na
+        # primeira execução depois da mudança, já que o empacotamento abaixo
+        # passa a usar odds_snapshots/ dali em diante.
         run: |
           git fetch origin history 2>/dev/null && \
           git show origin/history:odds_history.tar.gz > /tmp/odds_history.tar.gz 2>/dev/null && \
           tar -xzf /tmp/odds_history.tar.gz -C . 2>/dev/null && \
           echo "Histórico restaurado" || \
           echo "Sem histórico anterior — primeira execução"
-          mkdir -p odds_history
+          mkdir -p odds_snapshots
+          if [ -d odds_history ]; then
+            echo "Tarball com estrutura antiga (odds_history/) — migrando pra odds_snapshots/"
+            mv odds_history/* odds_snapshots/ 2>/dev/null || true
+            rmdir odds_history 2>/dev/null || true
+          fi
       - name: Executar coleta
         run: node pipeline/save_odds_history.js
       - name: Sincronizar histórico com Firestore
@@ -55,7 +66,7 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       - name: Empacotar e salvar na branch history
         run: |
-          tar -czf /tmp/odds_history.tar.gz odds_history/
+          tar -czf /tmp/odds_history.tar.gz odds_snapshots/
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout --orphan history-tmp

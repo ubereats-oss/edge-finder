@@ -83,9 +83,9 @@ async function syncBets() {
 }
 
 async function syncOddsHistory() {
-  const histDir = path.join(ROOT, 'odds_history');
+  const histDir = path.join(ROOT, 'odds_snapshots');
   if (!fs.existsSync(histDir)) {
-    console.log('  Pulando odds_history — pasta não encontrada');
+    console.log('  Pulando odds_snapshots — pasta não encontrada');
     return;
   }
 
@@ -116,11 +116,11 @@ async function syncOddsHistory() {
         }
       }
     } catch (e) {
-      console.error(`  ❌ Erro ao sincronizar odds_history/${file}:`, e.message);
+      console.error(`  ❌ Erro ao sincronizar odds_snapshots/${file}:`, e.message);
     }
   }
 
-  console.log(`  ✅ odds_history → Firestore (${synced} documentos)`);
+  console.log(`  ✅ odds_snapshots → Firestore/odds_history (${synced} documentos)`);
 }
 
 // Relatório de desempenho do modelo (odds_history/relatorio_desempenho.json)
