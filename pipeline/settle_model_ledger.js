@@ -8,7 +8,7 @@
 // Uso: node pipeline/settle_model_ledger.js [esporte1 esporte2 ...]
 // Sem argumentos, apura os 4 esportes com props (nhl, nfl, nba, mlb).
 
-const https = require('https');
+const axios = require('axios');
 const fs = require('fs');
 const ledger = require('./model_ledger');
 
@@ -28,16 +28,16 @@ const GRACE_MS = {
   'americanfootball/nfl': 6 * 60 * 60 * 1000,
 };
 
-function get(url) {
-  return new Promise((resolve, reject) => {
-    https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, r => {
-      let d = '';
-      r.on('data', c => d += c);
-      r.on('end', () => {
-        try { resolve(JSON.parse(d)); } catch (e) { reject(new Error(`JSON parse error: ${d.slice(0, 200)}`)); }
-      });
-    }).on('error', reject);
-  });
+// Mesmo cliente e mesmos cabeçalhos (nenhum customizado) dos demais scripts
+// do pipeline que chamam a ESPN (get_nba_player_stats.js, get_mlb_player_stats.js
+// etc.). https.get() com User-Agent de navegador levava Access Denied da ESPN
+// quando rodado no GitHub Actions — axios.get() sem headers customizados não.
+async function get(url) {
+  const res = await axios.get(url, { timeout: 15000 });
+  if (!res.data || typeof res.data !== 'object') {
+    throw new Error(`Resposta inesperada da ESPN (não é JSON): ${url}`);
+  }
+  return res.data;
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -195,7 +195,7 @@ async function settleSport({ esporte, espnSport }) {
   const now = Date.now();
   const partitions = ledger.listPartitions(esporte);
 
-  let apurados = 0, canceladas = 0, aindaPendentes = 0, naoApuraveis = 0, partitionsChanged = 0;
+  let apurados = 0, canceladas = 0, aindaPendentes = 0, naoApuraveis = 0, partitionsChanged = 0, falhasAcesso = 0;
 
   for (const file of partitions) {
     const entries = JSON.parse(fs.readFileSync(file, 'utf-8'));
@@ -278,15 +278,16 @@ async function settleSport({ esporte, espnSport }) {
         changed = true;
         apurados++;
       } catch (e) {
-        entry.resolutionAttempts = (entry.resolutionAttempts || 0) + 1;
-        if (entry.resolutionAttempts >= ledger.MAX_RESOLUTION_ATTEMPTS) {
-          entry.resolutionStatus = ledger.RESOLUTION_STATUS.NAO_APURAVEL;
-          naoApuraveis++;
-        } else {
-          aindaPendentes++;
-        }
-        changed = true;
-        console.warn(`  Erro apurando ${entry.player} (${entry.market}): ${e.message}`);
+        // Toda exceção aqui vem de get() (getScoreboard/getSummary), ou seja, é
+        // falha de acesso/rede à ESPN (timeout, HTTP não-2xx, resposta não-JSON),
+        // nunca ausência real de dado — essa é sempre detectada sem lançar
+        // exceção (event === null, status não final, extractor === null acima).
+        // Falha de acesso não consome tentativa nem leva a não_apuravel: a
+        // indicação continua pendente e é reapurada na próxima execução, sem
+        // prazo de validade.
+        falhasAcesso++;
+        aindaPendentes++;
+        console.warn(`  Falha de acesso à ESPN apurando ${entry.player} (${entry.market}): ${e.message}`);
       }
 
       await sleep(150);
@@ -298,8 +299,8 @@ async function settleSport({ esporte, espnSport }) {
     }
   }
 
-  console.log(`[${esporte}] apuradas: ${apurados} | canceladas/void: ${canceladas} | ainda pendentes: ${aindaPendentes} | não apuráveis: ${naoApuraveis} | partições atualizadas: ${partitionsChanged}`);
-  return { apurados, canceladas, aindaPendentes, naoApuraveis, partitionsChanged };
+  console.log(`[${esporte}] apuradas: ${apurados} | canceladas/void: ${canceladas} | ainda pendentes: ${aindaPendentes} | não apuráveis: ${naoApuraveis} | falhas de acesso à ESPN: ${falhasAcesso} | partições atualizadas: ${partitionsChanged}`);
+  return { apurados, canceladas, aindaPendentes, naoApuraveis, partitionsChanged, falhasAcesso };
 }
 
 async function main() {
@@ -308,7 +309,7 @@ async function main() {
     ? SPORTS.filter(s => requested.some(r => s.esporte.includes(r)))
     : SPORTS;
 
-  const totals = { apurados: 0, canceladas: 0, aindaPendentes: 0, naoApuraveis: 0, partitionsChanged: 0 };
+  const totals = { apurados: 0, canceladas: 0, aindaPendentes: 0, naoApuraveis: 0, partitionsChanged: 0, falhasAcesso: 0 };
   for (const sport of targets) {
     console.log(`Apurando resultados: ${sport.esporte}...`);
     const r = await settleSport(sport);
@@ -322,7 +323,8 @@ async function main() {
     `\nResumo geral: ${totals.partitionsChanged} partição(ões) de odds_history atualizada(s) | ` +
     `${transicionadas} indicação(ões) passaram de em aberto para apuradas ` +
     `(${totals.apurados} com resultado ganhou/perdeu/push, ${totals.canceladas} canceladas/void) | ` +
-    `${totals.aindaPendentes} continuam em aberto | ${totals.naoApuraveis} marcadas como não apuráveis nesta execução.`
+    `${totals.aindaPendentes} continuam em aberto | ${totals.naoApuraveis} marcadas como não apuráveis nesta execução` +
+    `${totals.falhasAcesso ? ` | ${totals.falhasAcesso} falha(s) de acesso à ESPN nesta execução (não contam como tentativa)` : ''}.`
   );
 }
 
