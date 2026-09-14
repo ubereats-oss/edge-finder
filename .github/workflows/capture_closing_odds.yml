@@ -1,56 +1,39 @@
 name: Capturar Odd de Fechamento
 
-# Roda com frequência pra pegar cada evento o mais perto possível do início
-# (janela de captura: até 2h antes, até 10min depois — ver
-# pipeline/capture_closing_odds.js). Indicações fora da janela numa execução
-# são pegas na execução seguinte, enquanto o evento ainda não começou.
+# Independente de agendador: pipeline/capture_closing_odds.js espera (sleep)
+# dentro do próprio job até perto do início do evento pendente mais próximo
+# (até MAX_JOB_WAIT_MS = 5h) e, ao terminar, dispara programaticamente uma
+# nova execução deste workflow via API do GitHub pra continuar a cadeia a
+# partir do evento seguinte — workflow_dispatch é confiável, diferente do
+# cron, que atrasa/descarta execuções sob carga (ver script pra detalhes).
 #
-# Frequência não é fixa o dia inteiro — acompanha o horário real dos jogos
-# de NBA/MLB/NHL/NFL (os 4 esportes que este script cobre; tênis não entra
-# no model_ledger). Levantamento do histórico de commenceTime já coletado
-# (42 jogos, model_ledger_*) mais o padrão conhecido de transmissão dessas
-# ligas nos EUA: início concentrado entre 16h e 06h UTC (tarde/madrugada
-# ET/PT), sem nenhum jogo registrado fora dessa faixa.
-#   - Banda ativa (16h–06h UTC): a cada 30min, igual antes.
-#   - Banda morta (06h–16h UTC): sem jogo conhecido começando aí — mantém
-#     só 4 checagens esparsas por dia (rede de segurança pra jogo remarcado
-#     ou horário atípico) em vez de rodar a cada 30min sem necessidade.
-# Reduz de 48 pra 32 execuções/dia (~33% a menos) sem abrir brecha real de
-# cobertura — todo horário de início observado ou plausível continua tendo
-# pelo menos uma execução dentro da janela de captura de 2h.
+# O cron abaixo existe só como rede de segurança, com frequência baixa: pega
+# o primeiro evento do dia (nada disparado ainda) ou reinicia a cadeia se
+# ela foi interrompida (job cancelado, disparo da próxima execução falhou,
+# etc.). Minuto fora de :00/:30 de propósito (mais concorrido na fila do
+# GitHub Actions).
 #
-# Step "Verificar se há evento na janela" (gate, abaixo): lê o commenceTime
-# das indicações pendentes do histórico central já restaurado (sem chamar a
-# API) e encerra o job ali mesmo se nenhuma estiver dentro da janela de
-# captura agora. IMPORTANTE: isso NÃO reduz os minutos de Actions cobrados
-# por execução — o GitHub cobra por job disparado, arredondado pra cima pro
-# minuto cheio, e um job que sai no gate já consome esse minuto mínimo do
-# mesmo jeito que um job que roda a captura inteira (medido: 28–42s reais em
-# qualquer um dos dois casos). O ganho é evitar instalar dependência e
-# chamar a API-de-odds à toa, e — o motivo de existir — gerar o log abaixo
-# pra decidir com dado real se vale apertar a banda ativa.
-#
-# Todo run loga "[gate] evento na janela: sim/não". Depois de ~1 semana,
-# contar sim/não das execuções da banda ativa (16h–06h UTC):
-#   since=AAAA-MM-DD
-#   gh run list --workflow=capture_closing_odds.yml --created ">=$since" \
-#     --json databaseId --jq '.[].databaseId' | while read id; do
-#     gh run view "$id" --log 2>/dev/null | grep '\[gate\] evento na janela'
-#   done | sort | uniq -c
-# Maioria "não" → vale apertar a banda/intervalo. Muitos "sim" → o custo
-# atual (~960min/mês) é o preço real de cobrir os jogos, não desperdício.
+# concurrency: nunca deixa duas execuções deste workflow rodarem ao mesmo
+# tempo — se o cron disparar enquanto uma execução está esperando/rodando,
+# a nova fica na fila em vez de rodar em paralelo (cancel-in-progress:
+# false, de propósito — cancelar cancelaria uma espera em andamento e
+# quebraria a cadeia). Isso é o que impede a cadeia de se multiplicar.
+concurrency:
+  group: capture-closing-odds
+  cancel-in-progress: false
+
 on:
   schedule:
-    # Minutos fora de :00/:30 de propósito — esses são os mais concorridos na
-    # fila de cron do GitHub Actions e sofrem mais atraso. Mesmo intervalo de
-    # 30min e mesmas bandas de horário, só deslocado pra minuto 7/37.
-    - cron: '7,37 16-23 * * *'
-    - cron: '7,37 0-5 * * *'
-    - cron: '7 6,9,12,15 * * *'
+    - cron: '23 */3 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
+  # O disparo da próxima execução (workflow_dispatch via API, ver
+  # triggerNextRun() no script) usa GH_PAT, não o GITHUB_TOKEN automático —
+  # este bloco de permissions não afeta esse disparo. O escopo de GH_PAT
+  # precisa incluir Actions: write (PAT fine-grained) ou "workflow" (PAT
+  # clássico) pra isso funcionar.
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -58,6 +41,11 @@ env:
 jobs:
   capture:
     runs-on: ubuntu-latest
+    # Teto de execução do GitHub Actions em runner hospedado é 6h (360min),
+    # não configurável pra cima. MAX_JOB_WAIT_MS no script já é 5h com
+    # margem — este timeout é só uma rede de segurança adicional pra nunca
+    # chegar no cutoff duro da plataforma de um jeito abrupto.
+    timeout-minutes: 330
     steps:
       - name: Checkout repositório
         uses: actions/checkout@v4
@@ -76,16 +64,20 @@ jobs:
           mkdir -p odds_history
           git checkout origin/data -- 'odds_history/model_ledger_*.json' 2>/dev/null || true
 
-      - name: Verificar se há evento na janela de captura
+      - name: Verificar se há evento no alcance da espera
         id: gate
+        # Mesmo alcance que pipeline/capture_closing_odds.js usa pra decidir
+        # se espera (MAX_JOB_WAIT_MS + TARGET_LEAD_MS) — não só a janela de
+        # captura de 2h, já que agora a execução pode esperar até 5h por um
+        # evento que ainda não chegou perto do início.
         run: |
           node -e "
           const fs = require('fs');
           const files = fs.readdirSync('odds_history').filter(f => f.startsWith('model_ledger_') && f.endsWith('.json'));
           const now = Date.now();
-          const BEFORE_MS = 2 * 60 * 60 * 1000;
-          const AFTER_MS  = 10 * 60 * 1000;
-          let pendentes = 0, naJanela = 0;
+          const AFTER_MS = 10 * 60 * 1000;
+          const MAX_WAIT_MS = 5 * 60 * 60 * 1000 + 3 * 60 * 1000;
+          let pendentes = 0, alcancaveis = 0;
           for (const f of files) {
             let entries;
             try { entries = JSON.parse(fs.readFileSync('odds_history/' + f, 'utf-8')); } catch { continue; }
@@ -96,12 +88,12 @@ jobs:
               if (isNaN(commence)) continue;
               pendentes++;
               const delta = commence - now;
-              if (delta <= BEFORE_MS && delta >= -AFTER_MS) naJanela++;
+              if (delta >= -AFTER_MS && delta <= MAX_WAIT_MS) alcancaveis++;
             }
           }
-          const hasEvent = naJanela > 0;
-          console.log('[gate] ' + naJanela + ' de ' + pendentes + ' indicação(ões) pendente(s) sem odd de fechamento estão dentro da janela agora.');
-          console.log('[gate] evento na janela: ' + (hasEvent ? 'sim' : 'não'));
+          const hasEvent = alcancaveis > 0;
+          console.log('[gate] ' + alcancaveis + ' de ' + pendentes + ' indicação(ões) pendente(s) sem odd de fechamento estão no alcance da espera agora.');
+          console.log('[gate] evento no alcance: ' + (hasEvent ? 'sim' : 'não'));
           fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_event=' + hasEvent + '\n');
           "
 
@@ -130,6 +122,8 @@ jobs:
       - name: Capturar odds de fechamento e calcular CLV
         if: steps.gate.outputs.has_event == 'true'
         run: node pipeline/capture_closing_odds.js
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
 
       - name: Salvar histórico central atualizado na branch data
         if: steps.gate.outputs.has_event == 'true'
