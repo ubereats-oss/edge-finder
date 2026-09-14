@@ -20,6 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _saved = false;
   bool _geminiSaved = false;
   bool _geminiObscure = true;
+  bool _hasGeminiKey = false;
   bool _rootPathSaved = false;
   bool _syncRunning = false;
 
@@ -31,12 +32,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _load() {
     final value = PrefsService.getBanca();
-    final geminiKey = PrefsService.getGeminiKey();
     final rootPath = PrefsService.getProjectRootPath();
     setState(() {
       _banca = value;
       _controller.text = value > 0 ? value.toStringAsFixed(2) : '';
-      _geminiController.text = geminiKey;
+      // Campo da chave Gemini começa sempre vazio — nunca pré-preenche nem
+      // exibe a chave já salva, só indica se existe uma (ver _hasGeminiKey).
+      _hasGeminiKey = PrefsService.hasGeminiKey();
       _rootPathController.text = rootPath;
     });
   }
@@ -62,8 +64,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _saveGeminiKey() {
-    PrefsService.setGeminiKey(_geminiController.text.trim());
-    setState(() => _geminiSaved = true);
+    final value = _geminiController.text.trim();
+    PrefsService.setGeminiKey(value);
+    setState(() {
+      _geminiSaved = true;
+      _hasGeminiKey = value.isNotEmpty;
+      _geminiController.clear();
+    });
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) setState(() => _geminiSaved = false);
     });
@@ -303,6 +310,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       setState(() => _geminiObscure = !_geminiObscure),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _hasGeminiKey
+                ? '✓ Chave salva. Deixe em branco e salve pra remover.'
+                : 'Nenhuma chave salva — avaliação por IA fica indisponível.',
+            style: TextStyle(
+              color: _hasGeminiKey
+                  ? const Color(0xFF4CAF50)
+                  : const Color(0xFF666666),
+              fontSize: 12,
             ),
           ),
           const SizedBox(height: 16),
