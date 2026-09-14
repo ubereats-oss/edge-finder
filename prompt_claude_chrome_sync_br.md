@@ -50,7 +50,9 @@ Repita para todos os jogos.
 Faça um POST para:
 `https://southamerica-east1-odds-app-edge.cloudfunctions.net/syncOddsBr`
 
-Headers: `Content-Type: application/json`
+Headers:
+- `Content-Type: application/json`
+- `X-Sync-Secret: <valor configurado em SYNC_ODDS_BR_SECRET>` — pergunte esse valor a quem está rodando este prompt, nunca invente nem reutilize um valor de uma sessão anterior. Sem esse header (ou com valor errado), a Cloud Function rejeita a requisição com 401 e não grava nada.
 
 Body:
 ```json

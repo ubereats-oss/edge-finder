@@ -1,9 +1,19 @@
 const { onRequest } = require('firebase-functions/v2/https');
+const { defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+const crypto = require('crypto');
 
 initializeApp();
 const db = getFirestore();
+
+// Segredo compartilhado exigido no header X-Sync-Secret de toda chamada a
+// syncOddsBr — guardado na configuração de segredos do Firebase (`firebase
+// functions:secrets:set SYNC_ODDS_BR_SECRET`), nunca no código. Ver o
+// comentário acima de `exports.syncOddsBr` pra quem precisa chamar essa
+// function e o que configurar.
+const SYNC_ODDS_BR_SECRET = defineSecret('SYNC_ODDS_BR_SECRET');
+const SYNC_SECRET_HEADER = 'X-Sync-Secret';
 
 // ── Tabelas de calibração ─────────────────────────────────────────────────────
 const CALIB_TABLES = {
@@ -142,8 +152,60 @@ function findPlayer(propPlayer, scrapedOdds) {
   return null;
 }
 
+// ── Segurança / validação de entrada ────────────────────────────────────────
+
+// Comparação em tempo constante — evita que o tempo de resposta revele
+// quantos caracteres do segredo estavam corretos.
+function safeEqual(a, b) {
+  const bufA = Buffer.from(String(a), 'utf8');
+  const bufB = Buffer.from(String(b), 'utf8');
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
+function isFiniteNumber(n) {
+  return typeof n === 'number' && Number.isFinite(n);
+}
+
+// { over, under, line } — over/under são odds decimais (sempre > 1 no
+// mercado real; teto de 1000 só como sanidade contra valor absurdo/typo).
+function isValidOddsEntry(v) {
+  return v !== null && typeof v === 'object' && !Array.isArray(v)
+    && isFiniteNumber(v.over) && v.over > 1 && v.over < 1000
+    && isFiniteNumber(v.under) && v.under > 1 && v.under < 1000
+    && isFiniteNumber(v.line);
+}
+
+// odds: { "Nome do Jogador": { prop: {over, under, line}, ... }, ... } —
+// rejeita qualquer coisa fora desse formato, incluindo objeto vazio.
+function isValidOddsPayload(odds) {
+  if (!odds || typeof odds !== 'object' || Array.isArray(odds)) return false;
+  const players = Object.keys(odds);
+  if (!players.length) return false;
+  for (const player of players) {
+    if (typeof player !== 'string' || !player.trim()) return false;
+    const props = odds[player];
+    if (!props || typeof props !== 'object' || Array.isArray(props)) return false;
+    const propKeys = Object.keys(props);
+    if (!propKeys.length) return false;
+    for (const propKey of propKeys) {
+      if (!isValidOddsEntry(props[propKey])) return false;
+    }
+  }
+  return true;
+}
+
 /**
  * POST /syncOddsBr
+ *
+ * Chamada manual/semiautomática (script de scraping via agente + browser,
+ * ver prompt_claude_chrome_sync_br.md na raiz do repo) — não é chamada por
+ * nenhuma página web pública, por isso CORS fica desabilitado.
+ *
+ * Requer o header X-Sync-Secret com o valor configurado no segredo
+ * SYNC_ODDS_BR_SECRET (`firebase functions:secrets:set SYNC_ODDS_BR_SECRET`).
+ * Sem o header, ou com valor errado, a requisição é rejeitada com 401
+ * genérico antes de tocar no Firestore.
  *
  * Body JSON:
  * {
@@ -159,21 +221,33 @@ function findPlayer(propPlayer, scrapedOdds) {
  * { "updated": 3, "removed": 1, "unchanged": 12 }
  */
 exports.syncOddsBr = onRequest(
-  { region: 'southamerica-east1', cors: true },
+  { region: 'southamerica-east1', cors: false, secrets: [SYNC_ODDS_BR_SECRET] },
   async (req, res) => {
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { sport, odds } = req.body;
-
-    if (!sport || !odds) {
-      return res.status(400).json({ error: 'Campos obrigatórios: sport, odds' });
+    // Segredo compartilhado — validado antes de qualquer leitura/escrita no
+    // Firestore. Resposta genérica (não diferencia "faltando" de "errado")
+    // e o log nunca inclui o valor recebido nem o configurado.
+    const expectedSecret = SYNC_ODDS_BR_SECRET.value() || '';
+    const providedSecret = req.get(SYNC_SECRET_HEADER) || '';
+    if (!expectedSecret || !providedSecret || !safeEqual(providedSecret, expectedSecret)) {
+      console.warn(`[syncOddsBr] requisição rejeitada: segredo ausente ou inválido (ip=${req.ip ?? 'desconhecido'}).`);
+      return res.status(401).json({ error: 'Unauthorized' });
     }
+
+    const { sport, odds } = req.body || {};
 
     const cfg = SPORT_CONFIG[sport];
     if (!cfg) {
+      console.warn(`[syncOddsBr] requisição rejeitada: esporte inválido (sport=${JSON.stringify(sport)}).`);
       return res.status(400).json({ error: `Esporte inválido: ${sport}` });
+    }
+
+    if (!isValidOddsPayload(odds)) {
+      console.warn(`[syncOddsBr] requisição rejeitada: formato de odds inválido (sport=${sport}).`);
+      return res.status(400).json({ error: 'Campo odds ausente ou em formato inválido' });
     }
 
     const calibTable = CALIB_TABLES[cfg.calib] || CALIB_TABLES.nba;
