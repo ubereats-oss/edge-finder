@@ -30,6 +30,12 @@ jobs:
         env:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
       - name: Restaurar stats MLB
+        # Inclui o histórico central (odds_history/model_ledger_mlb_*.json)
+        # — sem isso, a calibração (pipeline/calibration.js) via
+        # model_mlb_props.js lia amostra zero do segmento (nada restaurado
+        # localmente) mesmo com calibração plena já acumulada na branch
+        # data, caindo em "em_amostra" e calculando edge/Kelly errados no
+        # resultado sincronizado com o Firestore.
         run: |
           git fetch origin data 2>/dev/null || true
           git show origin/data:mlb_player_stats.json.gz > /tmp/mlb_ps.gz 2>/dev/null && \
@@ -38,6 +44,21 @@ jobs:
             git show origin/data:$f > $f 2>/dev/null || true
           done
           git show origin/data:bets.json > bets.json 2>/dev/null || echo '[]' > bets.json
+          mkdir -p odds_history
+          git checkout origin/data -- 'odds_history/model_ledger_mlb_*.json' 2>/dev/null || true
+          node -e "
+          const fs = require('fs');
+          const dir = 'odds_history';
+          let total = 0, arquivos = 0;
+          if (fs.existsSync(dir)) {
+            for (const f of fs.readdirSync(dir)) {
+              if (!f.startsWith('model_ledger_mlb_') || !f.endsWith('.json')) continue;
+              arquivos++;
+              try { total += JSON.parse(fs.readFileSync(dir + '/' + f, 'utf-8')).length; } catch {}
+            }
+          }
+          console.log('[ledger] histórico central restaurado: ' + total + ' indicação(ões) em ' + arquivos + ' partição(ões).');
+          "
       - run: node pipeline/get_mlb_injuries.js
       - run: node pipeline/get_mlb_player_teams.js
       - run: node pipeline/get_mlb_props.js
@@ -51,26 +72,96 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       - name: Salvar dados na branch data
+        # Inclui o histórico central de indicações (odds_history/
+        # model_ledger_mlb_*.json) — sem isso, as indicações avaliadas por
+        # este workflow eram perdidas ao fim do job. Mesmo mecanismo de
+        # recuperação dos outros workflows: se o push for rejeitado porque a
+        # branch data avançou (ex.: capture_closing_odds.js gravou no meio
+        # tempo), recarrega o estado mais recente e reaplica só esta
+        # execução por cima dele, preservando closingOdds/clv que já
+        # existam — repete com espera crescente antes de desistir. Ver
+        # pipeline/reapply_ledger_changes.js.
         run: |
           cp .github/scripts/save_stats_gz.sh /tmp/save_stats_gz.sh
-          mkdir -p /tmp/data-save
-          gzip -n -c mlb_player_stats.json > /tmp/data-save/mlb_player_stats.json.gz 2>/dev/null || true
+          mkdir -p /tmp/data-save /tmp/data-save-gz /tmp/data-save/odds_history /tmp/ledger_scripts
+          gzip -n -c mlb_player_stats.json > /tmp/data-save-gz/mlb_player_stats.json.gz 2>/dev/null || true
           for f in mlb_player_team.json mlb_injuries_today.json bets.json; do
             [ -f "$f" ] && cp "$f" /tmp/data-save/ || true
           done
+          cp odds_history/model_ledger_mlb_*.json /tmp/data-save/odds_history/ 2>/dev/null || true
+          cp pipeline/reapply_ledger_changes.js pipeline/model_ledger.js /tmp/ledger_scripts/
+
+          node -e "
+          const fs = require('fs');
+          const dir = '/tmp/data-save/odds_history';
+          let total = 0, arquivos = 0;
+          if (fs.existsSync(dir)) {
+            for (const f of fs.readdirSync(dir)) {
+              if (!f.startsWith('model_ledger_mlb_') || !f.endsWith('.json')) continue;
+              arquivos++;
+              try { total += JSON.parse(fs.readFileSync(dir + '/' + f, 'utf-8')).length; } catch {}
+            }
+          }
+          console.log('[ledger] histórico central desta execução: ' + total + ' indicação(ões) em ' + arquivos + ' partição(ões).');
+          "
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin data 2>/dev/null || true
-          git checkout -b data-work origin/data --force 2>/dev/null || \
-            (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
-          for f in /tmp/data-save/*.gz; do
-            [ -f "$f" ] || continue
-            bash /tmp/save_stats_gz.sh "$(basename "$f" _player_stats.json.gz)" "$f" "$(basename "$f")"
+
+          attempt=1
+          max_attempts=6
+          delay=10
+          while true; do
+            git fetch origin data 2>/dev/null || true
+            git checkout -B data-work origin/data --force 2>/dev/null || \
+              (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+            mkdir -p odds_history
+
+            for f in /tmp/data-save-gz/*.gz; do
+              [ -f "$f" ] || continue
+              bash /tmp/save_stats_gz.sh "$(basename "$f" _player_stats.json.gz)" "$f" "$(basename "$f")"
+            done
+            cp /tmp/data-save/* . 2>/dev/null || true
+            if [ "$attempt" -gt 1 ]; then
+              node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/data-save/odds_history --retry
+            else
+              node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/data-save/odds_history
+            fi
+
+            odds_history_patterns=(model_ledger_mlb_*.json)
+            included_patterns=()
+            for pattern in "${odds_history_patterns[@]}"; do
+              matched=false
+              for f in odds_history/$pattern; do
+                [ -f "$f" ] || continue
+                git add "$f"
+                matched=true
+              done
+              [ "$matched" = true ] && included_patterns+=("$pattern")
+            done
+            for f in mlb_player_stats.json.gz mlb_player_team.json mlb_injuries_today.json bets.json; do
+              [ -f "$f" ] && git add "$f" || true
+            done
+            if [ ${#included_patterns[@]} -gt 0 ]; then
+              echo "[histórico central] padrões incluídos no commit: ${included_patterns[*]}"
+            else
+              echo "[histórico central] nenhum arquivo de odds_history nesta execução."
+            fi
+            if git diff --staged --quiet; then
+              echo "Sem mudanças"
+              break
+            fi
+            git commit -m "data-mlb-early: $(date -u '+%Y-%m-%d %H:%M') UTC"
+            if git push origin data-work:data; then
+              [ "$attempt" -gt 1 ] && echo "[recuperação] gravação concluída após $attempt tentativa(s)."
+              break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "Falha ao gravar dados na branch data após $max_attempts tentativas." >&2
+              exit 1
+            fi
+            echo "[recuperação] push rejeitado (branch data avançou) — tentativa $attempt/$max_attempts, nova tentativa em ${delay}s."
+            sleep "$delay"
+            delay=$((delay * 2))
+            attempt=$((attempt + 1))
           done
-          rm -f /tmp/data-save/*.gz
-          cp /tmp/data-save/* . 2>/dev/null || true
-          for f in mlb_player_stats.json.gz mlb_player_team.json mlb_injuries_today.json bets.json; do
-            [ -f "$f" ] && git add "$f" || true
-          done
-          git diff --staged --quiet && echo "Sem mudanças" || git commit -m "data-mlb-early: $(date -u '+%Y-%m-%d %H:%M') UTC"
-          git push origin data-work:data
