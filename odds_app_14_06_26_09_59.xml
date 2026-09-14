@@ -12527,7 +12527,7 @@ class PrefsService {
 
   static const _envGeminiKey = String.fromEnvironment(
     'GEMINI_API_KEY',
-    defaultValue: 'AIzaSyAqHhpVvCZtIRu0Z9Cw8aYVVeBcCcTPYCI',
+    defaultValue: '',
   );
 
   static String getGeminiKey() {

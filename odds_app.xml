@@ -16781,7 +16781,7 @@ This section contains the contents of the repository's files.
 57: 
 58:   static const _envGeminiKey = String.fromEnvironment(
 59:     'GEMINI_API_KEY',
-60:     defaultValue: 'AIzaSyAqHhpVvCZtIRu0Z9Cw8aYVVeBcCcTPYCI',
+60:     defaultValue: '',
 61:   );
 62: 
 63:   static String getGeminiKey() {
