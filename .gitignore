@@ -8,8 +8,9 @@ node_modules/
 !ios/Runner/Assets.xcassets/**/Contents.json
 !web/manifest.json
 
-# Histórico de odds (grande demais para Git)
+# Histórico central de indicações e histórico de odds (grande demais para Git)
 odds_history/
+odds_snapshots/
 
 # Flutter build
 build/

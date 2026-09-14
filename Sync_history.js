@@ -10,7 +10,7 @@ for (const line of fs.readFileSync('.env', 'utf-8').split('\n')) {
 
 const GITHUB_REPO = process.env.GITHUB_REPO;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const HISTORY_DIR = path.join(__dirname, 'odds_history');
+const HISTORY_DIR = path.join(__dirname, 'odds_snapshots');
 
 if (!GITHUB_TOKEN || !GITHUB_REPO) {
   console.error('ERRO: GITHUB_TOKEN e GITHUB_REPO devem estar no .env');
@@ -81,9 +81,9 @@ async function main() {
     fs.mkdirSync(extractDir);
     execSync(`tar -xzf "${tarFile}" -C "${extractDir}"`, { stdio: 'pipe' });
 
-    const histDir = path.join(extractDir, 'odds_history');
+    const histDir = path.join(extractDir, 'odds_snapshots');
     if (!fs.existsSync(histDir)) {
-      console.log('Pasta odds_history não encontrada no arquivo.');
+      console.log('Pasta odds_snapshots não encontrada no arquivo.');
       return;
     }
 

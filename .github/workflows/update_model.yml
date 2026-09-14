@@ -60,13 +60,23 @@ jobs:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
 
       - name: Restaurar histórico anterior
+        # Histórico de odds (h2h/props) fica em odds_snapshots/, separado de
+        # odds_history/ (histórico central de indicações, restaurado no
+        # próximo passo). Tarball antigo ainda empacotado com a pasta
+        # odds_history/ por dentro: migra o conteúdo pra odds_snapshots/
+        # antes de seguir, senão contaminaria o histórico central.
         run: |
           git fetch origin history 2>/dev/null && \
           git show origin/history:odds_history.tar.gz > /tmp/odds_history.tar.gz 2>/dev/null && \
           tar -xzf /tmp/odds_history.tar.gz -C . 2>/dev/null && \
           echo "Histórico restaurado" || \
           echo "Sem histórico anterior"
-          mkdir -p odds_history
+          mkdir -p odds_snapshots
+          if [ -d odds_history ]; then
+            echo "Tarball com estrutura antiga (odds_history/) — migrando pra odds_snapshots/"
+            mv odds_history/* odds_snapshots/ 2>/dev/null || true
+            rmdir odds_history 2>/dev/null || true
+          fi
 
       - name: Restaurar dados da branch data
         # Inclui o histórico central (odds_history/model_ledger_*.json) —
