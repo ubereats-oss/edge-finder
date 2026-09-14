@@ -29,6 +29,14 @@ module.exports = {
   // real — a indicação é descartada, não publicada.
   EDGE_CAP_PCT: 40,
 
+  // Piso mínimo de edge (%) pra publicar. Abaixo disso a indicação continua
+  // registrada no histórico central (com motivo edge_abaixo_limiar), só não
+  // é oferecida como aposta — mesmo padrão que model_mlb_props.js (15),
+  // model_nhl_props.js (15) e model_nba_props_br.js (10) já aplicam, cada
+  // um com seu próprio valor local. Este aqui é o piso central usado por
+  // model_nba_props.js e model_nfl_props.js, que não tinham piso nenhum.
+  MIN_EDGE_PCT: 15,
+
   // Máximo de indicações publicadas por jogo (evento). Acima disso, ficam só
   // as de maior edge; o resto é rejeitado por essa guarda.
   MAX_BETS_PER_GAME: 3,

@@ -178,11 +178,13 @@ for (const prop of props) {
   const inefficientMarket = !stats.lowSample && edgePct >= INEFFICIENT_MARKET_EDGE;
 
   const segmentDisabled = riskConfig.isSegmentDisabled(ESPORTE, prop.prop);
+  const passedMinEdge   = edgePct >= riskConfig.MIN_EDGE_PCT;
   const edgeTooHigh     = edgePct > riskConfig.EDGE_CAP_PCT;
 
-  let published = !segmentDisabled && !edgeTooHigh;
+  let published = passedMinEdge && !segmentDisabled && !edgeTooHigh;
   let rejectionReason = null;
   if (segmentDisabled) rejectionReason = ledger.REJECTION_REASONS.SEGMENTO_DESABILITADO;
+  else if (!passedMinEdge) rejectionReason = ledger.REJECTION_REASONS.EDGE_ABAIXO_LIMIAR;
   else if (edgeTooHigh) rejectionReason = ledger.REJECTION_REASONS.GUARDA_EDGE_MAXIMO;
 
   candidates.push({
