@@ -26003,8 +26003,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.89,
+    "clv": 1.59
   },
   {
     "_key": "5ad8135dc2b5f27de0b777acd317855a|Courtland Sutton|receptionYards|31.5|Under",
