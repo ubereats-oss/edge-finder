@@ -6865,8 +6865,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.67,
+    "clv": 11.98
   },
   {
     "_key": "5ad8135dc2b5f27de0b777acd317855a|Patrick Mahomes|rushYards|14.5|Over",
