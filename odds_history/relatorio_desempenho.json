@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-14T19:47:01.629Z",
+  "generatedAt": "2026-09-15T15:02:40.235Z",
   "rows": [
     {
       "esporte": "americanfootball/nfl",
@@ -30,23 +30,23 @@
       "clvComOdd": 2,
       "semClv": 0,
       "segmentState": "calibrado",
-      "sampleSize": 78,
+      "sampleSize": 96,
       "faltamParaCalibrar": 0
     },
     {
       "esporte": "americanfootball/nfl",
       "market": "passYards",
       "edgeBucket": "0-5%",
-      "nResolvidasValidas": 12,
-      "nBinarias": 12,
-      "winRateReal": 33.3,
-      "winRateModelo": 59.9,
-      "roi": -56.1,
+      "nResolvidasValidas": 15,
+      "nBinarias": 15,
+      "winRateReal": 46.7,
+      "winRateModelo": 59.1,
+      "roi": -22.6,
       "clvMedio": 0.27,
       "clvComOdd": 2,
-      "semClv": 10,
+      "semClv": 13,
       "segmentState": "calibrado",
-      "sampleSize": 78,
+      "sampleSize": 96,
       "faltamParaCalibrar": 0
     },
     {
@@ -62,7 +62,7 @@
       "clvComOdd": 1,
       "semClv": 4,
       "segmentState": "calibrado",
-      "sampleSize": 78,
+      "sampleSize": 96,
       "faltamParaCalibrar": 0
     },
     {
@@ -78,7 +78,7 @@
       "clvComOdd": 1,
       "semClv": 1,
       "segmentState": "calibrado",
-      "sampleSize": 84,
+      "sampleSize": 88,
       "faltamParaCalibrar": 0
     },
     {
@@ -94,23 +94,23 @@
       "clvComOdd": 0,
       "semClv": 2,
       "segmentState": "calibrado",
-      "sampleSize": 278,
+      "sampleSize": 320,
       "faltamParaCalibrar": 0
     },
     {
       "esporte": "americanfootball/nfl",
       "market": "receptionYards",
       "edgeBucket": "0-5%",
-      "nResolvidasValidas": 49,
-      "nBinarias": 44,
-      "winRateReal": 54.5,
-      "winRateModelo": 56.3,
-      "roi": 2.4,
+      "nResolvidasValidas": 50,
+      "nBinarias": 45,
+      "winRateReal": 55.6,
+      "winRateModelo": 56.4,
+      "roi": 3.1,
       "clvMedio": -0.11,
       "clvComOdd": 18,
-      "semClv": 31,
+      "semClv": 32,
       "segmentState": "calibrado",
-      "sampleSize": 278,
+      "sampleSize": 320,
       "faltamParaCalibrar": 0
     },
     {
@@ -126,7 +126,7 @@
       "clvComOdd": 1,
       "semClv": 7,
       "segmentState": "calibrado",
-      "sampleSize": 278,
+      "sampleSize": 320,
       "faltamParaCalibrar": 0
     }
   ]
