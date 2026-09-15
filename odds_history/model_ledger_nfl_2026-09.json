@@ -6931,8 +6931,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": 3.24
   },
   {
     "_key": "8c94552d022acec4a0458d70c19d3da9|TreVeyon Henderson|rushYards|20.5|Over",
@@ -11014,8 +11014,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.73
   },
   {
     "_key": "5ad8135dc2b5f27de0b777acd317855a|RJ Harvey|receptionYards|16.5|Over",
