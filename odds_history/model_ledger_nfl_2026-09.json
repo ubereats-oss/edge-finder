@@ -11047,8 +11047,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.6
   },
   {
     "_key": "5ad8135dc2b5f27de0b777acd317855a|Noah Gray|receptionYards|9.5|Over",
