@@ -26036,8 +26036,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.55,
+    "clv": 3.92
   },
   {
     "_key": "5ad8135dc2b5f27de0b777acd317855a|Courtland Sutton|receptionYards|36.5|Under",
@@ -26069,8 +26069,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.15,
+    "clv": 2.33
   },
   {
     "_key": "5ad8135dc2b5f27de0b777acd317855a|Courtland Sutton|receptionYards|40.5|Over",
