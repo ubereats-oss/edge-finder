@@ -208,9 +208,13 @@
     "runId": "2026-09-15T21:03:28.016Z",
     "evaluatedAt": "2026-09-15T21:03:28.540Z",
     "firstEvaluatedAt": "2026-09-15T21:03:28.540Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 7,
+      "apuradoEm": "2026-09-16T15:00:08.997Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
