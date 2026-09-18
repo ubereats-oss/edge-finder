@@ -27127,8 +27127,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.19
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Dawson Knox|receptionYards|12.5|Over",
@@ -27259,8 +27259,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.74,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Dawson Knox|receptions|1.5|Over",
@@ -27292,8 +27292,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.27,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Joshua Palmer|receptions|1.5|Over",
@@ -27325,8 +27325,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.8,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Keon Coleman|receptions|1.5|Over",
@@ -27358,8 +27358,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.4,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Jahmyr Gibbs|rushYards|90.5|Over",
@@ -28645,8 +28645,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.61,
+    "clv": 1.86
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Jahmyr Gibbs|rushYards|88.5|Over",
@@ -28678,8 +28678,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Jahmyr Gibbs|rushYards|86.5|Under",
@@ -32671,8 +32671,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.85,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Jared Goff|passYards|278.5|Over",
@@ -32704,8 +32704,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.4,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Jared Goff|passYards|288.5|Over",
@@ -32737,8 +32737,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.7,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Josh Allen|passYards|283.5|Over",
@@ -32770,8 +32770,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.7,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Amon-Ra St. Brown|receptionYards|60.5|Under",
@@ -32803,8 +32803,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 3.05,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Amon-Ra St. Brown|receptionYards|100.5|Over",
@@ -32836,8 +32836,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.75,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|DJ Moore|receptionYards|67.5|Over",
@@ -33001,8 +33001,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.45,
+    "clv": -4.08
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Jahmyr Gibbs|receptionYards|41.5|Over",
@@ -33034,8 +33034,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.55,
+    "clv": 1.96
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Keon Coleman|receptionYards|14.5|Over",
@@ -33067,8 +33067,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.92,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Keon Coleman|receptionYards|15.5|Over",
@@ -33133,8 +33133,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Dawson Knox|receptionYards|11.5|Over",
@@ -33166,8 +33166,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Joshua Palmer|receptionYards|10.5|Over",
@@ -33199,8 +33199,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": -2.09
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Brock Wright|receptionYards|5.5|Over",
@@ -33232,8 +33232,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 3.83
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Brock Wright|receptionYards|6.5|Over",
@@ -33265,8 +33265,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Joshua Palmer|receptions|0.5|Over",
@@ -33298,8 +33298,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.48,
+    "clv": -1.35
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Jahmyr Gibbs|rushYards|87.5|Over",
@@ -33496,8 +33496,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|James Cook|rushYards|58.5|Under",
