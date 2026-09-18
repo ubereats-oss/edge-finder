@@ -282,9 +282,14 @@
     "runId": "2026-09-16T21:05:14.502Z",
     "evaluatedAt": "2026-09-16T21:05:14.970Z",
     "firstEvaluatedAt": "2026-09-16T21:05:14.970Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-18T14:32:22.781Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-17T15:01:38.567Z",
+  "generatedAt": "2026-09-18T14:32:47.676Z",
   "rows": [
     {
       "esporte": "americanfootball/nfl",
@@ -30,7 +30,7 @@
       "clvComOdd": 2,
       "semClv": 0,
       "segmentState": "calibrado",
-      "sampleSize": 96,
+      "sampleSize": 100,
       "faltamParaCalibrar": 0
     },
     {
@@ -46,7 +46,7 @@
       "clvComOdd": 2,
       "semClv": 13,
       "segmentState": "calibrado",
-      "sampleSize": 96,
+      "sampleSize": 100,
       "faltamParaCalibrar": 0
     },
     {
@@ -62,7 +62,7 @@
       "clvComOdd": 1,
       "semClv": 4,
       "segmentState": "calibrado",
-      "sampleSize": 96,
+      "sampleSize": 100,
       "faltamParaCalibrar": 0
     },
     {
@@ -78,7 +78,39 @@
       "clvComOdd": 1,
       "semClv": 1,
       "segmentState": "calibrado",
-      "sampleSize": 88,
+      "sampleSize": 94,
+      "faltamParaCalibrar": 0
+    },
+    {
+      "esporte": "americanfootball/nfl",
+      "market": "receptions",
+      "edgeBucket": "15-20%",
+      "nResolvidasValidas": 2,
+      "nBinarias": 2,
+      "winRateReal": 100,
+      "winRateModelo": 60.5,
+      "roi": 133.9,
+      "clvMedio": 0,
+      "clvComOdd": 2,
+      "semClv": 0,
+      "segmentState": "calibrado",
+      "sampleSize": 94,
+      "faltamParaCalibrar": 0
+    },
+    {
+      "esporte": "americanfootball/nfl",
+      "market": "receptions",
+      "edgeBucket": "20-25%",
+      "nResolvidasValidas": 1,
+      "nBinarias": 1,
+      "winRateReal": 0,
+      "winRateModelo": 60.3,
+      "roi": -100,
+      "clvMedio": 0,
+      "clvComOdd": 1,
+      "semClv": 0,
+      "segmentState": "calibrado",
+      "sampleSize": 94,
       "faltamParaCalibrar": 0
     },
     {
@@ -94,7 +126,7 @@
       "clvComOdd": 0,
       "semClv": 2,
       "segmentState": "calibrado",
-      "sampleSize": 320,
+      "sampleSize": 342,
       "faltamParaCalibrar": 0
     },
     {
@@ -110,7 +142,7 @@
       "clvComOdd": 18,
       "semClv": 32,
       "segmentState": "calibrado",
-      "sampleSize": 320,
+      "sampleSize": 342,
       "faltamParaCalibrar": 0
     },
     {
@@ -126,7 +158,7 @@
       "clvComOdd": 1,
       "semClv": 7,
       "segmentState": "calibrado",
-      "sampleSize": 320,
+      "sampleSize": 342,
       "faltamParaCalibrar": 0
     }
   ]
