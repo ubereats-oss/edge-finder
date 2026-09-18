@@ -27160,8 +27160,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": 1.05
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Keon Coleman|receptionYards|11.5|Over",
@@ -33331,8 +33331,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.07
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Jahmyr Gibbs|rushYards|86.5|Over",
