@@ -26995,8 +26995,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 3.83
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Isaac TeSlaa|receptionYards|16.5|Over",
