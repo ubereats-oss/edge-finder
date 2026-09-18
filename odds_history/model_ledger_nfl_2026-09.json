@@ -27193,8 +27193,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 3.28
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Keon Coleman|receptionYards|10.5|Over",
@@ -28579,8 +28579,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": 0
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Joshua Palmer|receptionYards|12.5|Over",
