@@ -30833,8 +30833,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.82,
+    "clv": 2.75
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|Drew Lock|passYards|207.5|Over",
@@ -37405,8 +37405,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.81,
+    "clv": 3.31
   },
   {
     "_key": "85ef85098ddd22fe4ecf45e7e3c0a9c0|Javonte Williams|rushYards|73.5|Over",
@@ -47140,8 +47140,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.6
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|George Holani|rushYards|32.5|Under",
@@ -48031,8 +48031,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.79,
+    "clv": 3.35
   },
   {
     "_key": "85ef85098ddd22fe4ecf45e7e3c0a9c0|Javonte Williams|rushYards|77.5|Under",
@@ -57271,8 +57271,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 0
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|Michael Wilson|receptionYards|27.5|Under",
