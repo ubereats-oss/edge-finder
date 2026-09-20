@@ -46876,8 +46876,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": 15.18
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|Rashid Shaheed|receptionYards|23.5|Over",
