@@ -49285,8 +49285,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.77,
+    "clv": 6.21
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|De'Von Achane|rushYards|63.5|Under",
