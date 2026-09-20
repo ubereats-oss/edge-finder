@@ -36613,8 +36613,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.07
   },
   {
     "_key": "71b3b83747589efdc5baef2c5cf811bf|Kirk Cousins|passYards|191.5|Over",
@@ -36679,8 +36679,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 3.21
   },
   {
     "_key": "71b3b83747589efdc5baef2c5cf811bf|Omarion Hampton|receptionYards|10.5|Over",
@@ -45985,8 +45985,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.6
   },
   {
     "_key": "71b3b83747589efdc5baef2c5cf811bf|Kirk Cousins|passYards|163.5|Under",
