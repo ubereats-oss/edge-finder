@@ -56545,8 +56545,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.81,
+    "clv": 3.87
   },
   {
     "_key": "71b3b83747589efdc5baef2c5cf811bf|Kirk Cousins|passYards|197.5|Over",
