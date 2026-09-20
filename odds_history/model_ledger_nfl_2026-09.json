@@ -48658,8 +48658,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 0
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|Mike Evans|receptionYards|40.5|Under",
