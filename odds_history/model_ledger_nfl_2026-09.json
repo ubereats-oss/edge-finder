@@ -33907,8 +33907,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 2.14
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Alvin Kamara|receptionYards|12.5|Over",
@@ -41101,8 +41101,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Josh Oliver|receptionYards|13.5|Over",
@@ -41134,8 +41134,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.89,
+    "clv": -0.53
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Josh Oliver|receptionYards|10.5|Over",
@@ -53410,8 +53410,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 14.97
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Andrei Iosivas|receptionYards|13.5|Over",
