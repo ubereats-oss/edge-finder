@@ -29051,8 +29051,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.51,
+    "clv": 7.95
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Tee Higgins|receptionYards|51.5|Over",
@@ -29810,8 +29810,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.36,
+    "clv": 3.68
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|DK Metcalf|receptionYards|50.5|Over",
@@ -35821,8 +35821,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 2.67
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Rico Dowdle|rushYards|33.5|Under",
@@ -35920,8 +35920,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": 0.52
   },
   {
     "_key": "fafc649c455e32a0f2ba1bd06e2039bc|Dallas Goedert|receptions|3.5|Over",
@@ -41167,8 +41167,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": -2.14
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|D'Andre Swift|receptionYards|10.5|Under",
@@ -51991,8 +51991,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": -1.08
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Noah Fant|receptionYards|11.5|Over",
