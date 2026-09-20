@@ -40243,8 +40243,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": -0.53
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Travis Etienne Jr.|rushYards|28.5|Over",
@@ -44170,8 +44170,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.9,
+    "clv": 0.53
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Romeo Doubs|receptionYards|38.5|Under",
