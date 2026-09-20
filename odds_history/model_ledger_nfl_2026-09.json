@@ -58459,8 +58459,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.74,
+    "clv": 7.47
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|Christian McCaffrey|receptionYards|41.5|Over",
