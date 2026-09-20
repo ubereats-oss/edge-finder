@@ -29084,8 +29084,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.73
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Tee Higgins|receptions|3.5|Over",
@@ -30371,8 +30371,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.19
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Courtland Sutton|receptionYards|43.5|Over",
@@ -51397,8 +51397,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.79,
+    "clv": 6.7
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Olamide Zaccheaus|receptionYards|8.5|Over",
