@@ -56182,8 +56182,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.19
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|J.K. Dobbins|rushYards|47.5|Over",
