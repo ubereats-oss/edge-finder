@@ -48625,8 +48625,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.81,
+    "clv": 3.87
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|Mike Evans|receptionYards|52.5|Over",
@@ -49318,8 +49318,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": -8.74
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|De'Von Achane|rushYards|68.5|Under",
@@ -58723,8 +58723,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 0.53
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|Deebo Samuel|receptionYards|36.5|Over",
