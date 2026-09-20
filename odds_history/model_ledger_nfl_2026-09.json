@@ -34039,8 +34039,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 3.21
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Travis Etienne Jr.|rushYards|40.5|Over",
@@ -34171,8 +34171,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 4.37
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Jordan Addison|receptionYards|34.5|Over",
@@ -34237,8 +34237,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.73
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|T.J. Hockenson|receptionYards|27.5|Over",
@@ -41200,8 +41200,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.8,
+    "clv": 7.22
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Aaron Jones|rushYards|70.5|Over",
@@ -42124,8 +42124,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": 1.62
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Woody Marks|rushYards|21.5|Over",
@@ -52090,8 +52090,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 4.28
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Alvin Kamara|receptions|1.5|Over",
