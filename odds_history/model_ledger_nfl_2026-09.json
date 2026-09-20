@@ -30965,8 +30965,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.81,
+    "clv": 3.31
   },
   {
     "_key": "85ef85098ddd22fe4ecf45e7e3c0a9c0|CeeDee Lamb|receptionYards|74.5|Over",
@@ -36844,8 +36844,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.82,
+    "clv": 3.3
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|Marvin Harrison Jr.|receptionYards|33.5|Over",
@@ -36877,8 +36877,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.19
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|Marvin Harrison Jr.|receptionYards|36.5|Over",
@@ -58921,8 +58921,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.78,
+    "clv": 6.18
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|Christian McCaffrey|rushYards|59.5|Over",
