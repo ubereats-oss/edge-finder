@@ -39847,8 +39847,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.93,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Noah Fant|receptionYards|16.5|Over",
@@ -41662,8 +41662,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.93,
+    "clv": 0
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Dalton Schultz|receptions|5.5|Under",
@@ -44236,8 +44236,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.6,
+    "clv": 0
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Romeo Doubs|receptionYards|34.5|Under",
@@ -44269,8 +44269,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.15,
+    "clv": 0
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Hunter Henry|receptionYards|27.5|Under",
@@ -44368,8 +44368,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.5,
+    "clv": 0
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Roman Wilson|receptionYards|32.5|Under",
