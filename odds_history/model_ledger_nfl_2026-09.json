@@ -42586,8 +42586,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.92,
+    "clv": -2.6
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Jalen McMillan|receptionYards|23.5|Over",
