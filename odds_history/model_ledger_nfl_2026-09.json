@@ -52123,8 +52123,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.54,
+    "clv": -1.3
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Noah Fant|receptions|1.5|Over",
