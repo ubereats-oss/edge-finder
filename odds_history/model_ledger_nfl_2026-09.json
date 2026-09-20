@@ -36250,8 +36250,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Pat Bryant|receptionYards|29.5|Over",
@@ -36316,8 +36316,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 3.83
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Evan Engram|receptionYards|23.5|Over",
@@ -36448,8 +36448,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.56,
+    "clv": 7.05
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Brian Thomas Jr|receptions|2.5|Under",
@@ -55984,8 +55984,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 4.37
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Pat Bryant|receptionYards|27.5|Under",
@@ -56446,8 +56446,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.07
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Chris Rodriguez Jr.|rushYards|22.5|Over",
