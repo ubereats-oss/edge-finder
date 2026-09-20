@@ -30899,8 +30899,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.89,
+    "clv": -0.53
   },
   {
     "_key": "85ef85098ddd22fe4ecf45e7e3c0a9c0|Dak Prescott|passYards|265.5|Over",
