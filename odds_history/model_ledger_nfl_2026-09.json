@@ -48592,8 +48592,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|Mike Evans|receptionYards|49.5|Over",
@@ -59053,8 +59053,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|De'Von Achane|rushYards|66.5|Under",
