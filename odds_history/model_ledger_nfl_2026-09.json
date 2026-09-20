@@ -44137,8 +44137,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 12.3
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Romeo Doubs|receptionYards|39.5|Under",
@@ -55126,8 +55126,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 12.3
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|DK Metcalf|receptionYards|47.5|Under",
@@ -55456,8 +55456,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 2.14
   },
   {
     "_key": "fafc649c455e32a0f2ba1bd06e2039bc|Calvin Ridley|receptionYards|17.5|Over",
