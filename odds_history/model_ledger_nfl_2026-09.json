@@ -37009,8 +37009,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.6
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|Cooper Kupp|receptions|2.5|Over",
