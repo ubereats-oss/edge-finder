@@ -30503,8 +30503,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.78,
+    "clv": 5.62
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Bhayshul Tuten|rushYards|51.5|Over",
