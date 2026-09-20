@@ -35029,8 +35029,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": 1.62
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Woody Marks|rushYards|26.5|Over",
@@ -51166,8 +51166,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 0.53
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Darren Waller|receptionYards|16.5|Over",
