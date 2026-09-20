@@ -54268,8 +54268,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": 0
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Quinshon Judkins|receptionYards|11.5|Under",
