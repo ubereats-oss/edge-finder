@@ -47206,8 +47206,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 4.37
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|George Holani|rushYards|21.5|Under",
