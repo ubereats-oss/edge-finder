@@ -36118,8 +36118,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 3.28
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Jakobi Meyers|receptionYards|37.5|Over",
@@ -55786,8 +55786,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.07
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Brian Thomas Jr|receptionYards|36.5|Under",
