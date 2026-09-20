@@ -27476,8 +27476,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": 3.24
   },
   {
     "_key": "85ef85098ddd22fe4ecf45e7e3c0a9c0|Dak Prescott|passYards|262.5|Over",
@@ -28820,8 +28820,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.9,
+    "clv": -0.53
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Drake London|receptionYards|56.5|Over",
@@ -28886,8 +28886,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.82,
+    "clv": 5.49
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Drake London|receptions|4.5|Over",
@@ -28919,8 +28919,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.74,
+    "clv": 4.6
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Chris Olave|receptions|6.5|Under",
@@ -29117,8 +29117,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.71,
+    "clv": -4.68
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Xavier Hutchinson|receptions|2.5|Under",
@@ -29150,8 +29150,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.2,
+    "clv": -2.27
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|David Montgomery|rushYards|67.5|Over",
@@ -29249,8 +29249,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.6
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Jerry Jeudy|receptionYards|29.5|Over",
@@ -29282,8 +29282,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Harold Fannin Jr.|receptionYards|35.5|Over",
@@ -29381,8 +29381,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.62,
+    "clv": 3.09
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Jerry Jeudy|receptions|2.5|Over",
@@ -29414,8 +29414,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.93,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jordan Love|passYards|252.5|Under",
@@ -29579,8 +29579,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Matthew Golden|receptionYards|49.5|Under",
@@ -29612,8 +29612,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 2.13
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Christian Watson|receptions|4.5|Under",
@@ -29645,8 +29645,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.65,
+    "clv": -1.82
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jonnu Smith|receptions|1.5|Over",
@@ -29678,8 +29678,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.1,
+    "clv": 7.14
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Matthew Golden|receptions|3.5|Under",
@@ -29711,8 +29711,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.31,
+    "clv": -5.63
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Braelon Allen|rushYards|24.5|Over",
@@ -29744,8 +29744,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Chris Brooks|rushYards|25.5|Over",
@@ -29777,8 +29777,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.93,
+    "clv": 0
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Aaron Rodgers|passTDs|0.5|Over",
@@ -33841,8 +33841,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.9,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Tyler Shough|passYards|231.5|Over",
@@ -33973,8 +33973,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.49,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Travis Etienne Jr.|receptions|1.5|Over",
@@ -34006,8 +34006,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.55,
+    "clv": 2.58
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Travis Etienne Jr.|rushYards|41.5|Over",
@@ -34072,8 +34072,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.93,
+    "clv": -1.04
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Alvin Kamara|rushYards|16.5|Under",
@@ -34303,8 +34303,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": 1.62
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Jauan Jennings|receptionYards|17.5|Over",
@@ -34468,8 +34468,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.6
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Josh Oliver|receptionYards|12.5|Over",
@@ -34501,8 +34501,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.73
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|D'Andre Swift|receptionYards|11.5|Over",
@@ -34534,8 +34534,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.92,
+    "clv": -0.52
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Rome Odunze|receptions|2.5|Over",
@@ -34567,8 +34567,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.78,
+    "clv": 2.25
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Jauan Jennings|receptions|1.5|Over",
@@ -34633,8 +34633,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": -1.64
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Cole Kmet|receptions|1.5|Over",
@@ -34666,8 +34666,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2,
+    "clv": 0
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Tee Higgins|receptionYards|53.5|Over",
@@ -34699,8 +34699,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 1.6
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Andrei Iosivas|receptionYards|14.5|Over",
@@ -34732,8 +34732,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Andrei Iosivas|receptionYards|15.5|Over",
@@ -34765,8 +34765,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 1.6
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Kayshon Boutte|receptionYards|32.5|Over",
@@ -34831,8 +34831,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.84,
+    "clv": 2.17
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|David Montgomery|receptionYards|11.5|Over",
@@ -34864,8 +34864,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.9,
+    "clv": 0
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|David Montgomery|receptionYards|12.5|Under",
@@ -34930,8 +34930,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.65,
+    "clv": 0
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Kayshon Boutte|receptions|2.5|Under",
@@ -34963,8 +34963,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.28,
+    "clv": 1.75
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|David Montgomery|rushYards|64.5|Over",
@@ -35161,8 +35161,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": 0
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Cade Otton|receptionYards|26.5|Over",
@@ -35227,8 +35227,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.71,
+    "clv": 0
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Chris Godwin|receptions|3.5|Over",
@@ -35260,8 +35260,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.8,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jordan Love|passYards|255.5|Over",
@@ -35392,8 +35392,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": -1.57
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Chris Brooks|receptionYards|6.5|Under",
@@ -35458,8 +35458,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": 2.09
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Braelon Allen|rushYards|23.5|Under",
@@ -35557,8 +35557,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": -0.53
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Hunter Henry|receptionYards|37.5|Under",
@@ -35854,8 +35854,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": 1.62
   },
   {
     "_key": "fafc649c455e32a0f2ba1bd06e2039bc|Tyjae Spears|receptionYards|14.5|Under",
@@ -35887,8 +35887,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 3.83
   },
   {
     "_key": "fafc649c455e32a0f2ba1bd06e2039bc|Tony Pollard|receptionYards|8.5|Over",
@@ -35953,8 +35953,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.72,
+    "clv": 5.23
   },
   {
     "_key": "fafc649c455e32a0f2ba1bd06e2039bc|Tony Pollard|receptions|1.5|Over",
@@ -35986,8 +35986,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.11,
+    "clv": -6.16
   },
   {
     "_key": "fafc649c455e32a0f2ba1bd06e2039bc|Tony Pollard|rushYards|42.5|Under",
@@ -38527,8 +38527,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.4,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Bryce Young|passYards|251.5|Over",
@@ -38560,8 +38560,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.75,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Cooper Rush|passYards|185.5|Under",
@@ -38626,8 +38626,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Drake London|receptionYards|53.5|Over",
@@ -38824,8 +38824,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.05,
+    "clv": 4.88
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Jalen Coker|receptionYards|59.5|Over",
@@ -38857,8 +38857,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.35,
+    "clv": 4.26
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Kyle Pitts|receptionYards|31.5|Over",
@@ -38989,8 +38989,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.86,
+    "clv": 1.08
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Xavier Legette|receptionYards|16.5|Over",
@@ -39022,8 +39022,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Chuba Hubbard|receptionYards|11.5|Over",
@@ -39121,8 +39121,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2,
+    "clv": 5
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Chuba Hubbard|receptions|1.5|Over",
@@ -39352,8 +39352,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 3.4,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Brian Robinson Jr.|rushYards|20.5|Under",
@@ -39385,8 +39385,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.45,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Tyler Shough|passYards|229.5|Under",
@@ -39451,8 +39451,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.9,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Tyler Shough|passYards|199.5|Under",
@@ -39748,8 +39748,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Juwan Johnson|receptionYards|26.5|Under",
@@ -39946,8 +39946,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.89,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Travis Etienne Jr.|receptionYards|10.5|Over",
@@ -39979,8 +39979,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.93,
+    "clv": -4.15
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Derrick Henry|receptionYards|6.5|Over",
@@ -40012,8 +40012,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Mark Andrews|receptions|4.5|Under",
@@ -40045,8 +40045,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.67,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Derrick Henry|receptions|0.5|Over",
@@ -40177,8 +40177,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.6,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Travis Etienne Jr.|rushYards|38.5|Over",
@@ -40474,8 +40474,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Caleb Williams|passYards|250.5|Over",
@@ -40738,8 +40738,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 0
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Colston Loveland|receptionYards|52.5|Under",
@@ -40936,8 +40936,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.6
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Jordan Addison|receptionYards|29.5|Under",
@@ -41035,8 +41035,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.55,
+    "clv": 1.96
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Rome Odunze|receptionYards|34.5|Under",
@@ -41068,8 +41068,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.1,
+    "clv": 2.38
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|T.J. Hockenson|receptionYards|28.5|Over",
@@ -41398,8 +41398,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 3.1,
+    "clv": 0
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Ja'Marr Chase|receptionYards|66.5|Under",
@@ -41431,8 +41431,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.3,
+    "clv": 0
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Tee Higgins|receptionYards|43.5|Under",
@@ -41464,8 +41464,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.45,
+    "clv": 0
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Tee Higgins|receptionYards|48.5|Under",
@@ -41497,8 +41497,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.1,
+    "clv": 0
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Dalton Schultz|receptionYards|57.5|Over",
@@ -41728,8 +41728,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.37,
+    "clv": -2.53
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|David Montgomery|rushYards|64.5|Under",
@@ -42091,8 +42091,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.93,
+    "clv": -1.04
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Woody Marks|rushYards|28.5|Over",
@@ -42685,8 +42685,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Emeka Egbuka|receptions|4.5|Under",
@@ -42718,8 +42718,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.57,
+    "clv": 5.1
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Jalen McMillan|receptions|1.5|Over",
@@ -42751,8 +42751,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.7,
+    "clv": -12.35
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Quinshon Judkins|receptions|2.5|Under",
@@ -42784,8 +42784,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.56,
+    "clv": 0
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Bucky Irving|rushYards|64.5|Under",
@@ -42982,8 +42982,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.9,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jordan Love|passYards|254.5|Over",
@@ -43015,8 +43015,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jordan Love|passYards|246.5|Under",
@@ -43411,8 +43411,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": -1.6
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Matthew Golden|receptionYards|48.5|Under",
@@ -43444,8 +43444,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Matthew Golden|receptionYards|45.5|Under",
@@ -43642,8 +43642,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.65,
+    "clv": 1.89
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jayden Reed|receptionYards|32.5|Under",
@@ -43675,8 +43675,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.2,
+    "clv": 2.27
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Chris Brooks|receptionYards|8.5|Under",
@@ -43708,8 +43708,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Chris Brooks|rushYards|25.5|Under",
@@ -43741,8 +43741,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.86,
+    "clv": 1.08
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Chris Brooks|rushYards|24.5|Under",
@@ -43807,8 +43807,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.3,
+    "clv": 2.17
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Chris Brooks|rushYards|30.5|Under",
@@ -43840,8 +43840,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.56,
+    "clv": 1.92
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Chris Brooks|rushYards|35.5|Under",
@@ -43873,8 +43873,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.38,
+    "clv": 1.45
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Braelon Allen|rushYards|24.5|Under",
@@ -43906,8 +43906,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Drake Maye|passYards|194.5|Under",
@@ -44401,8 +44401,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.92,
+    "clv": -2.08
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Roman Wilson|receptionYards|30.5|Under",
@@ -44434,8 +44434,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.95,
+    "clv": 0
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|TreVeyon Henderson|receptionYards|7.5|Over",
@@ -44500,8 +44500,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.77,
+    "clv": 19.77
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Rhamondre Stevenson|rushYards|38.5|Under",
@@ -44533,8 +44533,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.65,
+    "clv": 0
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Jaylen Warren|rushYards|38.5|Over",
@@ -44830,8 +44830,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 1.6
   },
   {
     "_key": "fafc649c455e32a0f2ba1bd06e2039bc|Tony Pollard|rushYards|42.5|Over",
@@ -50770,8 +50770,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.89,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Cooper Rush|passYards|183.5|Over",
@@ -50803,8 +50803,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0.53
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Drake London|receptionYards|54.5|Over",
@@ -50836,8 +50836,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Drake London|receptionYards|47.5|Under",
@@ -50869,8 +50869,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.45,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Drake London|receptionYards|52.5|Under",
@@ -50902,8 +50902,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.1,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Drake London|receptionYards|62.5|Over",
@@ -50935,8 +50935,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.1,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Jalen Coker|receptionYards|51.5|Over",
@@ -51199,8 +51199,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Jahan Dotson|receptionYards|16.5|Over",
@@ -51232,8 +51232,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.89,
+    "clv": -1.59
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Jahan Dotson|receptionYards|15.5|Over",
@@ -51265,8 +51265,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Xavier Legette|receptionYards|13.5|Over",
@@ -51430,8 +51430,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Bijan Robinson|receptions|5.5|Under",
@@ -51463,8 +51463,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.64,
+    "clv": 0.61
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Olamide Zaccheaus|receptions|1.5|Over",
@@ -51496,8 +51496,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.24,
+    "clv": -8.93
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Bijan Robinson|rushYards|61.5|Under",
@@ -51562,8 +51562,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Chuba Hubbard|rushYards|57.5|Under",
@@ -51859,8 +51859,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 1.06
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Juwan Johnson|receptionYards|38.5|Under",
@@ -51925,8 +51925,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.65,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Juwan Johnson|receptionYards|32.5|Under",
@@ -51958,8 +51958,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.2,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Noah Fant|receptionYards|13.5|Over",
@@ -52057,8 +52057,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": -2.09
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Derrick Henry|receptionYards|5.5|Under",
@@ -52156,8 +52156,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.59,
+    "clv": 0
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Derrick Henry|rushYards|75.5|Under",
@@ -52651,8 +52651,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 0.53
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Luther Burden III|receptionYards|62.5|Over",
@@ -52717,8 +52717,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.89,
+    "clv": 1.06
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Jordan Addison|receptionYards|39.5|Over",
@@ -52750,8 +52750,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Jordan Addison|receptionYards|30.5|Under",
@@ -52783,8 +52783,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.6,
+    "clv": 0
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Jordan Addison|receptionYards|35.5|Under",
@@ -52816,8 +52816,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.15,
+    "clv": 0
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Rome Odunze|receptionYards|28.5|Under",
@@ -52948,8 +52948,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": 2.16
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Josh Oliver|receptionYards|13.5|Under",
@@ -52981,8 +52981,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.9,
+    "clv": 1.05
   },
   {
     "_key": "0283a29e1b38ef78b29b904fd56a16dd|Aaron Jones|rushYards|66.5|Over",
@@ -53278,8 +53278,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.7,
+    "clv": 1.85
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Kayshon Boutte|receptionYards|34.5|Over",
@@ -53443,8 +53443,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.07
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Andrei Iosivas|receptionYards|15.5|Under",
@@ -53476,8 +53476,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 2.14
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|David Montgomery|receptionYards|10.5|Over",
@@ -53542,8 +53542,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.85,
+    "clv": 3.78
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Samaje Perine|receptionYards|6.5|Over",
@@ -53575,8 +53575,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.8,
+    "clv": 1.67
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|David Montgomery|rushYards|62.5|Under",
@@ -53773,8 +53773,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.5,
+    "clv": 2
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Woody Marks|rushYards|29.5|Over",
@@ -53806,8 +53806,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.73
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Woody Marks|rushYards|20.5|Over",
@@ -53839,8 +53839,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.36,
+    "clv": 0
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Woody Marks|rushYards|25.5|Over",
@@ -53872,8 +53872,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.61,
+    "clv": -1.24
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|Woody Marks|rushYards|35.5|Over",
@@ -53905,8 +53905,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.3,
+    "clv": -2.17
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Baker Mayfield|passYards|186.5|Under",
@@ -53938,8 +53938,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.9,
+    "clv": -1.72
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Baker Mayfield|passYards|196.5|Under",
@@ -53971,8 +53971,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.5,
+    "clv": -2
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Chris Godwin|receptionYards|39.5|Over",
@@ -54037,8 +54037,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Chris Godwin|receptionYards|40.5|Over",
@@ -54169,8 +54169,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Harold Fannin Jr.|receptionYards|34.5|Over",
@@ -54235,8 +54235,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Kenny Gainwell|receptionYards|12.5|Under",
@@ -54301,8 +54301,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": 0.52
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Kenny Gainwell|receptions|1.5|Over",
@@ -54334,8 +54334,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.67,
+    "clv": -6.59
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Bucky Irving|rushYards|65.5|Under",
@@ -54367,8 +54367,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.89,
+    "clv": 0.53
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Bucky Irving|rushYards|70.5|Under",
@@ -54400,8 +54400,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.69,
+    "clv": 0
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Bucky Irving|rushYards|75.5|Under",
@@ -54433,8 +54433,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.56,
+    "clv": -1.92
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Quinshon Judkins|rushYards|55.5|Under",
@@ -54532,8 +54532,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 3.25,
+    "clv": -3.08
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jordan Love|passYards|253.5|Under",
@@ -54631,8 +54631,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.1,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jordan Love|passYards|271.5|Over",
@@ -54664,8 +54664,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.4,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jordan Love|passYards|281.5|Over",
@@ -54697,8 +54697,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.7,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Garrett Wilson|receptionYards|73.5|Over",
@@ -54796,8 +54796,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.15,
+    "clv": 2.33
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Matthew Golden|receptionYards|54.5|Under",
@@ -54829,8 +54829,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.69,
+    "clv": 2.96
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Matthew Golden|receptionYards|59.5|Under",
@@ -54862,8 +54862,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.54,
+    "clv": 1.3
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Tucker Kraft|receptionYards|43.5|Over",
@@ -54895,8 +54895,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Tucker Kraft|receptionYards|33.5|Under",
@@ -54928,8 +54928,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.55,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Tucker Kraft|receptionYards|38.5|Under",
@@ -54961,8 +54961,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.15,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jonnu Smith|receptionYards|11.5|Over",
@@ -54994,8 +54994,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.88,
+    "clv": 0
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Chris Brooks|rushYards|22.5|Under",
@@ -55489,8 +55489,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": -1.57
   },
   {
     "_key": "fafc649c455e32a0f2ba1bd06e2039bc|Calvin Ridley|receptionYards|18.5|Over",
@@ -55555,8 +55555,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.79,
+    "clv": 0
   },
   {
     "_key": "fafc649c455e32a0f2ba1bd06e2039bc|Tony Pollard|rushYards|39.5|Over",
@@ -55588,8 +55588,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.9,
+    "clv": 1.05
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Bo Nix|passYards|193.5|Under",
