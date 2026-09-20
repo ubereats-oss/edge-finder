@@ -48691,8 +48691,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.5,
+    "clv": 0
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|Mike Evans|receptionYards|45.5|Under",
@@ -48724,8 +48724,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.15,
+    "clv": 0
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|Mike Evans|receptionYards|55.5|Over",
@@ -48757,8 +48757,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 2.1,
+    "clv": 0
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|Christian McCaffrey|receptionYards|39.5|Over",
@@ -57172,8 +57172,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": -0.53
   },
   {
     "_key": "71b3b83747589efdc5baef2c5cf811bf|Justin Herbert|rushYards|18.5|Over",
@@ -57205,8 +57205,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.73
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|Drew Lock|passYards|203.5|Under",
@@ -59086,8 +59086,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.67,
+    "clv": 0
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|De'Von Achane|rushYards|71.5|Under",
@@ -59119,8 +59119,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.53,
+    "clv": 0
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|Malik Willis|rushYards|40.5|Under",
