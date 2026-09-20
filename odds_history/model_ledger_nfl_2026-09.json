@@ -38890,8 +38890,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 3.28
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Kyle Pitts|receptionYards|29.5|Under",
@@ -39418,8 +39418,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.87,
+    "clv": 1.6
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Tyler Shough|passYards|230.5|Under",
@@ -39715,8 +39715,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.73
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Juwan Johnson|receptionYards|38.5|Over",
@@ -41761,8 +41761,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.8,
+    "clv": 3.89
   },
   {
     "_key": "36ad2fa722f4915ef23d2c81351261de|David Montgomery|rushYards|65.5|Under",
