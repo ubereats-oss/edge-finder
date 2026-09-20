@@ -30668,8 +30668,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.83,
+    "clv": 2.73
   },
   {
     "_key": "71b3b83747589efdc5baef2c5cf811bf|Ashton Jeanty|receptionYards|28.5|Under",
@@ -46348,8 +46348,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.82,
+    "clv": 3.3
   },
   {
     "_key": "71b3b83747589efdc5baef2c5cf811bf|Omarion Hampton|rushYards|58.5|Under",
