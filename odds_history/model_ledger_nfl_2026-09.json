@@ -45523,8 +45523,8 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null
+    "closingOdds": 1.91,
+    "clv": 15.18
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Brenton Strange|receptionYards|21.5|Under",
