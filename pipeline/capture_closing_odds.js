@@ -12,17 +12,15 @@
 // Uso: node pipeline/capture_closing_odds.js [esporte1 esporte2 ...]
 // Sem argumentos, roda pros 4 esportes com props.
 //
-// Independente de agendador: ao iniciar, acha a indicação pendente cujo
-// evento começa mais cedo (dentro do orçamento de espera de um job, ver
-// MAX_JOB_WAIT_MS) e aguarda (sleep) dentro do próprio processo até pouco
-// antes do início — não depende do cron disparar na hora certa. Ao acordar,
-// captura tudo que estiver na janela. Ao final, se ainda sobrar alguma
-// indicação pendente dentro do orçamento de espera, dispara programaticamente
-// uma nova execução deste workflow (via API do GitHub) pra continuar a
-// cadeia a partir do evento seguinte — ver triggerNextRun(). O cron
-// (capture_closing_odds.yml) continua existindo só como rede de segurança de
-// baixa frequência, pra reiniciar a cadeia se ela for interrompida (job
-// cancelado, disparo falhou, etc.) ou pra pegar o primeiro evento do dia.
+// Disparo just-in-time: quem decide QUANDO rodar é a Cloud Function
+// closingOddsScheduler (functions/index.js), que reimplementa a mesma
+// seleção de "próximo evento alcançável" (futuro priorizado sobre já
+// iniciado) lendo o histórico central direto do GitHub e chama este
+// workflow via workflow_dispatch pouco antes do início do evento. Este
+// script não espera nada — roda, captura tudo que estiver dentro da janela
+// de captura agora e encerra. O cron de baixa frequência
+// (capture_closing_odds.yml) continua existindo só como rede de segurança,
+// caso a Cloud Function falhe ou fique fora do ar.
 
 const axios = require('axios');
 const fs = require('fs');
@@ -52,17 +50,10 @@ function getNextKey() {
 // Janela de captura: só tenta buscar a odd de fechamento se o evento começa
 // dentro desse intervalo — nem tarde demais (já passou), nem cedo demais
 // (ainda não é "fechamento", é só mais uma cotação no meio do caminho).
-const CAPTURE_WINDOW_BEFORE_MS = 2 * 60 * 60 * 1000; // até 2h antes do início
-const CAPTURE_WINDOW_AFTER_MS  = 10 * 60 * 1000;      // até 10min depois (mercado pode suspender exatamente na hora)
-
-// Teto de espera por execução — abaixo do limite de execução de job do
-// GitHub Actions pra runner hospedado (6h / 360min, não configurável pra
-// cima), com margem de ~1h pra checkout, instalação, chamadas à API de odds,
-// tentativas de push com recuo exponencial e o disparo da próxima execução.
-// Evento além desse alcance não entra na espera desta execução — fica pro
-// cron pegar quando estiver mais perto (ver findNextReachableEvent).
-const MAX_JOB_WAIT_MS = 5 * 60 * 60 * 1000; // 5h
-const TARGET_LEAD_MS  = 3 * 60 * 1000;      // alvo: acordar ~3min antes do início
+// Fonte única em model_ledger.js — settle_model_ledger.js usa a mesma janela
+// pra expirar quem passou dela sem sucesso.
+const CAPTURE_WINDOW_BEFORE_MS = ledger.CLOSING_ODDS_CAPTURE_WINDOW_BEFORE_MS;
+const CAPTURE_WINDOW_AFTER_MS  = ledger.CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS;
 
 const SPORTS = [
   { esporte: 'basketball/nba', apiSport: 'basketball_nba', markets: { points: 'player_points', rebounds: 'player_rebounds', assists: 'player_assists', steals: 'player_steals', threes: 'player_threes' } },
@@ -111,7 +102,7 @@ async function captureSport({ esporte, apiSport, markets }) {
     const porEvento = new Map();
     for (const entry of entries) {
       if (entry.resolutionStatus !== ledger.RESOLUTION_STATUS.PENDENTE) continue;
-      if (entry.closingOdds !== null && entry.closingOdds !== undefined) continue;
+      if (ledger.closingOddsStatusOf(entry) !== ledger.CLOSING_ODDS_STATUS.PENDENTE) continue;
       if (!markets[entry.market]) continue;
 
       const commence = new Date(entry.commenceTime).getTime();
@@ -142,6 +133,7 @@ async function captureSport({ esporte, apiSport, markets }) {
         if (price === null) { semOddDisponivel++; continue; }
         entry.closingOdds = price;
         entry.clv = computeClv(entry.odds, price);
+        entry.closingOddsStatus = ledger.CLOSING_ODDS_STATUS.CAPTURADA;
         capturadas++;
         changed = true;
         const commence = new Date(entry.commenceTime).getTime();
@@ -160,69 +152,6 @@ async function captureSport({ esporte, apiSport, markets }) {
   return { capturadas, semJanela, semOddDisponivel, partitionsChanged };
 }
 
-// Vasculha todas as indicações pendentes (sem odd de fechamento ainda) dos
-// esportes alvo e devolve a de commenceTime mais cedo entre as que ainda são
-// "alcançáveis": não expirou (mais de CAPTURE_WINDOW_AFTER_MS desde o
-// início — essa nunca mais vai ter odd de fechamento, não faz sentido
-// esperar por ela nem travar a cadeia nela) e não fica além do orçamento de
-// espera de um único job (MAX_JOB_WAIT_MS, contado a partir do alvo de
-// TARGET_LEAD_MS antes do início). Devolve null se não houver nenhuma —
-// tanto faz se é porque não sobrou indicação pendente, quanto porque a mais
-// próxima está fora do alcance da espera.
-function findNextReachableEvent(targets, now) {
-  let best = null;
-  for (const { esporte, markets } of targets) {
-    for (const file of ledger.listPartitions(esporte)) {
-      const entries = ledger.loadPartitionFile(file);
-      for (const entry of entries) {
-        if (entry.resolutionStatus !== ledger.RESOLUTION_STATUS.PENDENTE) continue;
-        if (entry.closingOdds !== null && entry.closingOdds !== undefined) continue;
-        if (!markets[entry.market]) continue;
-
-        const commence = new Date(entry.commenceTime).getTime();
-        if (isNaN(commence)) continue;
-        if (commence + CAPTURE_WINDOW_AFTER_MS < now) continue;
-        if (commence - now > MAX_JOB_WAIT_MS + TARGET_LEAD_MS) continue;
-
-        if (best === null || commence < best.commence) {
-          best = { commence, esporte, player: entry.player, market: entry.market, side: entry.side, line: entry.line };
-        }
-      }
-    }
-  }
-  return best;
-}
-
-// Dispara uma nova execução deste mesmo workflow via API do GitHub, pra
-// continuar a cadeia a partir do evento seguinte. Usa GH_PAT (o mesmo token
-// já usado pra git push nesta e nas outras execuções) — precisa ter escopo
-// de disparar workflows (classic PAT com "workflow", ou fine-grained com
-// "Actions: write"). Falha aqui não é fatal: só significa que a cadeia para
-// e o cron (rede de segurança) retoma na próxima execução agendada.
-async function triggerNextRun() {
-  const pat = process.env.GH_PAT;
-  const repo = process.env.GITHUB_REPOSITORY;
-  const ref = process.env.GITHUB_REF_NAME || 'main';
-  if (!pat || !repo) {
-    console.warn('[cadeia] GH_PAT ou GITHUB_REPOSITORY ausente no ambiente — não dá pra disparar a próxima execução.');
-    return false;
-  }
-  const url = `https://api.github.com/repos/${repo}/actions/workflows/capture_closing_odds.yml/dispatches`;
-  try {
-    await axios.post(url, { ref }, {
-      headers: {
-        Authorization: `Bearer ${pat}`,
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-      },
-    });
-    return true;
-  } catch (e) {
-    console.warn(`[cadeia] falha ao disparar a próxima execução: ${e.response?.status || ''} ${e.response?.data?.message || e.message}`);
-    return false;
-  }
-}
-
 async function main() {
   if (!API_KEYS.length) {
     console.error('Nenhuma chave ODDS_API_KEY encontrada — abortando.');
@@ -231,46 +160,12 @@ async function main() {
   const requested = process.argv.slice(2).map(s => s.toLowerCase());
   const targets = requested.length ? SPORTS.filter(s => requested.some(r => s.esporte.includes(r))) : SPORTS;
 
-  // Não capturar de imediato se o evento mais próximo alcançável ainda não
-  // chegou no alvo de "poucos minutos antes do início" — espera aqui dentro
-  // do job (sem chamar a API-de-odds nesse meio tempo) e só então segue pra
-  // captura de verdade, que nesse momento pega tudo que já estiver dentro
-  // da janela (o alvo original e qualquer outro que tenha entrado na janela
-  // durante a espera — inclusive se o alvo em si começou nesse meio tempo).
-  const target = findNextReachableEvent(targets, Date.now());
-  if (target === null) {
-    console.log('[espera] nenhuma indicação pendente sem odd de fechamento dentro do alcance da espera — encerra sem aguardar, retomada fica por conta do cron.');
-  } else {
-    const waitMs = Math.max(0, target.commence - TARGET_LEAD_MS - Date.now());
-    const rotulo = `${target.esporte} ${target.player} ${target.market} ${target.side} ${target.line}`;
-    if (waitMs > 0) {
-      console.log(`[espera] evento alvo: ${rotulo} — começa às ${new Date(target.commence).toISOString()} — aguardando ${Math.round(waitMs / 60000)}min (acorda ~${Math.round(TARGET_LEAD_MS / 60000)}min antes do início).`);
-      await sleep(waitMs);
-    } else {
-      console.log(`[espera] evento alvo: ${rotulo} — já dentro da janela de captura, capturando imediatamente.`);
-    }
-  }
-
   const totals = { capturadas: 0, semJanela: 0, semOddDisponivel: 0, partitionsChanged: 0 };
   for (const sport of targets) {
     const r = await captureSport(sport);
     for (const k of Object.keys(totals)) totals[k] += r[k];
   }
   console.log(`\nResumo geral: ${totals.capturadas} odd(s) de fechamento capturada(s), ${totals.partitionsChanged} partição(ões) atualizada(s).`);
-
-  // Encadeamento: só dispara a próxima execução se sobrar indicação pendente
-  // dentro do alcance da espera — senão a próxima execução acharia "nada no
-  // alcance" e sairia sem fazer nada, gastando um run de Actions à toa. Sem
-  // indicação nenhuma dentro do alcance, a cadeia termina aqui e a retomada
-  // fica por conta do cron (rede de segurança).
-  const next = findNextReachableEvent(targets, Date.now());
-  if (next === null) {
-    console.log('[cadeia] nenhuma indicação pendente dentro do alcance da espera após esta captura — não disparando a próxima execução; retomada fica por conta do cron.');
-  } else {
-    const minutosAteProximo = Math.round((next.commence - Date.now()) / 60000);
-    const disparou = await triggerNextRun();
-    console.log(`[cadeia] próximo evento alcançável em ${minutosAteProximo}min (${next.esporte} ${next.player} ${next.market}) — ${disparou ? 'próxima execução disparada.' : 'falha ao disparar — cadeia interrompida, cron retoma.'}`);
-  }
 }
 
 main().catch(e => { console.error('Erro fatal em capture_closing_odds.js:', e); process.exit(1); });

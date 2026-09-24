@@ -1,39 +1,33 @@
 name: Capturar Odd de Fechamento
 
-# Independente de agendador: pipeline/capture_closing_odds.js espera (sleep)
-# dentro do próprio job até perto do início do evento pendente mais próximo
-# (até MAX_JOB_WAIT_MS = 5h) e, ao terminar, dispara programaticamente uma
-# nova execução deste workflow via API do GitHub pra continuar a cadeia a
-# partir do evento seguinte — workflow_dispatch é confiável, diferente do
-# cron, que atrasa/descarta execuções sob carga (ver script pra detalhes).
+# Disparo just-in-time via Cloud Function: a Firebase Scheduled Function
+# closingOddsScheduler (functions/index.js) roda a cada poucos minutos, lê o
+# histórico central direto do GitHub (branch data) e reimplementa a mesma
+# seleção de "próximo evento alcançável" (futuro priorizado sobre já
+# iniciado, ver pipeline/capture_closing_odds.js) pra decidir quando disparar
+# este workflow via workflow_dispatch — pouco antes do início do evento mais
+# próximo. Por isso este workflow NÃO espera mais nada dentro do job: roda,
+# captura tudo que estiver na janela de captura agora e encerra.
 #
-# O cron abaixo existe só como rede de segurança, com frequência baixa: pega
-# o primeiro evento do dia (nada disparado ainda) ou reinicia a cadeia se
-# ela foi interrompida (job cancelado, disparo da próxima execução falhou,
-# etc.). Minuto fora de :00/:30 de propósito (mais concorrido na fila do
-# GitHub Actions).
+# O cron abaixo existe só como rede de segurança, com frequência baixa: cobre
+# o caso da Cloud Function falhar, ficar fora do ar ou atrasar. O passo
+# "Verificar se há evento na janela de captura" evita gastar minutos de
+# Actions quando o cron dispara e não há nada pendente pra capturar.
 #
 # concurrency: nunca deixa duas execuções deste workflow rodarem ao mesmo
-# tempo — se o cron disparar enquanto uma execução está esperando/rodando,
-# a nova fica na fila em vez de rodar em paralelo (cancel-in-progress:
-# false, de propósito — cancelar cancelaria uma espera em andamento e
-# quebraria a cadeia). Isso é o que impede a cadeia de se multiplicar.
+# tempo — se o cron disparar perto de um disparo da Cloud Function, a nova
+# fica na fila em vez de rodar em paralelo.
 concurrency:
   group: capture-closing-odds
   cancel-in-progress: false
 
 on:
   schedule:
-    - cron: '23 */3 * * *'
+    - cron: '23 5 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
-  # O disparo da próxima execução (workflow_dispatch via API, ver
-  # triggerNextRun() no script) usa GH_PAT, não o GITHUB_TOKEN automático —
-  # este bloco de permissions não afeta esse disparo. O escopo de GH_PAT
-  # precisa incluir Actions: write (PAT fine-grained) ou "workflow" (PAT
-  # clássico) pra isso funcionar.
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -41,11 +35,10 @@ env:
 jobs:
   capture:
     runs-on: ubuntu-latest
-    # Teto de execução do GitHub Actions em runner hospedado é 6h (360min),
-    # não configurável pra cima. MAX_JOB_WAIT_MS no script já é 5h com
-    # margem — este timeout é só uma rede de segurança adicional pra nunca
-    # chegar no cutoff duro da plataforma de um jeito abrupto.
-    timeout-minutes: 330
+    # Sem espera dentro do job, a execução inteira (checkout, captura,
+    # commit/push) deve terminar em poucos minutos — este timeout é só uma
+    # rede de segurança.
+    timeout-minutes: 15
     steps:
       - name: Checkout repositório
         uses: actions/checkout@v4
@@ -64,36 +57,31 @@ jobs:
           mkdir -p odds_history
           git checkout origin/data -- 'odds_history/model_ledger_*.json' 2>/dev/null || true
 
-      - name: Verificar se há evento no alcance da espera
+      - name: Verificar se há indicação pendente sem odd de fechamento
         id: gate
-        # Mesmo alcance que pipeline/capture_closing_odds.js usa pra decidir
-        # se espera (MAX_JOB_WAIT_MS + TARGET_LEAD_MS) — não só a janela de
-        # captura de 2h, já que agora a execução pode esperar até 5h por um
-        # evento que ainda não chegou perto do início.
+        # Considera só o campo closingOddsStatus (independente de
+        # resolutionStatus) — quem já expirou (janela de captura passada sem
+        # sucesso, marcado por settle_model_ledger.js) já sai daqui, sem
+        # precisar recalcular a janela por commenceTime a cada execução.
+        # Compat com indicação gravada antes do campo existir: infere pelo
+        # closingOdds.
         run: |
           node -e "
           const fs = require('fs');
           const files = fs.readdirSync('odds_history').filter(f => f.startsWith('model_ledger_') && f.endsWith('.json'));
-          const now = Date.now();
-          const AFTER_MS = 10 * 60 * 1000;
-          const MAX_WAIT_MS = 5 * 60 * 60 * 1000 + 3 * 60 * 1000;
-          let pendentes = 0, alcancaveis = 0;
+          let pendentes = 0;
           for (const f of files) {
             let entries;
             try { entries = JSON.parse(fs.readFileSync('odds_history/' + f, 'utf-8')); } catch { continue; }
             for (const e of entries) {
               if (e.resolutionStatus !== 'pendente') continue;
-              if (e.closingOdds !== null && e.closingOdds !== undefined) continue;
-              const commence = new Date(e.commenceTime).getTime();
-              if (isNaN(commence)) continue;
-              pendentes++;
-              const delta = commence - now;
-              if (delta >= -AFTER_MS && delta <= MAX_WAIT_MS) alcancaveis++;
+              const status = e.closingOddsStatus || ((e.closingOdds !== null && e.closingOdds !== undefined) ? 'capturada' : 'pendente');
+              if (status === 'pendente') pendentes++;
             }
           }
-          const hasEvent = alcancaveis > 0;
-          console.log('[gate] ' + alcancaveis + ' de ' + pendentes + ' indicação(ões) pendente(s) sem odd de fechamento estão no alcance da espera agora.');
-          console.log('[gate] evento no alcance: ' + (hasEvent ? 'sim' : 'não'));
+          const hasEvent = pendentes > 0;
+          console.log('[gate] ' + pendentes + ' indicação(ões) com odd de fechamento pendente (nem capturada, nem expirada).');
+          console.log('[gate] há indicação pendente: ' + (hasEvent ? 'sim' : 'não'));
           fs.appendFileSync(process.env.GITHUB_OUTPUT, 'has_event=' + hasEvent + '\n');
           "
 
@@ -122,18 +110,16 @@ jobs:
       - name: Capturar odds de fechamento e calcular CLV
         if: steps.gate.outputs.has_event == 'true'
         run: node pipeline/capture_closing_odds.js
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
 
       - name: Salvar histórico central atualizado na branch data
         if: steps.gate.outputs.has_event == 'true'
-        # Espera dentro do job (capture_closing_odds.js) pode fazer duas
-        # execuções ficarem ativas ao mesmo tempo e tentarem gravar em
-        # sequência próxima. Se o push for rejeitado porque a branch data
-        # avançou, recarrega o estado mais recente e reaplica só a
-        # closingOdds/clv desta execução por cima dele (nunca sobrescreve
-        # odd de fechamento já existente) — repete com espera crescente
-        # antes de desistir. Ver pipeline/reapply_ledger_changes.js.
+        # Duas execuções podem ficar ativas perto uma da outra (cron +
+        # disparo da Cloud Function) e tentarem gravar em sequência próxima.
+        # Se o push for rejeitado porque a branch data avançou, recarrega o
+        # estado mais recente e reaplica só a closingOdds/clv desta execução
+        # por cima dele (nunca sobrescreve odd de fechamento já existente) —
+        # repete com espera crescente antes de desistir. Ver
+        # pipeline/reapply_ledger_changes.js.
         run: |
           mkdir -p /tmp/odds_history_out /tmp/ledger_scripts
           cp odds_history/model_ledger_*.json /tmp/odds_history_out/ 2>/dev/null || true

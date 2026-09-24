@@ -195,7 +195,7 @@ async function settleSport({ esporte, espnSport }) {
   const now = Date.now();
   const partitions = ledger.listPartitions(esporte);
 
-  let apurados = 0, canceladas = 0, aindaPendentes = 0, naoApuraveis = 0, partitionsChanged = 0, falhasAcesso = 0;
+  let apurados = 0, canceladas = 0, aindaPendentes = 0, naoApuraveis = 0, partitionsChanged = 0, falhasAcesso = 0, closingOddsExpiradas = 0;
 
   for (const file of partitions) {
     const entries = JSON.parse(fs.readFileSync(file, 'utf-8'));
@@ -203,6 +203,16 @@ async function settleSport({ esporte, espnSport }) {
 
     for (const entry of entries) {
       if (entry.resolutionStatus !== ledger.RESOLUTION_STATUS.PENDENTE) continue;
+
+      // Expira o rastreio de odd de fechamento (campo independente de
+      // resolutionStatus) pra quem já passou da janela de captura sem
+      // sucesso — antes da checagem de grace/apuração abaixo, pra rodar em
+      // toda indicação em aberto nesta varredura periódica, mesmo nas que
+      // ainda não chegaram no prazo de apuração de resultado.
+      if (ledger.maybeExpireClosingOdds(entry, now)) {
+        changed = true;
+        closingOddsExpiradas++;
+      }
 
       const commence = new Date(entry.commenceTime).getTime();
       if (isNaN(commence) || now - commence < grace) { aindaPendentes++; continue; }
@@ -299,8 +309,8 @@ async function settleSport({ esporte, espnSport }) {
     }
   }
 
-  console.log(`[${esporte}] apuradas: ${apurados} | canceladas/void: ${canceladas} | ainda pendentes: ${aindaPendentes} | não apuráveis: ${naoApuraveis} | falhas de acesso à ESPN: ${falhasAcesso} | partições atualizadas: ${partitionsChanged}`);
-  return { apurados, canceladas, aindaPendentes, naoApuraveis, partitionsChanged, falhasAcesso };
+  console.log(`[${esporte}] apuradas: ${apurados} | canceladas/void: ${canceladas} | ainda pendentes: ${aindaPendentes} | não apuráveis: ${naoApuraveis} | odd de fechamento expirada: ${closingOddsExpiradas} | falhas de acesso à ESPN: ${falhasAcesso} | partições atualizadas: ${partitionsChanged}`);
+  return { apurados, canceladas, aindaPendentes, naoApuraveis, partitionsChanged, falhasAcesso, closingOddsExpiradas };
 }
 
 async function main() {
@@ -309,7 +319,7 @@ async function main() {
     ? SPORTS.filter(s => requested.some(r => s.esporte.includes(r)))
     : SPORTS;
 
-  const totals = { apurados: 0, canceladas: 0, aindaPendentes: 0, naoApuraveis: 0, partitionsChanged: 0, falhasAcesso: 0 };
+  const totals = { apurados: 0, canceladas: 0, aindaPendentes: 0, naoApuraveis: 0, partitionsChanged: 0, falhasAcesso: 0, closingOddsExpiradas: 0 };
   for (const sport of targets) {
     console.log(`Apurando resultados: ${sport.esporte}...`);
     const r = await settleSport(sport);
@@ -323,7 +333,8 @@ async function main() {
     `\nResumo geral: ${totals.partitionsChanged} partição(ões) de odds_history atualizada(s) | ` +
     `${transicionadas} indicação(ões) passaram de em aberto para apuradas ` +
     `(${totals.apurados} com resultado ganhou/perdeu/push, ${totals.canceladas} canceladas/void) | ` +
-    `${totals.aindaPendentes} continuam em aberto | ${totals.naoApuraveis} marcadas como não apuráveis nesta execução` +
+    `${totals.aindaPendentes} continuam em aberto | ${totals.naoApuraveis} marcadas como não apuráveis nesta execução | ` +
+    `${totals.closingOddsExpiradas} tiveram a odd de fechamento expirada (janela de captura passou sem sucesso)` +
     `${totals.falhasAcesso ? ` | ${totals.falhasAcesso} falha(s) de acesso à ESPN nesta execução (não contam como tentativa)` : ''}.`
   );
 }
