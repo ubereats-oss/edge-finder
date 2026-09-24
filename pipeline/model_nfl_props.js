@@ -153,6 +153,7 @@ if (Object.keys(playerStats).length === 0) {
 const NOW = Date.now();
 let descartadosSemStats = 0, descartadosSigmaBaixa = 0, descartadosJogoBloqueado = 0;
 let descartadosPassTDsMediaZero = 0;
+let descartadosMarginRatio = 0;
 const candidates = [];
 
 for (const prop of props) {
@@ -197,8 +198,25 @@ for (const prop of props) {
     descartadosSigmaBaixa++; continue;
   }
 
+  // Linha muito perto da média histórica do jogador (relativa ao desvio-padrão)
+  // — modelo não tem sinal suficiente pra diferenciar de um chute aleatório.
+  // Mesmo padrão de rastreabilidade do guard de passTDs: antes descartava
+  // silenciosamente (nem published, nem rejectionReason); agora fica visível
+  // no histórico central. Lógica do filtro em si (limiar 0.4) não mudou.
   const marginRatio = Math.abs(prop.line - stats.avg) / stats.std;
-  if (marginRatio < 0.4) continue;
+  if (marginRatio < 0.4) {
+    descartadosMarginRatio++;
+    candidates.push({
+      prop, stats, avg5: null, avg10: null,
+      bestSide: 'Over', bestOdds: prop.oddsOver, bestEdge: null, edgePct: null,
+      kellyCrit: null, bestRawProb: null,
+      bestCalib: { calibratedProb: null, segmentState: null, sampleSize: null, stakeFraction: null },
+      inefficientMarket: false, published: false,
+      rejectionReason: 'margem_insuficiente',
+      game: prop.game, player: prop.player,
+    });
+    continue;
+  }
 
   const avg5  = calcRecentAvg(playerData, statKey, 5);
   const avg10 = calcRecentAvg(playerData, statKey, 10);
@@ -301,7 +319,7 @@ for (const c of candidates) {
 }
 
 const descartadosGuardas = candidates.filter(c => !c.published && c.rejectionReason).length;
-console.log(`Props NFL: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo (não-passTDs): ${descartadosSigmaBaixa} | passTDs média zero: ${descartadosPassTDsMediaZero} | Bloqueado: ${descartadosJogoBloqueado} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
+console.log(`Props NFL: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo (não-passTDs): ${descartadosSigmaBaixa} | passTDs média zero: ${descartadosPassTDsMediaZero} | Margem insuficiente: ${descartadosMarginRatio} | Bloqueado: ${descartadosJogoBloqueado} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
 
 const ledgerSummary = ledger.flush();
 console.log(`Histórico de indicações (NFL): ${ledgerSummary.partitionsSaved} partição(ões) atualizada(s), ${ledgerSummary.duplicatesInRun} indicação(ões) duplicada(s) na mesma execução.`);
