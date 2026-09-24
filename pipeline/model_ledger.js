@@ -40,6 +40,25 @@ const RESOLUTION_STATUS = {
   NAO_APURAVEL: 'nao_apuravel',
 };
 
+// Rastreio da odd de fechamento — independente de resolutionStatus (que é
+// sobre o RESULTADO da aposta). 'pendente' = ainda dentro (ou antes) da
+// janela de captura; 'capturada' = closingOdds já preenchido; 'expirada' =
+// a janela de captura passou sem sucesso (closingOdds continua nulo) — não
+// entra mais na varredura de capture_closing_odds.js nem do
+// closingOddsScheduler. Expiração é estado terminal: nunca volta a pendente.
+const CLOSING_ODDS_STATUS = {
+  PENDENTE: 'pendente',
+  CAPTURADA: 'capturada',
+  EXPIRADA: 'expirada',
+};
+
+// Janela de captura de odd de fechamento — mesma usada por
+// capture_closing_odds.js (o que tenta buscar) e settle_model_ledger.js (o
+// que expira quem passou da janela sem sucesso). Fonte única pra evitar os
+// dois lados divergirem.
+const CLOSING_ODDS_CAPTURE_WINDOW_BEFORE_MS = 2 * 60 * 60 * 1000; // até 2h antes do início
+const CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS  = 10 * 60 * 1000;     // até 10min depois
+
 const SEGMENT_STATE = {
   EM_AMOSTRA: 'em_amostra',
   CALIBRADO: 'calibrado',
@@ -111,6 +130,31 @@ function listAllPartitions() {
 
 function makeKey({ eventId, player, market, line, side }) {
   return `${eventId}|${player}|${market}|${line}|${side}`;
+}
+
+// Estado de rastreio da odd de fechamento pra uma indicação, inferindo a
+// partir de closingOdds quando o campo closingOddsStatus ainda não existir
+// (compat com indicações gravadas antes deste campo existir).
+function closingOddsStatusOf(entry) {
+  if (entry.closingOddsStatus) return entry.closingOddsStatus;
+  return (entry.closingOdds !== null && entry.closingOdds !== undefined)
+    ? CLOSING_ODDS_STATUS.CAPTURADA
+    : CLOSING_ODDS_STATUS.PENDENTE;
+}
+
+// Marca como expirada uma indicação cuja janela de captura de odd de
+// fechamento já passou sem sucesso. Não mexe em resolutionStatus. Nunca
+// reverte uma indicação já expirada ou já capturada (expiração é estado
+// terminal) nem expira uma indicação sem commenceTime válido — essa
+// simplesmente não muda de estado, sem travar a checagem das demais.
+// Devolve true se mudou o estado (pra quem chama saber se precisa salvar).
+function maybeExpireClosingOdds(entry, now) {
+  if (closingOddsStatusOf(entry) !== CLOSING_ODDS_STATUS.PENDENTE) return false;
+  const commence = new Date(entry.commenceTime).getTime();
+  if (isNaN(commence)) return false;
+  if (commence + CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS >= now) return false;
+  entry.closingOddsStatus = CLOSING_ODDS_STATUS.EXPIRADA;
+  return true;
 }
 
 // Buffer em memória por esporte+mês durante a execução do script chamador,
@@ -210,6 +254,7 @@ function recordEvaluation(rec) {
       invalidReason: existing.invalidReason ?? invalidReason ?? null,
       closingOdds: existing.closingOdds ?? closingOdds ?? null,
       clv: existing.clv ?? clv ?? null,
+      closingOddsStatus: existing.closingOddsStatus ?? CLOSING_ODDS_STATUS.PENDENTE,
     });
   } else {
     buf.byKey.set(_key, {
@@ -224,6 +269,7 @@ function recordEvaluation(rec) {
       invalidReason: invalidReason ?? null,
       closingOdds: closingOdds ?? null,
       clv: clv ?? null,
+      closingOddsStatus: CLOSING_ODDS_STATUS.PENDENTE,
     });
   }
 }
@@ -248,9 +294,14 @@ module.exports = {
   REJECTION_REASONS,
   RESULT_STATUS,
   RESOLUTION_STATUS,
+  CLOSING_ODDS_STATUS,
+  CLOSING_ODDS_CAPTURE_WINDOW_BEFORE_MS,
+  CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS,
   SEGMENT_STATE,
   sportSlug,
   makeKey,
+  closingOddsStatusOf,
+  maybeExpireClosingOdds,
   loadPartition,
   savePartition,
   loadPartitionFile,

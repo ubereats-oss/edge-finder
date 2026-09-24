@@ -1,4 +1,5 @@
 const { onRequest } = require('firebase-functions/v2/https');
+const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
@@ -334,5 +335,208 @@ exports.syncOddsBr = onRequest(
     });
 
     return res.json({ updated, removed, unchanged, total: final.length });
+  }
+);
+
+// ── Disparo just-in-time de "Capturar Odd de Fechamento" ───────────────────
+//
+// Substitui a espera de até 5h dentro do runner do GitHub Actions: esta
+// function roda a cada poucos minutos, lê o histórico central
+// (odds_history/model_ledger_*.json) direto da branch `data` do GitHub e
+// reimplementa a mesma seleção de "próximo evento alcançável" de
+// pipeline/capture_closing_odds.js — futuro priorizado sobre já iniciado
+// (ver comentário de findNextReachableEvent abaixo). Quando o próximo
+// evento entra na janela de disparo (~3min antes do início), chama a API do
+// GitHub pra disparar workflow_dispatch no workflow
+// capture_closing_odds.yml, que agora roda, captura o que estiver na janela
+// e encerra — sem espera. O cron de 3 em 3h do próprio workflow continua
+// existindo como rede de segurança.
+//
+// Requer o segredo GH_DISPATCH_TOKEN (`firebase functions:secrets:set
+// GH_DISPATCH_TOKEN`) — um GitHub PAT com escopo de leitura de conteúdo
+// (Contents: read, pra ler odds_history da branch data) e de disparo de
+// workflow (Actions: write, ou "workflow" em PAT clássico).
+const GH_DISPATCH_TOKEN = defineSecret('GH_DISPATCH_TOKEN');
+
+const GH_OWNER = 'ubereats-oss';
+const GH_REPO = 'edge-finder';
+const GH_DATA_REF = 'data';
+const GH_WORKFLOW_FILE = 'capture_closing_odds.yml';
+const GH_WORKFLOW_REF = 'main';
+
+// Mesmos critérios de pipeline/capture_closing_odds.js — duplicados aqui
+// porque esta function roda fora do repositório (sem acesso ao filesystem
+// do pipeline) e lê o histórico via API do GitHub. Manter em sincronia se
+// algum dos dois lados mudar.
+const SPORT_MARKET_KEYS = {
+  'basketball/nba': ['points', 'rebounds', 'assists', 'steals', 'threes'],
+  'baseball/mlb': ['hits', 'strikeouts', 'hitsAllowed'],
+  'hockey/nhl': ['points', 'goals', 'assists', 'shots'],
+  'americanfootball/nfl': ['passYards', 'passTDs', 'rushYards', 'receptions', 'receptionYards'],
+};
+const TARGET_LEAD_MS = 35 * 60 * 1000;          // dispara quando faltar até ~35min pro início
+const MIN_RETRY_INTERVAL_MS = 5 * 60 * 1000;    // intervalo mínimo entre disparos quando só sobram eventos já iniciados
+const DISPATCH_DEDUPE_MS = 3 * 60 * 1000;       // não redispara pro mesmo evento futuro dentro desse intervalo
+
+const SCHEDULER_STATE_DOC = db.collection('system').doc('closingOddsScheduler');
+
+async function ghFetchJson(url, token) {
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+  });
+  if (!res.ok) throw new Error(`GitHub API ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  return res.json();
+}
+
+// Mesma inferência de pipeline/model_ledger.js::closingOddsStatusOf —
+// duplicada aqui pelo mesmo motivo do resto do arquivo (sem acesso ao
+// filesystem do pipeline). Compat com indicações gravadas antes do campo
+// closingOddsStatus existir: infere a partir de closingOdds.
+function closingOddsStatusOf(entry) {
+  if (entry.closingOddsStatus) return entry.closingOddsStatus;
+  return (entry.closingOdds !== null && entry.closingOdds !== undefined) ? 'capturada' : 'pendente';
+}
+
+// Lê todas as partições model_ledger_*.json da branch `data` — uma chamada
+// pra listar o diretório, uma por arquivo (usando a download_url assinada
+// devolvida pelo próprio GitHub, sem precisar de auth de novo).
+async function loadLedgerEntries(token) {
+  const listUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/odds_history?ref=${GH_DATA_REF}`;
+  const files = await ghFetchJson(listUrl, token);
+  const ledgerFiles = (Array.isArray(files) ? files : [])
+    .filter(f => f.type === 'file' && /^model_ledger_.*\.json$/.test(f.name) && f.download_url);
+
+  const entries = [];
+  for (const f of ledgerFiles) {
+    try {
+      const res = await fetch(f.download_url);
+      if (!res.ok) {
+        console.warn(`[closingOddsScheduler] falha ao baixar ${f.name}: ${res.status}`);
+        continue;
+      }
+      const parsed = await res.json();
+      if (Array.isArray(parsed)) entries.push(...parsed);
+    } catch (e) {
+      console.warn(`[closingOddsScheduler] erro lendo ${f.name}: ${e.message}`);
+    }
+  }
+  return entries;
+}
+
+// Mesma lógica de pipeline/capture_closing_odds.js::findNextReachableEvent —
+// prioriza o evento futuro de commenceTime mais próximo; só cai pra "já
+// iniciado" quando não há nenhum futuro alcançável. A exclusão de quem já
+// passou da janela de captura não depende mais de recalcular commenceTime
+// aqui: fica a cargo do campo closingOddsStatus (marcado 'expirada' por
+// settle_model_ledger.js) — aqui só filtra por ele.
+function findNextReachableEvent(entries, now) {
+  let bestFuture = null;
+  let bestStarted = null;
+  for (const entry of entries) {
+    if (entry.resolutionStatus !== 'pendente') continue;
+    if (closingOddsStatusOf(entry) !== 'pendente') continue;
+    const markets = SPORT_MARKET_KEYS[entry.esporte];
+    if (!markets || !markets.includes(entry.market)) continue;
+
+    const commence = new Date(entry.commenceTime).getTime();
+    if (isNaN(commence)) continue;
+
+    const candidate = {
+      commence,
+      key: `${entry.eventId}|${entry.player}|${entry.market}|${entry.line}|${entry.side}`,
+      label: `${entry.esporte} ${entry.player} ${entry.market} ${entry.side} ${entry.line}`,
+    };
+    if (commence >= now) {
+      if (bestFuture === null || commence < bestFuture.commence) bestFuture = candidate;
+    } else {
+      if (bestStarted === null || commence < bestStarted.commence) bestStarted = candidate;
+    }
+  }
+  return bestFuture || bestStarted;
+}
+
+async function dispatchCaptureWorkflow(token) {
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}/dispatches`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ ref: GH_WORKFLOW_REF }),
+  });
+  if (!res.ok) throw new Error(`dispatch ${res.status}: ${(await res.text()).slice(0, 300)}`);
+}
+
+exports.closingOddsScheduler = onSchedule(
+  { region: 'southamerica-east1', schedule: 'every 30 minutes', secrets: [GH_DISPATCH_TOKEN] },
+  async () => {
+    const token = GH_DISPATCH_TOKEN.value();
+    if (!token) {
+      console.error('[closingOddsScheduler] segredo GH_DISPATCH_TOKEN ausente — abortando.');
+      return;
+    }
+
+    let entries;
+    try {
+      entries = await loadLedgerEntries(token);
+    } catch (e) {
+      console.error(`[closingOddsScheduler] falha ao ler histórico central: ${e.message}`);
+      return;
+    }
+
+    const now = Date.now();
+    const target = findNextReachableEvent(entries, now);
+    if (!target) {
+      console.log('[closingOddsScheduler] nenhuma indicação pendente sem odd de fechamento dentro da janela — nada a disparar.');
+      return;
+    }
+
+    const stateSnap = await SCHEDULER_STATE_DOC.get();
+    const state = stateSnap.exists ? stateSnap.data() : {};
+    const lastDispatchAt = state.lastDispatchAt?.toMillis?.() ?? 0;
+    const lastDispatchKey = state.lastDispatchKey ?? null;
+
+    const jaIniciado = target.commence < now;
+    if (jaIniciado) {
+      // Só restam eventos já iniciados sem odd disponível — sem horário
+      // futuro pra mirar, aplica o intervalo mínimo pra não disparar em
+      // rajada a cada execução agendada (ver MIN_RETRY_INTERVAL_MS).
+      if (now - lastDispatchAt < MIN_RETRY_INTERVAL_MS) {
+        console.log(`[closingOddsScheduler] alvo já iniciado (${target.label}) — intervalo mínimo de ${Math.round(MIN_RETRY_INTERVAL_MS / 60000)}min ainda não passou, não disparando.`);
+        return;
+      }
+    } else {
+      const faltamMs = target.commence - now;
+      if (faltamMs > TARGET_LEAD_MS) {
+        console.log(`[closingOddsScheduler] próximo evento alcançável (${target.label}) ainda a ${Math.round(faltamMs / 60000)}min — fora da janela de disparo, aguardando próxima execução.`);
+        return;
+      }
+      if (target.key === lastDispatchKey && now - lastDispatchAt < DISPATCH_DEDUPE_MS) {
+        console.log(`[closingOddsScheduler] já disparado recentemente para ${target.label} — evitando disparo duplicado.`);
+        return;
+      }
+    }
+
+    try {
+      await dispatchCaptureWorkflow(token);
+    } catch (e) {
+      console.error(`[closingOddsScheduler] falha ao disparar workflow_dispatch: ${e.message}`);
+      return;
+    }
+
+    await SCHEDULER_STATE_DOC.set({
+      lastDispatchAt: FieldValue.serverTimestamp(),
+      lastDispatchKey: target.key,
+      lastDispatchLabel: target.label,
+    }, { merge: true });
+
+    console.log(`[closingOddsScheduler] workflow disparado para ${target.label} (${jaIniciado ? 'já iniciado' : `faltam ~${Math.round((target.commence - now) / 60000)}min`}).`);
   }
 );
