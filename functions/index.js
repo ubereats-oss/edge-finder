@@ -17,6 +17,7 @@ const db = getFirestore();
 // function e o que configurar.
 const SYNC_ODDS_BR_SECRET = defineSecret('SYNC_ODDS_BR_SECRET');
 const SYNC_SECRET_HEADER = 'X-Sync-Secret';
+const GH_DISPATCH_TOKEN = defineSecret('GH_DISPATCH_TOKEN');
 
 // ── Tabelas de calibração ─────────────────────────────────────────────────────
 const CALIB_TABLES = {
@@ -55,14 +56,14 @@ const CALIB_TABLES = {
 };
 
 const SPORT_CONFIG = {
-  nba:    { col: 'results', doc: 'nba_props_br', minEdge: 10, calib: 'nba'    },
-  nhl:    { col: 'results', doc: 'nhl_props',    minEdge: 15, calib: 'nhl'    },
+  nba:    { esporte: 'basketball/nba',    col: 'results', doc: 'nba_props_br', minEdge: 10, calib: 'nba'    },
+  nhl:    { esporte: 'icehockey/nhl',     col: 'results', doc: 'nhl_props',    minEdge: 15, calib: 'nhl'    },
   // MLB não tem tabela de calibração própria e validada neste caminho —
   // `calib: null` faz recalcProp tratar como segmento "em_amostra" (ver
   // UNCALIBRATED_SHRINK_TO_RAW/UNCALIBRATED_STAKE_FRACTION abaixo), em vez
   // de usar a tabela de outro esporte.
-  mlb:    { col: 'results', doc: 'mlb_props',    minEdge: 15, calib: null    },
-  tennis: { col: 'results', doc: 'tennis_props', minEdge: 5,  calib: 'tennis' },
+  mlb:    { esporte: 'baseball/mlb',      col: 'results', doc: 'mlb_props',    minEdge: 15, calib: null    },
+  tennis: { esporte: 'tennis',            col: 'results', doc: 'tennis_props', minEdge: 5,  calib: 'tennis' },
 };
 
 // Espelha pipeline/risk_config.js porque functions/ é implantado isolado.
@@ -249,7 +250,7 @@ function isValidOddsPayload(odds) {
  * { "updated": 3, "removed": 1, "unchanged": 12 }
  */
 exports.syncOddsBr = onRequest(
-  { region: 'southamerica-east1', cors: false, secrets: [SYNC_ODDS_BR_SECRET] },
+  { region: 'southamerica-east1', cors: false, secrets: [SYNC_ODDS_BR_SECRET, GH_DISPATCH_TOKEN] },
   async (req, res) => {
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
@@ -279,6 +280,11 @@ exports.syncOddsBr = onRequest(
     }
 
     const calibTable = cfg.calib ? (CALIB_TABLES[cfg.calib] || CALIB_TABLES.nba) : null;
+    const githubToken = GH_DISPATCH_TOKEN.value();
+    if (!githubToken) {
+      console.error('[syncOddsBr] segredo GH_DISPATCH_TOKEN ausente — abortando para não dessíncronizar app e histórico central.');
+      return res.status(500).json({ error: 'Histórico central indisponível' });
+    }
 
     // Lê props do Firestore
     const snap = await db.collection(cfg.col).doc(cfg.doc).get();
@@ -309,13 +315,25 @@ exports.syncOddsBr = onRequest(
       if (!lineChanged && !oddsChanged) { unchanged++; continue; }
 
       const recalculated = recalcProp(prop, oddsOverBR, oddsUnderBR, lineBR, calibTable);
+      recalculated.bookmaker = prop.bookmaker ?? 'Pinnacle';
+      recalculated.indicationId = indicationIdFor(recalculated);
 
       if (recalculated.edge < cfg.minEdge) {
+        await applySyncOddsBrToLedger(githubToken, cfg, prop, recalculated, 'removed');
         toRemove.add(i);
         removed++;
         continue;
       }
 
+      const syncedLedgerEntry = await applySyncOddsBrToLedger(
+        githubToken,
+        cfg,
+        prop,
+        recalculated,
+        lineChanged ? 'line_changed' : 'odds_changed'
+      );
+      recalculated.indicationId = syncedLedgerEntry.indicationId ?? syncedLedgerEntry._key;
+      recalculated.ledgerKey = syncedLedgerEntry._key ?? recalculated.indicationId;
       props[i] = recalculated;
       updated++;
     }
@@ -352,16 +370,15 @@ exports.syncOddsBr = onRequest(
 // existindo como rede de segurança.
 //
 // Requer o segredo GH_DISPATCH_TOKEN (`firebase functions:secrets:set
-// GH_DISPATCH_TOKEN`) — um GitHub PAT com escopo de leitura de conteúdo
-// (Contents: read, pra ler odds_history da branch data) e de disparo de
-// workflow (Actions: write, ou "workflow" em PAT clássico).
-const GH_DISPATCH_TOKEN = defineSecret('GH_DISPATCH_TOKEN');
-
+// GH_DISPATCH_TOKEN`) — um GitHub PAT com Contents: write (syncOddsBr grava
+// odds_history na branch data) e Actions: write / workflow (closingOddsScheduler
+// dispara o workflow de captura).
 const GH_OWNER = 'ubereats-oss';
 const GH_REPO = 'edge-finder';
 const GH_DATA_REF = 'data';
 const GH_WORKFLOW_FILE = 'capture_closing_odds.yml';
 const GH_WORKFLOW_REF = 'main';
+const SYNC_BR_REJECTION_REASON = 'sync_br_edge_insuficiente';
 
 const MIN_RETRY_INTERVAL_MS = closingOddsRules.MIN_RETRY_INTERVAL_MS;
 
@@ -377,6 +394,199 @@ async function ghFetchJson(url, token) {
   });
   if (!res.ok) throw new Error(`GitHub API ${res.status}: ${(await res.text()).slice(0, 300)}`);
   return res.json();
+}
+
+function monthOf(isoOrDate) {
+  const d = isoOrDate ? new Date(isoOrDate) : new Date();
+  if (Number.isNaN(d.getTime())) return new Date().toISOString().slice(0, 7);
+  return d.toISOString().slice(0, 7);
+}
+
+function sportSlug(esporte) {
+  return esporte && esporte.includes('/') ? esporte.split('/')[1] : esporte;
+}
+
+function makeLedgerKey({ eventId, player, market, line, side }) {
+  return `${eventId}|${player}|${market}|${line}|${side}`;
+}
+
+function indicationIdFor(prop) {
+  return makeLedgerKey({
+    eventId: prop.eventId ?? prop.gameId ?? prop.pinnacleId ?? `${prop.game}|${prop.commence_time ?? prop.commenceTime}`,
+    player: prop.player,
+    market: prop.market ?? prop.prop,
+    line: prop.line,
+    side: prop.side,
+  });
+}
+
+function ensureOriginalRecommendation(entry) {
+  if (entry.originalRecommendation) return entry.originalRecommendation;
+  return {
+    line: entry.line,
+    side: entry.side,
+    odds: entry.odds,
+    modelProb: entry.modelProb,
+    impliedProb: entry.impliedProb,
+    edge: entry.edge,
+    kelly: entry.kelly,
+    bookmaker: entry.bookmaker ?? null,
+    evaluatedAt: entry.evaluatedAt ?? null,
+  };
+}
+
+async function loadLedgerPartitionForEntry(token, esporte, commenceTime) {
+  const month = monthOf(commenceTime);
+  const fileName = `model_ledger_${sportSlug(esporte)}_${month}.json`;
+  const path = `odds_history/${fileName}`;
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_DATA_REF}`;
+  try {
+    const file = await ghFetchJson(url, token);
+    const content = Buffer.from(file.content || '', 'base64').toString('utf8');
+    const entries = JSON.parse(content || '[]');
+    return { path, sha: file.sha, entries: Array.isArray(entries) ? entries : [] };
+  } catch (e) {
+    if (String(e.message).includes('GitHub API 404')) return { path, sha: null, entries: [] };
+    throw e;
+  }
+}
+
+async function saveLedgerPartition(token, partition, message) {
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${partition.path}`;
+  const body = {
+    message,
+    branch: GH_DATA_REF,
+    content: Buffer.from(JSON.stringify(partition.entries, null, 2) + '\n', 'utf8').toString('base64'),
+  };
+  if (partition.sha) body.sha = partition.sha;
+
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`GitHub ledger write ${res.status}: ${(await res.text()).slice(0, 300)}`);
+}
+
+async function applySyncOddsBrToLedger(token, cfg, prop, recalculated, action) {
+  const esporte = cfg.esporte;
+  const originalId = prop.indicationId ?? prop.ledgerKey ?? indicationIdFor(prop);
+  const originalKey = prop.ledgerKey ?? originalId;
+  const partition = await loadLedgerPartitionForEntry(token, esporte, prop.commence_time ?? prop.commenceTime);
+  const idx = partition.entries.findIndex(e => (e.indicationId ?? e._key) === originalId || e._key === originalKey);
+  if (idx === -1) {
+    throw new Error(`entrada ${originalId} não encontrada no histórico central`);
+  }
+
+  const now = new Date().toISOString();
+  const original = partition.entries[idx];
+  original.indicationId = original.indicationId ?? original._key ?? originalId;
+  original.originalRecommendation = ensureOriginalRecommendation(original);
+  original.syncHistory = [
+    ...(Array.isArray(original.syncHistory) ? original.syncHistory : []),
+    {
+      source: 'syncOddsBr',
+      action,
+      syncedAt: now,
+      previous: {
+        line: original.line,
+        side: original.side,
+        odds: original.odds,
+        modelProb: original.modelProb,
+        impliedProb: original.impliedProb,
+        edge: original.edge,
+        kelly: original.kelly,
+        bookmaker: original.bookmaker ?? null,
+      },
+      next: {
+        line: recalculated.line,
+        side: recalculated.side,
+        odds: recalculated.odds,
+        modelProb: recalculated.modelProb,
+        impliedProb: recalculated.impliedProb,
+        edge: recalculated.edge,
+        kelly: recalculated.kelly,
+        bookmaker: recalculated.bookmaker ?? prop.bookmaker ?? null,
+      },
+    },
+  ];
+
+  if (action === 'removed') {
+    original.published = false;
+    original.unpublishedBySync = true;
+    original.rejectionReason = SYNC_BR_REJECTION_REASON;
+    original.syncRemovedAt = now;
+    original.validForCalibration = original.validForCalibration !== false;
+  } else if (action === 'line_changed') {
+    const replacementId = indicationIdFor(recalculated);
+    original.published = false;
+    original.replacedBy = replacementId;
+    original.replacedAt = now;
+    original.replacementReason = 'sync_br_linha_alterada';
+    original.validForCalibration = original.validForCalibration !== false;
+
+    const replacement = {
+      ...original,
+      ...recalculated,
+      _key: replacementId,
+      indicationId: replacementId,
+      eventId: original.eventId,
+      game: original.game,
+      commenceTime: original.commenceTime,
+      player: original.player,
+      market: original.market,
+      line: recalculated.line,
+      side: recalculated.side,
+      odds: recalculated.odds,
+      modelProb: recalculated.modelProb,
+      rawProb: original.rawProb ?? null,
+      impliedProb: recalculated.impliedProb,
+      edge: recalculated.edge,
+      kelly: recalculated.kelly,
+      bookmaker: recalculated.bookmaker ?? original.bookmaker ?? null,
+      published: true,
+      rejectionReason: null,
+      replacedBy: null,
+      replacedAt: null,
+      source: 'syncOddsBr',
+      originalIndicationId: original.indicationId,
+      replacedFrom: original.indicationId,
+      replacementCreatedAt: now,
+      replacementReason: null,
+      unpublishedBySync: null,
+      syncRemovedAt: null,
+      evaluatedAt: now,
+      firstEvaluatedAt: original.firstEvaluatedAt ?? original.evaluatedAt ?? now,
+      result: null,
+      resolutionAttempts: 0,
+      resolutionStatus: 'pendente',
+      closingOdds: null,
+      clv: null,
+      closingOddsStatus: 'pendente',
+      syncHistory: [],
+    };
+    partition.entries.push(replacement);
+  } else {
+    original.line = recalculated.line;
+    original.side = recalculated.side;
+    original.odds = recalculated.odds;
+    original.modelProb = recalculated.modelProb;
+    original.impliedProb = recalculated.impliedProb;
+    original.edge = recalculated.edge;
+    original.kelly = recalculated.kelly;
+    original.bookmaker = recalculated.bookmaker ?? original.bookmaker ?? null;
+    original.syncUpdatedAt = now;
+  }
+
+  await saveLedgerPartition(token, partition, `ledger: syncOddsBr ${action} ${originalId}`);
+  return action === 'line_changed'
+    ? partition.entries[partition.entries.length - 1]
+    : original;
 }
 
 // Lê todas as partições model_ledger_*.json da branch `data` — uma chamada

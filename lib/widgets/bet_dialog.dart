@@ -44,7 +44,10 @@ Future<void> showBetDialog({
   final novaController = TextEditingController();
   final customBookmakers = PrefsService.getCustomBookmakers();
   final allBookmakers = [..._defaultBookmakers, ...customBookmakers];
-  String? selectedBookmaker = PrefsService.getLastBookmaker();
+  final indicatedBookmaker = (betData['bookmaker'] as String?)?.trim();
+  String? selectedBookmaker = indicatedBookmaker != null && indicatedBookmaker.isNotEmpty
+      ? indicatedBookmaker
+      : PrefsService.getLastBookmaker();
   if (selectedBookmaker != null && !allBookmakers.contains(selectedBookmaker)) {
     selectedBookmaker = null;
   }
@@ -72,7 +75,7 @@ Future<void> showBetDialog({
       final cdf = 0.5 * (1 + (z >= 0 ? erf : -erf));
       prob = 1 - cdf;
     } else if (modelProb != null) {
-      prob = modelProb! / 100;
+      prob = modelProb / 100;
     }
     if (prob == null) {
       update(() { _recalcEdge = null; _recalcKelly = null; });
@@ -348,14 +351,9 @@ Future<void> showBetDialog({
                       isExpanded: true,
                       dropdownColor: const Color(0xFF2A2A3E),
                       style: const TextStyle(color: Colors.white, fontSize: 14),
-                      hint: const Text('Não informar',
+                      hint: const Text('Selecione a casa',
                           style: TextStyle(color: Color(0xFF555566))),
                       items: [
-                        const DropdownMenuItem<String?>(
-                          value: null,
-                          child: Text('Não informar',
-                              style: TextStyle(color: Color(0xFF888888))),
-                        ),
                         ...[
                           ..._defaultBookmakers,
                           ...PrefsService.getCustomBookmakers()
@@ -400,17 +398,16 @@ Future<void> showBetDialog({
                 final oddsVal2 =
                     double.tryParse(oddsController.text.replaceAll(',', '.'));
                 if (stake == null || stake <= 0) return;
+                if (selectedBookmaker == null || selectedBookmaker!.trim().isEmpty) return;
                 Navigator.pop(ctx);
-                if (selectedBookmaker != null) {
-                  PrefsService.setLastBookmaker(selectedBookmaker!);
-                }
+                PrefsService.setLastBookmaker(selectedBookmaker!);
                 try {
                   await ApiService.createBet({
                     ...betData,
                     'stake': stake,
                     'odds': oddsVal2 ?? betData['odds'],
                     'side': hasSides ? selectedSide : betData['side'],
-                    'bookmaker': selectedBookmaker ?? '',
+                    'bookmaker': selectedBookmaker!.trim(),
                     'virtual': _isVirtual,
                   });
                   if (context.mounted) {

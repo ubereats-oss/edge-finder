@@ -52,6 +52,8 @@ jobs:
 
       - name: Gerar relatório de desempenho
         run: node pipeline/generate_report.js
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Sincronizar relatório de desempenho com Firestore
         run: node pipeline/firebase_sync.js report

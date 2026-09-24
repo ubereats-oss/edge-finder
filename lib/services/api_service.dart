@@ -58,6 +58,9 @@ class ApiService {
       for (final item in values) {
         final map = _firestoreToMap(
             item['mapValue']?['fields'] as Map<String, dynamic>? ?? {});
+        if (collection == 'results' && !_isDisplayableRecommendation(map)) {
+          continue;
+        }
         data.add(map);
       }
     }
@@ -71,6 +74,19 @@ class ApiService {
       }
     }
     return FetchResult(data: data, lastUpdated: lastUpdated);
+  }
+
+  static bool _isDisplayableRecommendation(Map<String, dynamic> item) {
+    final indicationId = item['indicationId'] as String?;
+    if (indicationId == null || indicationId.trim().isEmpty) return false;
+
+    final commenceRaw = item['commence_time'] ?? item['commenceTime'];
+    if (commenceRaw is! String) return false;
+
+    final commence = DateTime.tryParse(commenceRaw);
+    if (commence == null) return false;
+
+    return commence.toUtc().isAfter(DateTime.now().toUtc());
   }
 
   // ── Conversão Firestore → Map ──────────────────────────────────────────────
