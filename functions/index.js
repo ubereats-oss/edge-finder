@@ -54,9 +54,21 @@ const CALIB_TABLES = {
 const SPORT_CONFIG = {
   nba:    { col: 'results', doc: 'nba_props_br', minEdge: 10, calib: 'nba'    },
   nhl:    { col: 'results', doc: 'nhl_props',    minEdge: 15, calib: 'nhl'    },
-  mlb:    { col: 'results', doc: 'mlb_props',    minEdge: 15, calib: 'nba'    },
+  // MLB não tem tabela de calibração própria e validada neste caminho —
+  // `calib: null` faz recalcProp tratar como segmento "em_amostra" (ver
+  // UNCALIBRATED_SHRINK_TO_RAW/UNCALIBRATED_STAKE_FRACTION abaixo), em vez
+  // de usar a tabela de outro esporte.
+  mlb:    { col: 'results', doc: 'mlb_props',    minEdge: 15, calib: null    },
   tennis: { col: 'results', doc: 'tennis_props', minEdge: 5,  calib: 'tennis' },
 };
+
+// Mesmos valores de pipeline/risk_config.js (MIN_SHRINK_TO_RAW,
+// MIN_STAKE_FRACTION) pro estado "em_amostra" — sem amostra própria pra
+// calibração isotônica, a probabilidade encolhe em direção à implícita de
+// mercado e o stake sugerido cai pra 25%. Duplicado aqui (não importado)
+// porque functions/ é implantado isolado de pipeline/.
+const UNCALIBRATED_SHRINK_TO_RAW = 0.2;
+const UNCALIBRATED_STAKE_FRACTION = 0.25;
 
 // ── Matemática ────────────────────────────────────────────────────────────────
 function erf(x) {
@@ -92,11 +104,18 @@ function calibrate(p, table) {
   return p;
 }
 
-function calcKelly(prob, odds) {
+function calcKelly(prob, odds, stakeFraction = 1) {
   const b = odds - 1;
   const q = 1 - prob;
   const k = (prob * b - q) / b;
-  return Math.max(0, parseFloat((k * 0.25 * 100).toFixed(2)));
+  return Math.max(0, parseFloat((k * 0.25 * stakeFraction * 100).toFixed(2)));
+}
+
+// Mistura a bruta do modelo com a implícita de mercado — mesma fórmula do
+// estado "em_amostra" de pipeline/calibration.js, pra esporte sem tabela de
+// calibração própria neste caminho.
+function shrinkToImplied(rawProb, impliedProb) {
+  return UNCALIBRATED_SHRINK_TO_RAW * rawProb + (1 - UNCALIBRATED_SHRINK_TO_RAW) * impliedProb;
 }
 
 function recalcProp(prop, oddsOverBR, oddsUnderBR, lineBR, calibTable) {
@@ -106,8 +125,17 @@ function recalcProp(prop, oddsOverBR, oddsUnderBR, lineBR, calibTable) {
 
   const pOverRaw  = 1 - normalCDF(line, mu, sigma);
   const pUnderRaw = normalCDF(line, mu, sigma);
-  const pOver     = calibrate(pOverRaw, calibTable);
-  const pUnder    = calibrate(pUnderRaw, calibTable);
+
+  let pOver, pUnder, stakeFraction;
+  if (calibTable) {
+    pOver = calibrate(pOverRaw, calibTable);
+    pUnder = calibrate(pUnderRaw, calibTable);
+    stakeFraction = 1;
+  } else {
+    pOver = shrinkToImplied(pOverRaw, 1 / oddsOverBR);
+    pUnder = shrinkToImplied(pUnderRaw, 1 / oddsUnderBR);
+    stakeFraction = UNCALIBRATED_STAKE_FRACTION;
+  }
 
   const edgeOver  = pOver  - 1 / oddsOverBR;
   const edgeUnder = pUnder - 1 / oddsUnderBR;
@@ -127,7 +155,7 @@ function recalcProp(prop, oddsOverBR, oddsUnderBR, lineBR, calibTable) {
     modelProb:        parseFloat((bestProb * 100).toFixed(1)),
     impliedProb:      parseFloat(((1 / bestOdds) * 100).toFixed(1)),
     edge:             parseFloat((bestEdge * 100).toFixed(2)),
-    kelly:            calcKelly(bestProb, bestOdds),
+    kelly:            calcKelly(bestProb, bestOdds, stakeFraction),
     inefficientMarket: !prop.lowSample && (bestEdge * 100) >= 20,
     formWarning:      prop.playerAvg5 !== null &&
                       (bestSide === 'Over' ? prop.playerAvg5 < line : prop.playerAvg5 > line),
@@ -250,7 +278,7 @@ exports.syncOddsBr = onRequest(
       return res.status(400).json({ error: 'Campo odds ausente ou em formato inválido' });
     }
 
-    const calibTable = CALIB_TABLES[cfg.calib] || CALIB_TABLES.nba;
+    const calibTable = cfg.calib ? (CALIB_TABLES[cfg.calib] || CALIB_TABLES.nba) : null;
 
     // Lê props do Firestore
     const snap = await db.collection(cfg.col).doc(cfg.doc).get();
