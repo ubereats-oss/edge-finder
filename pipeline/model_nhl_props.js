@@ -274,8 +274,12 @@ for (const c of candidates) {
   });
 }
 
-const descartadosGuardas = candidates.filter(c => !c.published && c.rejectionReason && c.rejectionReason !== ledger.REJECTION_REASONS.EDGE_ABAIXO_LIMIAR && c.rejectionReason !== 'margem_insuficiente').length;
-console.log(`Props NHL: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Margem insuficiente: ${descartadosMarginRatio} | Bloqueado: ${descartadosJogoBloqueado} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
+// Dois grupos: descartado ANTES de calcular probabilidade/edge (dado
+// insuficiente pra avaliar) vs avaliado (edgePct calculado) e rejeitado
+// depois — por edge abaixo do limiar ou por guarda de risco.
+const descartadosAntesDeAvaliar = descartadosSemStats + descartadosSigmaBaixa + descartadosMarginRatio;
+const avaliadosRejeitados = candidates.filter(c => !c.published && c.edgePct !== null).length;
+console.log(`Props NHL: ${results.length} | Descartado antes de avaliar: ${descartadosAntesDeAvaliar} (sem stats: ${descartadosSemStats}, sigma baixo: ${descartadosSigmaBaixa}, margem insuficiente: ${descartadosMarginRatio}) | Bloqueado: ${descartadosJogoBloqueado} | Avaliado e rejeitado: ${avaliadosRejeitados}`);
 
 const ledgerSummary = ledger.flush();
 console.log(`Histórico de indicações (NHL): ${ledgerSummary.partitionsSaved} partição(ões) atualizada(s), ${ledgerSummary.duplicatesInRun} indicação(ões) duplicada(s) na mesma execução.`);
