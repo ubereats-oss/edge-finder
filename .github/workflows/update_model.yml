@@ -23,6 +23,8 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  ODDS_API_MIN_REMAINING: 200
+  ODDS_API_MAX_CALLS: 5
 
 jobs:
   update:
