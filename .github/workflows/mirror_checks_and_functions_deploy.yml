@@ -14,6 +14,14 @@ on:
         options:
           - 'false'
           - 'true'
+      force_sync_odds_br_deploy:
+        description: Force deploy syncOddsBr without code changes
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 permissions:
   contents: read
@@ -54,11 +62,30 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.force_closing_odds_deploy }}" == "true" ]]; then
-            echo "functions=closingOddsScheduler" >> "$GITHUB_OUTPUT"
-            echo "firebase_only=functions:closingOddsScheduler" >> "$GITHUB_OUTPUT"
-            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
-            echo "Forced Functions deploy: closingOddsScheduler"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            forced_functions=()
+            if [[ "${{ inputs.force_closing_odds_deploy }}" == "true" ]]; then
+              forced_functions+=("closingOddsScheduler")
+            fi
+            if [[ "${{ inputs.force_sync_odds_br_deploy }}" == "true" ]]; then
+              forced_functions+=("syncOddsBr")
+            fi
+            if [[ "${#forced_functions[@]}" -gt 0 ]]; then
+              functions="$(IFS=,; echo "${forced_functions[*]}")"
+              firebase_only="$(printf '%s' "$functions" | awk -F, '{ for (i=1; i<=NF; i++) { printf "%sfunctions:%s", (i==1 ? "" : ","), $i } }')"
+              echo "functions=$functions" >> "$GITHUB_OUTPUT"
+              echo "firebase_only=$firebase_only" >> "$GITHUB_OUTPUT"
+              echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+              echo "Forced Functions deploy: $functions"
+              exit 0
+            fi
+          fi
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "functions=" >> "$GITHUB_OUTPUT"
+            echo "firebase_only=" >> "$GITHUB_OUTPUT"
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            echo "No Functions deploy forced."
             exit 0
           fi
 

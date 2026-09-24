@@ -65,6 +65,7 @@ App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges
 - Fazer apenas o que foi pedido: não refatorar, renomear ou "melhorar" código fora do escopo da tarefa. Pode corrigir warnings do analyze se for rodado
 - NÃO rodar `flutter analyze`, nem deploy, nem commit, ne push — quem roda é o usuário, para economizar tokens. Só rodar se for explicitamente pedido. Sempre avisar se precisar fazer deploy e indicar o comando completo
 - Cloud Functions só são publicadas pelo workflow GitHub Actions "Mirror Checks and Functions Deploy". Mudança em `functions/` vai por commit e push na `main`; o deploy acontece automaticamente. Para republicar sem mudança de código, usar o disparo manual desse workflow. Nunca rodar `firebase deploy` de Functions na máquina local.
+- `GH_DISPATCH_TOKEN` no Secret Manager deve ser o fine-grained PAT `edge-finder-functions`, sem expiração, restrito ao repositório `ubereats-oss/edge-finder`, com `Actions` e `Contents` em leitura/escrita. Se for revogado/desativado, `syncOddsBr` deixa de gravar substituições/remoções no histórico central da branch `data` e `closingOddsScheduler` deixa de disparar a captura de odd de fechamento.
 - Respostas curtas: reportar o que foi feito em poucas linhas, sem explicar o código.
 - Ao criar, mover ou remover telas/arquivos principais, atualizar a seção "Mapa do projeto" deste CLAUDE.md.
 
