@@ -320,8 +320,14 @@ function buildTeamRatings(raw) {
     }
   }
 
+  if (!Object.keys(teamRating).length) {
+    console.log('mlb_team_rating.json não atualizado: stats sem metadados de time suficientes.');
+    return 0;
+  }
+
   fs.writeFileSync('mlb_team_rating.json', JSON.stringify(teamRating, null, 2));
   console.log(`mlb_team_rating.json salvo: ${Object.keys(teamRating).length} times.`);
+  return Object.keys(teamRating).length;
 }
 
 function stripInternalFields(raw) {
@@ -332,7 +338,7 @@ function stripInternalFields(raw) {
           const ctx = gameTypeData[loc];
           if (!ctx) continue;
           for (const statKey of ALL_STAT_KEYS) {
-            ctx[statKey] = (ctx[statKey] || []).map(({ _team, _eventDate, ...rest }) => rest);
+            ctx[statKey] = ctx[statKey] || [];
           }
         }
       }
@@ -382,6 +388,7 @@ async function getMlbPlayerStats() {
 
   if (!allEvents.length) {
     console.log('Nenhum jogo novo encontrado. Stats já atualizados.');
+    buildTeamRatings(existing);
     return;
   }
 
