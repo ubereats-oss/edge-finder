@@ -188,7 +188,7 @@ jobs:
           git fetch origin data 2>/dev/null || true
           git show origin/data:mlb_player_stats.json.gz > /tmp/mlb_ps.gz 2>/dev/null && \
             gunzip -c /tmp/mlb_ps.gz > mlb_player_stats.json || true
-          for f in mlb_player_team.json mlb_injuries_today.json; do
+          for f in mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
             git show origin/data:$f > $f 2>/dev/null || rm -f $f
           done
           mkdir -p odds_history
@@ -212,7 +212,7 @@ jobs:
         run: |
           mkdir -p /tmp/mlb-out
           gzip -n -c mlb_player_stats.json > /tmp/mlb-out/mlb_player_stats.json.gz 2>/dev/null || true
-          for f in mlb_results.json mlb_props_results.json mlb_player_team.json mlb_injuries_today.json; do
+          for f in mlb_results.json mlb_props_results.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json; do
             [ -f "$f" ] && cp "$f" /tmp/mlb-out/ || true
           done
           mkdir -p /tmp/mlb-out/odds_history

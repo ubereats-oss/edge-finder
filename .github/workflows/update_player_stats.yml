@@ -70,5 +70,6 @@ jobs:
           for f in nba_player_stats.json.gz mlb_player_stats.json.gz; do
             [ -f "$f" ] && git add "$f" || true
           done
+          [ -f mlb_team_rating.json ] && git add mlb_team_rating.json || true
           git diff --staged --quiet && echo "Sem mudanças nos stats" || git commit -m "stats: $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push origin data-work:data
