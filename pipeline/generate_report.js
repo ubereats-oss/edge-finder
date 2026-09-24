@@ -43,19 +43,26 @@ async function loadBets() {
     const snap = await admin.firestore().collection('bets').get();
     const bets = [];
     snap.forEach(doc => bets.push({ id: doc.id, ...doc.data() }));
-    return bets;
+    return { available: true, source: 'firestore', bets };
   }
 
   const file = path.join(__dirname, '..', 'bets.json');
-  if (!fs.existsSync(file)) return [];
+  if (!fs.existsSync(file)) {
+    return {
+      available: false,
+      source: null,
+      bets: [],
+      reason: 'FIREBASE_SERVICE_ACCOUNT ausente e bets.json não encontrado.',
+    };
+  }
   const raw = fs.readFileSync(file, 'utf8').trim();
-  if (!raw) return [];
+  if (!raw) return { available: true, source: 'bets.json', bets: [] };
   try {
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return { available: true, source: 'bets.json', bets: Array.isArray(parsed) ? parsed : [] };
   } catch (e) {
     console.warn(`Aviso: bets.json inválido — visão de apostas reais ignorada. ${e.message}`);
-    return [];
+    return { available: false, source: 'bets.json', bets: [], reason: `bets.json inválido: ${e.message}` };
   }
 }
 
@@ -165,9 +172,11 @@ function segmentSampleSize(esporte, market, allEntries) {
 
 async function main() {
   const all = loadAllEntries();
-  const bets = await loadBets();
+  const betsLoad = await loadBets();
   const countable = all.filter(isCountable);
-  const realBets = realBetRows(bets, all);
+  const realBets = betsLoad.available
+    ? realBetRows(betsLoad.bets, all)
+    : { rows: [], manualWithoutIndication: 0, unresolvedLinked: 0, linked: 0, unavailable: true, reason: betsLoad.reason };
 
   const groups = new Map(); // `${esporte}|${market}|${bucket}` -> entries[]
   for (const e of countable) {
@@ -232,7 +241,12 @@ async function main() {
   lines.push('');
   lines.push('Inclui só apostas registradas com identificador de indicação. Apostas manuais sem indicação de origem ficam fora desta visão e são sinalizadas abaixo.');
   lines.push('');
-  lines.push(`Apostas sem indicação de origem: ${realBets.manualWithoutIndication}`);
+  if (realBets.unavailable) {
+    lines.push(`Visão indisponível: ${realBets.reason}`);
+  } else {
+    lines.push(`Fonte: ${betsLoad.source}`);
+    lines.push(`Apostas sem indicação de origem: ${realBets.manualWithoutIndication}`);
+  }
   lines.push('');
   lines.push('| Esporte | Mercado | Apostas | Resolvidas | Taxa de acerto | Stake | Lucro | ROI | CLV médio | Sem ledger |');
   lines.push('|---|---|---|---|---|---|---|---|---|---|');
