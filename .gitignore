@@ -12,6 +12,10 @@ node_modules/
 odds_history/
 odds_snapshots/
 
+# Dumps do Repomix (snapshot do código pra IA, não deve ser versionado)
+odds_app.xml
+odds_app_*.xml
+
 # Flutter build
 build/
 .dart_tool/
