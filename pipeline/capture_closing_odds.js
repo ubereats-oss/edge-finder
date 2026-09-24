@@ -30,17 +30,17 @@ loadEnvFileIfPresent();
 let oddsApi;
 
 const SPORTS = [
-  { esporte: 'basketball/nba', apiSport: 'basketball_nba', markets: { points: 'player_points', rebounds: 'player_rebounds', assists: 'player_assists', steals: 'player_steals', threes: 'player_threes' } },
-  { esporte: 'baseball/mlb',   apiSport: 'baseball_mlb',   markets: { hits: 'batter_hits', strikeouts: 'pitcher_strikeouts', hitsAllowed: 'pitcher_hits_allowed' } },
+  { esporte: 'basketball/nba', apiSport: 'basketball_nba', markets: { h2h: 'h2h', points: 'player_points', rebounds: 'player_rebounds', assists: 'player_assists', steals: 'player_steals', threes: 'player_threes' } },
+  { esporte: 'baseball/mlb',   apiSport: 'baseball_mlb',   markets: { h2h: 'h2h', hits: 'batter_hits', strikeouts: 'pitcher_strikeouts', hitsAllowed: 'pitcher_hits_allowed' } },
   { esporte: 'hockey/nhl',     apiSport: 'icehockey_nhl',  markets: { points: 'player_points', goals: 'player_goals', assists: 'player_assists', shots: 'player_shots_on_goal' } },
   { esporte: 'americanfootball/nfl', apiSport: 'americanfootball_nfl', markets: { passYards: 'player_pass_yds', passTDs: 'player_pass_tds', rushYards: 'player_rush_yds', receptions: 'player_receptions', receptionYards: 'player_reception_yds' } },
 ];
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-async function fetchEventOdds(apiSport, eventId, marketKey) {
+async function fetchEventOdds(apiSport, eventId, marketKey, regions = 'us') {
   const url = `https://api.the-odds-api.com/v4/sports/${apiSport}/events/${eventId}/odds`;
-  const res = await oddsApi.get(url, { params: { regions: 'us', markets: marketKey, oddsFormat: 'decimal' } });
+  const res = await oddsApi.get(url, { params: { regions, markets: marketKey, oddsFormat: 'decimal' } });
   return res.data;
 }
 
@@ -48,10 +48,16 @@ async function fetchEventOdds(apiSport, eventId, marketKey) {
 // jogador+linha+lado, na MESMA casa de apostas usada na avaliação original.
 function findClosingPrice(oddsData, marketKey, player, line, side, bookmaker) {
   if (!oddsData?.bookmakers) return null;
-  const bm = oddsData.bookmakers.find(b => b.key === bookmaker);
+  const bm = bookmaker
+    ? oddsData.bookmakers.find(b => b.key === bookmaker)
+    : oddsData.bookmakers[0];
   if (!bm) return null;
   const market = bm.markets?.find(m => m.key === marketKey);
   if (!market) return null;
+  if (marketKey === 'h2h') {
+    const outcome = market.outcomes?.find(o => o.name === player);
+    return outcome ? outcome.price : null;
+  }
   const outcome = market.outcomes?.find(o => o.description === player && o.point === line && o.name === side);
   return outcome ? outcome.price : null;
 }
@@ -81,7 +87,8 @@ async function captureSport({ esporte, apiSport, markets }) {
       const marketKeysNeeded = [...new Set(group.map(e => markets[e.market]))];
       let oddsData;
       try {
-        oddsData = await fetchEventOdds(apiSport, eventId, marketKeysNeeded.join(','));
+        const regions = marketKeysNeeded.includes('h2h') ? 'us,eu' : 'us';
+        oddsData = await fetchEventOdds(apiSport, eventId, marketKeysNeeded.join(','), regions);
       } catch (e) {
         console.warn(`  [${esporte}] erro buscando odds do evento ${eventId}: ${e.response?.data?.message || e.message}`);
         continue;

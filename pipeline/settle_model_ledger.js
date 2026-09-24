@@ -190,6 +190,31 @@ function gradeResult(value, line, side) {
   return won ? ledger.RESULT_STATUS.GANHOU : ledger.RESULT_STATUS.PERDEU;
 }
 
+function teamNameMatches(displayName, teamNeedle) {
+  if (!displayName || !teamNeedle) return false;
+  const display = displayName.toLowerCase();
+  const needle = teamNeedle.toLowerCase();
+  return display === needle || display.includes(needle) || needle.includes(display) || lastWord(displayName) === lastWord(teamNeedle);
+}
+
+function h2hResultStatus(event, selectedTeam) {
+  const competitors = event?.competitions?.[0]?.competitors || [];
+  const selected = competitors.find(c => teamNameMatches(c.team?.displayName, selectedTeam));
+  if (!selected) return null;
+  if (selected.winner === true) return ledger.RESULT_STATUS.GANHOU;
+  if (selected.winner === false) return ledger.RESULT_STATUS.PERDEU;
+
+  const selectedScore = parseFloat(selected.score);
+  const otherScores = competitors
+    .filter(c => c !== selected)
+    .map(c => parseFloat(c.score))
+    .filter(v => !isNaN(v));
+  if (isNaN(selectedScore) || !otherScores.length) return null;
+  const bestOther = Math.max(...otherScores);
+  if (selectedScore === bestOther) return ledger.RESULT_STATUS.PUSH;
+  return selectedScore > bestOther ? ledger.RESULT_STATUS.GANHOU : ledger.RESULT_STATUS.PERDEU;
+}
+
 async function settleSport({ esporte, espnSport }) {
   const grace = GRACE_MS[esporte] ?? 4 * 60 * 60 * 1000;
   const now = Date.now();
@@ -218,7 +243,7 @@ async function settleSport({ esporte, espnSport }) {
       if (isNaN(commence) || now - commence < grace) { aindaPendentes++; continue; }
 
       const extractor = EXTRACTORS[esporte]?.[entry.market];
-      if (!extractor) { aindaPendentes++; continue; } // mercado sem apuração automática configurada
+      if (entry.market !== 'h2h' && !extractor) { aindaPendentes++; continue; } // mercado sem apuração automática configurada
 
       try {
         const event = await findEspnEvent(espnSport, entry.commenceTime, entry.game);
@@ -252,6 +277,30 @@ async function settleSport({ esporte, espnSport }) {
             aindaPendentes++;
           }
           changed = true;
+          continue;
+        }
+
+        if (entry.market === 'h2h') {
+          const statusResult = h2hResultStatus(event, entry.player);
+          if (statusResult === null) {
+            entry.resolutionAttempts = (entry.resolutionAttempts || 0) + 1;
+            if (entry.resolutionAttempts >= ledger.MAX_RESOLUTION_ATTEMPTS) {
+              entry.resolutionStatus = ledger.RESOLUTION_STATUS.NAO_APURAVEL;
+              naoApuraveis++;
+            } else {
+              aindaPendentes++;
+            }
+            changed = true;
+            continue;
+          }
+          entry.result = {
+            status: statusResult,
+            valorReal: entry.player,
+            apuradoEm: new Date().toISOString(),
+          };
+          entry.resolutionStatus = ledger.RESOLUTION_STATUS.RESOLVIDO;
+          changed = true;
+          apurados++;
           continue;
         }
 

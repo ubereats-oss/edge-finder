@@ -9,8 +9,8 @@ const MIN_RETRY_INTERVAL_MS = 5 * 60 * 1000;
 const DISPATCH_DEDUPE_MS = 3 * 60 * 1000;
 
 const SPORT_MARKET_KEYS = {
-  'basketball/nba': ['points', 'rebounds', 'assists', 'steals', 'threes'],
-  'baseball/mlb': ['hits', 'strikeouts', 'hitsAllowed'],
+  'basketball/nba': ['h2h', 'points', 'rebounds', 'assists', 'steals', 'threes'],
+  'baseball/mlb': ['h2h', 'hits', 'strikeouts', 'hitsAllowed'],
   'hockey/nhl': ['points', 'goals', 'assists', 'shots'],
   'americanfootball/nfl': ['passYards', 'passTDs', 'rushYards', 'receptions', 'receptionYards'],
 };
