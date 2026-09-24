@@ -1,9 +1,11 @@
 name: Histórico de Odds
 on:
+  schedule:
+    - cron: '0 19 * * *'
   workflow_dispatch:
     inputs:
-      force_run:
-        description: 'Executar mesmo com odds_history suspenso'
+      ignore_global_reserve:
+        description: 'Ignorar reserva global de cota'
         required: false
         default: 'false'
         type: choice
@@ -15,33 +17,24 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  ODDS_API_MIN_REMAINING: 200
+  ODDS_API_TOTAL_MIN_REMAINING: 0
 
 jobs:
   save-history:
     runs-on: ubuntu-latest
     steps:
-      - name: Bloquear enquanto cota estiver em reserva
-        if: github.event.inputs.force_run != 'true'
-        run: |
-          echo "odds_history suspenso para preservar cota da The Odds API. Chamadas puladas por falta de cota acima da reserva operacional."
-          exit 0
       - name: Checkout repositório
-        if: github.event.inputs.force_run == 'true'
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT }}
           persist-credentials: true
       - name: Setup Node.js
-        if: github.event.inputs.force_run == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '24'
       - name: Instalar dependências
-        if: github.event.inputs.force_run == 'true'
         run: npm install axios firebase-admin
       - name: Injetar chaves de API
-        if: github.event.inputs.force_run == 'true'
         run: |
           node -e "
           const fs = require('fs');
@@ -57,7 +50,6 @@ jobs:
         env:
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
       - name: Restaurar histórico anterior
-        if: github.event.inputs.force_run == 'true'
         # Histórico de odds (h2h/props) fica em odds_snapshots/, separado de
         # odds_history/ (histórico central de indicações). Tarball antigo
         # ainda empacotado com a pasta odds_history/ por dentro: migra o
@@ -77,15 +69,14 @@ jobs:
             rmdir odds_history 2>/dev/null || true
           fi
       - name: Executar coleta
-        if: github.event.inputs.force_run == 'true'
         run: node pipeline/save_odds_history.js
+        env:
+          ODDS_API_IGNORE_GLOBAL_RESERVE: ${{ github.event.inputs.ignore_global_reserve }}
       - name: Sincronizar histórico com Firestore
-        if: github.event.inputs.force_run == 'true'
         run: node pipeline/firebase_sync.js history
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       - name: Empacotar e salvar na branch history
-        if: github.event.inputs.force_run == 'true'
         run: |
           tar -czf /tmp/odds_history.tar.gz odds_snapshots/
           git config user.name "github-actions[bot]"

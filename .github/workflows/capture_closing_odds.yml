@@ -31,7 +31,6 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  ODDS_API_MIN_REMAINING: 0
 
 jobs:
   capture:
