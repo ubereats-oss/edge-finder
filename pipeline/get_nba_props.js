@@ -1,38 +1,8 @@
-const axios = require('axios');
 const fs = require('fs');
+const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
 
-if (fs.existsSync('.env')) {
-  for (const line of fs.readFileSync('.env', 'utf-8').split('\n')) {
-    const [k, ...v] = line.split('=');
-    if (k) process.env[k.trim()] = v.join('=').trim();
-  }
-}
-
-const API_KEYS = [];
-for (let i = 1; i <= 19; i++) {
-  const key = i === 1 ? process.env.ODDS_API_KEY : process.env[`ODDS_API_KEY_${i}`];
-  if (key && key.trim()) API_KEYS.push(key.trim());
-}
-if (!API_KEYS.length) { console.error('Nenhuma chave ODDS_API_KEY encontrada.'); process.exit(1); }
-
-const exhaustedKeys = new Set();
-let keyIndex = 0;
-
-function getNextValidKey() {
-  for (let i = 0; i < API_KEYS.length; i++) {
-    const idx = (keyIndex + i) % API_KEYS.length;
-    if (!exhaustedKeys.has(idx)) {
-      keyIndex = (idx + 1) % API_KEYS.length;
-      return API_KEYS[idx];
-    }
-  }
-  return null;
-}
-
-function markCurrentKeyExhausted() {
-  const idx = (keyIndex - 1 + API_KEYS.length) % API_KEYS.length;
-  exhaustedKeys.add(idx);
-}
+loadEnvFileIfPresent();
+let oddsApi;
 
 const MARKETS = 'player_points,player_rebounds,player_assists,player_steals,player_threes';
 
@@ -41,39 +11,19 @@ function sleep(ms) {
 }
 
 async function fetchEvents() {
-  const key = getNextValidKey();
-  if (!key) throw new Error('Todas as chaves esgotadas.');
-  const url = `https://api.the-odds-api.com/v4/sports/basketball_nba/events?apiKey=${key}`;
-  const res = await axios.get(url);
+  const url = 'https://api.the-odds-api.com/v4/sports/basketball_nba/events';
+  const res = await oddsApi.get(url);
   return res.data;
 }
 
 async function fetchEventProps(eventId) {
-  let lastError = null;
-  for (let attempt = 0; attempt < API_KEYS.length; attempt++) {
-    const key = getNextValidKey();
-    if (!key) break;
-    try {
-      const res = await axios.get(
-        `https://api.the-odds-api.com/v4/sports/basketball_nba/events/${eventId}/odds`,
-        { params: { apiKey: key, regions: 'us', markets: MARKETS, oddsFormat: 'decimal' } }
-      );
-      const remaining = res.headers['x-requests-remaining'];
-      if (remaining !== undefined) console.log(`    Créditos restantes: ${remaining}`);
-      return res.data;
-    } catch (e) {
-      const msg = e.response?.data?.message || e.message || '';
-      if (msg.toLowerCase().includes('quota')) {
-        markCurrentKeyExhausted();
-        console.warn(`    Chave esgotada (${exhaustedKeys.size}/${API_KEYS.length}), tentando próxima...`);
-        await sleep(300);
-        lastError = e;
-        continue;
-      }
-      throw e;
-    }
-  }
-  throw lastError || new Error('Todas as chaves esgotadas para este evento.');
+  const res = await oddsApi.get(
+    `https://api.the-odds-api.com/v4/sports/basketball_nba/events/${eventId}/odds`,
+    { params: { regions: 'us', markets: MARKETS, oddsFormat: 'decimal' } }
+  );
+  const remaining = res.headers['x-requests-remaining'];
+  if (remaining !== undefined) console.log(`    Créditos restantes: ${remaining}`);
+  return res.data;
 }
 
 async function getNbaProps() {
@@ -96,7 +46,7 @@ async function getNbaProps() {
     const allProps = [];
 
     for (const event of events) {
-      if (exhaustedKeys.size >= API_KEYS.length) {
+      if (oddsApi.allExhausted()) {
         console.error('Todas as chaves esgotadas — abortando.');
         break;
       }
@@ -159,4 +109,10 @@ async function getNbaProps() {
   }
 }
 
+try {
+  oddsApi = createOddsApiClient({ label: 'NBA props' });
+} catch (e) {
+  console.error(e.message);
+  process.exit(1);
+}
 getNbaProps();

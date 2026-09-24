@@ -1,6 +1,6 @@
 const fs    = require('fs');
 const path  = require('path');
-const axios = require('axios');
+const { createOddsApiClient, defaultKeysFromEnv } = require('./odds_api_client');
 
 // ── Chaves com rotação automática ─────────────────────────────────────────────
 const API_KEYS = [
@@ -37,6 +37,7 @@ const PROPS_MARKETS  = 'player_points,player_rebounds,player_assists,player_stea
 
 let keyIndex = 0;
 const keyBalances = {};
+let oddsApi;
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -53,34 +54,9 @@ function saveKeyState() {
   writeJson(KEY_STATE_FILE, { month: monthStr(), keyIndex, savedAt: nowISO(), balances: keyBalances });
 }
 
-function currentKey() { return API_KEYS[keyIndex % API_KEYS.length]; }
-
-function rotateKey() {
-  keyIndex = (keyIndex + 1) % API_KEYS.length;
-  saveKeyState();
-  console.log(`  [key] rotacionando para chave ${keyIndex}`);
-}
-
 async function apiGet(url, params = {}) {
-  for (let i = 0; i < API_KEYS.length; i++) {
-    try {
-      const res = await axios.get(url, { params: { ...params, apiKey: currentKey() } });
-      const rem  = parseInt(res.headers['x-requests-remaining'] ?? '999');
-      const used = parseInt(res.headers['x-requests-used'] ?? '0');
-      const last = parseInt(res.headers['x-requests-last'] ?? '0');
-      keyBalances[keyIndex] = { remaining: rem, used, lastCost: last, updatedAt: nowISO() };
-      saveKeyState();
-      if (rem < 10) { console.log(`  [key] chave ${keyIndex} quase esgotada (${rem}) — rotacionando`); rotateKey(); }
-      return res.data;
-    } catch (e) {
-      if (e.response?.status === 401 || e.response?.status === 429) {
-        console.warn(`  [key] chave ${keyIndex} inválida/esgotada — rotacionando`);
-        rotateKey();
-        await sleep(500);
-      } else throw e;
-    }
-  }
-  throw new Error('Todas as chaves esgotadas');
+  const res = await oddsApi.get(url, { params });
+  return res.data;
 }
 
 // ── Utilitários ────────────────────────────────────────────────────────────────
@@ -225,6 +201,23 @@ async function main() {
   console.log(`\n[save_odds_history] ${nowISO()}`);
   ensureDir(HISTORY_DIR);
   loadKeyState();
+  const envKeys = defaultKeysFromEnv();
+  oddsApi = createOddsApiClient({
+    keys: envKeys.length ? envKeys : API_KEYS,
+    label: 'odds-history',
+    startIndex: keyIndex,
+    onKeyUsed: ({ index, remaining, used, last }) => {
+      keyIndex = index;
+      keyBalances[index] = {
+        remaining: parseInt(remaining ?? '999'),
+        used: parseInt(used ?? '0'),
+        lastCost: parseInt(last ?? '0'),
+        updatedAt: nowISO(),
+      };
+      saveKeyState();
+      if (remaining !== undefined) console.log(`  [key] chave ${index} créditos restantes: ${remaining}`);
+    },
+  });
 
   console.log('Esportes configurados:', [...SPORTS_TO_COLLECT].join(', '));
   const sportKeys = [...SPORTS_TO_COLLECT];
