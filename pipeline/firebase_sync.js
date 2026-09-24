@@ -20,6 +20,7 @@ const DOC_SPORT = {
   nba_h2h: 'basketball/nba',
   nba_props: 'basketball/nba',
   nba_props_br: 'basketball/nba',
+  mlb_h2h: 'baseball/mlb',
   mlb_props: 'baseball/mlb',
   nhl_props: 'icehockey/nhl',
   nfl_props: 'americanfootball/nfl',
@@ -30,6 +31,7 @@ const DOC_SPORT = {
 const SYNC_MAP = [
   { file: 'model_results.json',        col: 'results', doc: 'tennis' },
   { file: 'nba_results.json',          col: 'results', doc: 'nba_h2h' },
+  { file: 'mlb_results.json',          col: 'results', doc: 'mlb_h2h' },
   { file: 'nba_props_results.json',    col: 'results', doc: 'nba_props' },
   { file: 'nba_props_br_results.json', col: 'results', doc: 'nba_props_br' },
   { file: 'mlb_props_results.json',    col: 'results', doc: 'mlb_props' },

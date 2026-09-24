@@ -202,13 +202,17 @@ jobs:
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
       - run: node pipeline/model_mlb_props.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
+      - run: node pipeline/get_mlb_odds.js
+        if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
+      - run: node pipeline/model_mlb.js
+        if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
 
       - name: Empacotar artefatos MLB
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
         run: |
           mkdir -p /tmp/mlb-out
           gzip -n -c mlb_player_stats.json > /tmp/mlb-out/mlb_player_stats.json.gz 2>/dev/null || true
-          for f in mlb_props_results.json mlb_player_team.json mlb_injuries_today.json; do
+          for f in mlb_results.json mlb_props_results.json mlb_player_team.json mlb_injuries_today.json; do
             [ -f "$f" ] && cp "$f" /tmp/mlb-out/ || true
           done
           mkdir -p /tmp/mlb-out/odds_history
@@ -619,7 +623,7 @@ jobs:
               done
               [ "$matched" = true ] && included_patterns+=("$pattern")
             done
-            for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json; do
+            for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_results.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json; do
               [ -f "$f" ] && git add "$f" || true
             done
             if [ ${#included_patterns[@]} -gt 0 ]; then

@@ -139,6 +139,8 @@ class ApiService {
       _fetchFirestore('results', 'nba_props');
   static Future<FetchResult> fetchNbaBrProps() =>
       _fetchFirestore('results', 'nba_props_br');
+  static Future<FetchResult> fetchMlbResults() =>
+      _fetchFirestore('results', 'mlb_h2h');
   static Future<FetchResult> fetchMlbProps() =>
       _fetchFirestore('results', 'mlb_props');
   static Future<FetchResult> fetchNhlProps() =>

@@ -18,7 +18,15 @@ async function getNbaOdds() {
       if (!market) return;
       const t1 = market.outcomes[0];
       const t2 = market.outcomes[1];
-      odds.push({ team1: t1.name, team2: t2.name, odds1: t1.price, odds2: t2.price, commence_time: match.commence_time });
+      odds.push({
+        team1: t1.name,
+        team2: t2.name,
+        odds1: t1.price,
+        odds2: t2.price,
+        commence_time: match.commence_time,
+        event_id: match.id,
+        bookmaker: bookmaker.key,
+      });
     });
     if (!odds.length) {
   console.warn('Sem jogos válidos — salvando array vazio.');
