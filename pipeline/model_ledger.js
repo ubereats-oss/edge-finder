@@ -12,6 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const closingOddsRules = require('./closing_odds_rules');
 
 const HISTORY_DIR = path.join(__dirname, '..', 'odds_history');
 
@@ -56,8 +57,8 @@ const CLOSING_ODDS_STATUS = {
 // capture_closing_odds.js (o que tenta buscar) e settle_model_ledger.js (o
 // que expira quem passou da janela sem sucesso). Fonte única pra evitar os
 // dois lados divergirem.
-const CLOSING_ODDS_CAPTURE_WINDOW_BEFORE_MS = 2 * 60 * 60 * 1000; // até 2h antes do início
-const CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS  = 10 * 60 * 1000;     // até 10min depois
+const CLOSING_ODDS_CAPTURE_WINDOW_BEFORE_MS = closingOddsRules.CLOSING_ODDS_CAPTURE_WINDOW_BEFORE_MS; // até 2h antes do início
+const CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS  = closingOddsRules.CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS;  // até 10min depois
 
 const SEGMENT_STATE = {
   EM_AMOSTRA: 'em_amostra',

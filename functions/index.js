@@ -5,6 +5,7 @@ const { initializeApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const crypto = require('crypto');
 const riskConfig = require('./risk_config');
+const closingOddsRules = require('./closing_odds_rules');
 
 initializeApp();
 const db = getFirestore();
@@ -362,19 +363,7 @@ const GH_DATA_REF = 'data';
 const GH_WORKFLOW_FILE = 'capture_closing_odds.yml';
 const GH_WORKFLOW_REF = 'main';
 
-// Mesmos critérios de pipeline/capture_closing_odds.js — duplicados aqui
-// porque esta function roda fora do repositório (sem acesso ao filesystem
-// do pipeline) e lê o histórico via API do GitHub. Manter em sincronia se
-// algum dos dois lados mudar.
-const SPORT_MARKET_KEYS = {
-  'basketball/nba': ['points', 'rebounds', 'assists', 'steals', 'threes'],
-  'baseball/mlb': ['hits', 'strikeouts', 'hitsAllowed'],
-  'hockey/nhl': ['points', 'goals', 'assists', 'shots'],
-  'americanfootball/nfl': ['passYards', 'passTDs', 'rushYards', 'receptions', 'receptionYards'],
-};
-const TARGET_LEAD_MS = 35 * 60 * 1000;          // dispara quando faltar até ~35min pro início
-const MIN_RETRY_INTERVAL_MS = 5 * 60 * 1000;    // intervalo mínimo entre disparos quando só sobram eventos já iniciados
-const DISPATCH_DEDUPE_MS = 3 * 60 * 1000;       // não redispara pro mesmo evento futuro dentro desse intervalo
+const MIN_RETRY_INTERVAL_MS = closingOddsRules.MIN_RETRY_INTERVAL_MS;
 
 const SCHEDULER_STATE_DOC = db.collection('system').doc('closingOddsScheduler');
 
@@ -388,15 +377,6 @@ async function ghFetchJson(url, token) {
   });
   if (!res.ok) throw new Error(`GitHub API ${res.status}: ${(await res.text()).slice(0, 300)}`);
   return res.json();
-}
-
-// Mesma inferência de pipeline/model_ledger.js::closingOddsStatusOf —
-// duplicada aqui pelo mesmo motivo do resto do arquivo (sem acesso ao
-// filesystem do pipeline). Compat com indicações gravadas antes do campo
-// closingOddsStatus existir: infere a partir de closingOdds.
-function closingOddsStatusOf(entry) {
-  if (entry.closingOddsStatus) return entry.closingOddsStatus;
-  return (entry.closingOdds !== null && entry.closingOdds !== undefined) ? 'capturada' : 'pendente';
 }
 
 // Lê todas as partições model_ledger_*.json da branch `data` — uma chamada
@@ -423,39 +403,6 @@ async function loadLedgerEntries(token) {
     }
   }
   return entries;
-}
-
-// Mesma lógica de pipeline/capture_closing_odds.js::findNextReachableEvent —
-// prioriza o evento futuro de commenceTime mais próximo; só cai pra "já
-// iniciado" quando não há nenhum futuro alcançável. A exclusão de quem já
-// passou da janela de captura fica a cargo do campo closingOddsStatus
-// (marcado 'expirada' por settle_model_ledger.js). Descartes técnicos sem
-// probabilidade de modelo válida nunca entram na fila de captura.
-function findNextReachableEvent(entries, now) {
-  let bestFuture = null;
-  let bestStarted = null;
-  for (const entry of entries) {
-    if (entry.hasModelProb === false || entry.validForCalibration === false) continue;
-    if (entry.resolutionStatus !== 'pendente') continue;
-    if (closingOddsStatusOf(entry) !== 'pendente') continue;
-    const markets = SPORT_MARKET_KEYS[entry.esporte];
-    if (!markets || !markets.includes(entry.market)) continue;
-
-    const commence = new Date(entry.commenceTime).getTime();
-    if (isNaN(commence)) continue;
-
-    const candidate = {
-      commence,
-      key: `${entry.eventId}|${entry.player}|${entry.market}|${entry.line}|${entry.side}`,
-      label: `${entry.esporte} ${entry.player} ${entry.market} ${entry.side} ${entry.line}`,
-    };
-    if (commence >= now) {
-      if (bestFuture === null || commence < bestFuture.commence) bestFuture = candidate;
-    } else {
-      if (bestStarted === null || commence < bestStarted.commence) bestStarted = candidate;
-    }
-  }
-  return bestFuture || bestStarted;
 }
 
 async function dispatchCaptureWorkflow(token) {
@@ -491,7 +438,7 @@ exports.closingOddsScheduler = onSchedule(
     }
 
     const now = Date.now();
-    const target = findNextReachableEvent(entries, now);
+    const target = closingOddsRules.findNextReachableEvent(entries, now);
     if (!target) {
       console.log('[closingOddsScheduler] nenhuma indicação pendente sem odd de fechamento dentro da janela — nada a disparar.');
       return;
@@ -502,25 +449,16 @@ exports.closingOddsScheduler = onSchedule(
     const lastDispatchAt = state.lastDispatchAt?.toMillis?.() ?? 0;
     const lastDispatchKey = state.lastDispatchKey ?? null;
 
-    const jaIniciado = target.commence < now;
-    if (jaIniciado) {
-      // Só restam eventos já iniciados sem odd disponível — sem horário
-      // futuro pra mirar, aplica o intervalo mínimo pra não disparar em
-      // rajada a cada execução agendada (ver MIN_RETRY_INTERVAL_MS).
-      if (now - lastDispatchAt < MIN_RETRY_INTERVAL_MS) {
+    const decision = closingOddsRules.shouldDispatchCapture(target, now, { lastDispatchAt, lastDispatchKey });
+    if (!decision.dispatch) {
+      if (decision.reason === 'intervalo_minimo') {
         console.log(`[closingOddsScheduler] alvo já iniciado (${target.label}) — intervalo mínimo de ${Math.round(MIN_RETRY_INTERVAL_MS / 60000)}min ainda não passou, não disparando.`);
-        return;
-      }
-    } else {
-      const faltamMs = target.commence - now;
-      if (faltamMs > TARGET_LEAD_MS) {
-        console.log(`[closingOddsScheduler] próximo evento alcançável (${target.label}) ainda a ${Math.round(faltamMs / 60000)}min — fora da janela de disparo, aguardando próxima execução.`);
-        return;
-      }
-      if (target.key === lastDispatchKey && now - lastDispatchAt < DISPATCH_DEDUPE_MS) {
+      } else if (decision.reason === 'fora_janela_disparo') {
+        console.log(`[closingOddsScheduler] próximo evento alcançável (${target.label}) ainda a ${Math.round(decision.faltamMs / 60000)}min — fora da janela de disparo, aguardando próxima execução.`);
+      } else if (decision.reason === 'dedupe') {
         console.log(`[closingOddsScheduler] já disparado recentemente para ${target.label} — evitando disparo duplicado.`);
-        return;
       }
+      return;
     }
 
     try {
@@ -536,6 +474,6 @@ exports.closingOddsScheduler = onSchedule(
       lastDispatchLabel: target.label,
     }, { merge: true });
 
-    console.log(`[closingOddsScheduler] workflow disparado para ${target.label} (${jaIniciado ? 'já iniciado' : `faltam ~${Math.round((target.commence - now) / 60000)}min`}).`);
+    console.log(`[closingOddsScheduler] workflow disparado para ${target.label} (${decision.jaIniciado ? 'já iniciado' : `faltam ~${Math.round((target.commence - now) / 60000)}min`}).`);
   }
 );

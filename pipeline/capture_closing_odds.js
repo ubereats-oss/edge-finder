@@ -25,6 +25,7 @@
 const axios = require('axios');
 const fs = require('fs');
 const ledger = require('./model_ledger');
+const closingOddsRules = require('./closing_odds_rules');
 
 if (fs.existsSync('.env')) {
   for (const line of fs.readFileSync('.env', 'utf-8').split('\n')) {
@@ -46,14 +47,6 @@ function getNextKey() {
   keyIndex++;
   return key;
 }
-
-// Janela de captura: só tenta buscar a odd de fechamento se o evento começa
-// dentro desse intervalo — nem tarde demais (já passou), nem cedo demais
-// (ainda não é "fechamento", é só mais uma cotação no meio do caminho).
-// Fonte única em model_ledger.js — settle_model_ledger.js usa a mesma janela
-// pra expirar quem passou dela sem sucesso.
-const CAPTURE_WINDOW_BEFORE_MS = ledger.CLOSING_ODDS_CAPTURE_WINDOW_BEFORE_MS;
-const CAPTURE_WINDOW_AFTER_MS  = ledger.CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS;
 
 const SPORTS = [
   { esporte: 'basketball/nba', apiSport: 'basketball_nba', markets: { points: 'player_points', rebounds: 'player_rebounds', assists: 'player_assists', steals: 'player_steals', threes: 'player_threes' } },
@@ -99,21 +92,9 @@ async function captureSport({ esporte, apiSport, markets }) {
     let changed = false;
 
     // Agrupa por evento pra não repetir a mesma chamada de API por indicação.
-    const porEvento = new Map();
-    for (const entry of entries) {
-      if (entry.hasModelProb === false || entry.validForCalibration === false) continue;
-      if (entry.resolutionStatus !== ledger.RESOLUTION_STATUS.PENDENTE) continue;
-      if (ledger.closingOddsStatusOf(entry) !== ledger.CLOSING_ODDS_STATUS.PENDENTE) continue;
-      if (!markets[entry.market]) continue;
-
-      const commence = new Date(entry.commenceTime).getTime();
-      if (isNaN(commence)) continue;
-      const delta = commence - now;
-      if (delta > CAPTURE_WINDOW_BEFORE_MS || delta < -CAPTURE_WINDOW_AFTER_MS) { semJanela++; continue; }
-
-      if (!porEvento.has(entry.eventId)) porEvento.set(entry.eventId, []);
-      porEvento.get(entry.eventId).push(entry);
-    }
+    const grouped = closingOddsRules.groupEntriesForCapture(entries, esporte, markets, now);
+    const porEvento = grouped.porEvento;
+    semJanela += grouped.semJanela;
 
     for (const [eventId, group] of porEvento) {
       // Uma chamada por mercado presente no grupo (o endpoint aceita vários
