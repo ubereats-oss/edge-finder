@@ -318,8 +318,14 @@ for (const c of candidates) {
   });
 }
 
-const descartadosGuardas = candidates.filter(c => !c.published && c.rejectionReason).length;
-console.log(`Props NFL: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo (não-passTDs): ${descartadosSigmaBaixa} | passTDs média zero: ${descartadosPassTDsMediaZero} | Margem insuficiente: ${descartadosMarginRatio} | Bloqueado: ${descartadosJogoBloqueado} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
+// Dois grupos: descartado ANTES de calcular probabilidade/edge (dado
+// insuficiente pra avaliar) vs avaliado (edgePct calculado) e rejeitado
+// depois — por edge abaixo do limiar ou por guarda de risco. Antes esse
+// segundo contador somava os dois grupos junto, distorcendo quantas
+// indicações o modelo de fato avaliou e recusou por falta de edge.
+const descartadosAntesDeAvaliar = descartadosSemStats + descartadosSigmaBaixa + descartadosPassTDsMediaZero + descartadosMarginRatio;
+const avaliadosRejeitados = candidates.filter(c => !c.published && c.edgePct !== null).length;
+console.log(`Props NFL: ${results.length} | Descartado antes de avaliar: ${descartadosAntesDeAvaliar} (sem stats: ${descartadosSemStats}, sigma baixo: ${descartadosSigmaBaixa}, passTDs média zero: ${descartadosPassTDsMediaZero}, margem insuficiente: ${descartadosMarginRatio}) | Bloqueado: ${descartadosJogoBloqueado} | Avaliado e rejeitado: ${avaliadosRejeitados}`);
 
 const ledgerSummary = ledger.flush();
 console.log(`Histórico de indicações (NFL): ${ledgerSummary.partitionsSaved} partição(ões) atualizada(s), ${ledgerSummary.duplicatesInRun} indicação(ões) duplicada(s) na mesma execução.`);
