@@ -4,9 +4,20 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      force_closing_odds_deploy:
+        description: Force deploy closingOddsScheduler without code changes
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 permissions:
   contents: read
+  id-token: write
 
 concurrency:
   group: mirror-checks-functions-deploy-main
@@ -43,6 +54,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.force_closing_odds_deploy }}" == "true" ]]; then
+            echo "functions=closingOddsScheduler" >> "$GITHUB_OUTPUT"
+            echo "firebase_only=functions:closingOddsScheduler" >> "$GITHUB_OUTPUT"
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+            echo "Forced Functions deploy: closingOddsScheduler"
+            exit 0
+          fi
+
           before="${{ github.event.before }}"
           after="${{ github.sha }}"
           if [[ "$before" =~ ^0+$ ]]; then
@@ -75,7 +94,7 @@ jobs:
       - detect-functions
     if: >
       github.repository == 'ubereats-oss/edge-finder' &&
-      github.event_name == 'push' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       needs.detect-functions.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     env:
@@ -89,7 +108,8 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_FUNCTIONS_DEPLOY_SA_KEY }}
+          workload_identity_provider: projects/29716291623/locations/global/workloadIdentityPools/github-actions/providers/edge-finder-main
+          service_account: github-functions-deployer@odds-app-edge.iam.gserviceaccount.com
 
       - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v2
