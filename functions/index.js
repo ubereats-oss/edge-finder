@@ -470,14 +470,17 @@ async function saveLedgerPartition(token, partition, message) {
     },
     body: JSON.stringify(body),
   });
+  if (res.status === 409) {
+    const err = new Error(`GitHub ledger conflict 409: ${(await res.text()).slice(0, 300)}`);
+    err.code = 'LEDGER_CONFLICT';
+    throw err;
+  }
   if (!res.ok) throw new Error(`GitHub ledger write ${res.status}: ${(await res.text()).slice(0, 300)}`);
 }
 
-async function applySyncOddsBrToLedger(token, cfg, prop, recalculated, action) {
-  const esporte = cfg.esporte;
+function applySyncOddsBrChangeToPartition(partition, cfg, prop, recalculated, action) {
   const originalId = prop.indicationId ?? prop.ledgerKey ?? indicationIdFor(prop);
   const originalKey = prop.ledgerKey ?? originalId;
-  const partition = await loadLedgerPartitionForEntry(token, esporte, prop.commence_time ?? prop.commenceTime);
   const idx = partition.entries.findIndex(e => (e.indicationId ?? e._key) === originalId || e._key === originalKey);
   if (idx === -1) {
     throw new Error(`entrada ${originalId} não encontrada no histórico central`);
@@ -522,7 +525,10 @@ async function applySyncOddsBrToLedger(token, cfg, prop, recalculated, action) {
     original.rejectionReason = SYNC_BR_REJECTION_REASON;
     original.syncRemovedAt = now;
     original.validForCalibration = original.validForCalibration !== false;
-  } else if (action === 'line_changed') {
+    return original;
+  }
+
+  if (action === 'line_changed') {
     const replacementId = indicationIdFor(recalculated);
     original.published = false;
     original.replacedBy = replacementId;
@@ -530,6 +536,7 @@ async function applySyncOddsBrToLedger(token, cfg, prop, recalculated, action) {
     original.replacementReason = 'sync_br_linha_alterada';
     original.validForCalibration = original.validForCalibration !== false;
 
+    const existingReplacement = partition.entries.find(e => (e.indicationId ?? e._key) === replacementId);
     const replacement = {
       ...original,
       ...recalculated,
@@ -562,31 +569,48 @@ async function applySyncOddsBrToLedger(token, cfg, prop, recalculated, action) {
       syncRemovedAt: null,
       evaluatedAt: now,
       firstEvaluatedAt: original.firstEvaluatedAt ?? original.evaluatedAt ?? now,
-      result: null,
-      resolutionAttempts: 0,
-      resolutionStatus: 'pendente',
-      closingOdds: null,
-      clv: null,
-      closingOddsStatus: 'pendente',
-      syncHistory: [],
+      result: existingReplacement?.result ?? null,
+      resolutionAttempts: existingReplacement?.resolutionAttempts ?? 0,
+      resolutionStatus: existingReplacement?.resolutionStatus ?? 'pendente',
+      closingOdds: existingReplacement?.closingOdds ?? null,
+      clv: existingReplacement?.clv ?? null,
+      closingOddsStatus: existingReplacement?.closingOddsStatus ?? 'pendente',
+      syncHistory: existingReplacement?.syncHistory ?? [],
     };
-    partition.entries.push(replacement);
-  } else {
-    original.line = recalculated.line;
-    original.side = recalculated.side;
-    original.odds = recalculated.odds;
-    original.modelProb = recalculated.modelProb;
-    original.impliedProb = recalculated.impliedProb;
-    original.edge = recalculated.edge;
-    original.kelly = recalculated.kelly;
-    original.bookmaker = recalculated.bookmaker ?? original.bookmaker ?? null;
-    original.syncUpdatedAt = now;
+    if (existingReplacement) Object.assign(existingReplacement, replacement);
+    else partition.entries.push(replacement);
+    return replacement;
   }
 
-  await saveLedgerPartition(token, partition, `ledger: syncOddsBr ${action} ${originalId}`);
-  return action === 'line_changed'
-    ? partition.entries[partition.entries.length - 1]
-    : original;
+  original.line = recalculated.line;
+  original.side = recalculated.side;
+  original.odds = recalculated.odds;
+  original.modelProb = recalculated.modelProb;
+  original.impliedProb = recalculated.impliedProb;
+  original.edge = recalculated.edge;
+  original.kelly = recalculated.kelly;
+  original.bookmaker = recalculated.bookmaker ?? original.bookmaker ?? null;
+  original.syncUpdatedAt = now;
+  return original;
+}
+
+async function applySyncOddsBrToLedger(token, cfg, prop, recalculated, action) {
+  const esporte = cfg.esporte;
+  const originalId = prop.indicationId ?? prop.ledgerKey ?? indicationIdFor(prop);
+  const maxAttempts = 5;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const partition = await loadLedgerPartitionForEntry(token, esporte, prop.commence_time ?? prop.commenceTime);
+    const applied = applySyncOddsBrChangeToPartition(partition, cfg, prop, recalculated, action);
+    try {
+      await saveLedgerPartition(token, partition, `ledger: syncOddsBr ${action} ${originalId}`);
+      return applied;
+    } catch (e) {
+      if (e.code !== 'LEDGER_CONFLICT' || attempt === maxAttempts) throw e;
+      console.warn(`[syncOddsBr] conflito ao gravar histórico central (${originalId}); relendo e reaplicando tentativa ${attempt + 1}/${maxAttempts}.`);
+    }
+  }
+  throw new Error(`falha ao gravar histórico central após ${maxAttempts} tentativas`);
 }
 
 // Lê todas as partições model_ledger_*.json da branch `data` — uma chamada
