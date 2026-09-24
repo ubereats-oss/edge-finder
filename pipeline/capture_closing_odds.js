@@ -22,31 +22,12 @@
 // (capture_closing_odds.yml) continua existindo só como rede de segurança,
 // caso a Cloud Function falhe ou fique fora do ar.
 
-const axios = require('axios');
-const fs = require('fs');
 const ledger = require('./model_ledger');
 const closingOddsRules = require('./closing_odds_rules');
+const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
 
-if (fs.existsSync('.env')) {
-  for (const line of fs.readFileSync('.env', 'utf-8').split('\n')) {
-    const [k, ...v] = line.split('=');
-    if (k) process.env[k.trim()] = v.join('=').trim();
-  }
-}
-
-const API_KEYS = [];
-for (let i = 1; i <= 19; i++) {
-  const key = i === 1 ? process.env.ODDS_API_KEY : process.env[`ODDS_API_KEY_${i}`];
-  if (key && key.trim()) API_KEYS.push(key.trim());
-}
-
-let keyIndex = 0;
-function getNextKey() {
-  if (!API_KEYS.length) return null;
-  const key = API_KEYS[keyIndex % API_KEYS.length];
-  keyIndex++;
-  return key;
-}
+loadEnvFileIfPresent();
+let oddsApi;
 
 const SPORTS = [
   { esporte: 'basketball/nba', apiSport: 'basketball_nba', markets: { points: 'player_points', rebounds: 'player_rebounds', assists: 'player_assists', steals: 'player_steals', threes: 'player_threes' } },
@@ -58,10 +39,8 @@ const SPORTS = [
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 async function fetchEventOdds(apiSport, eventId, marketKey) {
-  const key = getNextKey();
-  if (!key) throw new Error('Nenhuma chave ODDS_API_KEY configurada.');
   const url = `https://api.the-odds-api.com/v4/sports/${apiSport}/events/${eventId}/odds`;
-  const res = await axios.get(url, { params: { apiKey: key, regions: 'us', markets: marketKey, oddsFormat: 'decimal' } });
+  const res = await oddsApi.get(url, { params: { regions: 'us', markets: marketKey, oddsFormat: 'decimal' } });
   return res.data;
 }
 
@@ -135,8 +114,10 @@ async function captureSport({ esporte, apiSport, markets }) {
 }
 
 async function main() {
-  if (!API_KEYS.length) {
-    console.error('Nenhuma chave ODDS_API_KEY encontrada — abortando.');
+  try {
+    oddsApi = createOddsApiClient({ label: 'closing-odds' });
+  } catch (e) {
+    console.error(`${e.message} — abortando.`);
     process.exit(1);
   }
   const requested = process.argv.slice(2).map(s => s.toLowerCase());

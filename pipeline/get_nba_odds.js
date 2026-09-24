@@ -1,39 +1,26 @@
-const axios = require('axios');
 const fs = require('fs');
+const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
 
-if (fs.existsSync('.env')) {
-  for (const line of fs.readFileSync('.env', 'utf-8').split('\n')) {
-    const [k, ...v] = line.split('=');
-    if (k) process.env[k.trim()] = v.join('=').trim();
-  }
-}
-
-const API_KEYS = [];
-for (let i = 1; i <= 19; i++) {
-  const key = i === 1 ? process.env.ODDS_API_KEY : process.env[`ODDS_API_KEY_${i}`];
-  if (key && key.trim()) API_KEYS.push(key.trim());
-}
-if (!API_KEYS.length) { console.error('Nenhuma chave ODDS_API_KEY encontrada.'); process.exit(1); }
+loadEnvFileIfPresent();
+let oddsApi;
 
 async function getNbaOdds() {
-  let lastError = null;
-  for (let i = 0; i < API_KEYS.length; i++) {
-    try {
-      const url = `https://api.the-odds-api.com/v4/sports/basketball_nba/odds/?apiKey=${API_KEYS[i]}&regions=eu&markets=h2h`;
-      const response = await axios.get(url);
-      const remaining = response.headers['x-requests-remaining'];
-      if (remaining !== undefined) console.log(`Créditos restantes: ${remaining}`);
-      const odds = [];
-      response.data.forEach(match => {
-        if (!match.bookmakers.length) return;
-        const bookmaker = match.bookmakers[0];
-        const market = bookmaker.markets.find(m => m.key === 'h2h');
-        if (!market) return;
-        const t1 = market.outcomes[0];
-        const t2 = market.outcomes[1];
-        odds.push({ team1: t1.name, team2: t2.name, odds1: t1.price, odds2: t2.price, commence_time: match.commence_time });
-      });
-      if (!odds.length) {
+  try {
+    const url = 'https://api.the-odds-api.com/v4/sports/basketball_nba/odds/';
+    const response = await oddsApi.get(url, { params: { regions: 'eu', markets: 'h2h' } });
+    const remaining = response.headers['x-requests-remaining'];
+    if (remaining !== undefined) console.log(`Créditos restantes: ${remaining}`);
+    const odds = [];
+    response.data.forEach(match => {
+      if (!match.bookmakers.length) return;
+      const bookmaker = match.bookmakers[0];
+      const market = bookmaker.markets.find(m => m.key === 'h2h');
+      if (!market) return;
+      const t1 = market.outcomes[0];
+      const t2 = market.outcomes[1];
+      odds.push({ team1: t1.name, team2: t2.name, odds1: t1.price, odds2: t2.price, commence_time: match.commence_time });
+    });
+    if (!odds.length) {
   console.warn('Sem jogos válidos — salvando array vazio.');
 }
 
@@ -53,19 +40,15 @@ JSON.parse(check);
 fs.renameSync(tempFile, 'nba_odds.json');
 
 console.log(`NBA odds salvas: ${odds.length} partidas.`);
-      return;
-    } catch (err) {
-      const msg = err.response?.data?.message || err.message || '';
-      if (msg.toLowerCase().includes('quota')) {
-        console.warn(`    Chave esgotada (${i + 1}/${API_KEYS.length}), tentando próxima...`);
-        lastError = err;
-        continue;
-      }
-      console.error('Erro ao buscar odds NBA:', err.response?.status, err.response?.data || err.message);
-      return;
-    }
+  } catch (err) {
+    console.error('Erro ao buscar odds NBA:', err.response?.status, err.response?.data || err.message);
   }
-  console.error('Erro ao buscar odds NBA: todas as chaves esgotadas.', lastError?.response?.data || lastError?.message);
 }
 
+try {
+  oddsApi = createOddsApiClient({ label: 'NBA H2H' });
+} catch (e) {
+  console.error(e.message);
+  process.exit(1);
+}
 getNbaOdds();
