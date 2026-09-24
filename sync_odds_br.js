@@ -18,6 +18,7 @@
 const fs    = require('fs');
 const path  = require('path');
 const axios = require('axios');
+const riskConfig = require('./pipeline/risk_config');
 
 // ── Carrega .env ──────────────────────────────────────────────────────────────
 for (const line of fs.readFileSync(path.join(__dirname, '.env'), 'utf-8').split('\n')) {
@@ -114,7 +115,7 @@ function calcKelly(prob, odds) {
   const b = odds - 1;
   const q = 1 - prob;
   const k = (prob * b - q) / b;
-  return Math.max(0, parseFloat((k * 0.25 * 100).toFixed(2)));
+  return Math.max(0, parseFloat((k * riskConfig.KELLY_FRACTION * 100).toFixed(2)));
 }
 
 // ── Detecção de tipo de prop pelo nome do evento ──────────────────────────────
