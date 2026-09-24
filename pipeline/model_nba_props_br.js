@@ -252,14 +252,58 @@ let descartadosSigmaBaixa = 0;
 let descartadosJogoBloqueado = 0;
 let comFiltroAusentes = 0;
 let descartadosMarginRatio = 0;
+let descartadosJogadorAusente = 0;
+const descartadosMercadoForaCobertura = {};
 const candidates = [];
+
+const DISCARD_REASONS = {
+  SEM_STATS_JOGADOR: 'sem_stats_jogador',
+  JOGADOR_AUSENTE: 'jogador_ausente',
+  SEM_STATS_CONTEXTO: 'sem_stats_contexto',
+  SIGMA_BAIXO: 'sigma_baixo',
+};
+
+function pctOrNull(value) {
+  return typeof value === 'number' ? parseFloat((value * 100).toFixed(1)) : null;
+}
+
+function dataDiscardCandidate(prop, stats, reason) {
+  return {
+    prop,
+    stats: stats ?? { avg: null, std: null, totalGames: null, contextGames: null, lowSample: null, usedAbsentFilter: false },
+    avg5: null,
+    avg10: null,
+    absentToday: [],
+    lowMarginRatio: null,
+    bestSide: 'n/a',
+    bestOdds: null,
+    bestEdge: null,
+    edgePct: null,
+    kellyCrit: null,
+    bestRawProb: null,
+    bestCalib: { calibratedProb: null, segmentState: null, sampleSize: null, stakeFraction: null },
+    inefficientMarket: false,
+    published: false,
+    rejectionReason: reason,
+    game: prop.game,
+    player: prop.player,
+    hasModelProb: false,
+    validForCalibration: false,
+    invalidReason: reason,
+    resolutionStatus: ledger.RESOLUTION_STATUS.NAO_APURAVEL,
+  };
+}
 
 for (const prop of props) {
   const commence = new Date(prop.commence_time).getTime();
   if (commence - NOW < MIN_15) { descartadosJogoBloqueado++; continue; }
 
   const playerData = findPlayer(prop.player);
-  if (!playerData) { descartadosSemStats++; continue; }
+  if (!playerData) {
+    descartadosSemStats++;
+    candidates.push(dataDiscardCandidate(prop, null, DISCARD_REASONS.SEM_STATS_JOGADOR));
+    continue;
+  }
 
   const isPlayerAbsent = Object.values(injuriesToday).some(players =>
     players.some(absent =>
@@ -267,10 +311,17 @@ for (const prop of props) {
       prop.player.toLowerCase().includes(absent.toLowerCase())
     )
   );
-  if (isPlayerAbsent) { descartadosSemStats++; continue; }
+  if (isPlayerAbsent) {
+    descartadosJogadorAusente++;
+    candidates.push(dataDiscardCandidate(prop, null, DISCARD_REASONS.JOGADOR_AUSENTE));
+    continue;
+  }
 
   const statKey = PROP_MAP[prop.prop];
-  if (!statKey) continue;
+  if (!statKey) {
+    descartadosMercadoForaCobertura[prop.prop] = (descartadosMercadoForaCobertura[prop.prop] || 0) + 1;
+    continue;
+  }
 
   const locations = prop.location === 'home' || prop.location === 'away'
     ? [prop.location]
@@ -284,8 +335,16 @@ for (const prop of props) {
   const absentToday = getAbsentToday(teamName);
 
   const stats = combineContexts(playerData, statKey, locations, ['regular'], absentToday);
-  if (!stats) { descartadosSemStats++; continue; }
-  if (stats.std < 0.3) { descartadosSigmaBaixa++; continue; }
+  if (!stats) {
+    descartadosSemStats++;
+    candidates.push(dataDiscardCandidate(prop, null, DISCARD_REASONS.SEM_STATS_CONTEXTO));
+    continue;
+  }
+  if (stats.std < 0.3) {
+    descartadosSigmaBaixa++;
+    candidates.push(dataDiscardCandidate(prop, stats, DISCARD_REASONS.SIGMA_BAIXO));
+    continue;
+  }
   // Linha muito perto da média histórica do jogador (relativa ao desvio-padrão)
   // — sem sinal suficiente pra diferenciar de um chute aleatório. Mesmo
   // padrão de rastreabilidade do guard de passTDs/margem no NFL: antes
@@ -355,6 +414,7 @@ riskGuards.applyGameGuards(candidates);
 
 const results = [];
 for (const c of candidates) {
+  const hasModelProb = c.hasModelProb ?? c.edgePct !== null;
   ledger.recordEvaluation({
     esporte: ESPORTE,
     eventId: c.prop.eventId ?? `${c.prop.game}|${c.prop.commence_time}`,
@@ -364,8 +424,8 @@ for (const c of candidates) {
     market: c.prop.prop,
     line: c.prop.line,
     side: c.bestSide,
-    modelProb: parseFloat((c.bestCalib.calibratedProb * 100).toFixed(1)),
-    rawProb: parseFloat((c.bestRawProb * 100).toFixed(1)),
+    modelProb: pctOrNull(c.bestCalib.calibratedProb),
+    rawProb: pctOrNull(c.bestRawProb),
     odds: c.bestOdds,
     bookmaker: c.prop.bookmaker ?? null,
     edge: c.edgePct,
@@ -374,6 +434,10 @@ for (const c of candidates) {
     rejectionReason: c.rejectionReason,
     segmentState: c.bestCalib.segmentState,
     sampleSize: c.bestCalib.sampleSize,
+    hasModelProb,
+    validForCalibration: c.validForCalibration ?? hasModelProb,
+    invalidReason: c.invalidReason ?? (hasModelProb ? null : c.rejectionReason),
+    resolutionStatus: c.resolutionStatus ?? (hasModelProb ? undefined : ledger.RESOLUTION_STATUS.NAO_APURAVEL),
     runId: RUN_ID,
   });
 
@@ -418,9 +482,10 @@ for (const c of candidates) {
 // Dois grupos: descartado ANTES de calcular probabilidade/edge (dado
 // insuficiente pra avaliar) vs avaliado (edgePct calculado) e rejeitado
 // depois — por edge abaixo do limiar ou por guarda de risco.
-const descartadosAntesDeAvaliar = descartadosSemStats + descartadosSigmaBaixa + descartadosMarginRatio;
+const descartadosAntesDeAvaliar = descartadosSemStats + descartadosJogadorAusente + descartadosSigmaBaixa + descartadosMarginRatio;
 const avaliadosRejeitados = candidates.filter(c => !c.published && c.edgePct !== null).length;
-console.log(`Props processadas: ${results.length} | Descartado antes de avaliar: ${descartadosAntesDeAvaliar} (sem stats: ${descartadosSemStats}, sigma baixo: ${descartadosSigmaBaixa}, margem insuficiente: ${descartadosMarginRatio}) | Jogo bloqueado: ${descartadosJogoBloqueado} | Filtro ausentes: ${comFiltroAusentes} | Avaliado e rejeitado: ${avaliadosRejeitados}`);
+console.log(`Props processadas: ${results.length} | Descartado antes de avaliar: ${descartadosAntesDeAvaliar} (sem stats: ${descartadosSemStats}, jogador ausente: ${descartadosJogadorAusente}, sigma baixo: ${descartadosSigmaBaixa}, margem insuficiente: ${descartadosMarginRatio}) | Jogo bloqueado: ${descartadosJogoBloqueado} | Filtro ausentes: ${comFiltroAusentes} | Avaliado e rejeitado: ${avaliadosRejeitados}`);
+console.log(`Mercados fora da cobertura (NBA BR): ${JSON.stringify(descartadosMercadoForaCobertura)}`);
 
 const ledgerSummary = ledger.flush();
 console.log(`Histórico de indicações (NBA BR): ${ledgerSummary.partitionsSaved} partição(ões) atualizada(s), ${ledgerSummary.duplicatesInRun} indicação(ões) duplicada(s) na mesma execução.`);

@@ -175,10 +175,8 @@ function bufferFor(esporte, month) {
 
 /**
  * Registra uma indicação avaliada pelo modelo (publicada ou rejeitada).
- * Só deve ser chamada quando o modelo já calculou probabilidade, odd, edge
- * e Kelly para o lado escolhido — ou seja, depois de todos os filtros de
- * qualidade de dado (sem stats, sigma baixa, margem insuficiente etc.), que
- * continuam descartando silenciosamente como hoje.
+ * Registra também descartes de qualidade de dado quando o chamador passa
+ * hasModelProb:false e validForCalibration:false.
  */
 function recordEvaluation(rec) {
   const {
@@ -247,11 +245,11 @@ function recordEvaluation(rec) {
       firstEvaluatedAt: existing.firstEvaluatedAt ?? existing.evaluatedAt ?? now,
       result: existing.result ?? result ?? null,
       resolutionAttempts: existing.resolutionAttempts ?? resolutionAttempts ?? 0,
-      resolutionStatus: existing.resolutionStatus ?? resolutionStatus ?? RESOLUTION_STATUS.PENDENTE,
+      resolutionStatus: resolutionStatus ?? existing.resolutionStatus ?? RESOLUTION_STATUS.PENDENTE,
       source: existing.source ?? source ?? 'model',
-      hasModelProb: existing.hasModelProb ?? hasModelProb ?? true,
-      validForCalibration: existing.validForCalibration ?? validForCalibration ?? true,
-      invalidReason: existing.invalidReason ?? invalidReason ?? null,
+      hasModelProb: hasModelProb ?? existing.hasModelProb ?? true,
+      validForCalibration: validForCalibration ?? existing.validForCalibration ?? true,
+      invalidReason: invalidReason ?? existing.invalidReason ?? null,
       closingOdds: existing.closingOdds ?? closingOdds ?? null,
       clv: existing.clv ?? clv ?? null,
       closingOddsStatus: existing.closingOddsStatus ?? CLOSING_ODDS_STATUS.PENDENTE,
