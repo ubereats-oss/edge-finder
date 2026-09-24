@@ -24,7 +24,6 @@ const API_KEYS = [
 const SPORTS_TO_COLLECT = new Set([
   'basketball_nba',
   'baseball_mlb',
-  'tennis_atp',
 ]);
 
 const SPORTS_WITH_PROPS = new Set([
@@ -46,12 +45,39 @@ function loadKeyState() {
   if (!fs.existsSync(KEY_STATE_FILE)) return;
   try {
     const state = JSON.parse(fs.readFileSync(KEY_STATE_FILE));
-    if (state.month === monthStr()) keyIndex = state.keyIndex ?? 0;
+    if (state.month === monthStr()) {
+      keyIndex = state.keyIndex ?? 0;
+      Object.assign(keyBalances, state.balances || {});
+    }
   } catch {}
 }
 
 function saveKeyState() {
   writeJson(KEY_STATE_FILE, { month: monthStr(), keyIndex, savedAt: nowISO(), balances: keyBalances });
+}
+
+function knownTotalRemaining() {
+  const values = Object.values(keyBalances)
+    .map(b => Number(b?.remaining))
+    .filter(Number.isFinite);
+  if (!values.length) return null;
+  return values.reduce((sum, v) => sum + v, 0);
+}
+
+function globalReserve() {
+  const raw = process.env.ODDS_API_TOTAL_MIN_REMAINING || '0';
+  const value = parseInt(raw, 10);
+  return Number.isFinite(value) ? value : 0;
+}
+
+function ensureGlobalQuotaAvailable(scope) {
+  if (process.env.ODDS_API_IGNORE_GLOBAL_RESERVE === 'true') return true;
+  const reserve = globalReserve();
+  if (reserve <= 0) return true;
+  const total = knownTotalRemaining();
+  if (total === null || total >= reserve) return true;
+  console.log(`[quota] ${scope}: chamada pulada por reserva global da The Odds API. total_conhecido=${total}; reserva=${reserve}.`);
+  return false;
 }
 
 async function apiGet(url, params = {}) {
@@ -74,6 +100,13 @@ function writeJson(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
 
+function inSeason(sportKey) {
+  const month = new Date().getUTCMonth() + 1;
+  if (sportKey === 'basketball_nba') return month >= 10 || month <= 4;
+  if (sportKey === 'baseball_mlb') return month >= 3 && month <= 10;
+  return true;
+}
+
 function appendRecords(sport, type, records) {
   const file    = path.join(HISTORY_DIR, `${sport}_${type}_${monthStr()}.json`);
   const history = readJson(file);
@@ -91,6 +124,11 @@ function appendRecords(sport, type, records) {
 
 // ── Coleta H2H ────────────────────────────────────────────────────────────────
 async function collectH2H(sportKey) {
+  if (!inSeason(sportKey)) {
+    console.log(`  [${sportKey}/h2h] pulado: esporte fora de temporada.`);
+    return;
+  }
+  if (!ensureGlobalQuotaAvailable(`${sportKey}/h2h`)) return;
   const data = await apiGet(
     `https://api.the-odds-api.com/v4/sports/${sportKey}/odds/`,
     { regions: 'eu', markets: 'h2h', oddsFormat: 'decimal' }
@@ -129,6 +167,11 @@ async function collectH2H(sportKey) {
 
 // ── Coleta Props ───────────────────────────────────────────────────────────────
 async function collectProps(sportKey) {
+  if (!inSeason(sportKey)) {
+    console.log(`  [${sportKey}/props] pulado: mercado fora de temporada.`);
+    return;
+  }
+  if (!ensureGlobalQuotaAvailable(`${sportKey}/props/events`)) return;
   const events = await apiGet(`https://api.the-odds-api.com/v4/sports/${sportKey}/events`, {});
   if (!events?.length) return;
 
@@ -138,6 +181,7 @@ async function collectProps(sportKey) {
 
   for (const event of events) {
     try {
+      if (!ensureGlobalQuotaAvailable(`${sportKey}/props/${event.id}`)) break;
       const data = await apiGet(
         `https://api.the-odds-api.com/v4/sports/${sportKey}/events/${event.id}/odds`,
         { regions: 'eu', markets: PROPS_MARKETS, oddsFormat: 'decimal' }
