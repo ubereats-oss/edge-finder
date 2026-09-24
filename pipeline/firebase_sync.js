@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const admin = require('firebase-admin');
+const ledger = require('./model_ledger');
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
@@ -15,6 +16,17 @@ const db = admin.firestore();
 
 const ROOT = path.join(__dirname, '..');
 
+const DOC_SPORT = {
+  nba_h2h: 'basketball/nba',
+  nba_props: 'basketball/nba',
+  nba_props_br: 'basketball/nba',
+  mlb_props: 'baseball/mlb',
+  nhl_props: 'icehockey/nhl',
+  nfl_props: 'americanfootball/nfl',
+  tennis: 'tennis',
+  tennis_props: 'tennis',
+};
+
 const SYNC_MAP = [
   { file: 'model_results.json',        col: 'results', doc: 'tennis' },
   { file: 'nba_results.json',          col: 'results', doc: 'nba_h2h' },
@@ -26,9 +38,50 @@ const SYNC_MAP = [
   { file: 'tennis_props_results.json', col: 'results', doc: 'tennis_props' },
 ];
 
+function loadPublishedFutureLedgerIndex(now = Date.now()) {
+  const index = new Map();
+  for (const file of ledger.listAllPartitions()) {
+    for (const entry of ledger.loadPartitionFile(file)) {
+      if (!entry.published) continue;
+      if (entry.replacedBy || entry.unpublishedBySync) continue;
+      const commence = new Date(entry.commenceTime).getTime();
+      if (!Number.isFinite(commence) || commence <= now) continue;
+      const id = entry.indicationId ?? entry._key ?? ledger.indicationId(entry);
+      index.set(id, entry);
+    }
+  }
+  return index;
+}
+
+function enrichFromLedger(item, docSport, ledgerIndex) {
+  const id = ledger.indicationId({
+    eventId: item.eventId ?? item.gameId ?? item.pinnacleId ?? `${item.game}|${item.commence_time}`,
+    player: item.player ?? '',
+    market: item.market ?? item.prop ?? (docSport === 'tennis' ? 'h2h' : ''),
+    line: item.line ?? '',
+    side: item.side ?? '',
+  });
+  const entry = ledgerIndex.get(id);
+  if (!entry) return null;
+  return {
+    ...item,
+    indicationId: id,
+    ledgerKey: entry._key ?? id,
+    sourceLedgerMonth: ledger.monthOf(entry.commenceTime),
+    bookmaker: item.bookmaker ?? entry.bookmaker ?? '',
+  };
+}
+
+function filterDisplayableResults(doc, data, ledgerIndex) {
+  const sport = DOC_SPORT[doc];
+  if (!sport) return data;
+  return data.map(item => enrichFromLedger(item, sport, ledgerIndex)).filter(Boolean);
+}
+
 async function syncAll() {
   let synced = 0;
   let skipped = 0;
+  const ledgerIndex = loadPublishedFutureLedgerIndex();
 
   for (const { file, col, doc } of SYNC_MAP) {
     const filePath = path.join(ROOT, file);
@@ -40,7 +93,8 @@ async function syncAll() {
 
     try {
       const raw = JSON.parse(fs.readFileSync(filePath));
-      const data = Array.isArray(raw) ? raw : (raw.data || []);
+      const sourceData = Array.isArray(raw) ? raw : (raw.data || []);
+      const data = filterDisplayableResults(doc, sourceData, ledgerIndex);
       const stat = fs.statSync(filePath);
 
       await db.collection(col).doc(doc).set({
@@ -49,7 +103,7 @@ async function syncAll() {
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 
-      console.log(`  ✅ ${file} → ${col}/${doc} (${data.length} itens)`);
+      console.log(`  ✅ ${file} → ${col}/${doc} (${data.length}/${sourceData.length} itens futuros rastreados)`);
       synced++;
     } catch (e) {
       console.error(`  ❌ Erro ao sincronizar ${file}:`, e.message);

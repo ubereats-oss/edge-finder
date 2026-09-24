@@ -26,6 +26,7 @@ const REJECTION_REASONS = {
   GUARDA_EDGE_MAXIMO: 'guarda_edge_maximo',
   GUARDA_MAX_APOSTAS_JOGO: 'guarda_max_apostas_jogo',
   GUARDA_MAX_POR_JOGADOR: 'guarda_max_por_jogador',
+  SYNC_BR_EDGE_INSUFICIENTE: 'sync_br_edge_insuficiente',
 };
 
 const RESULT_STATUS = {
@@ -133,6 +134,16 @@ function makeKey({ eventId, player, market, line, side }) {
   return `${eventId}|${player}|${market}|${line}|${side}`;
 }
 
+function indicationId(rec) {
+  return makeKey({
+    eventId: rec.eventId ?? rec.gameId ?? rec.pinnacleId ?? `${rec.game}|${rec.commenceTime ?? rec.commence_time}`,
+    player: rec.player,
+    market: rec.market ?? rec.prop,
+    line: rec.line,
+    side: rec.side,
+  });
+}
+
 // Estado de rastreio da odd de fechamento pra uma indicação, inferindo a
 // partir de closingOdds quando o campo closingOddsStatus ainda não existir
 // (compat com indicações gravadas antes deste campo existir).
@@ -215,6 +226,7 @@ function recordEvaluation(rec) {
 
   const evaluation = {
     _key,
+    indicationId: _key,
     esporte,
     eventId,
     game: game ?? existing?.game ?? null,
@@ -243,6 +255,7 @@ function recordEvaluation(rec) {
     buf.byKey.set(_key, {
       ...existing,
       ...evaluation,
+      indicationId: _key,
       firstEvaluatedAt: existing.firstEvaluatedAt ?? existing.evaluatedAt ?? now,
       result: existing.result ?? result ?? null,
       resolutionAttempts: existing.resolutionAttempts ?? resolutionAttempts ?? 0,
@@ -258,6 +271,7 @@ function recordEvaluation(rec) {
   } else {
     buf.byKey.set(_key, {
       ...evaluation,
+      indicationId: _key,
       firstEvaluatedAt: now,
       result: result ?? null,
       resolutionAttempts: resolutionAttempts ?? 0,
@@ -298,7 +312,9 @@ module.exports = {
   CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS,
   SEGMENT_STATE,
   sportSlug,
+  monthOf,
   makeKey,
+  indicationId,
   closingOddsStatusOf,
   maybeExpireClosingOdds,
   loadPartition,

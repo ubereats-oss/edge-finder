@@ -102,7 +102,6 @@ class _MixScreenState extends State<MixScreen> {
       if (stats == null) return p;
       final prob = (p['_probCalibrada'] as double?) ??
           EdgeEvaluatorService.calibratedProb(p);
-      if (stats == null) return p;
       final z = (prob - stats.mean) / stats.std;
       final normProb = (0.75 + z * 0.125).clamp(0.50, 0.99);
       return {
@@ -514,13 +513,20 @@ class _MixScreenState extends State<MixScreen> {
       List<Map<String, dynamic>> props, List<double> stakes, bool isVirtual) async {
     int success = 0;
     int failed = 0;
-    final bookmaker = PrefsService.getLastBookmaker() ?? '';
+    final fallbackBookmaker = PrefsService.getLastBookmaker() ?? '';
 
     for (var i = 0; i < props.length; i++) {
       final stake = stakes[i];
       if (stake <= 0) continue;
       final p = props[i];
       final side = (p['side'] as String?) ?? 'Over';
+      final bookmaker = ((p['bookmaker'] as String?)?.trim().isNotEmpty ?? false)
+          ? (p['bookmaker'] as String).trim()
+          : fallbackBookmaker;
+      if (bookmaker.isEmpty) {
+        failed++;
+        continue;
+      }
       double? odds;
       if (side == 'Over' && p['oddsOver'] != null) {
         odds = (p['oddsOver'] as num).toDouble();
