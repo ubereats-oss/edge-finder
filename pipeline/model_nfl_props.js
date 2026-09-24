@@ -45,6 +45,29 @@ function normalCDF(x, mu, sigma) {
 function probOverRaw(mu, sigma, line) { return 1 - normalCDF(line, mu, sigma); }
 function probUnderRaw(mu, sigma, line) { return normalCDF(line, mu, sigma); }
 
+// ─── passTDs: distribuição de contagem (Poisson) ───────────────────────────
+// TDs de passe por jogo é uma contagem discreta e baixa (tipicamente 0-3);
+// desvio-padrão histórico abaixo de 1 é o normal pra esse tipo de estatística,
+// não sinal de dado ruim como seria numa distribuição contínua de jardas.
+// Por isso só este mercado usa Poisson(lambda = média histórica) em vez do
+// guard de sigma + CDF normal aplicados aos demais mercados de NFL.
+function poissonPMF(k, lambda) {
+  if (lambda <= 0) return k === 0 ? 1 : 0;
+  let logP = -lambda + k * Math.log(lambda);
+  for (let i = 2; i <= k; i++) logP -= Math.log(i);
+  return Math.exp(logP);
+}
+
+function poissonCDF(k, lambda) {
+  let sum = 0;
+  for (let i = 0; i <= k; i++) sum += poissonPMF(i, lambda);
+  return Math.min(1, sum);
+}
+
+// Linha de passTDs é sempre .5 (evita push) — "Under" cobre X <= floor(line).
+function probOverPoisson(lambda, line) { return 1 - poissonCDF(Math.floor(line), lambda); }
+function probUnderPoisson(lambda, line) { return poissonCDF(Math.floor(line), lambda); }
+
 function calcKelly(p, odd, stakeFraction = 1) {
   const b = odd - 1;
   const q = 1 - p;
@@ -129,6 +152,7 @@ if (Object.keys(playerStats).length === 0) {
 
 const NOW = Date.now();
 let descartadosSemStats = 0, descartadosSigmaBaixa = 0, descartadosJogoBloqueado = 0;
+let descartadosPassTDsMediaZero = 0;
 const candidates = [];
 
 for (const prop of props) {
@@ -146,7 +170,32 @@ for (const prop of props) {
 
   const stats = combineContexts(playerData, statKey, locations);
   if (!stats) { descartadosSemStats++; continue; }
-  if (stats.std < 1) { descartadosSigmaBaixa++; continue; }
+
+  const isPassTDs = prop.prop === 'passTDs';
+
+  if (isPassTDs) {
+    // Sem guard de sigma aqui (ver comentário no topo do arquivo) — só
+    // descarta se não há nenhum sinal histórico de TD pra montar Poisson
+    // (lambda <= 0 é degenerado: modelo sempre daria 100% em "Under").
+    // Diferente dos outros descartes de qualidade de dado, este é logado
+    // no histórico central (published:false + rejectionReason), a pedido —
+    // antes esse tipo de descarte era silencioso pra todos os mercados.
+    if (stats.avg <= 0) {
+      descartadosPassTDsMediaZero++;
+      candidates.push({
+        prop, stats, avg5: null, avg10: null,
+        bestSide: 'Over', bestOdds: prop.oddsOver, bestEdge: null, edgePct: null,
+        kellyCrit: null, bestRawProb: null,
+        bestCalib: { calibratedProb: null, segmentState: null, sampleSize: null, stakeFraction: null },
+        inefficientMarket: false, published: false,
+        rejectionReason: 'passtds_media_historica_zero',
+        game: prop.game, player: prop.player,
+      });
+      continue;
+    }
+  } else if (stats.std < 1) {
+    descartadosSigmaBaixa++; continue;
+  }
 
   const marginRatio = Math.abs(prop.line - stats.avg) / stats.std;
   if (marginRatio < 0.4) continue;
@@ -154,8 +203,8 @@ for (const prop of props) {
   const avg5  = calcRecentAvg(playerData, statKey, 5);
   const avg10 = calcRecentAvg(playerData, statKey, 10);
 
-  const rawOver  = probOverRaw(stats.avg, stats.std, prop.line);
-  const rawUnder = probUnderRaw(stats.avg, stats.std, prop.line);
+  const rawOver  = isPassTDs ? probOverPoisson(stats.avg, prop.line)        : probOverRaw(stats.avg, stats.std, prop.line);
+  const rawUnder = isPassTDs ? probUnderPoisson(stats.avg, prop.line)       : probUnderRaw(stats.avg, stats.std, prop.line);
 
   const impliedOver  = 1 / prop.oddsOver;
   const impliedUnder = 1 / prop.oddsUnder;
@@ -252,7 +301,7 @@ for (const c of candidates) {
 }
 
 const descartadosGuardas = candidates.filter(c => !c.published && c.rejectionReason).length;
-console.log(`Props NFL: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Bloqueado: ${descartadosJogoBloqueado} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
+console.log(`Props NFL: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo (não-passTDs): ${descartadosSigmaBaixa} | passTDs média zero: ${descartadosPassTDsMediaZero} | Bloqueado: ${descartadosJogoBloqueado} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
 
 const ledgerSummary = ledger.flush();
 console.log(`Histórico de indicações (NFL): ${ledgerSummary.partitionsSaved} partição(ões) atualizada(s), ${ledgerSummary.duplicatesInRun} indicação(ões) duplicada(s) na mesma execução.`);
