@@ -1,0 +1,129 @@
+name: Mirror Checks and Functions Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mirror-checks-functions-deploy-main
+  cancel-in-progress: false
+
+jobs:
+  verify-mirrors:
+    name: Verify mirrors
+    if: github.repository == 'ubereats-oss/edge-finder'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify closing odds and risk mirrors
+        run: node scripts/verify_mirrors.js
+
+  detect-functions:
+    name: Detect changed Functions
+    if: github.repository == 'ubereats-oss/edge-finder'
+    runs-on: ubuntu-latest
+    outputs:
+      functions: ${{ steps.detect.outputs.functions }}
+      firebase_only: ${{ steps.detect.outputs.firebase_only }}
+      should_deploy: ${{ steps.detect.outputs.should_deploy }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect affected Functions
+        id: detect
+        shell: bash
+        run: |
+          set -euo pipefail
+          before="${{ github.event.before }}"
+          after="${{ github.sha }}"
+          if [[ "$before" =~ ^0+$ ]]; then
+            mapfile -t changed < <(git diff-tree --no-commit-id --name-only -r "$after")
+          else
+            mapfile -t changed < <(git diff --name-only "$before" "$after")
+          fi
+
+          printf '%s\n' "${changed[@]}" > /tmp/changed_files.txt
+          functions="$(node scripts/detect_functions_to_deploy.js "${changed[@]}")"
+          if [[ -z "$functions" ]]; then
+            echo "functions=" >> "$GITHUB_OUTPUT"
+            echo "firebase_only=" >> "$GITHUB_OUTPUT"
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            echo "No Functions changed."
+            exit 0
+          fi
+
+          firebase_only="$(printf '%s' "$functions" | awk -F, '{ for (i=1; i<=NF; i++) { printf "%sfunctions:%s", (i==1 ? "" : ","), $i } }')"
+          echo "functions=$functions" >> "$GITHUB_OUTPUT"
+          echo "firebase_only=$firebase_only" >> "$GITHUB_OUTPUT"
+          echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+          echo "Affected Functions: $functions"
+          echo "Firebase --only: $firebase_only"
+
+  deploy-functions:
+    name: Deploy changed Functions
+    needs:
+      - verify-mirrors
+      - detect-functions
+    if: >
+      github.repository == 'ubereats-oss/edge-finder' &&
+      github.event_name == 'push' &&
+      needs.detect-functions.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_CLOUD_PROJECT: odds-app-edge
+      FUNCTIONS_REGION: southamerica-east1
+      FUNCTIONS_TO_VERIFY: ${{ needs.detect-functions.outputs.functions }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_FUNCTIONS_DEPLOY_SA_KEY }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Mark deployed commit in Functions source
+        run: printf '%s\n' '${{ github.sha }}' > functions/.deploy_commit
+
+      - name: Deploy affected Functions
+        run: npx -y firebase-tools@latest deploy --project "$GOOGLE_CLOUD_PROJECT" --only "${{ needs.detect-functions.outputs.firebase_only }}"
+
+      - name: Confirm active revisions contain this commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          IFS=',' read -ra functions <<< "$FUNCTIONS_TO_VERIFY"
+          for fn in "${functions[@]}"; do
+            echo "Checking active source for $fn"
+            gcloud functions describe "$fn" \
+              --gen2 \
+              --region="$FUNCTIONS_REGION" \
+              --project="$GOOGLE_CLOUD_PROJECT" \
+              --format=json > "/tmp/${fn}.json"
+
+            bucket="$(node -e "const d=require('/tmp/${fn}.json'); console.log(d.buildConfig.sourceProvenance.resolvedStorageSource.bucket)")"
+            object="$(node -e "const d=require('/tmp/${fn}.json'); console.log(d.buildConfig.sourceProvenance.resolvedStorageSource.object)")"
+            generation="$(node -e "const d=require('/tmp/${fn}.json'); console.log(d.buildConfig.sourceProvenance.resolvedStorageSource.generation)")"
+            revision="$(node -e "const d=require('/tmp/${fn}.json'); console.log(d.serviceConfig.revision)")"
+            update_time="$(node -e "const d=require('/tmp/${fn}.json'); console.log(d.updateTime)")"
+
+            gsutil cp "gs://${bucket}/${object}#${generation}" "/tmp/${fn}-source.zip"
+            deployed_sha="$(unzip -p "/tmp/${fn}-source.zip" .deploy_commit | tr -d '\r\n')"
+            if [[ "$deployed_sha" != "${{ github.sha }}" ]]; then
+              echo "::error::${fn} active revision ${revision} source has commit ${deployed_sha}, expected ${{ github.sha }}"
+              exit 1
+            fi
+            echo "${fn}: revision ${revision}, updateTime ${update_time}, commit ${deployed_sha}"
+          done

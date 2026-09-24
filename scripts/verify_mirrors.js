@@ -8,6 +8,22 @@ function fail(message) {
   process.exitCode = 1;
 }
 
+function reportValueDiff(label, snapshots) {
+  const keys = [...new Set(Object.values(snapshots).flatMap(s => Object.keys(s)))].sort();
+  for (const key of keys) {
+    const values = Object.fromEntries(
+      Object.entries(snapshots).map(([name, snapshot]) => [name, canonical(snapshot[key])])
+    );
+    const serialized = Object.values(values).map(v => JSON.stringify(v));
+    if (new Set(serialized).size > 1) {
+      console.error(`${label}: ${key} divergiu`);
+      for (const [name, value] of Object.entries(values)) {
+        console.error(`  ${name}: ${JSON.stringify(value)}`);
+      }
+    }
+  }
+}
+
 function read(rel) {
   return fs.readFileSync(path.join(ROOT, rel), 'utf8').replace(/\r\n/g, '\n');
 }
@@ -84,11 +100,15 @@ function verifyRiskConfig() {
   const functionsRisk = riskSnapshotJs(require('../functions/risk_config'));
   const appRisk = riskSnapshotDart();
 
-  if (!sameJson(pipelineRisk, functionsRisk)) {
-    fail('pipeline/risk_config.js e functions/risk_config.js divergiram');
-  }
-  if (!sameJson(pipelineRisk, appRisk)) {
-    fail('pipeline/risk_config.js e lib/services/risk_config.dart divergiram');
+  const snapshots = {
+    'pipeline/risk_config.js': pipelineRisk,
+    'functions/risk_config.js': functionsRisk,
+    'lib/services/risk_config.dart': appRisk,
+  };
+
+  if (!sameJson(pipelineRisk, functionsRisk) || !sameJson(pipelineRisk, appRisk)) {
+    reportValueDiff('risk_config', snapshots);
+    fail('risk_config divergiu entre pipeline, functions e app');
   }
 }
 
