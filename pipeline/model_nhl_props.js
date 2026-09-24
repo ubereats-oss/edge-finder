@@ -26,7 +26,7 @@ const playerTeamMap = readJsonSafe('nhl_player_team.json', {});
 const SEASON_WEIGHT = { 2024: 1, 2025: 2, 2026: 3 };
 const MIN_GAMES_CONTEXT = 8;
 const INEFFICIENT_MARKET_EDGE = 20;
-const KELLY_FRACTION = 0.25;
+const KELLY_FRACTION = riskConfig.KELLY_FRACTION;
 
 function erf(x) {
   const sign = x >= 0 ? 1 : -1;

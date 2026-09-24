@@ -25,7 +25,7 @@ const props = readJsonSafe('nba_props_pinnacle.json', []);
 const SEASON_WEIGHT = { 2024: 1, 2025: 2, 2026: 3 };
 const MIN_GAMES_CONTEXT = 10;
 const INEFFICIENT_MARKET_EDGE = 20;
-const KELLY_FRACTION = 0.25;
+const KELLY_FRACTION = riskConfig.KELLY_FRACTION;
 
 let injuriesToday = {};
 if (fs.existsSync('nba_injuries_today.json')) {

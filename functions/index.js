@@ -4,6 +4,7 @@ const { defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const crypto = require('crypto');
+const riskConfig = require('./risk_config');
 
 initializeApp();
 const db = getFirestore();
@@ -63,13 +64,10 @@ const SPORT_CONFIG = {
   tennis: { col: 'results', doc: 'tennis_props', minEdge: 5,  calib: 'tennis' },
 };
 
-// Mesmos valores de pipeline/risk_config.js (MIN_SHRINK_TO_RAW,
-// MIN_STAKE_FRACTION) pro estado "em_amostra" — sem amostra própria pra
-// calibração isotônica, a probabilidade encolhe em direção à implícita de
-// mercado e o stake sugerido cai pra 25%. Duplicado aqui (não importado)
-// porque functions/ é implantado isolado de pipeline/.
-const UNCALIBRATED_SHRINK_TO_RAW = 0.2;
-const UNCALIBRATED_STAKE_FRACTION = 0.25;
+// Espelha pipeline/risk_config.js porque functions/ é implantado isolado.
+const KELLY_FRACTION = riskConfig.KELLY_FRACTION;
+const UNCALIBRATED_SHRINK_TO_RAW = riskConfig.UNCALIBRATED_SHRINK_TO_RAW;
+const UNCALIBRATED_STAKE_FRACTION = riskConfig.UNCALIBRATED_STAKE_FRACTION;
 
 // ── Matemática ────────────────────────────────────────────────────────────────
 function erf(x) {
@@ -109,7 +107,7 @@ function calcKelly(prob, odds, stakeFraction = 1) {
   const b = odds - 1;
   const q = 1 - prob;
   const k = (prob * b - q) / b;
-  return Math.max(0, parseFloat((k * 0.25 * stakeFraction * 100).toFixed(2)));
+  return Math.max(0, parseFloat((k * KELLY_FRACTION * stakeFraction * 100).toFixed(2)));
 }
 
 // Mistura a bruta do modelo com a implícita de mercado — mesma fórmula do

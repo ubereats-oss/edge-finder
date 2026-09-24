@@ -1,4 +1,5 @@
 const fs = require('fs');
+const riskConfig = require('./risk_config');
 
 if (!fs.existsSync('nba_rating.json')) { console.log('nba_rating.json não encontrado — pulando modelo NBA H2H.'); process.exit(0); }
 if (!fs.existsSync('nba_odds.json')) { console.log('nba_odds.json não encontrado — pulando modelo NBA H2H.'); process.exit(0); }
@@ -18,9 +19,7 @@ function readJsonSafe(file, fallback) {
 const rating = readJsonSafe('nba_rating.json', {});
 const odds = readJsonSafe('nba_odds.json', []);
 
-// Kelly fracionário calibrado via backtest walk-forward (1105 jogos, 2025-26)
-// 0.25 → ROI +18.91%, Max Drawdown 36.5% | 0.15 → drawdown estimado ~15-20%
-const KELLY_FRACTION = 0.15;
+const KELLY_FRACTION = riskConfig.KELLY_FRACTION;
 
 // Sigma calibrado via backtesting walk-forward (1105 jogos, temporada 2025-26)
 // Sigma 12 apresentou menor desvio médio absoluto de calibração (3.99%)

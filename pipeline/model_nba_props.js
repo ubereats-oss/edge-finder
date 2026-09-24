@@ -13,7 +13,7 @@ const props = JSON.parse(fs.readFileSync('nba_props.json'));
 const SEASON_WEIGHT = { 2024: 1, 2025: 2, 2026: 3 };
 const MIN_GAMES_CONTEXT = 10;
 const INEFFICIENT_MARKET_EDGE = 20;
-const KELLY_FRACTION = 0.25;
+const KELLY_FRACTION = riskConfig.KELLY_FRACTION;
 
 // ── Distribuição normal ────────────────────────────────────────────────────────
 

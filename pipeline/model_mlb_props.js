@@ -30,7 +30,7 @@ if (!Object.keys(injuriesToday).length) {
 const SEASON_WEIGHT = { 2023: 1, 2024: 2, 2025: 3, 2026: 4 };
 const MIN_GAMES_CONTEXT = 10;
 const INEFFICIENT_MARKET_EDGE = 20;
-const KELLY_FRACTION = 0.15;
+const KELLY_FRACTION = riskConfig.KELLY_FRACTION;
 
 function erf(x) {
   const sign = x >= 0 ? 1 : -1;

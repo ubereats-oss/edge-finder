@@ -1,10 +1,13 @@
 // pipeline/risk_config.js
 // Configuração central de calibração e controle de risco por segmento.
 // Um segmento é a combinação esporte + mercado (ex.: 'hockey/nhl' + 'goals').
-// Editar os valores abaixo diretamente pra ajustar o comportamento — não há
-// nenhum outro lugar no código com esses números.
+// Editar os valores abaixo diretamente pra ajustar o comportamento do pipeline.
+// Runtimes isolados podem manter espelhos explícitos desses valores.
 
 module.exports = {
+  // Fração padrão do Kelly usada para dimensionar a aposta sugerida.
+  KELLY_FRACTION: 0.25,
+
   // ── Calibração ────────────────────────────────────────────────────────────
   // Nº mínimo de apostas resolvidas e válidas (ganhou/perdeu binário) que um
   // segmento precisa acumular antes de usar a regressão isotônica. Abaixo

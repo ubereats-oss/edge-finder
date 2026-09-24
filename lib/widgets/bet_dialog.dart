@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../services/prefs_service.dart';
+import '../services/risk_config.dart';
 
 const _defaultBookmakers = [
   'Pinnacle',
@@ -80,7 +81,9 @@ Future<void> showBetDialog({
     final implied = 1 / oddsVal;
     final edge = (prob - implied) * 100;
     final b = oddsVal - 1;
-    final kelly = edge > 0 ? ((prob * b - (1 - prob)) / b * 0.25 * 100) : 0.0;
+    final kelly = edge > 0
+        ? ((prob * b - (1 - prob)) / b * RiskConfig.kellyFraction * 100)
+        : 0.0;
     update(() { _recalcEdge = edge; _recalcKelly = kelly.clamp(0.0, 100.0); });
   }
 
