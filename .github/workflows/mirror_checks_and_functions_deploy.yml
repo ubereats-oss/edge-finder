@@ -117,6 +117,10 @@ jobs:
       - name: Mark deployed commit in Functions source
         run: printf '%s\n' '${{ github.sha }}' > functions/.deploy_commit
 
+      - name: Install Functions dependencies
+        working-directory: functions
+        run: npm ci
+
       - name: Deploy affected Functions
         run: npx -y firebase-tools@latest deploy --project "$GOOGLE_CLOUD_PROJECT" --only "${{ needs.detect-functions.outputs.firebase_only }}"
 
