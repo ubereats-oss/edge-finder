@@ -251,6 +251,7 @@ let descartadosSemStats = 0;
 let descartadosSigmaBaixa = 0;
 let descartadosJogoBloqueado = 0;
 let comFiltroAusentes = 0;
+let descartadosMarginRatio = 0;
 const candidates = [];
 
 for (const prop of props) {
@@ -285,8 +286,25 @@ for (const prop of props) {
   const stats = combineContexts(playerData, statKey, locations, ['regular'], absentToday);
   if (!stats) { descartadosSemStats++; continue; }
   if (stats.std < 0.3) { descartadosSigmaBaixa++; continue; }
+  // Linha muito perto da média histórica do jogador (relativa ao desvio-padrão)
+  // — sem sinal suficiente pra diferenciar de um chute aleatório. Mesmo
+  // padrão de rastreabilidade do guard de passTDs/margem no NFL: antes
+  // descartava silenciosamente; agora fica visível no histórico central.
+  // Limiar (0.5) não mudou.
   const marginRatio = Math.abs(prop.line - stats.avg) / stats.std;
-  if (marginRatio < 0.5) continue;
+  if (marginRatio < 0.5) {
+    descartadosMarginRatio++;
+    candidates.push({
+      prop, stats, avg5: null, avg10: null, absentToday: [], lowMarginRatio: null,
+      bestSide: 'Over', bestOdds: prop.oddsOver, bestEdge: null, edgePct: null,
+      kellyCrit: null, bestRawProb: null,
+      bestCalib: { calibratedProb: null, segmentState: null, sampleSize: null, stakeFraction: null },
+      inefficientMarket: false, published: false,
+      rejectionReason: 'margem_insuficiente',
+      game: prop.game, player: prop.player,
+    });
+    continue;
+  }
   const lowMarginRatio = marginRatio < 0.75;
   if (stats.usedAbsentFilter) comFiltroAusentes++;
 
@@ -397,8 +415,8 @@ for (const c of candidates) {
   });
 }
 
-const descartadosGuardas = candidates.filter(c => !c.published && c.rejectionReason && c.rejectionReason !== ledger.REJECTION_REASONS.EDGE_ABAIXO_LIMIAR).length;
-console.log(`Props processadas: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Jogo bloqueado: ${descartadosJogoBloqueado} | Filtro ausentes: ${comFiltroAusentes} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
+const descartadosGuardas = candidates.filter(c => !c.published && c.rejectionReason && c.rejectionReason !== ledger.REJECTION_REASONS.EDGE_ABAIXO_LIMIAR && c.rejectionReason !== 'margem_insuficiente').length;
+console.log(`Props processadas: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Margem insuficiente: ${descartadosMarginRatio} | Jogo bloqueado: ${descartadosJogoBloqueado} | Filtro ausentes: ${comFiltroAusentes} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
 
 const ledgerSummary = ledger.flush();
 console.log(`Histórico de indicações (NBA BR): ${ledgerSummary.partitionsSaved} partição(ões) atualizada(s), ${ledgerSummary.duplicatesInRun} indicação(ões) duplicada(s) na mesma execução.`);
