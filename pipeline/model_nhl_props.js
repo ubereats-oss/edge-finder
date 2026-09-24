@@ -132,6 +132,7 @@ if (Object.keys(playerStats).length === 0) {
 
 const NOW = Date.now();
 let descartadosSemStats = 0, descartadosSigmaBaixa = 0, descartadosJogoBloqueado = 0;
+let descartadosMarginRatio = 0;
 const candidates = [];
 
 for (const prop of props) {
@@ -151,8 +152,25 @@ for (const prop of props) {
   if (!stats) { descartadosSemStats++; continue; }
   if (stats.std < 0.2) { descartadosSigmaBaixa++; continue; }
 
+  // Linha muito perto da média histórica do jogador (relativa ao desvio-padrão)
+  // — sem sinal suficiente pra diferenciar de um chute aleatório. Mesmo
+  // padrão de rastreabilidade do guard de passTDs/margem no NFL: antes
+  // descartava silenciosamente; agora fica visível no histórico central.
+  // Limiar (0.4) não mudou.
   const marginRatio = Math.abs(prop.line - stats.avg) / stats.std;
-  if (marginRatio < 0.4) continue;
+  if (marginRatio < 0.4) {
+    descartadosMarginRatio++;
+    candidates.push({
+      prop, stats, avg5: null, avg10: null,
+      bestSide: 'Over', bestOdds: prop.oddsOver, bestEdge: null, edgePct: null,
+      kellyCrit: null, bestRawProb: null,
+      bestCalib: { calibratedProb: null, segmentState: null, sampleSize: null, stakeFraction: null },
+      inefficientMarket: false, published: false,
+      rejectionReason: 'margem_insuficiente',
+      game: prop.game, player: prop.player,
+    });
+    continue;
+  }
 
   const avg5  = calcRecentAvg(playerData, statKey, 5);
   const avg10 = calcRecentAvg(playerData, statKey, 10);
@@ -256,8 +274,8 @@ for (const c of candidates) {
   });
 }
 
-const descartadosGuardas = candidates.filter(c => !c.published && c.rejectionReason && c.rejectionReason !== ledger.REJECTION_REASONS.EDGE_ABAIXO_LIMIAR).length;
-console.log(`Props NHL: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Bloqueado: ${descartadosJogoBloqueado} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
+const descartadosGuardas = candidates.filter(c => !c.published && c.rejectionReason && c.rejectionReason !== ledger.REJECTION_REASONS.EDGE_ABAIXO_LIMIAR && c.rejectionReason !== 'margem_insuficiente').length;
+console.log(`Props NHL: ${results.length} | Sem stats: ${descartadosSemStats} | Sigma baixo: ${descartadosSigmaBaixa} | Margem insuficiente: ${descartadosMarginRatio} | Bloqueado: ${descartadosJogoBloqueado} | Rejeitadas por guarda/segmento: ${descartadosGuardas}`);
 
 const ledgerSummary = ledger.flush();
 console.log(`Histórico de indicações (NHL): ${ledgerSummary.partitionsSaved} partição(ões) atualizada(s), ${ledgerSummary.duplicatesInRun} indicação(ões) duplicada(s) na mesma execução.`);
