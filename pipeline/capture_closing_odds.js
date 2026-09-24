@@ -101,6 +101,7 @@ async function captureSport({ esporte, apiSport, markets }) {
     // Agrupa por evento pra não repetir a mesma chamada de API por indicação.
     const porEvento = new Map();
     for (const entry of entries) {
+      if (entry.hasModelProb === false || entry.validForCalibration === false) continue;
       if (entry.resolutionStatus !== ledger.RESOLUTION_STATUS.PENDENTE) continue;
       if (ledger.closingOddsStatusOf(entry) !== ledger.CLOSING_ODDS_STATUS.PENDENTE) continue;
       if (!markets[entry.market]) continue;

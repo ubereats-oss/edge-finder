@@ -59,10 +59,11 @@ jobs:
 
       - name: Verificar se há indicação pendente sem odd de fechamento
         id: gate
-        # Considera só o campo closingOddsStatus (independente de
-        # resolutionStatus) — quem já expirou (janela de captura passada sem
-        # sucesso, marcado por settle_model_ledger.js) já sai daqui, sem
-        # precisar recalcular a janela por commenceTime a cada execução.
+        # Considera apenas indicações com probabilidade de modelo válida.
+        # Descartes técnicos (hasModelProb:false / validForCalibration:false)
+        # não podem acionar captura nem gastar chamada da The Odds API.
+        # Quem já expirou (janela de captura passada sem sucesso, marcado por
+        # settle_model_ledger.js) sai daqui por closingOddsStatus.
         # Compat com indicação gravada antes do campo existir: infere pelo
         # closingOdds.
         run: |
@@ -74,6 +75,7 @@ jobs:
             let entries;
             try { entries = JSON.parse(fs.readFileSync('odds_history/' + f, 'utf-8')); } catch { continue; }
             for (const e of entries) {
+              if (e.hasModelProb === false || e.validForCalibration === false) continue;
               if (e.resolutionStatus !== 'pendente') continue;
               const status = e.closingOddsStatus || ((e.closingOdds !== null && e.closingOdds !== undefined) ? 'capturada' : 'pendente');
               if (status === 'pendente') pendentes++;

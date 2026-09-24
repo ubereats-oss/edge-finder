@@ -428,13 +428,14 @@ async function loadLedgerEntries(token) {
 // Mesma lógica de pipeline/capture_closing_odds.js::findNextReachableEvent —
 // prioriza o evento futuro de commenceTime mais próximo; só cai pra "já
 // iniciado" quando não há nenhum futuro alcançável. A exclusão de quem já
-// passou da janela de captura não depende mais de recalcular commenceTime
-// aqui: fica a cargo do campo closingOddsStatus (marcado 'expirada' por
-// settle_model_ledger.js) — aqui só filtra por ele.
+// passou da janela de captura fica a cargo do campo closingOddsStatus
+// (marcado 'expirada' por settle_model_ledger.js). Descartes técnicos sem
+// probabilidade de modelo válida nunca entram na fila de captura.
 function findNextReachableEvent(entries, now) {
   let bestFuture = null;
   let bestStarted = null;
   for (const entry of entries) {
+    if (entry.hasModelProb === false || entry.validForCalibration === false) continue;
     if (entry.resolutionStatus !== 'pendente') continue;
     if (closingOddsStatusOf(entry) !== 'pendente') continue;
     const markets = SPORT_MARKET_KEYS[entry.esporte];
