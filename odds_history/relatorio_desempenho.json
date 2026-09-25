@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-24T15:08:13.811Z",
+  "generatedAt": "2026-09-25T01:43:04.152Z",
   "rows": [
     {
       "esporte": "americanfootball/nfl",
@@ -78,23 +78,23 @@
       "clvComOdd": 1,
       "semClv": 1,
       "segmentState": "calibrado",
-      "sampleSize": 166,
+      "sampleSize": 171,
       "faltamParaCalibrar": 0
     },
     {
       "esporte": "americanfootball/nfl",
       "market": "receptions",
       "edgeBucket": "15-20%",
-      "nResolvidasValidas": 2,
-      "nBinarias": 2,
-      "winRateReal": 100,
-      "winRateModelo": 60.5,
-      "roi": 133.9,
-      "clvMedio": 0,
-      "clvComOdd": 2,
+      "nResolvidasValidas": 3,
+      "nBinarias": 3,
+      "winRateReal": 66.7,
+      "winRateModelo": 61.5,
+      "roi": 50.2,
+      "clvMedio": 2.38,
+      "clvComOdd": 3,
       "semClv": 0,
       "segmentState": "calibrado",
-      "sampleSize": 166,
+      "sampleSize": 171,
       "faltamParaCalibrar": 0
     },
     {
@@ -110,7 +110,7 @@
       "clvComOdd": 3,
       "semClv": 1,
       "segmentState": "calibrado",
-      "sampleSize": 166,
+      "sampleSize": 171,
       "faltamParaCalibrar": 0
     },
     {
@@ -126,7 +126,7 @@
       "clvComOdd": 0,
       "semClv": 2,
       "segmentState": "calibrado",
-      "sampleSize": 775,
+      "sampleSize": 791,
       "faltamParaCalibrar": 0
     },
     {
@@ -142,23 +142,23 @@
       "clvComOdd": 18,
       "semClv": 32,
       "segmentState": "calibrado",
-      "sampleSize": 775,
+      "sampleSize": 791,
       "faltamParaCalibrar": 0
     },
     {
       "esporte": "americanfootball/nfl",
       "market": "receptionYards",
       "edgeBucket": "15-20%",
-      "nResolvidasValidas": 3,
-      "nBinarias": 3,
-      "winRateReal": 66.7,
-      "winRateModelo": 73.1,
-      "roi": 12.9,
+      "nResolvidasValidas": 4,
+      "nBinarias": 4,
+      "winRateReal": 50,
+      "winRateModelo": 71.4,
+      "roi": -11.1,
       "clvMedio": 1.6,
       "clvComOdd": 1,
-      "semClv": 2,
+      "semClv": 3,
       "segmentState": "calibrado",
-      "sampleSize": 775,
+      "sampleSize": 791,
       "faltamParaCalibrar": 0
     },
     {
@@ -174,7 +174,7 @@
       "clvComOdd": 1,
       "semClv": 3,
       "segmentState": "calibrado",
-      "sampleSize": 775,
+      "sampleSize": 791,
       "faltamParaCalibrar": 0
     },
     {
@@ -190,7 +190,7 @@
       "clvComOdd": 1,
       "semClv": 0,
       "segmentState": "calibrado",
-      "sampleSize": 775,
+      "sampleSize": 791,
       "faltamParaCalibrar": 0
     },
     {
@@ -206,23 +206,23 @@
       "clvComOdd": 1,
       "semClv": 0,
       "segmentState": "calibrado",
-      "sampleSize": 775,
+      "sampleSize": 791,
       "faltamParaCalibrar": 0
     },
     {
       "esporte": "americanfootball/nfl",
       "market": "receptionYards",
       "edgeBucket": "5-10%",
-      "nResolvidasValidas": 8,
-      "nBinarias": 8,
-      "winRateReal": 62.5,
-      "winRateModelo": 59.2,
-      "roi": 13.9,
-      "clvMedio": 0.52,
-      "clvComOdd": 1,
+      "nResolvidasValidas": 9,
+      "nBinarias": 9,
+      "winRateReal": 55.6,
+      "winRateModelo": 59.1,
+      "roi": 3.4,
+      "clvMedio": 0.53,
+      "clvComOdd": 2,
       "semClv": 7,
       "segmentState": "calibrado",
-      "sampleSize": 775,
+      "sampleSize": 791,
       "faltamParaCalibrar": 0
     },
     {
@@ -238,7 +238,7 @@
       "clvComOdd": 1,
       "semClv": 4,
       "segmentState": "calibrado",
-      "sampleSize": 449,
+      "sampleSize": 455,
       "faltamParaCalibrar": 0
     },
     {
@@ -254,8 +254,14 @@
       "clvComOdd": 1,
       "semClv": 3,
       "segmentState": "calibrado",
-      "sampleSize": 449,
+      "sampleSize": 455,
       "faltamParaCalibrar": 0
     }
-  ]
+  ],
+  "realBets": {
+    "rows": [],
+    "manualWithoutIndication": 179,
+    "unresolvedLinked": 0,
+    "linked": 0
+  }
 }
