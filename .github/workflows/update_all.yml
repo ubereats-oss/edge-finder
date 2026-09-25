@@ -580,7 +580,7 @@ jobs:
         # antes de desistir. Ver pipeline/reapply_ledger_changes.js.
         run: |
           cp .github/scripts/save_stats_gz.sh /tmp/save_stats_gz.sh
-          mkdir -p /tmp/to-save /tmp/to-save/odds_history /tmp/to-save-gz /tmp/ledger_scripts
+          mkdir -p /tmp/to-save /tmp/to-save/odds_history /tmp/to-save-gz 
           for dir in /tmp/nba-out /tmp/mlb-out /tmp/nhl-out /tmp/nfl-out /tmp/tennis-out; do
             if [ -d "$dir" ]; then
               cp "$dir"/* /tmp/to-save/ 2>/dev/null || true
@@ -588,7 +588,8 @@ jobs:
             fi
           done
           mv /tmp/to-save/*.gz /tmp/to-save-gz/ 2>/dev/null || true
-          cp pipeline/reapply_ledger_changes.js pipeline/model_ledger.js pipeline/closing_odds_rules.js /tmp/ledger_scripts/
+          rm -rf /tmp/ledger_pipeline
+          cp -R pipeline /tmp/ledger_pipeline
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -607,9 +608,9 @@ jobs:
             done
             cp /tmp/to-save/* . 2>/dev/null || true
             if [ "$attempt" -gt 1 ]; then
-              node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history --retry
+              node /tmp/ledger_pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history --retry
             else
-              node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history
+              node /tmp/ledger_pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history
             fi
 
             odds_history_patterns=(model_ledger_*.json basketball_nba_model_br_*.json baseball_mlb_model_*.json hockey_nhl_model_*.json football_nfl_model_*.json)
