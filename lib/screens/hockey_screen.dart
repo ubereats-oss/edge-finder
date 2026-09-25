@@ -56,8 +56,7 @@ class _HockeyScreenState extends State<HockeyScreen> {
       if (!mounted) return;
       _showError(e.toString());
     } finally {
-      if (!mounted) return;
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -79,6 +78,7 @@ class _HockeyScreenState extends State<HockeyScreen> {
           if (s == 'completed') break;
         } catch (_) {}
       }
+      if (!mounted) return;
       setState(() => _status = 'Carregando...');
       await _load();
       if (!mounted) return;
@@ -87,8 +87,7 @@ class _HockeyScreenState extends State<HockeyScreen> {
       if (!mounted) return;
       _showError(e.toString());
     } finally {
-      if (!mounted) return;
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -133,8 +132,9 @@ class _HockeyScreenState extends State<HockeyScreen> {
       final edge = (p['edge'] as num).toDouble();
       if (edge < _minEdge) return false;
       if (_selectedProp != null && p['prop'] != _selectedProp) return false;
-      if (_selectedTeam != null && p['playerTeam'] != _selectedTeam)
+      if (_selectedTeam != null && p['playerTeam'] != _selectedTeam) {
         return false;
+      }
       if (_hideWarnings && p['lowSample'] == true) return false;
       return true;
     }).toList();

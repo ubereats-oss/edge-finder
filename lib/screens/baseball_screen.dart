@@ -71,8 +71,7 @@ class _BaseballScreenState extends State<BaseballScreen>
       if (!mounted) return;
       _showError(e.toString());
     } finally {
-      if (!mounted) return;
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -107,8 +106,7 @@ class _BaseballScreenState extends State<BaseballScreen>
       if (!mounted) return;
       _showError(e.toString());
     } finally {
-      if (!mounted) return;
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -131,8 +129,7 @@ class _BaseballScreenState extends State<BaseballScreen>
       if (!mounted) return;
       _showError(e.toString());
     } finally {
-      if (!mounted) return;
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 

@@ -52,8 +52,7 @@ class _BetsScreenState extends State<BetsScreen> {
       if (!mounted) return;
       _showError(e.toString());
     } finally {
-      if (!mounted) return;
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -68,6 +67,7 @@ class _BetsScreenState extends State<BetsScreen> {
         setState(() => _loading = false);
         if (live['completed'] == true) {
           await ApiService.resolveBet(id);
+          if (!mounted) return;
           await _load();
           return;
         }
@@ -157,6 +157,7 @@ class _BetsScreenState extends State<BetsScreen> {
                     if (!mounted) return;
                     setState(() => _loading = true);
                     await ApiService.resolveBet(id);
+                    if (!mounted) return;
                     await _load();
                   },
                   style: ElevatedButton.styleFrom(
@@ -207,13 +208,13 @@ class _BetsScreenState extends State<BetsScreen> {
     setState(() => _loading = true);
     try {
       await ApiService.resolveBet(id);
+      if (!mounted) return;
       await _load();
     } catch (e) {
       if (!mounted) return;
       _showError(e.toString());
     } finally {
-      if (!mounted) return;
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -700,22 +701,26 @@ class _BetsScreenState extends State<BetsScreen> {
       sheet
           .cell(xl.CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: row))
           .value = xl.DoubleCellValue(stake);
-      if (edge != 0)
+      if (edge != 0) {
         sheet
             .cell(xl.CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: row))
             .value = xl.DoubleCellValue(edge);
-      if (modelProb > 0)
+      }
+      if (modelProb > 0) {
         sheet
             .cell(xl.CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: row))
             .value = xl.DoubleCellValue(modelProb);
-      if (impliedProb > 0)
+      }
+      if (impliedProb > 0) {
         sheet
             .cell(xl.CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: row))
             .value = xl.DoubleCellValue(impliedProb);
-      if (kelly > 0)
+      }
+      if (kelly > 0) {
         sheet
             .cell(xl.CellIndex.indexByColumnRow(columnIndex: 10, rowIndex: row))
             .value = xl.DoubleCellValue(kelly);
+      }
       if (profit != null) {
         sheet
             .cell(xl.CellIndex.indexByColumnRow(columnIndex: 11, rowIndex: row))
@@ -794,10 +799,12 @@ class _BetsScreenState extends State<BetsScreen> {
       final kelly = (b['kelly'] as num?)?.toDouble() ?? 0;
       final analyticParts = <String>[];
       if (edge != 0) analyticParts.add('Edge: ${edge.toStringAsFixed(1)}%');
-      if (modelProb > 0)
+      if (modelProb > 0) {
         analyticParts.add('Mod: ${modelProb.toStringAsFixed(1)}%');
-      if (impliedProb > 0)
+      }
+      if (impliedProb > 0) {
         analyticParts.add('Mer: ${impliedProb.toStringAsFixed(1)}%');
+      }
       if (kelly > 0) analyticParts.add('Kelly: ${kelly.toStringAsFixed(1)}%');
       final analytic = analyticParts.join(' · ');
       return pw.TableRow(children: [
@@ -1018,17 +1025,20 @@ class _BetsScreenState extends State<BetsScreen> {
     final kelly = (b['kelly'] as num?)?.toDouble() ?? 0;
     final analyticParts = <String>[];
     if (edge != 0) analyticParts.add('Edge: ${edge.toStringAsFixed(1)}%');
-    if (modelProb > 0)
+    if (modelProb > 0) {
       analyticParts.add('Modelo: ${modelProb.toStringAsFixed(1)}%');
-    if (impliedProb > 0)
+    }
+    if (impliedProb > 0) {
       analyticParts.add('Mercado: ${impliedProb.toStringAsFixed(1)}%');
+    }
     if (kelly > 0) analyticParts.add('Kelly: ${kelly.toStringAsFixed(1)}%');
 
     buf.writeln('• $title');
     buf.writeln('  $desc');
     if (date.isNotEmpty) buf.writeln('  $date');
-    if (bookmaker != null && bookmaker.isNotEmpty)
+    if (bookmaker != null && bookmaker.isNotEmpty) {
       buf.writeln('  Casa: $bookmaker');
+    }
     if (analyticParts.isNotEmpty) buf.writeln('  ${analyticParts.join(' · ')}');
     buf.write('  @$odds  R\$ $stake');
     if (!isPending && profit != null) {

@@ -57,7 +57,9 @@ class PlayerDetailScreen extends StatelessWidget {
       // No Flutter Web, externalApplication abre na mesma aba — forçar nova aba
       openInNewTab(uri.toString());
     } else {
-      if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
     }
   }
 
@@ -242,9 +244,11 @@ class PlayerDetailScreen extends StatelessWidget {
                       GestureDetector(
                         onTap: () => _openPinnacle(prop),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1A237E).withValues(alpha: 0.3),
+                            color:
+                                const Color(0xFF1A237E).withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: const Color(0xFF3949AB)),
                           ),
@@ -273,7 +277,8 @@ class PlayerDetailScreen extends StatelessWidget {
                         playerStd: std,
                       ),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
                           color: edgeColor.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
@@ -556,8 +561,7 @@ class _ContextRow extends StatelessWidget {
   const _ContextRow({
     required this.label,
     required this.value,
-    this.highlight = false,
-  });
+  }) : highlight = false;
 
   @override
   Widget build(BuildContext context) {
