@@ -34,19 +34,9 @@ jobs:
       - name: Instalar dependências
         run: npm install axios firebase-admin
       - name: Injetar chaves de API
-        run: |
-          node -e "
-          const fs = require('fs');
-          const keys = process.env.ODDS_API_KEYS.split(',');
-          let content = fs.readFileSync('pipeline/save_odds_history.js', 'utf8');
-          content = content.replace(
-            /const API_KEYS = \[[\s\S]*?\];/,
-            'const API_KEYS = ' + JSON.stringify(keys, null, 2) + ';'
-          );
-          fs.writeFileSync('pipeline/save_odds_history.js', content);
-          console.log('Chaves injetadas:', keys.length);
-          "
+        run: node scripts/export_odds_api_keys.js
         env:
+          THE_ODDS_API_KEYS: ${{ secrets.THE_ODDS_API_KEYS }}
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
       - name: Restaurar histórico anterior
         # Histórico de odds (h2h/props) fica em odds_snapshots/, separado de

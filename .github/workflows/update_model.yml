@@ -44,19 +44,9 @@ jobs:
         run: npm install axios firebase-admin
 
       - name: Injetar chaves da Odds API no ambiente
-        run: |
-          node -e "
-          const keys = process.env.ODDS_API_KEYS.split(',');
-          keys.forEach(k => console.log('::add-mask::' + k.trim()));
-          const lines = [];
-          keys.forEach((k, i) => {
-            const name = i === 0 ? 'ODDS_API_KEY' : 'ODDS_API_KEY_' + (i + 1);
-            lines.push(name + '=' + k.trim());
-          });
-          require('fs').appendFileSync(process.env.GITHUB_ENV, lines.join('\n') + '\n');
-          console.log('Chaves injetadas no ambiente:', keys.length);
-          "
+        run: node scripts/export_odds_api_keys.js
         env:
+          THE_ODDS_API_KEYS: ${{ secrets.THE_ODDS_API_KEYS }}
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
 
       - name: Restaurar histórico anterior
