@@ -588,7 +588,7 @@ jobs:
             fi
           done
           mv /tmp/to-save/*.gz /tmp/to-save-gz/ 2>/dev/null || true
-          cp pipeline/reapply_ledger_changes.js pipeline/model_ledger.js /tmp/ledger_scripts/
+          cp pipeline/reapply_ledger_changes.js pipeline/model_ledger.js pipeline/closing_odds_rules.js /tmp/ledger_scripts/
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
