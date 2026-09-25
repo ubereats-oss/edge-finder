@@ -20,6 +20,7 @@ const OUT_FILE = path.join(ledger.HISTORY_DIR, 'relatorio_desempenho.md');
 const OUT_JSON = path.join(ledger.HISTORY_DIR, 'relatorio_desempenho.json');
 const EDGE_BUCKET_SIZE = 5; // %
 const FIRST_CLOSING_ODDS_CAPTURE_AT = '2026-09-06T20:22:20.000Z'; // f99781d
+const JIT_CLOSING_ODDS_CAPTURE_AT = '2026-09-14T09:44:01.000Z'; // 374a2db
 const SHARED_CLOSING_ODDS_STATUS_AT = '2026-09-24T17:27:34.000Z'; // 26a2385
 const DATA_SAVE_DEPENDENCY_FIX_AT = '2026-09-25T01:42:16.000Z'; // be2ab14
 
@@ -114,9 +115,13 @@ function missingClvReason(e) {
   if (commenceIso >= '2026-09-24T23:30:00.000Z' && commenceIso < '2026-09-25T01:00:00.000Z') {
     return 'execucao_falha';
   }
-  if (commenceIso >= '2026-09-22T00:00:00.000Z' && commenceIso < '2026-09-25T00:00:00.000Z') {
-    return 'bloqueio_actions_22_24_set';
+  if (
+    (commenceIso >= '2026-09-21T00:15:00.000Z' && commenceIso < '2026-09-21T00:25:00.000Z') ||
+    (commenceIso >= '2026-09-22T00:10:00.000Z' && commenceIso < '2026-09-22T00:20:00.000Z')
+  ) {
+    return 'cota_api_esgotada_na_captura_pre_fix';
   }
+  if (e.closingOddsMissingReason) return e.closingOddsMissingReason;
   if (e.closingOddsStatus === ledger.CLOSING_ODDS_STATUS.EXPIRADA) {
     return 'captura_expirada_sem_odd_gravada';
   }
@@ -138,6 +143,49 @@ function missingClvReasons(entries) {
     if (reason) reasons[reason] = (reasons[reason] ?? 0) + 1;
   }
   return reasons;
+}
+
+function clvCoverageCohort(e) {
+  const created = new Date(e.runId ?? e.createdAt);
+  const createdIso = isNaN(created.getTime()) ? null : created.toISOString();
+  if (!createdIso) return 'sem_data_criacao';
+  if (createdIso < FIRST_CLOSING_ODDS_CAPTURE_AT) return 'antes_primeira_captura';
+  if (createdIso < JIT_CLOSING_ODDS_CAPTURE_AT) return 'captura_inicial_pre_jit';
+  if (createdIso < SHARED_CLOSING_ODDS_STATUS_AT) return 'jit_pre_controle_status';
+  if (createdIso < DATA_SAVE_DEPENDENCY_FIX_AT) return 'controle_status_pre_fix_dependencia';
+  return 'apos_fix_dependencia_be2ab14';
+}
+
+function clvCoverageRows(entries) {
+  const groups = new Map();
+  for (const e of entries) {
+    const cohort = clvCoverageCohort(e);
+    if (!groups.has(cohort)) {
+      groups.set(cohort, {
+        cohort,
+        nPublicadasResolvidas: 0,
+        clvComOdd: 0,
+        semClv: 0,
+        clvCoveragePct: null,
+        semClvMotivos: {},
+      });
+    }
+    const row = groups.get(cohort);
+    row.nPublicadasResolvidas++;
+    if (typeof e.clv === 'number') {
+      row.clvComOdd++;
+    } else {
+      row.semClv++;
+      const reason = missingClvReason(e);
+      if (reason) row.semClvMotivos[reason] = (row.semClvMotivos[reason] ?? 0) + 1;
+    }
+  }
+  for (const row of groups.values()) {
+    row.clvCoveragePct = row.nPublicadasResolvidas
+      ? parseFloat((row.clvComOdd / row.nPublicadasResolvidas * 100).toFixed(1))
+      : null;
+  }
+  return [...groups.values()];
 }
 
 function realBetRows(bets, allEntries) {
@@ -214,6 +262,7 @@ async function main() {
   const all = loadAllEntries();
   const betsLoad = await loadBets();
   const countable = all.filter(isCountable);
+  const clvCoverage = clvCoverageRows(countable);
   const realBets = betsLoad.available
     ? realBetRows(betsLoad.bets, all)
     : { rows: [], manualWithoutIndication: 0, unresolvedLinked: 0, linked: 0, unavailable: true, reason: betsLoad.reason };
@@ -285,6 +334,16 @@ async function main() {
   }
   if (!rows.length) lines.push('| _sem dados ainda_ | | | | | | | | | |');
   lines.push('');
+  lines.push('## Cobertura de CLV por coorte');
+  lines.push('');
+  lines.push('| Coorte de criação | Publicadas resolvidas | Com odd de fechamento | Cobertura | Sem odd por motivo |');
+  lines.push('|---|---|---|---|---|');
+  for (const r of clvCoverage) {
+    const reasons = Object.entries(r.semClvMotivos).map(([k, v]) => `${k}: ${v}`).join('; ') || '—';
+    lines.push(`| ${r.cohort} | ${r.nPublicadasResolvidas} | ${r.clvComOdd} | ${fmt(r.clvCoveragePct)}% | ${reasons} |`);
+  }
+  if (!clvCoverage.length) lines.push('| _sem dados ainda_ | | | | |');
+  lines.push('');
   lines.push('## Apostas reais');
   lines.push('');
   lines.push('Inclui só apostas registradas com identificador de indicação. Apostas manuais sem indicação de origem ficam fora desta visão e são sinalizadas abaixo.');
@@ -306,7 +365,7 @@ async function main() {
 
   if (!fs.existsSync(ledger.HISTORY_DIR)) fs.mkdirSync(ledger.HISTORY_DIR, { recursive: true });
   fs.writeFileSync(OUT_FILE, lines.join('\n') + '\n');
-  fs.writeFileSync(OUT_JSON, JSON.stringify({ generatedAt, rows, realBets }, null, 2));
+  fs.writeFileSync(OUT_JSON, JSON.stringify({ generatedAt, rows, clvCoverage, realBets }, null, 2));
   console.log(`Relatório salvo em ${OUT_FILE} e ${OUT_JSON} — ${rows.length} grupo(s) esporte+mercado+faixa de edge.`);
 }
 
