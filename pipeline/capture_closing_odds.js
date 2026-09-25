@@ -24,6 +24,7 @@
 
 const ledger = require('./model_ledger');
 const closingOddsRules = require('./closing_odds_rules');
+const lineAdjustedClv = require('./line_adjusted_clv');
 const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
 
 loadEnvFileIfPresent();
@@ -61,9 +62,20 @@ function describeClosingPriceMatch(oddsData, marketKey, player, line, side, book
 
   const samePlayerSide = market.outcomes?.filter(o => o.description === player && o.name === side) ?? [];
   if (samePlayerSide.length) {
+    const byLine = new Map();
+    for (const o of market.outcomes ?? []) {
+      if (o.description !== player || typeof o.point !== 'number') continue;
+      if (!byLine.has(o.point)) byLine.set(o.point, {});
+      byLine.get(o.point)[o.name] = o.price;
+    }
+    const closingLines = [...byLine.entries()]
+      .map(([point, prices]) => ({ line: point, overOdds: prices.Over, underOdds: prices.Under }))
+      .filter(x => x.overOdds && x.underOdds)
+      .sort((a, b) => Math.abs(a.line - line) - Math.abs(b.line - line));
     return {
       price: null,
       reason: 'linha_mudou_ate_fechamento',
+      adjustedClosingLine: closingLines[0] ?? null,
       availableLines: samePlayerSide.map(o => ({ line: o.point, price: o.price })).slice(0, 10),
     };
   }
@@ -128,6 +140,13 @@ async function captureSport({ esporte, apiSport, markets }) {
           entry.closingOddsLastAttemptAt = new Date().toISOString();
           entry.closingOddsMissingReason = match.reason;
           if (match.availableLines?.length) entry.closingOddsAvailableLines = match.availableLines;
+          if (match.adjustedClosingLine) {
+            entry.adjustedClosingLine = match.adjustedClosingLine.line;
+            entry.adjustedClosingOverOdds = match.adjustedClosingLine.overOdds;
+            entry.adjustedClosingUnderOdds = match.adjustedClosingLine.underOdds;
+            entry.closingLineMovement = lineAdjustedClv.movementDirection(entry.side, entry.line, match.adjustedClosingLine.line);
+            entry.lineAdjustedClv = lineAdjustedClv.adjustedClv(entry, match.adjustedClosingLine);
+          }
           changed = true;
           continue;
         }
@@ -136,6 +155,11 @@ async function captureSport({ esporte, apiSport, markets }) {
         entry.closingOddsStatus = ledger.CLOSING_ODDS_STATUS.CAPTURADA;
         entry.closingOddsMissingReason = null;
         entry.closingOddsAvailableLines = null;
+        entry.adjustedClosingLine = null;
+        entry.adjustedClosingOverOdds = null;
+        entry.adjustedClosingUnderOdds = null;
+        entry.closingLineMovement = 'neutro';
+        entry.lineAdjustedClv = null;
         capturadas++;
         changed = true;
         const commence = new Date(entry.commenceTime).getTime();

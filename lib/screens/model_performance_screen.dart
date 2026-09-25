@@ -257,9 +257,17 @@ class _ReportRowCard extends StatelessWidget {
     final nResolvidas = (row['nResolvidasValidas'] as num?)?.toInt() ?? 0;
     final nBinarias = (row['nBinarias'] as num?)?.toInt() ?? 0;
     final clv = _num('clvMedio');
+    final clvAjustado = _num('clvAjustadoMedio');
     final clvComOdd = (row['clvComOdd'] as num?)?.toInt() ?? 0;
+    final clvComLinhaAjustada =
+        (row['clvComLinhaAjustada'] as num?)?.toInt() ?? 0;
+    final movimentoFavorPct = _num('movimentoLinhaFavorPct');
+    final movimentoFavor = (row['movimentoLinhaFavor'] as num?)?.toInt() ?? 0;
+    final movimentoTotal = (row['movimentoLinhaTotal'] as num?)?.toInt() ?? 0;
     final semClv = (row['semClv'] as num?)?.toInt() ?? 0;
     final clvCoverage = _num('clvCoveragePct');
+    final clvExactCoverage = _num('clvExactCoveragePct');
+    final clvAdjustedCoverage = _num('clvAdjustedCoveragePct');
     final faltam = (row['faltamParaCalibrar'] as num?)?.toInt() ?? 0;
     final sampleSize = (row['sampleSize'] as num?)?.toInt() ?? 0;
     final minSampleToCalibrate =
@@ -328,7 +336,7 @@ class _ReportRowCard extends StatelessWidget {
                   Icon(Icons.trending_up, color: clvColor, size: 20),
                   const SizedBox(width: 8),
                   Text(
-                    'CLV médio: ${clv == null ? 'indisponível (sem odd de fechamento)' : '${clv >= 0 ? '+' : ''}${clv.toStringAsFixed(2)}%'}',
+                    'CLV exato: ${clv == null ? 'indisponível' : '${clv >= 0 ? '+' : ''}${clv.toStringAsFixed(2)}%'}',
                     style: TextStyle(
                       color: clvColor,
                       fontSize: 15,
@@ -338,8 +346,8 @@ class _ReportRowCard extends StatelessWidget {
                   if (clv != null) ...[
                     const Spacer(),
                     Text(
-                      '$clvComOdd/$nResolvidas com odd de fechamento'
-                      '${clvCoverage == null ? '' : ' (${clvCoverage.toStringAsFixed(1)}%)'}',
+                      '$clvComOdd/$nResolvidas exata'
+                      '${clvExactCoverage == null ? '' : ' (${clvExactCoverage.toStringAsFixed(1)}%)'}',
                       style: const TextStyle(
                           color: Color(0xFF888888), fontSize: 11),
                     ),
@@ -347,6 +355,21 @@ class _ReportRowCard extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 6),
+            Text(
+              'CLV ajustado por linha: ${clvAjustado == null ? 'indisponível' : '${clvAjustado >= 0 ? '+' : ''}${clvAjustado.toStringAsFixed(2)}%'}'
+              ' · $clvComLinhaAjustada/$nResolvidas ajustada'
+              '${clvAdjustedCoverage == null ? '' : ' (${clvAdjustedCoverage.toStringAsFixed(1)}%)'}'
+              ' · cobertura total ${clvCoverage == null ? '—' : '${clvCoverage.toStringAsFixed(1)}%'}',
+              style: const TextStyle(color: Color(0xFF888888), fontSize: 11),
+            ),
+            if (movimentoTotal > 0) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Movimento a favor: ${movimentoFavorPct == null ? '—' : '${movimentoFavorPct.toStringAsFixed(1)}%'} ($movimentoFavor/$movimentoTotal)',
+                style: const TextStyle(color: Color(0xFF888888), fontSize: 11),
+              ),
+            ],
             if (semClv > 0 && missingClvText.isNotEmpty) ...[
               const SizedBox(height: 6),
               Text(
