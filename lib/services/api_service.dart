@@ -152,18 +152,23 @@ class ApiService {
   // Documento 'summary' + continuação em 'summary_p1', 'summary_p2'... quando
   // o relatório não coube num documento só (mesmo padrão de odds_history).
   static Future<ModelReportResult> fetchModelReport() async {
+    final token = await _authToken();
     final rows = <Map<String, dynamic>>[];
     DateTime? generatedAt;
     for (int i = -1; i < 20; i++) {
       final docId = i == -1 ? 'summary' : 'summary_p$i';
       final url = '$_firestoreBase/model_report/$docId';
-      final res = await http.get(Uri.parse(url));
+      final res = await http.get(
+        Uri.parse(url),
+        headers: {'Authorization': 'Bearer $token'},
+      );
       if (res.statusCode != 200) {
-        if (i == -1) {
+        if (res.statusCode == 404 && i == -1) {
           // Nenhum relatório sincronizado ainda.
           return const ModelReportResult(rows: []);
         }
-        break;
+        if (res.statusCode == 404) break;
+        throw Exception('Erro ao buscar relatório: ${res.statusCode}');
       }
       final body = jsonDecode(res.body) as Map<String, dynamic>;
       final fields = body['fields'] as Map<String, dynamic>?;
