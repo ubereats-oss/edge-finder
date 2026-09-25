@@ -39,8 +39,8 @@ class _ModelPerformanceScreenState extends State<ModelPerformanceScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _error =
-          'Falha ao carregar o relatório. Verifique sua conexão e tente novamente.');
+      final message = e.toString().replaceFirst('Exception: ', '');
+      setState(() => _error = 'Falha ao carregar o relatório: $message');
     } finally {
       if (!mounted) return;
       setState(() => _loading = false);
