@@ -222,7 +222,7 @@ jobs:
         # pipeline/reapply_ledger_changes.js.
         run: |
           cp .github/scripts/save_stats_gz.sh /tmp/save_stats_gz.sh
-          mkdir -p /tmp/to-save /tmp/to-save-gz /tmp/to-save/odds_history /tmp/ledger_scripts
+          mkdir -p /tmp/to-save /tmp/to-save-gz /tmp/to-save/odds_history 
           gzip -n -c nba_player_stats.json > /tmp/to-save-gz/nba_player_stats.json.gz 2>/dev/null || true
           gzip -n -c mlb_player_stats.json > /tmp/to-save-gz/mlb_player_stats.json.gz 2>/dev/null || true
           gzip -n -c nhl_player_stats.json > /tmp/to-save-gz/nhl_player_stats.json.gz 2>/dev/null || true
@@ -231,7 +231,8 @@ jobs:
             [ -f "$f" ] && cp "$f" /tmp/to-save/ || true
           done
           cp odds_history/model_ledger_*.json /tmp/to-save/odds_history/ 2>/dev/null || true
-          cp pipeline/reapply_ledger_changes.js pipeline/model_ledger.js pipeline/closing_odds_rules.js /tmp/ledger_scripts/
+          rm -rf /tmp/ledger_pipeline
+          cp -R pipeline /tmp/ledger_pipeline
 
           node -e "
           const fs = require('fs');
@@ -265,9 +266,9 @@ jobs:
             done
             cp /tmp/to-save/* . 2>/dev/null || true
             if [ "$attempt" -gt 1 ]; then
-              node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history --retry
+              node /tmp/ledger_pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history --retry
             else
-              node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history
+              node /tmp/ledger_pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history
             fi
 
             odds_history_patterns=(model_ledger_*.json)

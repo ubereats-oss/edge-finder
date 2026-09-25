@@ -85,13 +85,14 @@ jobs:
         # pipeline/reapply_ledger_changes.js.
         run: |
           cp .github/scripts/save_stats_gz.sh /tmp/save_stats_gz.sh
-          mkdir -p /tmp/data-save /tmp/data-save-gz /tmp/data-save/odds_history /tmp/ledger_scripts
+          mkdir -p /tmp/data-save /tmp/data-save-gz /tmp/data-save/odds_history 
           gzip -n -c mlb_player_stats.json > /tmp/data-save-gz/mlb_player_stats.json.gz 2>/dev/null || true
           for f in mlb_results.json mlb_props_results.json mlb_player_team.json mlb_injuries_today.json mlb_team_rating.json bets.json; do
             [ -f "$f" ] && cp "$f" /tmp/data-save/ || true
           done
           cp odds_history/model_ledger_mlb_*.json /tmp/data-save/odds_history/ 2>/dev/null || true
-          cp pipeline/reapply_ledger_changes.js pipeline/model_ledger.js pipeline/closing_odds_rules.js /tmp/ledger_scripts/
+          rm -rf /tmp/ledger_pipeline
+          cp -R pipeline /tmp/ledger_pipeline
 
           node -e "
           const fs = require('fs');
@@ -125,9 +126,9 @@ jobs:
             done
             cp /tmp/data-save/* . 2>/dev/null || true
             if [ "$attempt" -gt 1 ]; then
-              node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/data-save/odds_history --retry
+              node /tmp/ledger_pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/data-save/odds_history --retry
             else
-              node /tmp/ledger_scripts/reapply_ledger_changes.js protect-closing-odds /tmp/data-save/odds_history
+              node /tmp/ledger_pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/data-save/odds_history
             fi
 
             odds_history_patterns=(model_ledger_mlb_*.json)

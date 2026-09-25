@@ -43,6 +43,9 @@ jobs:
       - name: Verify closing odds and risk mirrors
         run: node scripts/verify_mirrors.js
 
+      - name: Verify data save helper dependencies
+        run: bash scripts/check_data_save_helpers.sh
+
   detect-functions:
     name: Detect changed Functions
     if: github.repository == 'ubereats-oss/edge-finder'
