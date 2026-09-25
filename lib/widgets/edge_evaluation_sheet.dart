@@ -56,11 +56,14 @@ class _EdgeEvaluationSheetState extends State<EdgeEvaluationSheet>
     try {
       final ranked = await EdgeEvaluatorService.rankWithGemini(
           widget.props, key, widget.sport);
+      if (!mounted) return;
       setState(() => _geminiRanked = ranked);
     } catch (e) {
-      setState(() =>
-          _geminiError = e.toString().replaceFirst('Exception: ', ''));
+      if (!mounted) return;
+      setState(
+          () => _geminiError = e.toString().replaceFirst('Exception: ', ''));
     } finally {
+      if (!mounted) return;
       setState(() => _geminiLoading = false);
     }
   }
@@ -172,7 +175,8 @@ class _EdgeEvaluationSheetState extends State<EdgeEvaluationSheet>
                 children: [
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Color(0xFF888888), size: 22),
+                    icon: const Icon(Icons.close,
+                        color: Color(0xFF888888), size: 22),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                   ),
@@ -234,8 +238,8 @@ class _EdgeEvaluationSheetState extends State<EdgeEvaluationSheet>
                 indicatorColor: const Color(0xFF7C4DFF),
                 labelColor: Colors.white,
                 unselectedLabelColor: const Color(0xFF666666),
-                labelStyle: const TextStyle(
-                    fontSize: 13, fontWeight: FontWeight.bold),
+                labelStyle:
+                    const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                 tabs: const [
                   Tab(
                     icon: Icon(Icons.calculate_outlined, size: 16),
@@ -253,9 +257,7 @@ class _EdgeEvaluationSheetState extends State<EdgeEvaluationSheet>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _LocalTab(
-                      ranked: _localRanked,
-                      scrollController: scrollCtrl),
+                  _LocalTab(ranked: _localRanked, scrollController: scrollCtrl),
                   _GeminiTab(
                     ranked: _geminiRanked,
                     loading: _geminiLoading,
@@ -279,8 +281,7 @@ class _LocalTab extends StatelessWidget {
   final List<Map<String, dynamic>> ranked;
   final ScrollController scrollController;
 
-  const _LocalTab(
-      {required this.ranked, required this.scrollController});
+  const _LocalTab({required this.ranked, required this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -338,8 +339,7 @@ class _LocalPropCard extends StatelessWidget {
     final side = prop['side'] as String;
     final lowSample = prop['lowSample'] == true;
     final inefficient = prop['inefficientMarket'] == true;
-    final justification =
-        EdgeEvaluatorService.generateLocalJustification(prop);
+    final justification = EdgeEvaluatorService.generateLocalJustification(prop);
     final oddsStr = _fmtOdds(prop['odds'] as num?);
     final playerTeam = prop['playerTeam'] as String?;
     final contextLabel = prop['_contextLabel'] as String?;
@@ -347,7 +347,9 @@ class _LocalPropCard extends StatelessWidget {
     final contextScore = (prop['_contextScore'] as int?) ?? 0;
     final contextConfirmed = (prop['_contextConfirmed'] as bool?) ?? false;
     final contradictionLevel = (prop['_contradictionLevel'] as int?) ?? 0;
-    final probCal = (prop['_probCalibrada'] as double?) ?? (prop['_probFinal'] as double?) ?? 0.0;
+    final probCal = (prop['_probCalibrada'] as double?) ??
+        (prop['_probFinal'] as double?) ??
+        0.0;
     final evScore = (prop['_evScore'] as double?) ?? 0.0;
     final scoreFinal = (prop['_scoreFinal'] as double?) ?? score;
 
@@ -366,8 +368,7 @@ class _LocalPropCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A2E),
         borderRadius: BorderRadius.circular(12),
-        border:
-            Border.all(color: scoreColor.withValues(alpha: 0.25), width: 1),
+        border: Border.all(color: scoreColor.withValues(alpha: 0.25), width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -406,20 +407,16 @@ class _LocalPropCard extends StatelessWidget {
                         ),
                       ),
                       if (playerTeam != null && playerTeam.isNotEmpty) ...[
-                        const Text('  ',
-                            style: TextStyle(fontSize: 14)),
+                        const Text('  ', style: TextStyle(fontSize: 14)),
                         Text(playerTeam,
                             style: const TextStyle(
-                                color: Color(0xFF00B0FF),
-                                fontSize: 12)),
+                                color: Color(0xFF00B0FF), fontSize: 12)),
                       ],
                     ],
                   ),
                 ),
-                if (inefficient)
-                  _Badge('Ineficiente', const Color(0xFF00C853)),
-                if (lowSample)
-                  _Badge('Poucos jogos', const Color(0xFFFF6D00)),
+                if (inefficient) _Badge('Ineficiente', const Color(0xFF00C853)),
+                if (lowSample) _Badge('Poucos jogos', const Color(0xFFFF6D00)),
               ],
             ),
             const SizedBox(height: 4),
@@ -427,9 +424,15 @@ class _LocalPropCard extends StatelessWidget {
               text: TextSpan(
                 style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 12),
                 children: [
-                  TextSpan(text: '${_propLabel(prop['prop'] as String)} ${side == 'Over' ? '↑ Over' : '↓ Under'} ${_fmtN(line, 1)}'),
+                  TextSpan(
+                      text:
+                          '${_propLabel(prop['prop'] as String)} ${side == 'Over' ? '↑ Over' : '↓ Under'} ${_fmtN(line, 1)}'),
                   if (oddsStr.isNotEmpty)
-                    TextSpan(text: ' · $oddsStr', style: const TextStyle(color: Color(0xFFFFD600), fontWeight: FontWeight.bold)),
+                    TextSpan(
+                        text: ' · $oddsStr',
+                        style: const TextStyle(
+                            color: Color(0xFFFFD600),
+                            fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -551,8 +554,7 @@ class _LocalPropCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFF0D0D1A),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                      color: const Color(0xFF2A2A44), width: 1),
+                  border: Border.all(color: const Color(0xFF2A2A44), width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -602,8 +604,7 @@ class _LocalPropCard extends StatelessWidget {
             Row(
               children: [
                 const Text('Score ',
-                    style: TextStyle(
-                        color: Color(0xFF666666), fontSize: 10)),
+                    style: TextStyle(color: Color(0xFF666666), fontSize: 10)),
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(4),
@@ -611,8 +612,7 @@ class _LocalPropCard extends StatelessWidget {
                       value: score / 100,
                       minHeight: 5,
                       backgroundColor: const Color(0xFF2A2A3E),
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(scoreColor),
+                      valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
                     ),
                   ),
                 ),
@@ -660,12 +660,10 @@ class _GeminiTab extends StatelessWidget {
             CircularProgressIndicator(color: Color(0xFF7C4DFF)),
             SizedBox(height: 16),
             Text('Consultando Gemini AI...',
-                style:
-                    TextStyle(color: Color(0xFF888888), fontSize: 14)),
+                style: TextStyle(color: Color(0xFF888888), fontSize: 14)),
             SizedBox(height: 6),
             Text('Buscando notícias ESPN + Google Search',
-                style:
-                    TextStyle(color: Color(0xFF555577), fontSize: 12)),
+                style: TextStyle(color: Color(0xFF555577), fontSize: 12)),
           ],
         ),
       );
@@ -680,9 +678,7 @@ class _GeminiTab extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                isNoKey
-                    ? Icons.vpn_key_outlined
-                    : Icons.error_outline,
+                isNoKey ? Icons.vpn_key_outlined : Icons.error_outline,
                 color: const Color(0xFF7C4DFF),
                 size: 48,
               ),
@@ -690,8 +686,7 @@ class _GeminiTab extends StatelessWidget {
               Text(
                 error!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                    color: Color(0xFFAAAAAA), fontSize: 14),
+                style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
               ),
               const SizedBox(height: 24),
               if (!isNoKey)
@@ -706,12 +701,10 @@ class _GeminiTab extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color:
-                        const Color(0xFF7C4DFF).withValues(alpha: 0.1),
+                    color: const Color(0xFF7C4DFF).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                        color: const Color(0xFF7C4DFF)
-                            .withValues(alpha: 0.3)),
+                        color: const Color(0xFF7C4DFF).withValues(alpha: 0.3)),
                   ),
                   child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -743,8 +736,8 @@ class _GeminiTab extends StatelessWidget {
 
     if (ranked == null || ranked!.isEmpty) {
       return const Center(
-        child: Text('Sem resultados.',
-            style: TextStyle(color: Color(0xFF666666))),
+        child:
+            Text('Sem resultados.', style: TextStyle(color: Color(0xFF666666))),
       );
     }
 
@@ -760,8 +753,8 @@ class _GeminiTab extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Top ${ranked!.length} props · Gemini 2.5 Flash Lite + notícias ESPN',
-                  style: const TextStyle(
-                      color: Color(0xFF555577), fontSize: 11),
+                  style:
+                      const TextStyle(color: Color(0xFF555577), fontSize: 11),
                 ),
               ),
             ],
@@ -836,8 +829,7 @@ class _GeminiPropCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A2E),
         borderRadius: BorderRadius.circular(12),
-        border:
-            Border.all(color: probColor.withValues(alpha: 0.25), width: 1),
+        border: Border.all(color: probColor.withValues(alpha: 0.25), width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -882,8 +874,10 @@ class _GeminiPropCard extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                if (playerTeam != null && playerTeam.isNotEmpty) ...[
-                                  const Text('  ', style: TextStyle(fontSize: 14)),
+                                if (playerTeam != null &&
+                                    playerTeam.isNotEmpty) ...[
+                                  const Text('  ',
+                                      style: TextStyle(fontSize: 14)),
                                   Text(playerTeam,
                                       style: const TextStyle(
                                           color: Color(0xFF00B0FF),
@@ -900,11 +894,18 @@ class _GeminiPropCard extends StatelessWidget {
                       ),
                       RichText(
                         text: TextSpan(
-                          style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 12),
+                          style: const TextStyle(
+                              color: Color(0xFFAAAAAA), fontSize: 12),
                           children: [
-                            TextSpan(text: '${_propLabel(prop['prop'] as String)} ${side == 'Over' ? '↑ Over' : '↓ Under'} ${_fmtN(line, 1)}'),
+                            TextSpan(
+                                text:
+                                    '${_propLabel(prop['prop'] as String)} ${side == 'Over' ? '↑ Over' : '↓ Under'} ${_fmtN(line, 1)}'),
                             if (oddsStr.isNotEmpty)
-                              TextSpan(text: ' · $oddsStr', style: const TextStyle(color: Color(0xFFFFD600), fontWeight: FontWeight.bold)),
+                              TextSpan(
+                                  text: ' · $oddsStr',
+                                  style: const TextStyle(
+                                      color: Color(0xFFFFD600),
+                                      fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -948,7 +949,8 @@ class _GeminiPropCard extends StatelessWidget {
                       if (!contextConfirmedLocal) ...[
                         const SizedBox(height: 4),
                         const Text('⚠ Contexto externo não confirmado',
-                            style: TextStyle(color: Color(0xFFFF9800), fontSize: 10)),
+                            style: TextStyle(
+                                color: Color(0xFFFF9800), fontSize: 10)),
                       ],
                       if (contradictionLevel > 0) ...[
                         const SizedBox(height: 4),
@@ -991,8 +993,8 @@ class _GeminiPropCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     const Text('AI prob',
-                        style: TextStyle(
-                            color: Color(0xFF555577), fontSize: 9)),
+                        style:
+                            TextStyle(color: Color(0xFF555577), fontSize: 9)),
                   ],
                 ),
               ],
@@ -1033,8 +1035,7 @@ class _GeminiPropCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFF0D0D1A),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                      color: const Color(0xFF2A2A44), width: 1),
+                  border: Border.all(color: const Color(0xFF2A2A44), width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1222,14 +1223,11 @@ class _StatChip extends StatelessWidget {
           children: [
             TextSpan(
                 text: '$label ',
-                style: const TextStyle(
-                    color: Color(0xFF888888), fontSize: 10)),
+                style: const TextStyle(color: Color(0xFF888888), fontSize: 10)),
             TextSpan(
                 text: value,
                 style: TextStyle(
-                    color: color,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold)),
+                    color: color, fontSize: 11, fontWeight: FontWeight.bold)),
           ],
         ),
       ),

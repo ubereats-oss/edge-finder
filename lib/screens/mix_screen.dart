@@ -56,6 +56,7 @@ class _MixScreenState extends State<MixScreen> {
       final enriched = await EdgeEvaluatorService.enrichAllWithContext(valid);
       final normalized = _normalizeProbBySport(enriched);
       final ranked = EdgeEvaluatorService.rankLocal(normalized);
+      if (!mounted) return;
       setState(() {
         _allProps = ranked;
         _prePisoProps = normalized;
@@ -63,9 +64,11 @@ class _MixScreenState extends State<MixScreen> {
         _status = '';
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _status = '');
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -159,7 +162,8 @@ class _MixScreenState extends State<MixScreen> {
                 children: [
                   Text(
                     '${props.length} apostas serão registradas com os lados e odds recomendados.',
-                    style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
+                    style:
+                        const TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -171,21 +175,28 @@ class _MixScreenState extends State<MixScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             decoration: BoxDecoration(
                               color: !isVirtual
-                                  ? const Color(0xFF00C853).withValues(alpha: 0.15)
+                                  ? const Color(0xFF00C853)
+                                      .withValues(alpha: 0.15)
                                   : const Color(0xFF2A2A3E),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: !isVirtual ? const Color(0xFF00C853) : Colors.transparent,
+                                color: !isVirtual
+                                    ? const Color(0xFF00C853)
+                                    : Colors.transparent,
                               ),
                             ),
                             child: Column(
                               children: [
                                 Icon(Icons.attach_money,
-                                    color: !isVirtual ? const Color(0xFF00C853) : const Color(0xFF666666)),
+                                    color: !isVirtual
+                                        ? const Color(0xFF00C853)
+                                        : const Color(0xFF666666)),
                                 const SizedBox(height: 4),
                                 Text('Real',
                                     style: TextStyle(
-                                        color: !isVirtual ? const Color(0xFF00C853) : const Color(0xFF888888),
+                                        color: !isVirtual
+                                            ? const Color(0xFF00C853)
+                                            : const Color(0xFF888888),
                                         fontWeight: FontWeight.bold)),
                               ],
                             ),
@@ -200,21 +211,28 @@ class _MixScreenState extends State<MixScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             decoration: BoxDecoration(
                               color: isVirtual
-                                  ? const Color(0xFF00B0FF).withValues(alpha: 0.15)
+                                  ? const Color(0xFF00B0FF)
+                                      .withValues(alpha: 0.15)
                                   : const Color(0xFF2A2A3E),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: isVirtual ? const Color(0xFF00B0FF) : Colors.transparent,
+                                color: isVirtual
+                                    ? const Color(0xFF00B0FF)
+                                    : Colors.transparent,
                               ),
                             ),
                             child: Column(
                               children: [
                                 Icon(Icons.visibility,
-                                    color: isVirtual ? const Color(0xFF00B0FF) : const Color(0xFF666666)),
+                                    color: isVirtual
+                                        ? const Color(0xFF00B0FF)
+                                        : const Color(0xFF666666)),
                                 const SizedBox(height: 4),
                                 Text('Virtual',
                                     style: TextStyle(
-                                        color: isVirtual ? const Color(0xFF00B0FF) : const Color(0xFF888888),
+                                        color: isVirtual
+                                            ? const Color(0xFF00B0FF)
+                                            : const Color(0xFF888888),
                                         fontWeight: FontWeight.bold)),
                               ],
                             ),
@@ -244,21 +262,28 @@ class _MixScreenState extends State<MixScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             decoration: BoxDecoration(
                               color: valoresIguais
-                                  ? const Color(0xFFFFD600).withValues(alpha: 0.15)
+                                  ? const Color(0xFFFFD600)
+                                      .withValues(alpha: 0.15)
                                   : const Color(0xFF2A2A3E),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: valoresIguais ? const Color(0xFFFFD600) : Colors.transparent,
+                                color: valoresIguais
+                                    ? const Color(0xFFFFD600)
+                                    : Colors.transparent,
                               ),
                             ),
                             child: Column(
                               children: [
                                 Icon(Icons.format_align_center,
-                                    color: valoresIguais ? const Color(0xFFFFD600) : const Color(0xFF666666)),
+                                    color: valoresIguais
+                                        ? const Color(0xFFFFD600)
+                                        : const Color(0xFF666666)),
                                 const SizedBox(height: 4),
                                 Text('Iguais',
                                     style: TextStyle(
-                                        color: valoresIguais ? const Color(0xFFFFD600) : const Color(0xFF888888),
+                                        color: valoresIguais
+                                            ? const Color(0xFFFFD600)
+                                            : const Color(0xFF888888),
                                         fontWeight: FontWeight.bold)),
                               ],
                             ),
@@ -273,21 +298,28 @@ class _MixScreenState extends State<MixScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             decoration: BoxDecoration(
                               color: !valoresIguais
-                                  ? const Color(0xFF7C4DFF).withValues(alpha: 0.15)
+                                  ? const Color(0xFF7C4DFF)
+                                      .withValues(alpha: 0.15)
                                   : const Color(0xFF2A2A3E),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: !valoresIguais ? const Color(0xFF7C4DFF) : Colors.transparent,
+                                color: !valoresIguais
+                                    ? const Color(0xFF7C4DFF)
+                                    : Colors.transparent,
                               ),
                             ),
                             child: Column(
                               children: [
                                 Icon(Icons.tune,
-                                    color: !valoresIguais ? const Color(0xFF7C4DFF) : const Color(0xFF666666)),
+                                    color: !valoresIguais
+                                        ? const Color(0xFF7C4DFF)
+                                        : const Color(0xFF666666)),
                                 const SizedBox(height: 4),
                                 Text('Diferentes',
                                     style: TextStyle(
-                                        color: !valoresIguais ? const Color(0xFF7C4DFF) : const Color(0xFF888888),
+                                        color: !valoresIguais
+                                            ? const Color(0xFF7C4DFF)
+                                            : const Color(0xFF888888),
                                         fontWeight: FontWeight.bold)),
                               ],
                             ),
@@ -306,13 +338,15 @@ class _MixScreenState extends State<MixScreen> {
                   children: [
                     Text(
                       'Valor para cada uma das ${props.length} apostas:',
-                      style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
+                      style: const TextStyle(
+                          color: Color(0xFFAAAAAA), fontSize: 13),
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: globalStakeController,
                       autofocus: true,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       style: const TextStyle(color: Colors.white, fontSize: 18),
                       decoration: InputDecoration(
                         filled: true,
@@ -339,7 +373,8 @@ class _MixScreenState extends State<MixScreen> {
                       children: [
                         const Text(
                           'Valor por aposta (deixe 0 para pular):',
-                          style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
+                          style:
+                              TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
                         ),
                         const SizedBox(height: 12),
                         ...List.generate(props.length, (i) {
@@ -369,17 +404,22 @@ class _MixScreenState extends State<MixScreen> {
                                       ),
                                     ),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
                                       decoration: BoxDecoration(
                                         color: edge >= 5
-                                            ? const Color(0xFF00C853).withValues(alpha: 0.2)
-                                            : const Color(0xFFFFD600).withValues(alpha: 0.2),
+                                            ? const Color(0xFF00C853)
+                                                .withValues(alpha: 0.2)
+                                            : const Color(0xFFFFD600)
+                                                .withValues(alpha: 0.2),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
                                         '${edge.toStringAsFixed(1)}%',
                                         style: TextStyle(
-                                          color: edge >= 5 ? const Color(0xFF00C853) : const Color(0xFFFFD600),
+                                          color: edge >= 5
+                                              ? const Color(0xFF00C853)
+                                              : const Color(0xFFFFD600),
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -389,12 +429,15 @@ class _MixScreenState extends State<MixScreen> {
                                 ),
                                 Text(
                                   '$side $line $propType',
-                                  style: const TextStyle(color: Color(0xFF888888), fontSize: 11),
+                                  style: const TextStyle(
+                                      color: Color(0xFF888888), fontSize: 11),
                                 ),
                                 const SizedBox(height: 4),
                                 TextField(
                                   controller: stakeControllers[i],
-                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          decimal: true),
                                   style: const TextStyle(color: Colors.white),
                                   decoration: InputDecoration(
                                     filled: true,
@@ -404,9 +447,11 @@ class _MixScreenState extends State<MixScreen> {
                                       borderSide: BorderSide.none,
                                     ),
                                     prefixText: 'R\$ ',
-                                    prefixStyle: const TextStyle(color: Color(0xFF888888)),
+                                    prefixStyle: const TextStyle(
+                                        color: Color(0xFF888888)),
                                     hintText: '0,00',
-                                    hintStyle: const TextStyle(color: Color(0xFF555566)),
+                                    hintStyle: const TextStyle(
+                                        color: Color(0xFF555566)),
                                     isDense: true,
                                   ),
                                 ),
@@ -427,7 +472,8 @@ class _MixScreenState extends State<MixScreen> {
             backgroundColor: const Color(0xFF1E1E2E),
             title: Row(
               children: [
-                const Icon(Icons.playlist_add_check, color: Color(0xFFFFD600), size: 20),
+                const Icon(Icons.playlist_add_check,
+                    color: Color(0xFFFFD600), size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -447,12 +493,14 @@ class _MixScreenState extends State<MixScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('Cancelar', style: TextStyle(color: Color(0xFF888888))),
+                child: const Text('Cancelar',
+                    style: TextStyle(color: Color(0xFF888888))),
               ),
               if (step > 0)
                 TextButton(
                   onPressed: () => setDlg(() => step--),
-                  child: const Text('Voltar', style: TextStyle(color: Color(0xFF888888))),
+                  child: const Text('Voltar',
+                      style: TextStyle(color: Color(0xFF888888))),
                 ),
               ElevatedButton(
                 onPressed: () {
@@ -475,7 +523,8 @@ class _MixScreenState extends State<MixScreen> {
                     stakes = List.filled(props.length, v);
                   } else {
                     stakes = stakeControllers
-                        .map((c) => double.tryParse(c.text.replaceAll(',', '.')) ?? 0.0)
+                        .map((c) =>
+                            double.tryParse(c.text.replaceAll(',', '.')) ?? 0.0)
                         .toList();
                     if (stakes.every((s) => s <= 0)) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -490,12 +539,16 @@ class _MixScreenState extends State<MixScreen> {
                   Navigator.pop(ctx);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isLastStep ? const Color(0xFF00C853) : const Color(0xFF7C4DFF),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  backgroundColor: isLastStep
+                      ? const Color(0xFF00C853)
+                      : const Color(0xFF7C4DFF),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
                 child: Text(
                   isLastStep ? 'Registrar ${props.length} apostas' : 'Próximo',
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -509,8 +562,8 @@ class _MixScreenState extends State<MixScreen> {
     }
   }
 
-  Future<void> _submitAllBets(
-      List<Map<String, dynamic>> props, List<double> stakes, bool isVirtual) async {
+  Future<void> _submitAllBets(List<Map<String, dynamic>> props,
+      List<double> stakes, bool isVirtual) async {
     int success = 0;
     int failed = 0;
     final fallbackBookmaker = PrefsService.getLastBookmaker() ?? '';
@@ -520,9 +573,10 @@ class _MixScreenState extends State<MixScreen> {
       if (stake <= 0) continue;
       final p = props[i];
       final side = (p['side'] as String?) ?? 'Over';
-      final bookmaker = ((p['bookmaker'] as String?)?.trim().isNotEmpty ?? false)
-          ? (p['bookmaker'] as String).trim()
-          : fallbackBookmaker;
+      final bookmaker =
+          ((p['bookmaker'] as String?)?.trim().isNotEmpty ?? false)
+              ? (p['bookmaker'] as String).trim()
+              : fallbackBookmaker;
       if (bookmaker.isEmpty) {
         failed++;
         continue;
@@ -540,7 +594,8 @@ class _MixScreenState extends State<MixScreen> {
         await ApiService.createBet({
           ...p,
           'stake': stake,
-          'odds': odds ?? (p['odds'] is num ? (p['odds'] as num).toDouble() : null),
+          'odds':
+              odds ?? (p['odds'] is num ? (p['odds'] as num).toDouble() : null),
           'side': side,
           'bookmaker': bookmaker,
           'virtual': isVirtual,
@@ -558,7 +613,8 @@ class _MixScreenState extends State<MixScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(msg),
-          backgroundColor: failed == 0 ? const Color(0xFF00C853) : const Color(0xFFFF6D00),
+          backgroundColor:
+              failed == 0 ? const Color(0xFF00C853) : const Color(0xFFFF6D00),
           duration: const Duration(seconds: 4),
         ),
       );
@@ -726,11 +782,13 @@ class _MixScreenState extends State<MixScreen> {
         children: [
           FloatingActionButton.extended(
             heroTag: 'registrar_todas',
-            onPressed: _loading || _filtered.isEmpty ? null : _registrarTodasApostas,
+            onPressed:
+                _loading || _filtered.isEmpty ? null : _registrarTodasApostas,
             backgroundColor: const Color(0xFF7C4DFF),
             icon: const Icon(Icons.playlist_add_check, color: Colors.white),
             label: const Text('Registrar todas',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(height: 8),
           FloatingActionButton.extended(
@@ -739,7 +797,8 @@ class _MixScreenState extends State<MixScreen> {
             backgroundColor: const Color(0xFFFFD600),
             icon: const Icon(Icons.shuffle, color: Colors.black),
             label: const Text('Atualizar',
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

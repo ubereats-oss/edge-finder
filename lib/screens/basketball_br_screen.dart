@@ -61,8 +61,10 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
     try {
       final h2h = await ApiService.fetchNbaResults();
       final props = await ApiService.fetchNbaBrProps();
-      final enriched = await EdgeEvaluatorService.enrichWithContext(props.data, 'nba');
+      final enriched =
+          await EdgeEvaluatorService.enrichWithContext(props.data, 'nba');
       final filtered = EdgeEvaluatorService.adaptiveFilter(enriched);
+      if (!mounted) return;
       setState(() {
         _h2hResults = h2h.data;
         _propsResults = filtered;
@@ -70,8 +72,10 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
         _propsUpdated = props.lastUpdated;
       });
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -80,8 +84,10 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
     // Polling até workflow concluir (máx 3 minutos)
     for (int i = 0; i < 36; i++) {
       await Future.delayed(const Duration(seconds: 5));
+      if (!mounted) return;
       try {
         final status = await ApiService.getWorkflowStatus();
+        if (!mounted) return;
         if (status == 'completed') {
           return;
         }
@@ -96,14 +102,19 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
     });
     try {
       await ApiService.triggerUpdate('nba_br');
+      if (!mounted) return;
       setState(() => _status = 'Aguardando conclusão...');
       await _waitForWorkflow();
+      if (!mounted) return;
       setState(() => _status = 'Carregando...');
       await _loadAll();
+      if (!mounted) return;
       setState(() => _status = 'Concluído.');
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -115,14 +126,19 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
     });
     try {
       await ApiService.triggerUpdate('nba');
+      if (!mounted) return;
       setState(() => _status = 'Aguardando conclusão (~20 min)...');
       await _waitForWorkflow();
+      if (!mounted) return;
       setState(() => _status = 'Carregando...');
       await _loadAll();
+      if (!mounted) return;
       setState(() => _status = 'Concluído.');
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -260,12 +276,10 @@ class _BasketballBrScreenState extends State<BasketballBrScreen>
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.auto_awesome,
-                color: Color(0xFF7C4DFF)),
+            icon: const Icon(Icons.auto_awesome, color: Color(0xFF7C4DFF)),
             tooltip: 'Avaliar Edges',
-            onPressed: _loading || _propsResults.isEmpty
-                ? null
-                : _showEvaluation,
+            onPressed:
+                _loading || _propsResults.isEmpty ? null : _showEvaluation,
           ),
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),

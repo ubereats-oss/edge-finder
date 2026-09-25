@@ -46,10 +46,13 @@ class _BetsScreenState extends State<BetsScreen> {
         } catch (_) {}
       }
       final updated = anyResolved ? await ApiService.fetchBets() : bets;
+      if (!mounted) return;
       setState(() => _bets = updated.reversed.toList());
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -61,8 +64,8 @@ class _BetsScreenState extends State<BetsScreen> {
       setState(() => _loading = true);
       try {
         final live = await ApiService.fetchLiveStatAndTime(bet);
-        setState(() => _loading = false);
         if (!mounted) return;
+        setState(() => _loading = false);
         if (live['completed'] == true) {
           await ApiService.resolveBet(id);
           await _load();
@@ -151,6 +154,7 @@ class _BetsScreenState extends State<BetsScreen> {
                 ElevatedButton(
                   onPressed: () async {
                     Navigator.pop(ctx);
+                    if (!mounted) return;
                     setState(() => _loading = true);
                     await ApiService.resolveBet(id);
                     await _load();
@@ -165,11 +169,11 @@ class _BetsScreenState extends State<BetsScreen> {
           ),
         );
       } catch (e) {
+        if (!mounted) return;
         setState(() => _loading = false);
         final msg = e.toString();
         final isNotFound =
             msg.contains('não encontrado') || msg.contains('not found');
-        if (!mounted) return;
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -205,8 +209,10 @@ class _BetsScreenState extends State<BetsScreen> {
       await ApiService.resolveBet(id);
       await _load();
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -235,8 +241,10 @@ class _BetsScreenState extends State<BetsScreen> {
         ],
       ),
     );
+    if (!mounted) return;
     if (confirm == true) {
       await ApiService.deleteBet(id);
+      if (!mounted) return;
       await _load();
     }
   }
@@ -410,7 +418,8 @@ class _BetsScreenState extends State<BetsScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
                               color: wonOverride
-                                  ? const Color(0xFF00C853).withValues(alpha: 0.15)
+                                  ? const Color(0xFF00C853)
+                                      .withValues(alpha: 0.15)
                                   : const Color(0xFF2A2A3E),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
@@ -438,7 +447,8 @@ class _BetsScreenState extends State<BetsScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
                               color: !wonOverride
-                                  ? const Color(0xFFFF1744).withValues(alpha: 0.15)
+                                  ? const Color(0xFFFF1744)
+                                      .withValues(alpha: 0.15)
                                   : const Color(0xFF2A2A3E),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
@@ -550,12 +560,10 @@ class _BetsScreenState extends State<BetsScreen> {
                 final modelProb = double.tryParse(
                     modelProbController.text.replaceAll(',', '.'));
                 Navigator.pop(ctx);
-                final resolvedWon =
-                    isResolved ? wonOverride : manualResult;
+                final resolvedWon = isResolved ? wonOverride : manualResult;
                 final profit = resolvedWon != null
                     ? (resolvedWon
-                        ? double.parse(
-                            ((odds - 1) * stake).toStringAsFixed(2))
+                        ? double.parse(((odds - 1) * stake).toStringAsFixed(2))
                         : double.parse((-stake).toStringAsFixed(2)))
                     : null;
                 await ApiService.updateBet(bet['id'] as String, {
@@ -571,6 +579,7 @@ class _BetsScreenState extends State<BetsScreen> {
                     'realValue': manualResult! ? 'Manual' : 'Manual',
                   },
                 });
+                if (!mounted) return;
                 await _load();
               },
               style: ElevatedButton.styleFrom(
@@ -631,9 +640,19 @@ class _BetsScreenState extends State<BetsScreen> {
     ex.delete('Sheet1');
 
     const headers = [
-      'Esporte', 'Data', 'Jogo', 'Props', 'Aposta', 'Odds',
-      'Stake (BRL)', 'Edge (%)', 'Modelo (%)', 'Mercado (%)', 'Kelly (%)',
-      'Resultado (BRL)', 'Status',
+      'Esporte',
+      'Data',
+      'Jogo',
+      'Props',
+      'Aposta',
+      'Odds',
+      'Stake (BRL)',
+      'Edge (%)',
+      'Modelo (%)',
+      'Mercado (%)',
+      'Kelly (%)',
+      'Resultado (BRL)',
+      'Status',
     ];
     for (int i = 0; i < headers.length; i++) {
       sheet
@@ -657,46 +676,73 @@ class _BetsScreenState extends State<BetsScreen> {
       final impliedProb = (b['impliedProb'] as num?)?.toDouble() ?? 0;
       final kelly = (b['kelly'] as num?)?.toDouble() ?? 0;
 
-      sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row)).value =
-          xl.TextCellValue(_sportForBet(b));
-      sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row)).value =
-          xl.TextCellValue(_dateExcel(b['commence_time'] as String?));
-      sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: row)).value =
-          xl.TextCellValue((b['game'] as String? ?? '').replaceAll(' x ', '\nx\n'));
-      sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: row)).value =
+      sheet
+          .cell(xl.CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row))
+          .value = xl.TextCellValue(_sportForBet(b));
+      sheet
+          .cell(xl.CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row))
+          .value = xl.TextCellValue(_dateExcel(b['commence_time'] as String?));
+      sheet
+          .cell(xl.CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: row))
+          .value = xl.TextCellValue((b['game'] as String? ??
+              '')
+          .replaceAll(' x ', '\nx\n'));
+      sheet
+              .cell(xl.CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: row))
+              .value =
           xl.TextCellValue(isH2h ? '' : _propLabel(b['prop'] as String? ?? ''));
-      sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: row)).value =
-          xl.TextCellValue(_betDescExcel(b));
-      sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: row)).value =
-          xl.DoubleCellValue(odds);
-      sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: row)).value =
-          xl.DoubleCellValue(stake);
-      if (edge != 0) sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: row)).value =
-          xl.DoubleCellValue(edge);
-      if (modelProb > 0) sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: row)).value =
-          xl.DoubleCellValue(modelProb);
-      if (impliedProb > 0) sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: row)).value =
-          xl.DoubleCellValue(impliedProb);
-      if (kelly > 0) sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 10, rowIndex: row)).value =
-          xl.DoubleCellValue(kelly);
+      sheet
+          .cell(xl.CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: row))
+          .value = xl.TextCellValue(_betDescExcel(b));
+      sheet
+          .cell(xl.CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: row))
+          .value = xl.DoubleCellValue(odds);
+      sheet
+          .cell(xl.CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: row))
+          .value = xl.DoubleCellValue(stake);
+      if (edge != 0)
+        sheet
+            .cell(xl.CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: row))
+            .value = xl.DoubleCellValue(edge);
+      if (modelProb > 0)
+        sheet
+            .cell(xl.CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: row))
+            .value = xl.DoubleCellValue(modelProb);
+      if (impliedProb > 0)
+        sheet
+            .cell(xl.CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: row))
+            .value = xl.DoubleCellValue(impliedProb);
+      if (kelly > 0)
+        sheet
+            .cell(xl.CellIndex.indexByColumnRow(columnIndex: 10, rowIndex: row))
+            .value = xl.DoubleCellValue(kelly);
       if (profit != null) {
-        sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 11, rowIndex: row)).value =
-            xl.DoubleCellValue(profit);
+        sheet
+            .cell(xl.CellIndex.indexByColumnRow(columnIndex: 11, rowIndex: row))
+            .value = xl.DoubleCellValue(profit);
       }
-      sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 12, rowIndex: row)).value =
-          xl.TextCellValue(isPending ? 'Pendente' : (b['won'] == true ? 'Ganhou' : 'Perdeu'));
+      sheet
+              .cell(xl.CellIndex.indexByColumnRow(columnIndex: 12, rowIndex: row))
+              .value =
+          xl.TextCellValue(isPending
+              ? 'Pendente'
+              : (b['won'] == true ? 'Ganhou' : 'Perdeu'));
 
       totalStake += stake;
       totalProfit += profit ?? 0;
     }
 
     final totalRow = _bets.length + 1;
-    sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: totalRow)).value =
-        xl.TextCellValue('Total');
-    sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: totalRow)).value =
-        xl.DoubleCellValue(totalStake);
-    sheet.cell(xl.CellIndex.indexByColumnRow(columnIndex: 11, rowIndex: totalRow)).value =
-        xl.DoubleCellValue(totalProfit);
+    sheet
+        .cell(xl.CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: totalRow))
+        .value = xl.TextCellValue('Total');
+    sheet
+        .cell(xl.CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: totalRow))
+        .value = xl.DoubleCellValue(totalStake);
+    sheet
+        .cell(
+            xl.CellIndex.indexByColumnRow(columnIndex: 11, rowIndex: totalRow))
+        .value = xl.DoubleCellValue(totalProfit);
 
     final bytes = ex.encode()!;
     await saveAndShareFile(
@@ -718,8 +764,7 @@ class _BetsScreenState extends State<BetsScreen> {
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 3),
         child: pw.Align(
           alignment: align,
-          child: pw.Text(text,
-              style: style ?? const pw.TextStyle(fontSize: 7)),
+          child: pw.Text(text, style: style ?? const pw.TextStyle(fontSize: 7)),
         ),
       );
     }
@@ -749,8 +794,10 @@ class _BetsScreenState extends State<BetsScreen> {
       final kelly = (b['kelly'] as num?)?.toDouble() ?? 0;
       final analyticParts = <String>[];
       if (edge != 0) analyticParts.add('Edge: ${edge.toStringAsFixed(1)}%');
-      if (modelProb > 0) analyticParts.add('Mod: ${modelProb.toStringAsFixed(1)}%');
-      if (impliedProb > 0) analyticParts.add('Mer: ${impliedProb.toStringAsFixed(1)}%');
+      if (modelProb > 0)
+        analyticParts.add('Mod: ${modelProb.toStringAsFixed(1)}%');
+      if (impliedProb > 0)
+        analyticParts.add('Mer: ${impliedProb.toStringAsFixed(1)}%');
       if (kelly > 0) analyticParts.add('Kelly: ${kelly.toStringAsFixed(1)}%');
       final analytic = analyticParts.join(' · ');
       return pw.TableRow(children: [
@@ -763,7 +810,8 @@ class _BetsScreenState extends State<BetsScreen> {
               pw.Text(desc, style: const pw.TextStyle(fontSize: 7)),
               if (analytic.isNotEmpty)
                 pw.Text(analytic,
-                    style: pw.TextStyle(fontSize: 5.5, color: PdfColors.grey600)),
+                    style:
+                        pw.TextStyle(fontSize: 5.5, color: PdfColors.grey600)),
             ],
           ),
         ),
@@ -777,10 +825,8 @@ class _BetsScreenState extends State<BetsScreen> {
       margin: const pw.EdgeInsets.all(28),
       build: (ctx) => [
         pw.Text('Minhas Apostas — Edge Finder',
-            style: pw.TextStyle(
-                fontSize: 14, fontWeight: pw.FontWeight.bold)),
-        pw.Text(
-            'Exportado em ${_formatDate(DateTime.now().toIso8601String())}',
+            style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+        pw.Text('Exportado em ${_formatDate(DateTime.now().toIso8601String())}',
             style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
         pw.SizedBox(height: 10),
         if (resolved.isNotEmpty) ...[
@@ -842,8 +888,7 @@ class _BetsScreenState extends State<BetsScreen> {
             border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
             children: [
               pw.TableRow(
-                decoration:
-                    const pw.BoxDecoration(color: PdfColors.grey200),
+                decoration: const pw.BoxDecoration(color: PdfColors.grey200),
                 children: [
                   cell('Data / Jogo',
                       style: pw.TextStyle(
@@ -883,8 +928,7 @@ class _BetsScreenState extends State<BetsScreen> {
             border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
             children: [
               pw.TableRow(
-                decoration:
-                    const pw.BoxDecoration(color: PdfColors.grey200),
+                decoration: const pw.BoxDecoration(color: PdfColors.grey200),
                 children: [
                   cell('Data / Jogo',
                       style: pw.TextStyle(
@@ -974,14 +1018,17 @@ class _BetsScreenState extends State<BetsScreen> {
     final kelly = (b['kelly'] as num?)?.toDouble() ?? 0;
     final analyticParts = <String>[];
     if (edge != 0) analyticParts.add('Edge: ${edge.toStringAsFixed(1)}%');
-    if (modelProb > 0) analyticParts.add('Modelo: ${modelProb.toStringAsFixed(1)}%');
-    if (impliedProb > 0) analyticParts.add('Mercado: ${impliedProb.toStringAsFixed(1)}%');
+    if (modelProb > 0)
+      analyticParts.add('Modelo: ${modelProb.toStringAsFixed(1)}%');
+    if (impliedProb > 0)
+      analyticParts.add('Mercado: ${impliedProb.toStringAsFixed(1)}%');
     if (kelly > 0) analyticParts.add('Kelly: ${kelly.toStringAsFixed(1)}%');
 
     buf.writeln('• $title');
     buf.writeln('  $desc');
     if (date.isNotEmpty) buf.writeln('  $date');
-    if (bookmaker != null && bookmaker.isNotEmpty) buf.writeln('  Casa: $bookmaker');
+    if (bookmaker != null && bookmaker.isNotEmpty)
+      buf.writeln('  Casa: $bookmaker');
     if (analyticParts.isNotEmpty) buf.writeln('  ${analyticParts.join(' · ')}');
     buf.write('  @$odds  R\$ $stake');
     if (!isPending && profit != null) {
@@ -1110,7 +1157,8 @@ class _BetsScreenState extends State<BetsScreen> {
 
   double get _virtualProfit =>
       _virtualResolved.fold(0.0, (s, b) => s + (b['profit'] as num).toDouble());
-  int get _virtualWins => _virtualResolved.where((b) => b['won'] == true).length;
+  int get _virtualWins =>
+      _virtualResolved.where((b) => b['won'] == true).length;
 
   @override
   Widget build(BuildContext context) {
@@ -1371,7 +1419,8 @@ class _VirtualSummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1E2E),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF00B0FF).withValues(alpha: 0.4)),
+        border:
+            Border.all(color: const Color(0xFF00B0FF).withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1462,7 +1511,8 @@ class _BetCardState extends State<_BetCard> {
 
     if (bet['voided'] == true) {
       veredito = '⚪ Anulada (DNP)';
-      descricao = 'O jogador não participou do jogo. Aposta anulada — stake devolvida.';
+      descricao =
+          'O jogador não participou do jogo. Aposta anulada — stake devolvida.';
       cor = const Color(0xFF888888);
     } else if (modelProb == 0) {
       veredito = 'Sem dados do modelo';
@@ -1523,7 +1573,9 @@ class _BetCardState extends State<_BetCard> {
     if (!isPending) {
       borderColor = voided
           ? const Color(0xFF888888)
-          : won == true ? const Color(0xFF00C853) : const Color(0xFFFF1744);
+          : won == true
+              ? const Color(0xFF00C853)
+              : const Color(0xFFFF1744);
     } else if (widget.isVirtual) {
       borderColor = const Color(0xFF00B0FF).withValues(alpha: 0.5);
     } else {
@@ -1621,7 +1673,11 @@ class _BetCardState extends State<_BetCard> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    voided ? '⚪ ANULADA' : won == true ? '✅ GANHOU' : '❌ PERDEU',
+                    voided
+                        ? '⚪ ANULADA'
+                        : won == true
+                            ? '✅ GANHOU'
+                            : '❌ PERDEU',
                     style: TextStyle(
                         color: voided
                             ? const Color(0xFF888888)
