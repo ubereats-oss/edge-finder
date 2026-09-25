@@ -371,10 +371,14 @@ async function settleSport({ esporte, espnSport }) {
             entry.resolutionStatus = ledger.RESOLUTION_STATUS.RESOLVIDO;
             apurados++;
           } else {
-            // Jogo final e jogador não aparece em nenhum grupo: não jogou/riscado.
-            entry.result = { status: ledger.RESULT_STATUS.CANCELADO, valorReal: null, apuradoEm: new Date().toISOString(), motivo: 'jogador_nao_jogou' };
-            entry.resolutionStatus = ledger.RESOLUTION_STATUS.RESOLVIDO;
-            canceladas++;
+            // Ausência no boxscore não prova inativo/DNP: pode ser grafia,
+            // sufixo ou origem de odds desalinhada. Mantém pendente até haver
+            // uma fonte explícita de inativo/fora do jogo.
+            entry.resolutionStatus = ledger.RESOLUTION_STATUS.PENDENTE;
+            entry.result = null;
+            entry.resolutionFailureReason = 'jogador_nao_encontrado';
+            entry.resolutionFailureEvidence = { espnEventId: event.id, player: entry.player, market: entry.market };
+            aindaPendentes++;
           }
           changed = true;
           continue;
