@@ -231,7 +231,7 @@ jobs:
             [ -f "$f" ] && cp "$f" /tmp/to-save/ || true
           done
           cp odds_history/model_ledger_*.json /tmp/to-save/odds_history/ 2>/dev/null || true
-          cp pipeline/reapply_ledger_changes.js pipeline/model_ledger.js /tmp/ledger_scripts/
+          cp pipeline/reapply_ledger_changes.js pipeline/model_ledger.js pipeline/closing_odds_rules.js /tmp/ledger_scripts/
 
           node -e "
           const fs = require('fs');
