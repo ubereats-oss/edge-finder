@@ -1,7 +1,7 @@
 # Edge Finder
 
 ## Sobre o projeto
-App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges) comparando odds entre casas. Integra pipeline Node.js que coleta odds/props de NBA, MLB, NHL, Tênis via APIs e calcula modelos de probabilidade. GitHub Actions automatiza coleta diária, backtesting e atualização de dados para Firestore.
+App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges) comparando odds entre casas. Integra pipeline Node.js que coleta odds/props de NBA, MLB, NHL, NFL e Tênis via APIs e calcula modelos de probabilidade. GitHub Actions automatiza coleta diária, backtesting e atualização de dados para Firestore.
 
 ## Mapa do projeto
 
@@ -67,6 +67,7 @@ App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges
 - Cloud Functions só são publicadas pelo workflow GitHub Actions "Mirror Checks and Functions Deploy". Mudança em `functions/` vai por commit e push na `main`; o deploy acontece automaticamente. Para republicar sem mudança de código, usar o disparo manual desse workflow. Nunca rodar `firebase deploy` de Functions na máquina local.
 - `GH_DISPATCH_TOKEN` no Secret Manager deve ser o fine-grained PAT `edge-finder-functions`, sem expiração, restrito ao repositório `ubereats-oss/edge-finder`, com `Actions` e `Contents` em leitura/escrita. Se for revogado/desativado, `syncOddsBr` deixa de gravar substituições/remoções no histórico central da branch `data` e `closingOddsScheduler` deixa de disparar a captura de odd de fechamento.
 - Testes e comparações antes/depois nunca devem chamar a The Odds API real. Usar somente dados já salvos, fixtures ou logs. Só chamar a The Odds API quando o usuário pedir explicitamente na mensagem atual.
+- Chaves da The Odds API nunca devem ficar hardcoded no repositório. Workflows devem injetar `ODDS_API_KEYS` e os scripts devem ler apenas `ODDS_API_KEY`, `ODDS_API_KEY_2`... via ambiente.
 - Enquanto a cota da The Odds API estiver baixa, prioridade de uso: 1) captura de odd de fechamento para CLV; 2) coleta diária; 3) `odds_history` suspenso. Toda chamada pulada por reserva de cota deve ficar registrada no log.
 - Respostas curtas: reportar o que foi feito em poucas linhas, sem explicar o código.
 - Ao criar, mover ou remover telas/arquivos principais, atualizar a seção "Mapa do projeto" deste CLAUDE.md.
