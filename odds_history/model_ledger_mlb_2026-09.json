@@ -473,16 +473,20 @@
     "runId": "2026-09-25T01:51:22.421Z",
     "evaluatedAt": "2026-09-25T01:51:22.762Z",
     "firstEvaluatedAt": "2026-09-25T01:43:13.363Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 11,
+      "apuradoEm": "2026-09-25T15:17:24.645Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "a44be11545d471429fd459d4c5740006|Nick Pivetta|strikeouts|4.5|Over",
@@ -509,15 +513,19 @@
     "runId": "2026-09-25T01:51:22.421Z",
     "evaluatedAt": "2026-09-25T01:51:22.763Z",
     "firstEvaluatedAt": "2026-09-25T01:43:13.363Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 7,
+      "apuradoEm": "2026-09-25T15:17:25.219Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   }
 ]
