@@ -321,6 +321,7 @@ for (const c of candidates) {
     game: c.prop.game,
     commenceTime: c.prop.commence_time,
     player: c.prop.player,
+    playerTeam: playerTeamMap[c.prop.player] ?? null,
     market: c.prop.prop,
     line: c.prop.line,
     side: c.bestSide,
