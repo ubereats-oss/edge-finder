@@ -223,9 +223,15 @@ class _ReportRowCard extends StatelessWidget {
     if (raw is! Map || raw.isEmpty) return '';
     const labels = {
       'bloqueio_actions_22_24_set': 'bloqueio Actions 22-24/set',
+      'cota_api_esgotada_na_captura_pre_fix': 'cota da API esgotada na captura',
       'execucao_falha': 'execução falha',
       'captura_expirada_sem_odd_gravada': 'expirada sem odd gravada',
       'captura_nao_disparou_na_janela': 'captura não disparou na janela',
+      'bookmaker_indisponivel': 'bookmaker indisponível',
+      'mercado_indisponivel': 'mercado indisponível',
+      'jogador_indisponivel_no_mercado': 'jogador indisponível',
+      'linha_mudou_ate_fechamento': 'linha mudou até o fechamento',
+      'lado_indisponivel_para_jogador': 'lado indisponível',
       'registrada_antes_da_captura_existir': 'antes da captura existir',
       'registrada_antes_do_controle_de_status_da_captura':
           'antes do controle de captura',

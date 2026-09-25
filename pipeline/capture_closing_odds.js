@@ -44,22 +44,46 @@ async function fetchEventOdds(apiSport, eventId, marketKey, regions = 'us') {
   return res.data;
 }
 
-// Acha, dentro da resposta de odds de um evento, o preço atual do mesmo
-// jogador+linha+lado, na MESMA casa de apostas usada na avaliação original.
-function findClosingPrice(oddsData, marketKey, player, line, side, bookmaker) {
-  if (!oddsData?.bookmakers) return null;
+function describeClosingPriceMatch(oddsData, marketKey, player, line, side, bookmaker) {
+  if (!oddsData?.bookmakers) return { price: null, reason: 'evento_nao_encontrado' };
   const bm = bookmaker
     ? oddsData.bookmakers.find(b => b.key === bookmaker)
     : oddsData.bookmakers[0];
-  if (!bm) return null;
+  if (!bm) return { price: null, reason: 'bookmaker_indisponivel' };
   const market = bm.markets?.find(m => m.key === marketKey);
-  if (!market) return null;
+  if (!market) return { price: null, reason: 'mercado_indisponivel' };
   if (marketKey === 'h2h') {
     const outcome = market.outcomes?.find(o => o.name === player);
-    return outcome ? outcome.price : null;
+    return outcome ? { price: outcome.price, reason: null } : { price: null, reason: 'evento_sem_jogador' };
   }
   const outcome = market.outcomes?.find(o => o.description === player && o.point === line && o.name === side);
-  return outcome ? outcome.price : null;
+  if (outcome) return { price: outcome.price, reason: null };
+
+  const samePlayerSide = market.outcomes?.filter(o => o.description === player && o.name === side) ?? [];
+  if (samePlayerSide.length) {
+    return {
+      price: null,
+      reason: 'linha_mudou_ate_fechamento',
+      availableLines: samePlayerSide.map(o => ({ line: o.point, price: o.price })).slice(0, 10),
+    };
+  }
+
+  const samePlayer = market.outcomes?.filter(o => o.description === player) ?? [];
+  if (samePlayer.length) {
+    return {
+      price: null,
+      reason: 'lado_indisponivel_para_jogador',
+      availableLines: samePlayer.map(o => ({ side: o.name, line: o.point, price: o.price })).slice(0, 10),
+    };
+  }
+
+  return { price: null, reason: 'jogador_indisponivel_no_mercado' };
+}
+
+// Acha, dentro da resposta de odds de um evento, o preço atual do mesmo
+// jogador+linha+lado, na MESMA casa de apostas usada na avaliação original.
+function findClosingPrice(oddsData, marketKey, player, line, side, bookmaker) {
+  return describeClosingPriceMatch(oddsData, marketKey, player, line, side, bookmaker).price;
 }
 
 function computeClv(oddsObtida, oddsFechamento) {
@@ -97,11 +121,21 @@ async function captureSport({ esporte, apiSport, markets }) {
 
       for (const entry of group) {
         const marketKey = markets[entry.market];
-        const price = findClosingPrice(oddsData, marketKey, entry.player, entry.line, entry.side, entry.bookmaker);
-        if (price === null) { semOddDisponivel++; continue; }
+        const match = describeClosingPriceMatch(oddsData, marketKey, entry.player, entry.line, entry.side, entry.bookmaker);
+        const price = match.price;
+        if (price === null) {
+          semOddDisponivel++;
+          entry.closingOddsLastAttemptAt = new Date().toISOString();
+          entry.closingOddsMissingReason = match.reason;
+          if (match.availableLines?.length) entry.closingOddsAvailableLines = match.availableLines;
+          changed = true;
+          continue;
+        }
         entry.closingOdds = price;
         entry.clv = computeClv(entry.odds, price);
         entry.closingOddsStatus = ledger.CLOSING_ODDS_STATUS.CAPTURADA;
+        entry.closingOddsMissingReason = null;
+        entry.closingOddsAvailableLines = null;
         capturadas++;
         changed = true;
         const commence = new Date(entry.commenceTime).getTime();
@@ -138,4 +172,12 @@ async function main() {
   console.log(`\nResumo geral: ${totals.capturadas} odd(s) de fechamento capturada(s), ${totals.partitionsChanged} partição(ões) atualizada(s).`);
 }
 
-main().catch(e => { console.error('Erro fatal em capture_closing_odds.js:', e); process.exit(1); });
+if (require.main === module) {
+  main().catch(e => { console.error('Erro fatal em capture_closing_odds.js:', e); process.exit(1); });
+}
+
+module.exports = {
+  describeClosingPriceMatch,
+  findClosingPrice,
+  computeClv,
+};
