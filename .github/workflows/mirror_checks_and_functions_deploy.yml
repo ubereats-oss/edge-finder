@@ -40,6 +40,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check for committed The Odds API keys
+        run: node scripts/check_no_odds_api_keys.js
+
       - name: Verify closing odds and risk mirrors
         run: node scripts/verify_mirrors.js
 

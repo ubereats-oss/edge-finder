@@ -4,24 +4,6 @@ const { createOddsApiClient, defaultKeysFromEnv } = require('./odds_api_client')
 const ledger = require('./model_ledger');
 const closingOddsRules = require('./closing_odds_rules');
 
-// ── Chaves com rotação automática ─────────────────────────────────────────────
-const API_KEYS = [
-  '1c578076d6dfa967d0369920e4c22969',
-  'cdea0b39024b47310a32dab1dfb308a8',
-  '438ae5826b683c3251a3adee591e19f5',
-  'abce8a042af4f25fd795835932746518',
-  '0c92529a8b4493260dded91f83008547',
-  'bf93bfd15042771f6b4b919f1c40a0ac',
-  'a23686280065456cf304a7800249b2d0',
-  '81e70ddaf53dee6f25b6e2031cdfd5c5',
-  '97343549274d914ec2680e40f77d37bb',
-  'e7947fa40bf559435f11301c00a6987f',
-  'e8a536d6be32236e870cf7f0d6ae7e05',
-  'c96bb55d00cace6e0aca19ab7cbae462',
-  'dc6eef44441582f0aa3a4a632ee63f95',
-  'abce8a042af4f25fd795835932746518'
-];
-
 // Esportes com coleta de props (além de H2H)
 const SPORTS_TO_COLLECT = new Set([
   'basketball_nba',
@@ -275,7 +257,7 @@ async function main() {
   loadKeyState();
   const envKeys = defaultKeysFromEnv();
   oddsApi = createOddsApiClient({
-    keys: envKeys.length ? envKeys : API_KEYS,
+    keys: envKeys,
     label: 'odds-history',
     startIndex: keyIndex,
     onKeyUsed: ({ index, remaining, used, last }) => {
