@@ -1,6 +1,8 @@
 const fs    = require('fs');
 const path  = require('path');
 const { createOddsApiClient, defaultKeysFromEnv } = require('./odds_api_client');
+const ledger = require('./model_ledger');
+const closingOddsRules = require('./closing_odds_rules');
 
 // ── Chaves com rotação automática ─────────────────────────────────────────────
 const API_KEYS = [
@@ -64,10 +66,36 @@ function knownTotalRemaining() {
   return values.reduce((sum, v) => sum + v, 0);
 }
 
+function nextOddsApiRenewal(now = new Date()) {
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1, 0, 0, 0, 0));
+}
+
+function estimateClosingOddsReserve(nowMs = Date.now()) {
+  const renewalMs = nextOddsApiRenewal(new Date(nowMs)).getTime();
+  const groups = new Set();
+
+  for (const file of ledger.listAllPartitions()) {
+    const entries = ledger.loadPartitionFile(file);
+    for (const entry of entries) {
+      if (!closingOddsRules.isClosingOddsEligible(entry)) continue;
+      const commence = new Date(entry.commenceTime).getTime();
+      if (isNaN(commence)) continue;
+      if (commence < nowMs - closingOddsRules.CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS) continue;
+      if (commence > renewalMs + closingOddsRules.CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS) continue;
+      groups.add(`${entry.esporte}|${entry.eventId}|${entry.market}`);
+    }
+  }
+
+  return groups.size;
+}
+
 function globalReserve() {
   const raw = process.env.ODDS_API_TOTAL_MIN_REMAINING || '0';
-  const value = parseInt(raw, 10);
-  return Number.isFinite(value) ? value : 0;
+  const configured = parseInt(raw, 10);
+  const dynamic = estimateClosingOddsReserve();
+  const reserve = Math.max(Number.isFinite(configured) ? configured : 0, dynamic);
+  console.log(`[quota] reserva global dinâmica: ${reserve} crédito(s) (captura estimada até ${nextOddsApiRenewal().toISOString().slice(0, 10)}: ${dynamic}; piso configurado: ${Number.isFinite(configured) ? configured : 0}).`);
+  return reserve;
 }
 
 function ensureGlobalQuotaAvailable(scope) {
