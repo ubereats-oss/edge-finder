@@ -218,6 +218,25 @@ class _ReportRowCard extends StatelessWidget {
     return v == null ? '—' : '${v.toStringAsFixed(decimals)}%';
   }
 
+  String _missingClvText() {
+    final raw = row['semClvMotivos'];
+    if (raw is! Map || raw.isEmpty) return '';
+    const labels = {
+      'bloqueio_actions_22_24_set': 'bloqueio Actions 22-24/set',
+      'execucao_falha': 'execução falha',
+      'fora_da_janela_de_captura': 'fora da janela',
+      'evento_nao_encontrado': 'evento não encontrado',
+      'outro': 'outro',
+    };
+    final parts = <String>[];
+    for (final entry in raw.entries) {
+      final count = entry.value is num ? (entry.value as num).toInt() : 0;
+      if (count <= 0) continue;
+      parts.add('${labels[entry.key] ?? entry.key}: $count');
+    }
+    return parts.join(' · ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final market = (row['market'] as String?) ?? '?';
@@ -228,7 +247,14 @@ class _ReportRowCard extends StatelessWidget {
     final nBinarias = (row['nBinarias'] as num?)?.toInt() ?? 0;
     final clv = _num('clvMedio');
     final clvComOdd = (row['clvComOdd'] as num?)?.toInt() ?? 0;
+    final semClv = (row['semClv'] as num?)?.toInt() ?? 0;
+    final clvCoverage = _num('clvCoveragePct');
     final faltam = (row['faltamParaCalibrar'] as num?)?.toInt() ?? 0;
+    final sampleSize = (row['sampleSize'] as num?)?.toInt() ?? 0;
+    final minSampleToCalibrate =
+        (row['minSampleToCalibrate'] as num?)?.toInt() ?? 30;
+    final rawProb = _num('winRateModeloBruto');
+    final missingClvText = _missingClvText();
 
     final clvColor = clv == null
         ? const Color(0xFF888888)
@@ -272,6 +298,10 @@ class _ReportRowCard extends StatelessWidget {
                 : '$nResolvidas apostas resolvidas e válidas ($nBinarias decididas)',
             style: const TextStyle(color: Color(0xFF888888), fontSize: 12),
           ),
+          Text(
+            'Calibração do mercado: $sampleSize/$minSampleToCalibrate resolvidas válidas e binárias',
+            style: const TextStyle(color: Color(0xFF777777), fontSize: 11),
+          ),
           if (nResolvidas > 0) ...[
             const SizedBox(height: 14),
             // CLV em destaque — é o indicador principal.
@@ -297,7 +327,8 @@ class _ReportRowCard extends StatelessWidget {
                   if (clv != null) ...[
                     const Spacer(),
                     Text(
-                      '$clvComOdd/$nResolvidas com odd de fechamento',
+                      '$clvComOdd/$nResolvidas com odd de fechamento'
+                      '${clvCoverage == null ? '' : ' (${clvCoverage.toStringAsFixed(1)}%)'}',
                       style: const TextStyle(
                           color: Color(0xFF888888), fontSize: 11),
                     ),
@@ -305,6 +336,13 @@ class _ReportRowCard extends StatelessWidget {
                 ],
               ),
             ),
+            if (semClv > 0 && missingClvText.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Sem odd de fechamento: $semClv · $missingClvText',
+                style: const TextStyle(color: Color(0xFF888888), fontSize: 11),
+              ),
+            ],
             const SizedBox(height: 12),
             Row(
               children: [
@@ -313,7 +351,9 @@ class _ReportRowCard extends StatelessWidget {
                         label: 'Acerto real', value: _fmtPct('winRateReal'))),
                 Expanded(
                     child: _Stat(
-                        label: 'Previsto pelo modelo',
+                        label: rawProb == null
+                            ? 'Previsto calibrado'
+                            : 'Previsto calibrado · bruto ${rawProb.toStringAsFixed(1)}%',
                         value: _fmtPct('winRateModelo'))),
                 Expanded(child: _Stat(label: 'ROI', value: _fmtPct('roi'))),
               ],
@@ -371,7 +411,9 @@ class _SegmentBadge extends StatelessWidget {
               color: color, size: 13),
           const SizedBox(width: 4),
           Text(
-            emAmostra ? '$label · faltam $faltam' : label,
+            emAmostra
+                ? '$label · faltam $faltam no mercado'
+                : '$label · mercado',
             style: TextStyle(
                 color: color, fontSize: 11, fontWeight: FontWeight.bold),
           ),

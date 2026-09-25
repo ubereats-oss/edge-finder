@@ -100,6 +100,34 @@ function computeBetClv(bet, entry) {
   return (bet.odds / entry.closingOdds - 1) * 100;
 }
 
+function missingClvReason(e) {
+  if (typeof e.closingOdds === 'number') return null;
+
+  const commence = new Date(e.commenceTime);
+  const commenceIso = isNaN(commence.getTime()) ? null : commence.toISOString();
+  if (!commenceIso) return 'evento_nao_encontrado';
+
+  if (commenceIso >= '2026-09-24T23:30:00.000Z' && commenceIso < '2026-09-25T01:00:00.000Z') {
+    return 'execucao_falha';
+  }
+  if (commenceIso >= '2026-09-22T00:00:00.000Z' && commenceIso < '2026-09-25T00:00:00.000Z') {
+    return 'bloqueio_actions_22_24_set';
+  }
+  if (e.closingOddsStatus === ledger.CLOSING_ODDS_STATUS.EXPIRADA) {
+    return 'fora_da_janela_de_captura';
+  }
+  return 'outro';
+}
+
+function missingClvReasons(entries) {
+  const reasons = {};
+  for (const e of entries) {
+    const reason = missingClvReason(e);
+    if (reason) reasons[reason] = (reasons[reason] ?? 0) + 1;
+  }
+  return reasons;
+}
+
 function realBetRows(bets, allEntries) {
   const byId = new Map();
   for (const entry of allEntries) {
@@ -192,11 +220,14 @@ async function main() {
     const acertos = winLoss.filter(e => e.result.status === ledger.RESULT_STATUS.GANHOU).length;
     const winRateReal = winLoss.length ? acertos / winLoss.length * 100 : null;
     const winRateModelo = entries.length ? entries.reduce((s, e) => s + e.modelProb, 0) / entries.length : null;
+    const withRawProb = entries.filter(e => typeof e.rawProb === 'number');
+    const winRateModeloBruto = withRawProb.length ? withRawProb.reduce((s, e) => s + e.rawProb, 0) / withRawProb.length : null;
     const lucro = entries.reduce((s, e) => s + profitUnits(e), 0);
     const stakeTotal = entries.reduce((s, e) => s + (typeof e.kelly === 'number' ? e.kelly : 0), 0);
     const roi = stakeTotal > 0 ? (lucro / stakeTotal) * 100 : null;
     const comClv = entries.filter(e => typeof e.clv === 'number');
     const clvMedio = comClv.length ? comClv.reduce((s, e) => s + e.clv, 0) / comClv.length : null;
+    const semClv = entries.length - comClv.length;
 
     const sampleSize = segmentSampleSize(esporte, market, all);
     const segmentState = sampleSize >= riskConfig.MIN_SAMPLE_TO_CALIBRATE ? ledger.SEGMENT_STATE.CALIBRADO : ledger.SEGMENT_STATE.EM_AMOSTRA;
@@ -209,10 +240,14 @@ async function main() {
       nBinarias: winLoss.length,
       winRateReal: winRateReal === null ? null : parseFloat(winRateReal.toFixed(1)),
       winRateModelo: winRateModelo === null ? null : parseFloat(winRateModelo.toFixed(1)),
+      winRateModeloBruto: winRateModeloBruto === null ? null : parseFloat(winRateModeloBruto.toFixed(1)),
       roi: roi === null ? null : parseFloat(roi.toFixed(1)),
       clvMedio: clvMedio === null ? null : parseFloat(clvMedio.toFixed(2)),
       clvComOdd: comClv.length,
-      semClv: entries.length - comClv.length,
+      semClv,
+      clvCoveragePct: entries.length ? parseFloat((comClv.length / entries.length * 100).toFixed(1)) : null,
+      semClvMotivos: missingClvReasons(entries),
+      minSampleToCalibrate: riskConfig.MIN_SAMPLE_TO_CALIBRATE,
       segmentState, sampleSize, faltamParaCalibrar,
     });
   }
@@ -229,11 +264,12 @@ async function main() {
   lines.push('');
   lines.push('Só inclui indicações publicadas, resolvidas e válidas para calibração (mesmo critério da calibração — NHL pré-correção da agregação de odds fica de fora, por exemplo). Push e cancelado entram no lucro/ROI mas não na taxa de acerto.');
   lines.push('');
-  lines.push('| Esporte | Mercado | Faixa de edge | Nº resolvidas válidas | Taxa de acerto real | Taxa prevista pelo modelo | ROI | CLV médio | Estado do segmento | Faltam p/ calibrar |');
+  lines.push('| Esporte | Mercado | Faixa de edge | Nº resolvidas válidas | Taxa de acerto real | Taxa prevista calibrada | ROI | CLV médio | Estado do segmento | Faltam p/ calibrar |');
   lines.push('|---|---|---|---|---|---|---|---|---|---|');
   for (const r of rows) {
     const clvCell = r.clvMedio === null ? '—' : `${fmt(r.clvMedio)}% (${r.clvComOdd}/${r.nResolvidasValidas} com odd de fechamento)`;
-    lines.push(`| ${r.esporte} | ${r.market} | ${r.edgeBucket} | ${r.nResolvidasValidas} | ${fmt(r.winRateReal)}% (${r.nBinarias} decididas) | ${fmt(r.winRateModelo)}% | ${r.roi === null ? '—' : fmt(r.roi) + '%'} | ${clvCell} | ${r.segmentState} | ${r.faltamParaCalibrar} |`);
+    const modelCell = r.winRateModeloBruto === null ? `${fmt(r.winRateModelo)}%` : `${fmt(r.winRateModelo)}% (bruta ${fmt(r.winRateModeloBruto)}%)`;
+    lines.push(`| ${r.esporte} | ${r.market} | ${r.edgeBucket} | ${r.nResolvidasValidas} | ${fmt(r.winRateReal)}% (${r.nBinarias} decididas) | ${modelCell} | ${r.roi === null ? '—' : fmt(r.roi) + '%'} | ${clvCell} | ${r.segmentState} | ${r.faltamParaCalibrar} |`);
   }
   if (!rows.length) lines.push('| _sem dados ainda_ | | | | | | | | | |');
   lines.push('');
