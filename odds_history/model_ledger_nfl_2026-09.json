@@ -108,7 +108,9 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "lineAdjustedClvStatus": "model_context_not_reproducible",
+    "lineAdjustedClvMissingReason": "model_history_matches_0"
   },
   {
     "_key": "8c94552d022acec4a0458d70c19d3da9|Drake Maye|passYards|224.5|Over",
@@ -219,7 +221,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 53.3,
+    "playerStd": 31.3,
+    "playerAvg5": 34.2,
+    "playerAvg10": 33.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "8c94552d022acec4a0458d70c19d3da9|Cooper Kupp|receptionYards|30.5|Over",
@@ -256,7 +263,9 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "lineAdjustedClvStatus": "model_context_not_reproducible",
+    "lineAdjustedClvMissingReason": "model_history_matches_0"
   },
   {
     "_key": "8c94552d022acec4a0458d70c19d3da9|Cooper Kupp|receptionYards|32.5|Over",
@@ -738,7 +747,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 2.1,
-    "clv": -2.38
+    "clv": -2.38,
+    "playerAvg": 2,
+    "playerStd": 1,
+    "playerAvg5": 1.8,
+    "playerAvg10": 2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "acc580d74344ea3b31bbcdd057fe6a9c|Puka Nacua|receptionYards|90.5|Over",
@@ -775,7 +789,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.9,
-    "clv": -0.53
+    "clv": -0.53,
+    "playerAvg": 115.6,
+    "playerStd": 41.4,
+    "playerAvg5": 91,
+    "playerAvg10": 107.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "acc580d74344ea3b31bbcdd057fe6a9c|Puka Nacua|receptionYards|91.5|Over",
@@ -812,7 +831,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 115.6,
+    "playerStd": 41.4,
+    "playerAvg5": 91,
+    "playerAvg10": 107.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "acc580d74344ea3b31bbcdd057fe6a9c|Christian McCaffrey|receptionYards|38.5|Over",
@@ -1737,7 +1761,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.92,
-    "clv": -1.56
+    "clv": -1.56,
+    "playerAvg": 17.8,
+    "playerStd": 14.4,
+    "playerAvg5": 9.2,
+    "playerAvg10": 17.3,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "95c01d1bb797d6df14824b106c5a9130|Jahan Dotson|receptions|1.5|Over",
@@ -1774,7 +1803,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.94,
-    "clv": -1.55
+    "clv": -1.55,
+    "playerAvg": 2,
+    "playerStd": 1.1,
+    "playerAvg5": 2.2,
+    "playerAvg10": 1.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "95c01d1bb797d6df14824b106c5a9130|Rico Dowdle|receptions|1.5|Over",
@@ -1885,7 +1919,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 61.2,
+    "playerStd": 26.9,
+    "playerAvg5": 25,
+    "playerAvg10": 42.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "b6cfdcbafa61ce220ba87dc2d9b80c77|Mark Andrews|receptionYards|36.5|Under",
@@ -1922,7 +1961,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 29.8,
+    "playerStd": 16.4,
+    "playerAvg5": 23.8,
+    "playerAvg10": 23.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "b6cfdcbafa61ce220ba87dc2d9b80c77|Tyler Warren|receptions|4.5|Over",
@@ -3106,7 +3150,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.5,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 2.2,
+    "playerStd": 1.6,
+    "playerAvg5": 2,
+    "playerAvg10": 2.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "ed6d24ff979f9c71979fead577b0b3f7|Cade Otton|receptionYards|29.5|Over",
@@ -3328,7 +3377,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.9,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 40.9,
+    "playerStd": 25.1,
+    "playerAvg5": 105.6,
+    "playerAvg10": 69.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "e55c6fe19fce094ce214c8b0e5b504e9|Parker Washington|receptionYards|51.5|Under",
@@ -4142,7 +4196,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.5,
-    "clv": 7.33
+    "clv": 7.33,
+    "playerAvg": 2,
+    "playerStd": 1.1,
+    "playerAvg5": 1.8,
+    "playerAvg10": 1.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c1d3fcec25aaeb06ebd2244d33d338e0|Jared Goff|passYards|263.5|Over",
@@ -4290,7 +4349,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.88,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 74.7,
+    "playerStd": 36.8,
+    "playerAvg5": 82.2,
+    "playerAvg10": 78.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c1d3fcec25aaeb06ebd2244d33d338e0|Jameson Williams|receptionYards|58.5|Over",
@@ -4364,7 +4428,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 35.7,
+    "playerStd": 13.1,
+    "playerAvg5": 34.8,
+    "playerAvg10": 28.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c1d3fcec25aaeb06ebd2244d33d338e0|Chris Olave|receptions|6.5|Under",
@@ -4586,7 +4655,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.4,
-    "clv": 0.71
+    "clv": 0.71,
+    "playerAvg": 1.4,
+    "playerStd": 1.1,
+    "playerAvg5": 1.4,
+    "playerAvg10": 1.5,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7dddb296a42e7a41a774b24bd1709ce1|Garrett Wilson|receptionYards|59.5|Over",
@@ -4623,7 +4697,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 72,
+    "playerStd": 30.8,
+    "playerAvg5": 41.6,
+    "playerAvg10": 54.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7dddb296a42e7a41a774b24bd1709ce1|Garrett Wilson|receptionYards|58.5|Over",
@@ -4660,7 +4739,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 72,
+    "playerStd": 30.8,
+    "playerAvg5": 41.6,
+    "playerAvg10": 54.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7dddb296a42e7a41a774b24bd1709ce1|Calvin Ridley|receptionYards|26.5|Over",
@@ -4884,7 +4968,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 3.6,
+    "playerStd": 1.9,
+    "playerAvg5": 3.4,
+    "playerAvg10": 3.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1edfa5ceaa1ad2cb57df1c1b908731f6|Omarion Hampton|rushYards|67.5|Under",
@@ -5069,7 +5158,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 203,
+    "playerStd": 87.8,
+    "playerAvg5": 150,
+    "playerAvg10": 170.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "cb77efed7e711d25a72c1a2a0a1af119|Kyler Murray|passYards|224.5|Under",
@@ -5106,7 +5200,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 210,
+    "playerStd": 33.8,
+    "playerAvg5": 161.8,
+    "playerAvg10": 197.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "cb77efed7e711d25a72c1a2a0a1af119|Matthew Golden|receptionYards|40.5|Under",
@@ -5661,7 +5760,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 78.9,
+    "playerStd": 65.9,
+    "playerAvg5": 93,
+    "playerAvg10": 98.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c5d95f48a16849ab6bebc68fbbfcb74a|Malik Willis|passYards|177.5|Under",
@@ -5883,7 +5987,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.9,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 63.6,
+    "playerStd": 42.5,
+    "playerAvg5": 49.6,
+    "playerAvg10": 47.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "17885cb8dcade8f6c3bce14b2de805e8|Stefon Diggs|receptionYards|42.5|Over",
@@ -6142,7 +6251,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 129,
+    "playerStd": 92.8,
+    "playerAvg5": 134.8,
+    "playerAvg10": 177.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Jaxson Dart|passYards|217.5|Under",
@@ -7186,7 +7300,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 257.3,
+    "playerStd": 49.8,
+    "playerAvg5": 241.6,
+    "playerAvg10": 249,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "8c94552d022acec4a0458d70c19d3da9|Drake Maye|passYards|226.5|Over",
@@ -7445,7 +7564,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 115.6,
+    "playerStd": 41.4,
+    "playerAvg5": 91,
+    "playerAvg10": 107.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "acc580d74344ea3b31bbcdd057fe6a9c|Christian McCaffrey|receptionYards|39.5|Over",
@@ -7892,7 +8016,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 27.3,
+    "playerStd": 18.8,
+    "playerAvg5": 18.6,
+    "playerAvg10": 22,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "95c01d1bb797d6df14824b106c5a9130|Darnell Washington|receptionYards|16.5|Over",
@@ -7966,7 +8095,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 27.3,
+    "playerStd": 18.8,
+    "playerAvg5": 18.6,
+    "playerAvg10": 22,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "95c01d1bb797d6df14824b106c5a9130|Darnell Washington|receptions|1.5|Over",
@@ -8263,7 +8397,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.87,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 22.3,
+    "playerStd": 16.4,
+    "playerAvg5": 25.2,
+    "playerAvg10": 16.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "b6cfdcbafa61ce220ba87dc2d9b80c77|Jonathan Taylor|receptions|2.5|Under",
@@ -8670,7 +8809,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 181.7,
+    "playerStd": 62,
+    "playerAvg5": 130.2,
+    "playerAvg10": 182.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "fc362aff0d889ec52d358307a70c32ed|Bryce Young|passYards|212.5|Under",
@@ -8744,7 +8888,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 47.2,
+    "playerStd": 24.6,
+    "playerAvg5": 53.8,
+    "playerAvg10": 56.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "fc362aff0d889ec52d358307a70c32ed|Kalif Raymond|receptionYards|17.5|Over",
@@ -8781,7 +8930,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 26.6,
+    "playerStd": 21.3,
+    "playerAvg5": 35.2,
+    "playerAvg10": 28.9,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "fc362aff0d889ec52d358307a70c32ed|Cole Kmet|receptionYards|15.5|Over",
@@ -9337,7 +9491,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.92,
-    "clv": -2.08
+    "clv": -2.08,
+    "playerAvg": 56.1,
+    "playerStd": 28.6,
+    "playerAvg5": 37,
+    "playerAvg10": 38.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "e55c6fe19fce094ce214c8b0e5b504e9|Harold Fannin Jr.|receptionYards|32.5|Over",
@@ -9707,7 +9866,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 74.7,
+    "playerStd": 36.8,
+    "playerAvg5": 82.2,
+    "playerAvg10": 78.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c1d3fcec25aaeb06ebd2244d33d338e0|Isaac TeSlaa|receptionYards|15.5|Over",
@@ -9818,7 +9982,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 72,
+    "playerStd": 30.8,
+    "playerAvg5": 41.6,
+    "playerAvg10": 54.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7dddb296a42e7a41a774b24bd1709ce1|Calvin Ridley|receptionYards|28.5|Over",
@@ -9856,7 +10025,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 43.2,
+    "playerStd": 26.6,
+    "playerAvg5": 47.4,
+    "playerAvg10": 52.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7dddb296a42e7a41a774b24bd1709ce1|Calvin Ridley|receptionYards|27.5|Over",
@@ -9894,7 +10068,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.9,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 43.2,
+    "playerStd": 26.6,
+    "playerAvg5": 47.4,
+    "playerAvg10": 52.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7dddb296a42e7a41a774b24bd1709ce1|Mason Taylor|receptionYards|18.5|Over",
@@ -10340,7 +10519,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 78.9,
+    "playerStd": 65.9,
+    "playerAvg5": 93,
+    "playerAvg10": 98.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c5d95f48a16849ab6bebc68fbbfcb74a|Malik Willis|passYards|176.5|Under",
@@ -10452,7 +10636,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 53.8,
+    "playerStd": 30.2,
+    "playerAvg5": 40.6,
+    "playerAvg10": 52.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c5d95f48a16849ab6bebc68fbbfcb74a|Malik Washington|receptionYards|26.5|Under",
@@ -10711,7 +10900,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 39.3,
+    "playerStd": 21.4,
+    "playerAvg5": 30.2,
+    "playerAvg10": 23.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "17885cb8dcade8f6c3bce14b2de805e8|Dontayvion Wicks|receptions|2.5|Over",
@@ -10859,7 +11053,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 129,
+    "playerStd": 92.8,
+    "playerAvg5": 134.8,
+    "playerAvg10": 177.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Odell Beckham Jr.|receptionYards|11.5|Over",
@@ -11463,7 +11662,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.85,
-    "clv": 1.62
+    "clv": 1.62,
+    "playerAvg": 63.4,
+    "playerStd": 31,
+    "playerAvg5": 62.8,
+    "playerAvg10": 57.5,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "acc580d74344ea3b31bbcdd057fe6a9c|Christian McCaffrey|receptionYards|41.5|Over",
@@ -11796,7 +12000,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 27.3,
+    "playerStd": 18.8,
+    "playerAvg5": 18.6,
+    "playerAvg10": 22,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "95c01d1bb797d6df14824b106c5a9130|Rico Dowdle|receptionYards|9.5|Over",
@@ -11981,7 +12190,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 61.2,
+    "playerStd": 26.9,
+    "playerAvg5": 25,
+    "playerAvg10": 42.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "b6cfdcbafa61ce220ba87dc2d9b80c77|Justice Hill|receptions|1.5|Over",
@@ -12129,7 +12343,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.92,
-    "clv": -1.04
+    "clv": -1.04,
+    "playerAvg": 48.5,
+    "playerStd": 32.5,
+    "playerAvg5": 53.4,
+    "playerAvg10": 46,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7e09efed7e12c659b82740b67ce2f9a1|Josh Allen|rushYards|30.5|Over",
@@ -12240,7 +12459,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 56.2,
+    "playerStd": 33.1,
+    "playerAvg5": 44.2,
+    "playerAvg10": 48,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "ed6d24ff979f9c71979fead577b0b3f7|Cade Otton|receptionYards|27.5|Over",
@@ -12277,7 +12501,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 40.4,
+    "playerStd": 21.5,
+    "playerAvg5": 34,
+    "playerAvg10": 43.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "e55c6fe19fce094ce214c8b0e5b504e9|Harold Fannin Jr.|receptionYards|33.5|Over",
@@ -12574,7 +12803,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.91,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 30.1,
+    "playerStd": 22.1,
+    "playerAvg5": 26.2,
+    "playerAvg10": 23.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1edfa5ceaa1ad2cb57df1c1b908731f6|Trey McBride|receptionYards|55.5|Over",
@@ -12611,7 +12845,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.85,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 70.3,
+    "playerStd": 36.3,
+    "playerAvg5": 77.4,
+    "playerAvg10": 74.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1edfa5ceaa1ad2cb57df1c1b908731f6|Kendrick Bourne|receptionYards|19.5|Over",
@@ -12648,7 +12887,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 54.3,
+    "playerStd": 45.4,
+    "playerAvg5": 21.4,
+    "playerAvg10": 46.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1edfa5ceaa1ad2cb57df1c1b908731f6|Kendrick Bourne|receptions|2.5|Over",
@@ -12797,7 +13041,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 53.8,
+    "playerStd": 30.2,
+    "playerAvg5": 40.6,
+    "playerAvg10": 52.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c5d95f48a16849ab6bebc68fbbfcb74a|Jalen Nailor|receptionYards|22.5|Over",
@@ -12982,7 +13231,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 63.6,
+    "playerStd": 42.5,
+    "playerAvg5": 49.6,
+    "playerAvg10": 47.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "17885cb8dcade8f6c3bce14b2de805e8|Dontayvion Wicks|receptionYards|29.5|Over",
@@ -13282,7 +13536,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 204.1,
+    "playerStd": 58.1,
+    "playerAvg5": 206,
+    "playerAvg10": 231,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "5ad8135dc2b5f27de0b777acd317855a|Rashee Rice|receptionYards|57.5|Over",
@@ -13578,7 +13837,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 247.8,
+    "playerStd": 67.5,
+    "playerAvg5": 232.6,
+    "playerAvg10": 246.5,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "8c94552d022acec4a0458d70c19d3da9|Sam Darnold|passYards|206.5|Over",
@@ -13689,7 +13953,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 84.2,
+    "playerStd": 45.5,
+    "playerAvg5": 86.4,
+    "playerAvg10": 110.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "8c94552d022acec4a0458d70c19d3da9|Romeo Doubs|receptionYards|25.5|Over",
@@ -15432,7 +15701,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.92,
-    "clv": 0.52
+    "clv": 0.52,
+    "playerAvg": 13.1,
+    "playerStd": 9.4,
+    "playerAvg5": 11.8,
+    "playerAvg10": 13.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "e55c6fe19fce094ce214c8b0e5b504e9|Jerry Jeudy|receptionYards|32.5|Over",
@@ -15691,7 +15965,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 50.9,
+    "playerStd": 27.7,
+    "playerAvg5": 52.6,
+    "playerAvg10": 54.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c1d3fcec25aaeb06ebd2244d33d338e0|Jahmyr Gibbs|receptions|3.5|Over",
@@ -15877,7 +16156,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.9,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 14,
+    "playerStd": 6.3,
+    "playerAvg5": 17.2,
+    "playerAvg10": 13.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1edfa5ceaa1ad2cb57df1c1b908731f6|Trey McBride|receptions|5.5|Over",
@@ -15951,7 +16235,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.88,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 57.1,
+    "playerStd": 34.8,
+    "playerAvg5": 64,
+    "playerAvg10": 55.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "cb77efed7e711d25a72c1a2a0a1af119|Matthew Golden|receptionYards|38.5|Under",
@@ -16247,7 +16536,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 35.5,
+    "playerStd": 24,
+    "playerAvg5": 28.6,
+    "playerAvg10": 30.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c5d95f48a16849ab6bebc68fbbfcb74a|Tre Tucker|receptionYards|45.5|Under",
@@ -17100,7 +17394,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.41,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 268,
+    "playerStd": 74.8,
+    "playerAvg5": 292.8,
+    "playerAvg10": 294.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "acc580d74344ea3b31bbcdd057fe6a9c|Brock Purdy|passYards|208.5|Over",
@@ -18547,7 +18846,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 85.4,
+    "playerStd": 41.6,
+    "playerAvg5": 84,
+    "playerAvg10": 80.5,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7e09efed7e12c659b82740b67ce2f9a1|Nico Collins|receptionYards|68.5|Over",
@@ -18621,7 +18925,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 43.8,
+    "playerStd": 26.4,
+    "playerAvg5": 50,
+    "playerAvg10": 43.9,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7e09efed7e12c659b82740b67ce2f9a1|Kayshon Boutte|receptionYards|26.5|Over",
@@ -19472,7 +19781,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 54.3,
+    "playerStd": 45.4,
+    "playerAvg5": 21.4,
+    "playerAvg10": 46.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1edfa5ceaa1ad2cb57df1c1b908731f6|Omarion Hampton|receptionYards|13.5|Over",
@@ -19510,7 +19824,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.87,
-    "clv": 0.53
+    "clv": 0.53,
+    "playerAvg": 28,
+    "playerStd": 17.3,
+    "playerAvg5": 16.4,
+    "playerAvg10": 21.3,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1edfa5ceaa1ad2cb57df1c1b908731f6|Tyler Allgeier|rushYards|28.5|Over",
@@ -19695,7 +20014,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 22.5,
+    "playerStd": 16.4,
+    "playerAvg5": 19.6,
+    "playerAvg10": 21.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "c5d95f48a16849ab6bebc68fbbfcb74a|Michael Mayer|receptionYards|41.5|Under",
@@ -19880,7 +20204,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 204.1,
+    "playerStd": 58.1,
+    "playerAvg5": 206,
+    "playerAvg10": 231,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "95c01d1bb797d6df14824b106c5a9130|Rico Dowdle|rushYards|45.5|Over",
@@ -20028,7 +20357,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.87,
-    "clv": 1.07
+    "clv": 1.07,
+    "playerAvg": 54.6,
+    "playerStd": 38,
+    "playerAvg5": 29.2,
+    "playerAvg10": 29.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "b6cfdcbafa61ce220ba87dc2d9b80c77|Keenan Allen|receptionYards|26.5|Over",
@@ -20176,7 +20510,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 28.8,
+    "playerStd": 22.8,
+    "playerAvg5": 19,
+    "playerAvg10": 28.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7e09efed7e12c659b82740b67ce2f9a1|Kayshon Boutte|receptions|2.5|Over",
@@ -20324,7 +20663,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.88,
-    "clv": 0.53
+    "clv": 0.53,
+    "playerAvg": 181.7,
+    "playerStd": 62,
+    "playerAvg5": 130.2,
+    "playerAvg10": 182.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "fc362aff0d889ec52d358307a70c32ed|Tetairoa McMillan|receptionYards|61.5|Under",
@@ -20361,7 +20705,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 47.2,
+    "playerStd": 24.6,
+    "playerAvg5": 53.8,
+    "playerAvg10": 56.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "fc362aff0d889ec52d358307a70c32ed|Tetairoa McMillan|receptionYards|60.5|Under",
@@ -20398,7 +20747,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.9,
-    "clv": -1.05
+    "clv": -1.05,
+    "playerAvg": 47.2,
+    "playerStd": 24.6,
+    "playerAvg5": 53.8,
+    "playerAvg10": 56.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "fc362aff0d889ec52d358307a70c32ed|Darren Waller|receptionYards|16.5|Over",
@@ -20435,7 +20789,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.9,
-    "clv": 1.58
+    "clv": 1.58,
+    "playerAvg": 28.5,
+    "playerStd": 25.6,
+    "playerAvg5": 40.6,
+    "playerAvg10": 39.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "fc362aff0d889ec52d358307a70c32ed|Chuba Hubbard|receptions|1.5|Over",
@@ -20657,7 +21016,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.88,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 40.4,
+    "playerStd": 21.5,
+    "playerAvg5": 34,
+    "playerAvg10": 43.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "ed6d24ff979f9c71979fead577b0b3f7|Kenny Gainwell|receptionYards|23.5|Under",
@@ -20694,7 +21058,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 14,
+    "playerStd": 20,
+    "playerAvg5": 45.4,
+    "playerAvg10": 32.5,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "ed6d24ff979f9c71979fead577b0b3f7|Andrei Iosivas|receptionYards|15.5|Over",
@@ -20805,7 +21174,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.42,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 228.2,
+    "playerStd": 67.6,
+    "playerAvg5": 249.8,
+    "playerAvg10": 228,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "e55c6fe19fce094ce214c8b0e5b504e9|Deshaun Watson|passYards|197.5|Under",
@@ -20842,7 +21216,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 168.1,
+    "playerStd": 61.3,
+    "playerAvg5": 170.8,
+    "playerAvg10": 164,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "e55c6fe19fce094ce214c8b0e5b504e9|Deshaun Watson|passYards|207.5|Under",
@@ -21176,7 +21555,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 203,
+    "playerStd": 87.8,
+    "playerAvg5": 150,
+    "playerAvg10": 170.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "cb77efed7e711d25a72c1a2a0a1af119|Jordan Love|passYards|242.5|Under",
@@ -21400,7 +21784,9 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.88,
-    "clv": 0
+    "clv": 0,
+    "lineAdjustedClvStatus": "model_context_not_reproducible",
+    "lineAdjustedClvMissingReason": "model_history_matches_0"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Jaxson Dart|passYards|218.5|Under",
@@ -21548,7 +21934,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 40.9,
+    "playerStd": 26.2,
+    "playerAvg5": 27.8,
+    "playerAvg10": 34.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Theo Johnson|receptionYards|13.5|Over",
@@ -21844,7 +22235,9 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "lineAdjustedClvStatus": "model_context_not_reproducible",
+    "lineAdjustedClvMissingReason": "model_history_matches_0"
   },
   {
     "_key": "5ad8135dc2b5f27de0b777acd317855a|J.K. Dobbins|rushYards|51.5|Over",
@@ -22029,7 +22422,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 53,
+    "playerStd": 30.1,
+    "playerAvg5": 36.8,
+    "playerAvg10": 39.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "7e09efed7e12c659b82740b67ce2f9a1|Joshua Palmer|receptionYards|11.5|Over",
@@ -22585,7 +22983,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 84.7,
+    "playerStd": 35.1,
+    "playerAvg5": 57.2,
+    "playerAvg10": 63.3,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "cb77efed7e711d25a72c1a2a0a1af119|Matthew Golden|receptionYards|37.5|Under",
@@ -23031,7 +23434,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 32.9,
+    "playerStd": 16.1,
+    "playerAvg5": 26.4,
+    "playerAvg10": 32,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "17885cb8dcade8f6c3bce14b2de805e8|Hollywood Brown|receptions|1.5|Over",
@@ -23475,7 +23883,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.54,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 240,
+    "playerStd": 78.3,
+    "playerAvg5": 258.2,
+    "playerAvg10": 267.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Dak Prescott|passYards|290.5|Under",
@@ -24490,7 +24903,9 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "lineAdjustedClvStatus": "model_context_not_reproducible",
+    "lineAdjustedClvMissingReason": "model_history_matches_0"
   },
   {
     "_key": "5ad8135dc2b5f27de0b777acd317855a|Jaylen Waddle|receptionYards|66.5|Under",
@@ -24971,7 +25386,9 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "lineAdjustedClvStatus": "model_context_not_reproducible",
+    "lineAdjustedClvMissingReason": "model_history_matches_0"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Dak Prescott|passYards|281.5|Under",
@@ -25341,7 +25758,9 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "lineAdjustedClvStatus": "model_context_not_reproducible",
+    "lineAdjustedClvMissingReason": "model_history_matches_0"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Isaiah Likely|receptionYards|42.5|Under",
@@ -25686,7 +26105,9 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "lineAdjustedClvStatus": "model_context_not_reproducible",
+    "lineAdjustedClvMissingReason": "model_history_matches_0"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Dak Prescott|passYards|284.5|Under",
@@ -27505,7 +27926,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 2.27,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 2.6,
+    "playerStd": 1.7,
+    "playerAvg5": 2.6,
+    "playerAvg10": 2.9,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Joshua Palmer|receptions|1.5|Over",
@@ -27542,7 +27968,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 2.8,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 2.4,
+    "playerStd": 1.3,
+    "playerAvg5": 1.2,
+    "playerAvg10": 1.5,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Keon Coleman|receptions|1.5|Over",
@@ -27579,7 +28010,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 2.4,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 3.2,
+    "playerStd": 1.9,
+    "playerAvg5": 1.6,
+    "playerAvg10": 2.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Jahmyr Gibbs|rushYards|90.5|Over",
@@ -29690,7 +30126,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 56.8,
+    "playerStd": 16.3,
+    "playerAvg5": 52.2,
+    "playerAvg10": 48.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "0636ebff776d43f8c829a36713c80b22|Harold Fannin Jr.|receptions|4.5|Over",
@@ -30099,7 +30540,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 2.1,
-    "clv": 7.14
+    "clv": 7.14,
+    "playerAvg": 4.1,
+    "playerStd": 2.7,
+    "playerAvg5": 2,
+    "playerAvg10": 2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Matthew Golden|receptions|3.5|Under",
@@ -31961,7 +32407,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 76.9,
+    "playerStd": 32.4,
+    "playerAvg5": 40.4,
+    "playerAvg10": 50.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|George Kittle|receptionYards|42.5|Over",
@@ -34817,7 +35268,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 2.49,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 4.8,
+    "playerStd": 1.5,
+    "playerAvg5": 3,
+    "playerAvg10": 3.5,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Travis Etienne Jr.|receptions|1.5|Over",
@@ -36486,7 +36942,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.91,
-    "clv": 2.09
+    "clv": 2.09,
+    "playerAvg": 3,
+    "playerStd": 4.2,
+    "playerAvg5": 4.6,
+    "playerAvg10": 4.9,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Braelon Allen|rushYards|23.5|Under",
@@ -37938,7 +38399,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 2.24,
-    "clv": 8.04
+    "clv": 8.04,
+    "playerAvg": 4.5,
+    "playerStd": 2.6,
+    "playerAvg5": 2.4,
+    "playerAvg10": 3.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "71b3b83747589efdc5baef2c5cf811bf|Omarion Hampton|rushYards|63.5|Under",
@@ -40567,7 +41033,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 5.3,
+    "playerStd": 1.7,
+    "playerAvg5": 3.4,
+    "playerAvg10": 3.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Xavier Legette|receptions|1.5|Over",
@@ -40678,7 +41149,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 86,
+    "playerStd": 53.1,
+    "playerAvg5": 96,
+    "playerAvg10": 92.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "aee7eae1849ebb103b9bf233e9741392|Chuba Hubbard|rushYards|54.5|Under",
@@ -42012,7 +42488,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 61.4,
+    "playerStd": 30.1,
+    "playerAvg5": 62.6,
+    "playerAvg10": 61.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "2143ade9684fd876b68a4e8cbf451f05|Alvin Kamara|rushYards|16.5|Over",
@@ -47568,7 +48049,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 2.7,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 13.1,
+    "playerStd": 9.4,
+    "playerAvg5": 11.8,
+    "playerAvg10": 13.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Brian Thomas Jr|receptionYards|28.5|Under",
@@ -48123,7 +48609,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 21.4,
+    "playerStd": 12.8,
+    "playerAvg5": 21.4,
+    "playerAvg10": 20.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Bhayshul Tuten|rushYards|44.5|Under",
@@ -49716,7 +50207,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 3.6,
+    "playerStd": 2.9,
+    "playerAvg5": 22,
+    "playerAvg10": 15.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|George Holani|rushYards|26.5|Under",
@@ -51567,7 +52063,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.88,
-    "clv": 1.6
+    "clv": 1.6,
+    "playerAvg": 76.9,
+    "playerStd": 32.4,
+    "playerAvg5": 40.4,
+    "playerAvg10": 50.6,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|George Kittle|receptionYards|29.5|Over",
@@ -51937,7 +52438,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 17.3,
+    "playerStd": 17.5,
+    "playerAvg5": 22.4,
+    "playerAvg10": 19.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "68bc55903f50af4af4766adcc89fcc61|De'Von Achane|rushYards|58.5|Under",
@@ -53566,7 +54072,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 27.8,
+    "playerStd": 12.5,
+    "playerAvg5": 12.8,
+    "playerAvg10": 21.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "32367f882fac1a0c20a6335619922025|Cam Skattebo|receptions|1.5|Over",
@@ -57898,7 +58409,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 3.25,
-    "clv": -3.08
+    "clv": -3.08,
+    "playerAvg": 27.2,
+    "playerStd": 26.5,
+    "playerAvg5": 36.2,
+    "playerAvg10": 30.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "4aeee070bb6ec60bdfae4dede61b9014|Jordan Love|passYards|253.5|Under",
@@ -58863,7 +59379,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "playerAvg": 19.7,
+    "playerStd": 10.2,
+    "playerAvg5": 8.4,
+    "playerAvg10": 12.3,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Rhamondre Stevenson|rushYards|37.5|Under",
@@ -59381,7 +59902,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 13.1,
+    "playerStd": 9.4,
+    "playerAvg5": 11.8,
+    "playerAvg10": 13.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Brian Thomas Jr|receptionYards|27.5|Under",
@@ -59900,7 +60426,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 2.65,
-    "clv": 0
+    "clv": 0,
+    "playerAvg": 21.4,
+    "playerStd": 12.8,
+    "playerAvg5": 21.4,
+    "playerAvg10": 20.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1fd6628c781f556a7a19638e97d7107f|Bhayshul Tuten|rushYards|43.5|Under",
@@ -60233,7 +60764,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": 1.91,
-    "clv": -0.52
+    "clv": -0.52,
+    "playerAvg": 20.8,
+    "playerStd": 18.6,
+    "playerAvg5": 23.2,
+    "playerAvg10": 24.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "71b3b83747589efdc5baef2c5cf811bf|Michael Mayer|receptionYards|43.5|Under",
@@ -61383,7 +61919,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 3.6,
+    "playerStd": 2.9,
+    "playerAvg5": 22,
+    "playerAvg10": 15.8,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "4dd8020192a544385db42374e5555303|George Holani|rushYards|25.5|Under",
@@ -63936,7 +64477,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 59.4,
+    "playerStd": 31.4,
+    "playerAvg5": 69.8,
+    "playerAvg10": 67,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "50bc247030707d823b9c3581d7eb5760|Kenneth Walker III|rushYards|93.5|Under",
@@ -64164,7 +64710,12 @@
       "player": "Odell Beckham Jr.",
       "market": "receptionYards",
       "expectedTeam": "New York Giants"
-    }
+    },
+    "playerAvg": 25.2,
+    "playerStd": 15.9,
+    "playerAvg5": 16.4,
+    "playerAvg10": 16.3,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "32367f882fac1a0c20a6335619922025|Odell Beckham Jr.|receptionYards|6.5|Over",
@@ -65019,7 +65570,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 59.4,
+    "playerStd": 31.4,
+    "playerAvg5": 69.8,
+    "playerAvg10": 67,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "50bc247030707d823b9c3581d7eb5760|Kenneth Walker III|rushYards|92.5|Under",
@@ -66266,7 +66822,12 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "playerAvg": 80.3,
+    "playerStd": 21.2,
+    "playerAvg5": 56.8,
+    "playerAvg10": 68.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "3bfd8bfb4b8e9a365a0877879b73b16b|Kyren Williams|rushYards|56.5|Over",
@@ -69539,7 +70100,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 40.3,
+    "playerStd": 29.7,
+    "playerAvg5": 24.8,
+    "playerAvg10": 27.5,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "613b8cd3a5fab58f7be4e3fd6f76223e|Quinshon Judkins|rushYards|59.5|Over",
@@ -74579,7 +75145,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 1.9,
+    "playerStd": 1.3,
+    "playerAvg5": 2.2,
+    "playerAvg10": 2.4,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "17a730b7d399feeab6a78c30767c29d2|Jonathan Taylor|receptions|2.5|Under",
@@ -74867,7 +75438,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 3.2,
+    "playerStd": 1.5,
+    "playerAvg5": 2.4,
+    "playerAvg10": 2.9,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "17a730b7d399feeab6a78c30767c29d2|Jonathan Taylor|rushYards|78.5|Over",
@@ -77135,7 +77711,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 1.6,
+    "playerStd": 1,
+    "playerAvg5": 1.8,
+    "playerAvg10": 1.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "1f3cfd315a24d1a7dd5859a8e6b88e18|Brian Thomas Jr|receptions|2.5|Under",
@@ -79007,7 +79588,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 2.3,
+    "playerStd": 1.1,
+    "playerAvg5": 2.4,
+    "playerAvg10": 2.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "0339a0e41bcee12820eb3e64bb5fadb4|Kenneth Walker III|receptions|3.5|Under",
@@ -79043,7 +79629,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 2,
+    "playerStd": 1.2,
+    "playerAvg5": 2.4,
+    "playerAvg10": 2.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "0339a0e41bcee12820eb3e64bb5fadb4|Greg Dulcich|receptions|2.5|n/a",
@@ -81131,7 +81722,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 3.7,
+    "playerStd": 2,
+    "playerAvg5": 2.2,
+    "playerAvg10": 3.3,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "555afd4a27aaa392662881cffa8f2eef|Tony Pollard|receptions|1.5|Over",
@@ -85739,7 +86335,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 3.8,
+    "playerStd": 2.3,
+    "playerAvg5": 2.8,
+    "playerAvg10": 3.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "f1724dead3eab61546033032fc782375|Josh Oliver|receptions|1.5|n/a",
@@ -88223,7 +88824,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 2,
+    "playerStd": 1,
+    "playerAvg5": 1.4,
+    "playerAvg10": 2.1,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "84cfca14efc21363fd605508404cf1ff|Javonte Williams|receptions|2.5|Over",
@@ -89447,7 +90053,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 0.3,
+    "playerStd": 0.5,
+    "playerAvg5": 1.4,
+    "playerAvg10": 1.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "2e523fcb0497aa689473e290eb2b97de|Kirk Cousins|passTDs|1.5|Over",
@@ -90491,7 +91102,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 2.3,
+    "playerStd": 1.4,
+    "playerAvg5": 5.2,
+    "playerAvg10": 3.2,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "2e523fcb0497aa689473e290eb2b97de|Devaughn Vele|receptions|3.5|Under",
@@ -91931,7 +92547,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "playerAvg": 80.3,
+    "playerStd": 21.2,
+    "playerAvg5": 56.8,
+    "playerAvg10": 68.7,
+    "lineAdjustedClvContextSource": "odds_history/football_nfl_model_2026-09.json"
   },
   {
     "_key": "3bfd8bfb4b8e9a365a0877879b73b16b|Kyren Williams|rushYards|54.5|Over",
