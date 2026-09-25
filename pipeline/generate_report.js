@@ -19,6 +19,9 @@ const riskConfig = require('./risk_config');
 const OUT_FILE = path.join(ledger.HISTORY_DIR, 'relatorio_desempenho.md');
 const OUT_JSON = path.join(ledger.HISTORY_DIR, 'relatorio_desempenho.json');
 const EDGE_BUCKET_SIZE = 5; // %
+const FIRST_CLOSING_ODDS_CAPTURE_AT = '2026-09-06T20:22:20.000Z'; // f99781d
+const SHARED_CLOSING_ODDS_STATUS_AT = '2026-09-24T17:27:34.000Z'; // 26a2385
+const DATA_SAVE_DEPENDENCY_FIX_AT = '2026-09-25T01:42:16.000Z'; // be2ab14
 
 function edgeBucket(edgePct) {
   const lo = Math.floor(edgePct / EDGE_BUCKET_SIZE) * EDGE_BUCKET_SIZE;
@@ -102,6 +105,7 @@ function computeBetClv(bet, entry) {
 
 function missingClvReason(e) {
   if (typeof e.closingOdds === 'number') return null;
+  if (!e.published) return 'indicacao_rejeitada_nao_publicada';
 
   const commence = new Date(e.commenceTime);
   const commenceIso = isNaN(commence.getTime()) ? null : commence.toISOString();
@@ -114,8 +118,16 @@ function missingClvReason(e) {
     return 'bloqueio_actions_22_24_set';
   }
   if (e.closingOddsStatus === ledger.CLOSING_ODDS_STATUS.EXPIRADA) {
-    return 'fora_da_janela_de_captura';
+    return 'captura_expirada_sem_odd_gravada';
   }
+  if (e.closingOddsStatus === ledger.CLOSING_ODDS_STATUS.PENDENTE) return 'captura_nao_disparou_na_janela';
+
+  const created = new Date(e.runId ?? e.createdAt);
+  const createdIso = isNaN(created.getTime()) ? null : created.toISOString();
+  if (createdIso && createdIso < FIRST_CLOSING_ODDS_CAPTURE_AT) return 'registrada_antes_da_captura_existir';
+  if (createdIso && createdIso < SHARED_CLOSING_ODDS_STATUS_AT) return 'registrada_antes_do_controle_de_status_da_captura';
+  if (createdIso && createdIso < DATA_SAVE_DEPENDENCY_FIX_AT) return 'execucao_falha';
+
   return 'outro';
 }
 
