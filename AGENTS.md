@@ -30,7 +30,7 @@
 
 ## Workflows
 - `update_model.yml` — sports: `nba_br`, `nba`, `mlb`, `tennis`, `all`
-- `odds_history.yml` — roda 19h UTC diariamente
+- `.github/workflows/odds_history.yml` — roda 19h UTC diariamente
 - `update_player_stats.yml` — roda 10h UTC diariamente
 
 ## Arquivos críticos na branch `data`
