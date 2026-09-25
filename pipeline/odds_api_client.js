@@ -10,6 +10,14 @@ function loadEnvFileIfPresent(envPath = '.env') {
 }
 
 function defaultKeysFromEnv() {
+  const grouped = process.env.THE_ODDS_API_KEYS;
+  if (grouped && grouped.trim()) {
+    return grouped
+      .split(/[\r\n,]+/)
+      .map(key => key.trim())
+      .filter(Boolean);
+  }
+
   const keys = [];
   for (let i = 1; i <= 19; i++) {
     const key = i === 1 ? process.env.ODDS_API_KEY : process.env[`ODDS_API_KEY_${i}`];
@@ -33,7 +41,7 @@ function createOddsApiClient({
   disabled = process.env.ODDS_API_DISABLE === '1',
 } = {}) {
   if (!keys.length) {
-    throw new Error('Nenhuma chave ODDS_API_KEY configurada.');
+    throw new Error('Nenhuma chave THE_ODDS_API_KEYS ou ODDS_API_KEY configurada.');
   }
   if (disabled) {
     throw new Error(`[${label}] chamadas à The Odds API bloqueadas por ODDS_API_DISABLE=1.`);
