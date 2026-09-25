@@ -197,6 +197,7 @@ function recordEvaluation(rec) {
     // = probabilidade bruta do modelo, antes da calibração, só para auditoria.
     modelProb, rawProb, odds, bookmaker, edge, kelly, published, rejectionReason,
     playerTeam,
+    playerAvg, playerStd, playerAvg5, playerAvg10,
     runId,
     // Estado do controle de risco por segmento no momento da avaliação.
     segmentState, sampleSize,
@@ -234,6 +235,10 @@ function recordEvaluation(rec) {
     commenceTime: commenceTime ?? existing?.commenceTime ?? null,
     player,
     playerTeam: playerTeam ?? existing?.playerTeam ?? null,
+    playerAvg: playerAvg ?? existing?.playerAvg ?? null,
+    playerStd: playerStd ?? existing?.playerStd ?? null,
+    playerAvg5: playerAvg5 ?? existing?.playerAvg5 ?? null,
+    playerAvg10: playerAvg10 ?? existing?.playerAvg10 ?? null,
     market,
     line,
     side,
@@ -268,6 +273,14 @@ function recordEvaluation(rec) {
       invalidReason: invalidReason ?? existing.invalidReason ?? null,
       closingOdds: existing.closingOdds ?? closingOdds ?? null,
       clv: existing.clv ?? clv ?? null,
+      adjustedClosingLine: existing.adjustedClosingLine ?? null,
+      adjustedClosingOverOdds: existing.adjustedClosingOverOdds ?? null,
+      adjustedClosingUnderOdds: existing.adjustedClosingUnderOdds ?? null,
+      closingLineMovement: existing.closingLineMovement ?? null,
+      lineAdjustedClv: existing.lineAdjustedClv ?? null,
+      closingOddsMissingReason: existing.closingOddsMissingReason ?? null,
+      closingOddsAvailableLines: existing.closingOddsAvailableLines ?? null,
+      closingOddsLastAttemptAt: existing.closingOddsLastAttemptAt ?? null,
       closingOddsStatus: existing.closingOddsStatus ?? CLOSING_ODDS_STATUS.PENDENTE,
     });
   } else {

@@ -164,7 +164,9 @@ function clvCoverageRows(entries) {
       groups.set(cohort, {
         cohort,
         nPublicadasResolvidas: 0,
-        clvComOdd: 0,
+        clvExato: 0,
+        clvAjustado: 0,
+        clvTotal: 0,
         semClv: 0,
         clvCoveragePct: null,
         semClvMotivos: {},
@@ -173,7 +175,11 @@ function clvCoverageRows(entries) {
     const row = groups.get(cohort);
     row.nPublicadasResolvidas++;
     if (typeof e.clv === 'number') {
-      row.clvComOdd++;
+      row.clvExato++;
+      row.clvTotal++;
+    } else if (typeof e.lineAdjustedClv === 'number') {
+      row.clvAjustado++;
+      row.clvTotal++;
     } else {
       row.semClv++;
       const reason = missingClvReason(e);
@@ -182,7 +188,7 @@ function clvCoverageRows(entries) {
   }
   for (const row of groups.values()) {
     row.clvCoveragePct = row.nPublicadasResolvidas
-      ? parseFloat((row.clvComOdd / row.nPublicadasResolvidas * 100).toFixed(1))
+      ? parseFloat((row.clvTotal / row.nPublicadasResolvidas * 100).toFixed(1))
       : null;
   }
   return [...groups.values()];
@@ -287,8 +293,13 @@ async function main() {
     const stakeTotal = entries.reduce((s, e) => s + (typeof e.kelly === 'number' ? e.kelly : 0), 0);
     const roi = stakeTotal > 0 ? (lucro / stakeTotal) * 100 : null;
     const comClv = entries.filter(e => typeof e.clv === 'number');
+    const comClvAjustado = entries.filter(e => typeof e.lineAdjustedClv === 'number');
+    const comClvTotal = entries.filter(e => typeof e.clv === 'number' || typeof e.lineAdjustedClv === 'number');
+    const movimentosComLinha = entries.filter(e => e.closingLineMovement);
+    const movimentosFavor = movimentosComLinha.filter(e => e.closingLineMovement === 'a_favor');
     const clvMedio = comClv.length ? comClv.reduce((s, e) => s + e.clv, 0) / comClv.length : null;
-    const semClv = entries.length - comClv.length;
+    const clvAjustadoMedio = comClvAjustado.length ? comClvAjustado.reduce((s, e) => s + e.lineAdjustedClv, 0) / comClvAjustado.length : null;
+    const semClv = entries.length - comClvTotal.length;
 
     const sampleSize = segmentSampleSize(esporte, market, all);
     const segmentState = sampleSize >= riskConfig.MIN_SAMPLE_TO_CALIBRATE ? ledger.SEGMENT_STATE.CALIBRADO : ledger.SEGMENT_STATE.EM_AMOSTRA;
@@ -305,8 +316,16 @@ async function main() {
       roi: roi === null ? null : parseFloat(roi.toFixed(1)),
       clvMedio: clvMedio === null ? null : parseFloat(clvMedio.toFixed(2)),
       clvComOdd: comClv.length,
+      clvAjustadoMedio: clvAjustadoMedio === null ? null : parseFloat(clvAjustadoMedio.toFixed(2)),
+      clvComLinhaAjustada: comClvAjustado.length,
+      clvCoberturaTotal: comClvTotal.length,
+      movimentoLinhaTotal: movimentosComLinha.length,
+      movimentoLinhaFavor: movimentosFavor.length,
+      movimentoLinhaFavorPct: movimentosComLinha.length ? parseFloat((movimentosFavor.length / movimentosComLinha.length * 100).toFixed(1)) : null,
       semClv,
-      clvCoveragePct: entries.length ? parseFloat((comClv.length / entries.length * 100).toFixed(1)) : null,
+      clvCoveragePct: entries.length ? parseFloat((comClvTotal.length / entries.length * 100).toFixed(1)) : null,
+      clvExactCoveragePct: entries.length ? parseFloat((comClv.length / entries.length * 100).toFixed(1)) : null,
+      clvAdjustedCoveragePct: entries.length ? parseFloat((comClvAjustado.length / entries.length * 100).toFixed(1)) : null,
       semClvMotivos: missingClvReasons(entries),
       minSampleToCalibrate: riskConfig.MIN_SAMPLE_TO_CALIBRATE,
       segmentState, sampleSize, faltamParaCalibrar,
@@ -328,19 +347,21 @@ async function main() {
   lines.push('| Esporte | Mercado | Faixa de edge | Nº resolvidas válidas | Taxa de acerto real | Taxa prevista calibrada | ROI | CLV médio | Estado do segmento | Faltam p/ calibrar |');
   lines.push('|---|---|---|---|---|---|---|---|---|---|');
   for (const r of rows) {
-    const clvCell = r.clvMedio === null ? '—' : `${fmt(r.clvMedio)}% (${r.clvComOdd}/${r.nResolvidasValidas} com odd de fechamento)`;
+    const clvCell = r.clvMedio === null ? '—' : `${fmt(r.clvMedio)}% (${r.clvComOdd}/${r.nResolvidasValidas} exata)`;
+    const clvAdjustedCell = r.clvAjustadoMedio === null ? '—' : `${fmt(r.clvAjustadoMedio)}% (${r.clvComLinhaAjustada}/${r.nResolvidasValidas} ajustada)`;
+    const movementCell = r.movimentoLinhaFavorPct === null ? '—' : `${fmt(r.movimentoLinhaFavorPct)}% (${r.movimentoLinhaFavor}/${r.movimentoLinhaTotal})`;
     const modelCell = r.winRateModeloBruto === null ? `${fmt(r.winRateModelo)}%` : `${fmt(r.winRateModelo)}% (bruta ${fmt(r.winRateModeloBruto)}%)`;
-    lines.push(`| ${r.esporte} | ${r.market} | ${r.edgeBucket} | ${r.nResolvidasValidas} | ${fmt(r.winRateReal)}% (${r.nBinarias} decididas) | ${modelCell} | ${r.roi === null ? '—' : fmt(r.roi) + '%'} | ${clvCell} | ${r.segmentState} | ${r.faltamParaCalibrar} |`);
+    lines.push(`| ${r.esporte} | ${r.market} | ${r.edgeBucket} | ${r.nResolvidasValidas} | ${fmt(r.winRateReal)}% (${r.nBinarias} decididas) | ${modelCell} | ${r.roi === null ? '—' : fmt(r.roi) + '%'} | ${clvCell}; ajustado ${clvAdjustedCell}; mov. favor ${movementCell} | ${r.segmentState} | ${r.faltamParaCalibrar} |`);
   }
   if (!rows.length) lines.push('| _sem dados ainda_ | | | | | | | | | |');
   lines.push('');
   lines.push('## Cobertura de CLV por coorte');
   lines.push('');
-  lines.push('| Coorte de criação | Publicadas resolvidas | Com odd de fechamento | Cobertura | Sem odd por motivo |');
-  lines.push('|---|---|---|---|---|');
+  lines.push('| Coorte de criação | Publicadas resolvidas | CLV exato | CLV ajustado | Cobertura total | Sem CLV por motivo |');
+  lines.push('|---|---|---|---|---|---|');
   for (const r of clvCoverage) {
     const reasons = Object.entries(r.semClvMotivos).map(([k, v]) => `${k}: ${v}`).join('; ') || '—';
-    lines.push(`| ${r.cohort} | ${r.nPublicadasResolvidas} | ${r.clvComOdd} | ${fmt(r.clvCoveragePct)}% | ${reasons} |`);
+    lines.push(`| ${r.cohort} | ${r.nPublicadasResolvidas} | ${r.clvExato} | ${r.clvAjustado} | ${fmt(r.clvCoveragePct)}% | ${reasons} |`);
   }
   if (!clvCoverage.length) lines.push('| _sem dados ainda_ | | | | |');
   lines.push('');
