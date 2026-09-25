@@ -27,31 +27,43 @@ class _TennisScreenState extends State<TennisScreen> {
     setState(() => _loading = true);
     try {
       final result = await ApiService.fetchTennisResults();
+      if (!mounted) return;
       setState(() {
         _results = result.data;
         _lastUpdated = result.lastUpdated;
       });
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
 
   Future<void> _runPipeline() async {
-    setState(() { _loading = true; _status = 'Atualizando ranking...'; });
+    setState(() {
+      _loading = true;
+      _status = 'Atualizando ranking...';
+    });
     try {
       await ApiService.post('tennis/update-ranking');
+      if (!mounted) return;
       setState(() => _status = 'Buscando odds...');
       await ApiService.post('tennis/update-odds');
+      if (!mounted) return;
       setState(() => _status = 'Rodando modelo...');
       await ApiService.post('tennis/run-model');
+      if (!mounted) return;
       setState(() => _status = 'Carregando resultados...');
       await _loadResults();
+      if (!mounted) return;
       setState(() => _status = 'Concluído.');
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -119,8 +131,7 @@ class _TennisScreenState extends State<TennisScreen> {
         backgroundColor: const Color(0xFF7C4DFF),
         icon: const Icon(Icons.play_arrow, color: Colors.white),
         label: const Text('Atualizar',
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
   }

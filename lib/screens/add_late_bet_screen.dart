@@ -73,9 +73,12 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
         child: child!,
       ),
     );
+    if (!mounted) return;
     setState(() {
       _selectedDate = DateTime(
-        date.year, date.month, date.day,
+        date.year,
+        date.month,
+        date.day,
         time?.hour ?? _selectedDate.hour,
         time?.minute ?? _selectedDate.minute,
       );
@@ -129,8 +132,7 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
         if (_isProp) ...{
           'player': _playerCtrl.text.trim(),
           'prop': _prop,
-          'line': double.parse(
-              _lineCtrl.text.replaceAll(',', '.')),
+          'line': double.parse(_lineCtrl.text.replaceAll(',', '.')),
           'side': _side,
         } else ...{
           'team': _teamCtrl.text.trim(),
@@ -141,6 +143,7 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
       if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -257,7 +260,6 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
                       hint: 'Ex: Jerami Grant',
                     ),
                     const SizedBox(height: 16),
-
                     _label('Prop'),
                     const SizedBox(height: 6),
                     Container(
@@ -279,13 +281,11 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
                                     child: Text(p.$2),
                                   ))
                               .toList(),
-                          onChanged: (v) =>
-                              setState(() => _prop = v ?? _prop),
+                          onChanged: (v) => setState(() => _prop = v ?? _prop),
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     Row(
                       children: [
                         Expanded(
@@ -314,8 +314,7 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
                                   final sel = _side == s;
                                   return Expanded(
                                     child: GestureDetector(
-                                      onTap: () =>
-                                          setState(() => _side = s),
+                                      onTap: () => setState(() => _side = s),
                                       child: Container(
                                         margin: EdgeInsets.only(
                                             right: s == 'Over' ? 6 : 0),
@@ -338,12 +337,9 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
                                           child: Text(s,
                                               style: TextStyle(
                                                   color: sel
-                                                      ? const Color(
-                                                          0xFF00C853)
-                                                      : const Color(
-                                                          0xFF888888),
-                                                  fontWeight:
-                                                      FontWeight.bold,
+                                                      ? const Color(0xFF00C853)
+                                                      : const Color(0xFF888888),
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: 13)),
                                         ),
                                       ),
@@ -416,7 +412,8 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
 
                   // Virtual
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                     decoration: BoxDecoration(
                       color: _isVirtual
                           ? const Color(0xFF00B0FF).withValues(alpha: 0.1)
@@ -450,7 +447,8 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
                           value: _isVirtual,
                           onChanged: (v) => setState(() => _isVirtual = v),
                           activeThumbColor: const Color(0xFF00B0FF),
-                          activeTrackColor: const Color(0xFF00B0FF).withValues(alpha: 0.4),
+                          activeTrackColor:
+                              const Color(0xFF00B0FF).withValues(alpha: 0.4),
                         ),
                       ],
                     ),
@@ -464,8 +462,7 @@ class _AddLateBetScreenState extends State<AddLateBetScreen> {
                       onPressed: _submit,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00C853),
-                        padding:
-                            const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                       ),
@@ -507,13 +504,13 @@ class _TypeChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: selected ? color.withValues(alpha: 0.15) : const Color(0xFF2A2A3E),
+          color: selected
+              ? color.withValues(alpha: 0.15)
+              : const Color(0xFF2A2A3E),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-              color: selected ? color : Colors.transparent),
+          border: Border.all(color: selected ? color : Colors.transparent),
         ),
         child: Text(label,
             style: TextStyle(

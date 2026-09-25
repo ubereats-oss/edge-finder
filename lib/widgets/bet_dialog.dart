@@ -45,9 +45,10 @@ Future<void> showBetDialog({
   final customBookmakers = PrefsService.getCustomBookmakers();
   final allBookmakers = [..._defaultBookmakers, ...customBookmakers];
   final indicatedBookmaker = (betData['bookmaker'] as String?)?.trim();
-  String? selectedBookmaker = indicatedBookmaker != null && indicatedBookmaker.isNotEmpty
-      ? indicatedBookmaker
-      : PrefsService.getLastBookmaker();
+  String? selectedBookmaker =
+      indicatedBookmaker != null && indicatedBookmaker.isNotEmpty
+          ? indicatedBookmaker
+          : PrefsService.getLastBookmaker();
   if (selectedBookmaker != null && !allBookmakers.contains(selectedBookmaker)) {
     selectedBookmaker = null;
   }
@@ -64,21 +65,36 @@ Future<void> showBetDialog({
     final lineVal = double.tryParse(lineController.text.replaceAll(',', '.'));
     void update(VoidCallback fn) => setState != null ? setState(fn) : fn();
     if (oddsVal == null || oddsVal <= 1) {
-      update(() { _recalcEdge = null; _recalcKelly = null; });
+      update(() {
+        _recalcEdge = null;
+        _recalcKelly = null;
+      });
       return;
     }
     double? prob;
-    if (playerAvg != null && playerStd != null && playerStd > 0 && lineVal != null) {
+    if (playerAvg != null &&
+        playerStd != null &&
+        playerStd > 0 &&
+        lineVal != null) {
       final z = (lineVal - playerAvg) / (playerStd * 1.4142135623730951);
       final t = 1 / (1 + 0.3275911 * z.abs());
-      final erf = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * math.exp(-z * z);
+      final erf = 1 -
+          (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t -
+                          0.284496736) *
+                      t +
+                  0.254829592) *
+              t *
+              math.exp(-z * z);
       final cdf = 0.5 * (1 + (z >= 0 ? erf : -erf));
       prob = 1 - cdf;
     } else if (modelProb != null) {
       prob = modelProb / 100;
     }
     if (prob == null) {
-      update(() { _recalcEdge = null; _recalcKelly = null; });
+      update(() {
+        _recalcEdge = null;
+        _recalcKelly = null;
+      });
       return;
     }
     final implied = 1 / oddsVal;
@@ -87,7 +103,10 @@ Future<void> showBetDialog({
     final kelly = edge > 0
         ? ((prob * b - (1 - prob)) / b * RiskConfig.kellyFraction * 100)
         : 0.0;
-    update(() { _recalcEdge = edge; _recalcKelly = kelly.clamp(0.0, 100.0); });
+    update(() {
+      _recalcEdge = edge;
+      _recalcKelly = kelly.clamp(0.0, 100.0);
+    });
   }
 
   _recalculate();
@@ -197,8 +216,7 @@ Future<void> showBetDialog({
                 ),
                 const SizedBox(height: 12),
                 const Text('Linha (ajustar se diferente)',
-                    style:
-                        TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                    style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
                 const SizedBox(height: 6),
                 TextField(
                   controller: lineController,
@@ -214,15 +232,14 @@ Future<void> showBetDialog({
                       borderSide: BorderSide.none,
                     ),
                     hintText: originalLine?.toStringAsFixed(1) ?? '-',
-                    hintStyle:
-                        const TextStyle(color: Color(0xFF555566)),
+                    hintStyle: const TextStyle(color: Color(0xFF555566)),
                   ),
                 ),
                 if (edgeSnap != null) ...[
                   const SizedBox(height: 10),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
                       color: (edgeSnap >= 5
                               ? const Color(0xFF00C853)
@@ -325,12 +342,14 @@ Future<void> showBetDialog({
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('Aposta virtual',
-                        style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                        style:
+                            TextStyle(color: Color(0xFF888888), fontSize: 12)),
                     Switch(
                       value: _isVirtual,
                       onChanged: (v) => setState(() => _isVirtual = v),
                       activeThumbColor: const Color(0xFF00B0FF),
-                      activeTrackColor: const Color(0xFF00B0FF).withValues(alpha: 0.4),
+                      activeTrackColor:
+                          const Color(0xFF00B0FF).withValues(alpha: 0.4),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ],
@@ -371,6 +390,7 @@ Future<void> showBetDialog({
                         if (val == '__nova__') {
                           final nova = await _showAddBookmakerDialog(
                               ctx, novaController);
+                          if (!ctx.mounted) return;
                           if (nova != null && nova.isNotEmpty) {
                             PrefsService.addCustomBookmaker(nova);
                             setState(() => selectedBookmaker = nova);
@@ -398,8 +418,10 @@ Future<void> showBetDialog({
                 final oddsVal2 =
                     double.tryParse(oddsController.text.replaceAll(',', '.'));
                 if (stake == null || stake <= 0) return;
-                if (selectedBookmaker == null || selectedBookmaker!.trim().isEmpty) return;
+                if (selectedBookmaker == null ||
+                    selectedBookmaker!.trim().isEmpty) return;
                 Navigator.pop(ctx);
+                if (!context.mounted) return;
                 PrefsService.setLastBookmaker(selectedBookmaker!);
                 try {
                   await ApiService.createBet({

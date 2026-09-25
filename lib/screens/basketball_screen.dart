@@ -57,8 +57,10 @@ class _BasketballScreenState extends State<BasketballScreen>
     try {
       final h2h = await ApiService.fetchNbaResults();
       final props = await ApiService.fetchNbaProps();
-      final enriched = await EdgeEvaluatorService.enrichWithContext(props.data, 'nba');
+      final enriched =
+          await EdgeEvaluatorService.enrichWithContext(props.data, 'nba');
       final filtered = EdgeEvaluatorService.adaptiveFilter(enriched);
+      if (!mounted) return;
       setState(() {
         _h2hResults = h2h.data;
         _propsResults = filtered;
@@ -66,8 +68,10 @@ class _BasketballScreenState extends State<BasketballScreen>
         _propsUpdated = props.lastUpdated;
       });
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -79,17 +83,23 @@ class _BasketballScreenState extends State<BasketballScreen>
     });
     try {
       await ApiService.post('nba/update-odds');
+      if (!mounted) return;
       setState(() => _status = 'Buscando props...');
       await ApiService.post('nba/update-props');
+      if (!mounted) return;
       setState(() => _status = 'Rodando modelos...');
       await ApiService.post('nba/run-model');
       await ApiService.post('nba/run-props-model');
+      if (!mounted) return;
       setState(() => _status = 'Carregando...');
       await _loadAll();
+      if (!mounted) return;
       setState(() => _status = 'Concluído.');
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -101,13 +111,17 @@ class _BasketballScreenState extends State<BasketballScreen>
     });
     try {
       await ApiService.post('nba/update-scores');
+      if (!mounted) return;
       setState(() => _status = 'Atualizando stats de jogadores (~20 min)...');
       await ApiService.post('nba/update-player-stats');
+      if (!mounted) return;
       setState(() => _status = 'Atualizando odds e props...');
       await _runQuick();
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -128,8 +142,7 @@ class _BasketballScreenState extends State<BasketballScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) =>
-          EdgeEvaluationSheet(props: valid, sport: 'Basquete NBA'),
+      builder: (_) => EdgeEvaluationSheet(props: valid, sport: 'Basquete NBA'),
     );
   }
 
@@ -222,12 +235,10 @@ class _BasketballScreenState extends State<BasketballScreen>
         ]),
         actions: [
           IconButton(
-            icon: const Icon(Icons.auto_awesome,
-                color: Color(0xFF7C4DFF)),
+            icon: const Icon(Icons.auto_awesome, color: Color(0xFF7C4DFF)),
             tooltip: 'Avaliar Edges',
-            onPressed: _loading || _propsResults.isEmpty
-                ? null
-                : _showEvaluation,
+            onPressed:
+                _loading || _propsResults.isEmpty ? null : _showEvaluation,
           ),
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),

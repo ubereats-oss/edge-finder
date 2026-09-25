@@ -88,7 +88,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (kIsWeb) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Pipeline disponível apenas na versão desktop/mobile.'),
+            content:
+                Text('Pipeline disponível apenas na versão desktop/mobile.'),
             backgroundColor: Colors.orange),
       );
       return;
@@ -97,7 +98,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (rootPath.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Configure o caminho do projeto antes de sincronizar.'),
+            content:
+                Text('Configure o caminho do projeto antes de sincronizar.'),
             backgroundColor: Colors.red),
       );
       return;
@@ -110,7 +112,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => _SyncOutputDialog(stream: controller.stream, doneNotifier: () => exitCode),
+      builder: (_) => _SyncOutputDialog(
+          stream: controller.stream, doneNotifier: () => exitCode),
     ).then((_) {
       controller.close();
     });
@@ -123,11 +126,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
         runInShell: true,
       );
 
-      process.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen(
-        (line) { if (!controller.isClosed) controller.add(line); },
+      process.stdout
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen(
+        (line) {
+          if (!controller.isClosed) controller.add(line);
+        },
       );
-      process.stderr.transform(utf8.decoder).transform(const LineSplitter()).listen(
-        (line) { if (!controller.isClosed) controller.add('ERR: $line'); },
+      process.stderr
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen(
+        (line) {
+          if (!controller.isClosed) controller.add('ERR: $line');
+        },
       );
 
       exitCode = await process.exitCode;
@@ -139,7 +152,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             content: Text(exitCode == 0
                 ? 'Odds BR sincronizadas com sucesso.'
                 : 'Erro ao sincronizar (exit code $exitCode).'),
-            backgroundColor: exitCode == 0 ? const Color(0xFF00C853) : Colors.red,
+            backgroundColor:
+                exitCode == 0 ? const Color(0xFF00C853) : Colors.red,
           ),
         );
       }
@@ -182,8 +196,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         decoration: const BoxDecoration(
           color: Color(0xFF1E1E2E),
           borderRadius: BorderRadius.all(Radius.circular(12)),
-          border: Border.fromBorderSide(
-              BorderSide(color: Color(0xFF333355))),
+          border: Border.fromBorderSide(BorderSide(color: Color(0xFF333355))),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: child,
@@ -200,8 +213,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text('Configurações',
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
       body: ListView(
         padding: const EdgeInsets.all(24),
@@ -223,8 +235,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 prefixText: 'R\$ ',
-                prefixStyle:
-                    TextStyle(color: Color(0xFF888888), fontSize: 18),
+                prefixStyle: TextStyle(color: Color(0xFF888888), fontSize: 18),
                 hintText: '0,00',
                 hintStyle: TextStyle(color: Color(0xFF444455)),
               ),
@@ -289,8 +300,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: TextField(
                     controller: _geminiController,
                     obscureText: _geminiObscure,
-                    style:
-                        const TextStyle(color: Colors.white, fontSize: 14),
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'AIzaSy...',
@@ -434,8 +444,7 @@ class _SyncOutputDialog extends StatefulWidget {
   final Stream<String> stream;
   final int? Function() doneNotifier;
 
-  const _SyncOutputDialog(
-      {required this.stream, required this.doneNotifier});
+  const _SyncOutputDialog({required this.stream, required this.doneNotifier});
 
   @override
   State<_SyncOutputDialog> createState() => _SyncOutputDialogState();
@@ -458,6 +467,7 @@ class _SyncOutputDialogState extends State<_SyncOutputDialog> {
       if (mounted) {
         setState(() => _lines.add(line));
         WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
           if (_scroll.hasClients) {
             _scroll.animateTo(
               _scroll.position.maxScrollExtent,
@@ -524,9 +534,8 @@ class _SyncOutputDialogState extends State<_SyncOutputDialog> {
           child: Text(
             'Fechar',
             style: TextStyle(
-                color: _done
-                    ? const Color(0xFF00C853)
-                    : const Color(0xFF444455),
+                color:
+                    _done ? const Color(0xFF00C853) : const Color(0xFF444455),
                 fontWeight: FontWeight.bold),
           ),
         ),

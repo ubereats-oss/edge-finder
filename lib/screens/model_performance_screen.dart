@@ -10,8 +10,7 @@ class ModelPerformanceScreen extends StatefulWidget {
   const ModelPerformanceScreen({super.key});
 
   @override
-  State<ModelPerformanceScreen> createState() =>
-      _ModelPerformanceScreenState();
+  State<ModelPerformanceScreen> createState() => _ModelPerformanceScreenState();
 }
 
 class _ModelPerformanceScreenState extends State<ModelPerformanceScreen> {
@@ -33,13 +32,17 @@ class _ModelPerformanceScreenState extends State<ModelPerformanceScreen> {
     });
     try {
       final result = await ApiService.fetchModelReport();
+      if (!mounted) return;
       setState(() {
         _rows = result.rows;
         _generatedAt = result.generatedAt;
       });
     } catch (e) {
-      setState(() => _error = 'Falha ao carregar o relatório. Verifique sua conexão e tente novamente.');
+      if (!mounted) return;
+      setState(() => _error =
+          'Falha ao carregar o relatório. Verifique sua conexão e tente novamente.');
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -52,9 +55,11 @@ class _ModelPerformanceScreenState extends State<ModelPerformanceScreen> {
     }
     for (final list in map.values) {
       list.sort((a, b) {
-        final m = ((a['market'] as String?) ?? '').compareTo((b['market'] as String?) ?? '');
+        final m = ((a['market'] as String?) ?? '')
+            .compareTo((b['market'] as String?) ?? '');
         if (m != 0) return m;
-        return ((a['edgeBucket'] as String?) ?? '').compareTo((b['edgeBucket'] as String?) ?? '');
+        return ((a['edgeBucket'] as String?) ?? '')
+            .compareTo((b['edgeBucket'] as String?) ?? '');
       });
     }
     return map;
@@ -83,7 +88,8 @@ class _ModelPerformanceScreenState extends State<ModelPerformanceScreen> {
             Icon(Icons.insights, color: Color(0xFF7C4DFF), size: 20),
             SizedBox(width: 8),
             Text('Desempenho do Modelo',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
           ],
         ),
         actions: [
@@ -292,7 +298,8 @@ class _ReportRowCard extends StatelessWidget {
                     const Spacer(),
                     Text(
                       '$clvComOdd/$nResolvidas com odd de fechamento',
-                      style: const TextStyle(color: Color(0xFF888888), fontSize: 11),
+                      style: const TextStyle(
+                          color: Color(0xFF888888), fontSize: 11),
                     ),
                   ],
                 ],
@@ -301,8 +308,13 @@ class _ReportRowCard extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                Expanded(child: _Stat(label: 'Acerto real', value: _fmtPct('winRateReal'))),
-                Expanded(child: _Stat(label: 'Previsto pelo modelo', value: _fmtPct('winRateModelo'))),
+                Expanded(
+                    child: _Stat(
+                        label: 'Acerto real', value: _fmtPct('winRateReal'))),
+                Expanded(
+                    child: _Stat(
+                        label: 'Previsto pelo modelo',
+                        value: _fmtPct('winRateModelo'))),
                 Expanded(child: _Stat(label: 'ROI', value: _fmtPct('roi'))),
               ],
             ),
@@ -325,9 +337,12 @@ class _Stat extends StatelessWidget {
       children: [
         Text(value,
             style: const TextStyle(
-                color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold)),
         const SizedBox(height: 2),
-        Text(label, style: const TextStyle(color: Color(0xFF888888), fontSize: 11)),
+        Text(label,
+            style: const TextStyle(color: Color(0xFF888888), fontSize: 11)),
       ],
     );
   }
@@ -352,11 +367,13 @@ class _SegmentBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(emAmostra ? Icons.science : Icons.verified, color: color, size: 13),
+          Icon(emAmostra ? Icons.science : Icons.verified,
+              color: color, size: 13),
           const SizedBox(width: 4),
           Text(
             emAmostra ? '$label · faltam $faltam' : label,
-            style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: color, fontSize: 11, fontWeight: FontWeight.bold),
           ),
         ],
       ),

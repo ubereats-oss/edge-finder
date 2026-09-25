@@ -60,6 +60,7 @@ class _BaseballScreenState extends State<BaseballScreen>
       final enriched =
           await EdgeEvaluatorService.enrichWithContext(props.data, 'mlb');
       final filtered = EdgeEvaluatorService.adaptiveFilter(enriched);
+      if (!mounted) return;
       setState(() {
         _h2hResults = h2h.data;
         _propsResults = filtered;
@@ -67,8 +68,10 @@ class _BaseballScreenState extends State<BaseballScreen>
         _propsUpdated = props.lastUpdated;
       });
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -76,8 +79,10 @@ class _BaseballScreenState extends State<BaseballScreen>
   Future<void> _waitForWorkflow() async {
     for (int i = 0; i < 36; i++) {
       await Future.delayed(const Duration(seconds: 5));
+      if (!mounted) return;
       try {
         final status = await ApiService.getWorkflowStatus();
+        if (!mounted) return;
         if (status == 'completed') return;
       } catch (_) {}
     }
@@ -90,14 +95,19 @@ class _BaseballScreenState extends State<BaseballScreen>
     });
     try {
       await ApiService.triggerUpdate('mlb');
+      if (!mounted) return;
       setState(() => _status = 'Aguardando conclusão...');
       await _waitForWorkflow();
+      if (!mounted) return;
       setState(() => _status = 'Carregando...');
       await _loadAll();
+      if (!mounted) return;
       setState(() => _status = 'Concluído.');
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -109,14 +119,19 @@ class _BaseballScreenState extends State<BaseballScreen>
     });
     try {
       await ApiService.triggerUpdate('all');
+      if (!mounted) return;
       setState(() => _status = 'Aguardando conclusão (~20 min)...');
       await _waitForWorkflow();
+      if (!mounted) return;
       setState(() => _status = 'Carregando...');
       await _loadAll();
+      if (!mounted) return;
       setState(() => _status = 'Concluído.');
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }

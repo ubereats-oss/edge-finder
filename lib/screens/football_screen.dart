@@ -44,15 +44,19 @@ class _FootballScreenState extends State<FootballScreen> {
     setState(() => _loading = true);
     try {
       final props = await ApiService.fetchNflProps();
-      final enriched = await EdgeEvaluatorService.enrichWithContext(props.data, 'nfl');
+      final enriched =
+          await EdgeEvaluatorService.enrichWithContext(props.data, 'nfl');
       final filtered = EdgeEvaluatorService.adaptiveFilter(enriched);
+      if (!mounted) return;
       setState(() {
         _propsResults = filtered;
         _propsUpdated = props.lastUpdated;
       });
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -64,20 +68,26 @@ class _FootballScreenState extends State<FootballScreen> {
     });
     try {
       await ApiService.triggerUpdate('nfl');
+      if (!mounted) return;
       setState(() => _status = 'Aguardando conclusão...');
       for (int i = 0; i < 36; i++) {
         await Future.delayed(const Duration(seconds: 5));
+        if (!mounted) return;
         try {
           final s = await ApiService.getWorkflowStatus();
+          if (!mounted) return;
           if (s == 'completed') break;
         } catch (_) {}
       }
       setState(() => _status = 'Carregando...');
       await _load();
+      if (!mounted) return;
       setState(() => _status = 'Concluído.');
     } catch (e) {
+      if (!mounted) return;
       _showError(e.toString());
     } finally {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }
@@ -90,20 +100,33 @@ class _FootballScreenState extends State<FootballScreen> {
 
   void _showEvaluation() {
     final valid = _propsResults.where(_jogoValido).toList();
-    if (valid.isEmpty) { _showError('Sem props disponíveis.'); return; }
+    if (valid.isEmpty) {
+      _showError('Sem props disponíveis.');
+      return;
+    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => EdgeEvaluationSheet(props: valid, sport: 'Futebol Americano NFL'),
+      builder: (_) =>
+          EdgeEvaluationSheet(props: valid, sport: 'Futebol Americano NFL'),
     );
   }
 
-  List<String> get _availableProps =>
-      _propsResults.where(_jogoValido).map((p) => p['prop'] as String).toSet().toList()..sort();
+  List<String> get _availableProps => _propsResults
+      .where(_jogoValido)
+      .map((p) => p['prop'] as String)
+      .toSet()
+      .toList()
+    ..sort();
 
-  List<String> get _availableTeams =>
-      _propsResults.where(_jogoValido).map((p) => (p['playerTeam'] as String?) ?? '').where((t) => t.isNotEmpty).toSet().toList()..sort();
+  List<String> get _availableTeams => _propsResults
+      .where(_jogoValido)
+      .map((p) => (p['playerTeam'] as String?) ?? '')
+      .where((t) => t.isNotEmpty)
+      .toSet()
+      .toList()
+    ..sort();
 
   List<Map<String, dynamic>> get _filtered {
     return _propsResults.where((p) {
@@ -111,7 +134,8 @@ class _FootballScreenState extends State<FootballScreen> {
       final edge = (p['edge'] as num).toDouble();
       if (edge < _minEdge) return false;
       if (_selectedProp != null && p['prop'] != _selectedProp) return false;
-      if (_selectedTeam != null && p['playerTeam'] != _selectedTeam) return false;
+      if (_selectedTeam != null && p['playerTeam'] != _selectedTeam)
+        return false;
       if (_hideWarnings && p['lowSample'] == true) return false;
       return true;
     }).toList();
@@ -132,14 +156,16 @@ class _FootballScreenState extends State<FootballScreen> {
             Text('🏈', style: TextStyle(fontSize: 20)),
             SizedBox(width: 8),
             Text('Futebol Americano NFL',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
           ],
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.auto_awesome, color: Color(0xFFFF6D00)),
             tooltip: 'Avaliar Edges',
-            onPressed: _loading || _propsResults.isEmpty ? null : _showEvaluation,
+            onPressed:
+                _loading || _propsResults.isEmpty ? null : _showEvaluation,
           ),
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
@@ -170,7 +196,8 @@ class _FootballScreenState extends State<FootballScreen> {
           ),
           Expanded(
             child: _filtered.isEmpty && !_loading
-                ? const _EmptyState(msg: 'Sem props NFL.\nAtualize para buscar.')
+                ? const _EmptyState(
+                    msg: 'Sem props NFL.\nAtualize para buscar.')
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     itemCount: _filtered.length,
