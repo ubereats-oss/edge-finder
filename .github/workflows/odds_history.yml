@@ -17,7 +17,6 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  ODDS_API_TOTAL_MIN_REMAINING: 0
 
 jobs:
   save-history:
@@ -68,6 +67,13 @@ jobs:
             mv odds_history/* odds_snapshots/ 2>/dev/null || true
             rmdir odds_history 2>/dev/null || true
           fi
+      - name: Restaurar histórico central para reserva dinâmica
+        run: |
+          mkdir -p odds_history
+          git fetch origin data
+          for file in $(git ls-tree -r --name-only origin/data | grep '^odds_history/model_ledger_.*\.json$'); do
+            git show "origin/data:$file" > "$file"
+          done
       - name: Executar coleta
         run: node pipeline/save_odds_history.js
         env:

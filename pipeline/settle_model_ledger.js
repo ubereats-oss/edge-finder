@@ -58,17 +58,42 @@ function lastWord(s) {
   return (s || '').toLowerCase().trim().split(' ').slice(-1)[0];
 }
 
+function normalizeText(s) {
+  return (s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\b(jr|sr|ii|iii|iv|v)\.?\b/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function gameTeamNeedles(game) {
+  return (game || '')
+    .split(/\s+x\s+|\s+@\s+|\s+vs\.?\s+/i)
+    .map(normalizeText)
+    .filter(Boolean);
+}
+
+function teamMatchesGame(teamName, gameNeedle) {
+  const team = normalizeText(teamName);
+  if (!team || !gameNeedle) return false;
+  return team === gameNeedle || team.includes(gameNeedle) || gameNeedle.includes(team) || lastWord(team) === lastWord(gameNeedle);
+}
+
 // Acha o evento ESPN que corresponde ao "game" salvo na indicação ('Home x Away'),
 // testando o dia do commenceTime e o dia seguinte/anterior (fuso horário).
 async function findEspnEvent(espnSport, commenceTime, game) {
-  const gameNorm = (game || '').toLowerCase();
+  const gameNeedles = gameTeamNeedles(game);
   const base = new Date(commenceTime);
   for (const offsetDays of [0, 1, -1]) {
     const d = new Date(base.getTime() + offsetDays * 24 * 60 * 60 * 1000);
     const scoreboard = await getScoreboard(espnSport, toYyyymmdd(d));
     for (const event of scoreboard.events || []) {
-      const teams = event.competitions?.[0]?.competitors?.map(c => lastWord(c.team?.displayName)) || [];
-      if (teams.some(t => t && gameNorm.includes(t))) return event;
+      const teams = event.competitions?.[0]?.competitors?.map(c => c.team?.displayName || '') || [];
+      const matched = gameNeedles.filter(needle => teams.some(team => teamMatchesGame(team, needle))).length;
+      if (matched >= Math.min(2, gameNeedles.length)) return event;
     }
   }
   return null;
@@ -85,8 +110,10 @@ function isVoidStatus(status) {
 
 function nameMatches(displayName, playerNeedle) {
   if (!displayName) return false;
-  const lastNeedle = lastWord(playerNeedle);
-  return displayName.toLowerCase().includes(lastNeedle);
+  const display = normalizeText(displayName);
+  const needle = normalizeText(playerNeedle);
+  const lastNeedle = lastWord(needle);
+  return display === needle || display.includes(needle) || needle.includes(display) || display.split(' ').includes(lastNeedle);
 }
 
 // Extratores por esporte/mercado. Cada um recebe o boxscore (resposta de
@@ -183,6 +210,17 @@ function playerAppearsInBox(box, playerNeedle) {
   return false;
 }
 
+function setNotResolvable(entry, reason, evidence) {
+  entry.resolutionStatus = ledger.RESOLUTION_STATUS.NAO_APURAVEL;
+  entry.resolutionFailureReason = reason;
+  entry.resolutionFailureEvidence = evidence ?? null;
+}
+
+function summarizeCounter(bucket, market, reason) {
+  if (!bucket[market]) bucket[market] = {};
+  bucket[market][reason] = (bucket[market][reason] || 0) + 1;
+}
+
 function gradeResult(value, line, side) {
   if (value === line) return ledger.RESULT_STATUS.PUSH;
   const over = value > line;
@@ -221,13 +259,17 @@ async function settleSport({ esporte, espnSport }) {
   const partitions = ledger.listPartitions(esporte);
 
   let apurados = 0, canceladas = 0, aindaPendentes = 0, naoApuraveis = 0, partitionsChanged = 0, falhasAcesso = 0, closingOddsExpiradas = 0;
+  const semExtratorPorMercado = {};
+  const naoApuravelPorMercado = {};
 
   for (const file of partitions) {
     const entries = JSON.parse(fs.readFileSync(file, 'utf-8'));
     let changed = false;
 
     for (const entry of entries) {
-      if (entry.resolutionStatus !== ledger.RESOLUTION_STATUS.PENDENTE) continue;
+      const shouldReprocessLegacyNotResolvable =
+        entry.resolutionStatus === ledger.RESOLUTION_STATUS.NAO_APURAVEL && !entry.resolutionFailureReason;
+      if (entry.resolutionStatus !== ledger.RESOLUTION_STATUS.PENDENTE && !shouldReprocessLegacyNotResolvable) continue;
 
       // Expira o rastreio de odd de fechamento (campo independente de
       // resolutionStatus) pra quem já passou da janela de captura sem
@@ -243,14 +285,19 @@ async function settleSport({ esporte, espnSport }) {
       if (isNaN(commence) || now - commence < grace) { aindaPendentes++; continue; }
 
       const extractor = EXTRACTORS[esporte]?.[entry.market];
-      if (entry.market !== 'h2h' && !extractor) { aindaPendentes++; continue; } // mercado sem apuração automática configurada
+      if (entry.market !== 'h2h' && !extractor) {
+        aindaPendentes++;
+        summarizeCounter(semExtratorPorMercado, entry.market || 'sem_market', 'sem_extrator');
+        continue;
+      }
 
       try {
         const event = await findEspnEvent(espnSport, entry.commenceTime, entry.game);
         if (!event) {
           entry.resolutionAttempts = (entry.resolutionAttempts || 0) + 1;
           if (entry.resolutionAttempts >= ledger.MAX_RESOLUTION_ATTEMPTS) {
-            entry.resolutionStatus = ledger.RESOLUTION_STATUS.NAO_APURAVEL;
+            setNotResolvable(entry, 'jogo_nao_encontrado_espn', { game: entry.game, commenceTime: entry.commenceTime });
+            summarizeCounter(naoApuravelPorMercado, entry.market, entry.resolutionFailureReason);
             naoApuraveis++;
           } else {
             aindaPendentes++;
@@ -271,7 +318,8 @@ async function settleSport({ esporte, espnSport }) {
         if (!isFinal(status)) {
           entry.resolutionAttempts = (entry.resolutionAttempts || 0) + 1;
           if (entry.resolutionAttempts >= ledger.MAX_RESOLUTION_ATTEMPTS) {
-            entry.resolutionStatus = ledger.RESOLUTION_STATUS.NAO_APURAVEL;
+            setNotResolvable(entry, 'status_nao_final', { espnEventId: event.id, status });
+            summarizeCounter(naoApuravelPorMercado, entry.market, entry.resolutionFailureReason);
             naoApuraveis++;
           } else {
             aindaPendentes++;
@@ -285,7 +333,8 @@ async function settleSport({ esporte, espnSport }) {
           if (statusResult === null) {
             entry.resolutionAttempts = (entry.resolutionAttempts || 0) + 1;
             if (entry.resolutionAttempts >= ledger.MAX_RESOLUTION_ATTEMPTS) {
-              entry.resolutionStatus = ledger.RESOLUTION_STATUS.NAO_APURAVEL;
+              setNotResolvable(entry, 'time_nao_encontrado_no_evento', { espnEventId: event.id, team: entry.player });
+              summarizeCounter(naoApuravelPorMercado, entry.market, entry.resolutionFailureReason);
               naoApuraveis++;
             } else {
               aindaPendentes++;
@@ -310,14 +359,17 @@ async function settleSport({ esporte, espnSport }) {
 
         if (value === null) {
           if (playerAppearsInBox(summary, entry.player)) {
-            // Apareceu no boxscore mas sem a coluna esperada — tenta de novo depois.
-            entry.resolutionAttempts = (entry.resolutionAttempts || 0) + 1;
-            if (entry.resolutionAttempts >= ledger.MAX_RESOLUTION_ATTEMPTS) {
-              entry.resolutionStatus = ledger.RESOLUTION_STATUS.NAO_APURAVEL;
-              naoApuraveis++;
-            } else {
-              aindaPendentes++;
-            }
+            // NFL/ESPN omite grupos/colunas zeradas para alguns jogadores
+            // (ex.: recebedor sem recepção, QB sem corrida). Se o jogador
+            // apareceu no boxscore e o jogo terminou, o realizado do prop é 0.
+            entry.result = {
+              status: gradeResult(0, entry.line, entry.side),
+              valorReal: 0,
+              apuradoEm: new Date().toISOString(),
+              motivo: 'estatistica_zerada_no_boxscore',
+            };
+            entry.resolutionStatus = ledger.RESOLUTION_STATUS.RESOLVIDO;
+            apurados++;
           } else {
             // Jogo final e jogador não aparece em nenhum grupo: não jogou/riscado.
             entry.result = { status: ledger.RESULT_STATUS.CANCELADO, valorReal: null, apuradoEm: new Date().toISOString(), motivo: 'jogador_nao_jogou' };
@@ -359,6 +411,12 @@ async function settleSport({ esporte, espnSport }) {
   }
 
   console.log(`[${esporte}] apuradas: ${apurados} | canceladas/void: ${canceladas} | ainda pendentes: ${aindaPendentes} | não apuráveis: ${naoApuraveis} | odd de fechamento expirada: ${closingOddsExpiradas} | falhas de acesso à ESPN: ${falhasAcesso} | partições atualizadas: ${partitionsChanged}`);
+  if (Object.keys(semExtratorPorMercado).length) {
+    console.log(`[${esporte}] pendentes sem extrator por mercado: ${JSON.stringify(semExtratorPorMercado)}`);
+  }
+  if (Object.keys(naoApuravelPorMercado).length) {
+    console.log(`[${esporte}] novas não apuráveis por mercado/motivo: ${JSON.stringify(naoApuravelPorMercado)}`);
+  }
   return { apurados, canceladas, aindaPendentes, naoApuraveis, partitionsChanged, falhasAcesso, closingOddsExpiradas };
 }
 
