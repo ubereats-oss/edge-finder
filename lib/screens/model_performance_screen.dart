@@ -224,7 +224,12 @@ class _ReportRowCard extends StatelessWidget {
     const labels = {
       'bloqueio_actions_22_24_set': 'bloqueio Actions 22-24/set',
       'execucao_falha': 'execução falha',
-      'fora_da_janela_de_captura': 'fora da janela',
+      'captura_expirada_sem_odd_gravada': 'expirada sem odd gravada',
+      'captura_nao_disparou_na_janela': 'captura não disparou na janela',
+      'registrada_antes_da_captura_existir': 'antes da captura existir',
+      'registrada_antes_do_controle_de_status_da_captura':
+          'antes do controle de captura',
+      'indicacao_rejeitada_nao_publicada': 'rejeitada',
       'evento_nao_encontrado': 'evento não encontrado',
       'outro': 'outro',
     };
