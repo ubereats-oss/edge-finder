@@ -6243,7 +6243,7 @@
     "firstEvaluatedAt": "2026-09-06T18:01:47.093Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -6255,7 +6255,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Odell Beckham Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -6394,7 +6395,7 @@
     "firstEvaluatedAt": "2026-09-06T18:01:47.093Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -6405,7 +6406,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Odell Beckham Jr.",
-      "market": "receptions"
+      "market": "receptions",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -10884,7 +10886,7 @@
     "firstEvaluatedAt": "2026-09-07T21:23:02.537Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -10896,7 +10898,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Odell Beckham Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -10924,7 +10927,7 @@
     "firstEvaluatedAt": "2026-09-07T21:23:02.537Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -10936,7 +10939,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Odell Beckham Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -10964,7 +10968,7 @@
     "firstEvaluatedAt": "2026-09-07T21:23:02.537Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -10975,7 +10979,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Odell Beckham Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -13152,7 +13157,7 @@
     "firstEvaluatedAt": "2026-09-08T20:59:48.659Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -13164,7 +13169,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Odell Beckham Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -24051,7 +24057,7 @@
     "firstEvaluatedAt": "2026-09-13T20:35:24.159Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -24063,7 +24069,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Odell Beckham Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -24091,7 +24098,7 @@
     "firstEvaluatedAt": "2026-09-13T20:35:24.159Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -24103,7 +24110,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Najee Harris",
-      "market": "rushYards"
+      "market": "rushYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -24131,7 +24139,7 @@
     "firstEvaluatedAt": "2026-09-13T20:35:24.159Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -24143,7 +24151,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Najee Harris",
-      "market": "rushYards"
+      "market": "rushYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -24171,7 +24180,7 @@
     "firstEvaluatedAt": "2026-09-13T20:35:24.159Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -24183,7 +24192,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Najee Harris",
-      "market": "rushYards"
+      "market": "rushYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -25543,7 +25553,7 @@
     "firstEvaluatedAt": "2026-09-13T23:45:37.969Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -25555,7 +25565,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Odell Beckham Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -25583,7 +25594,7 @@
     "firstEvaluatedAt": "2026-09-13T23:45:37.969Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -25595,7 +25606,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Odell Beckham Jr.",
-      "market": "receptions"
+      "market": "receptions",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -25623,7 +25635,7 @@
     "firstEvaluatedAt": "2026-09-13T23:45:37.969Z",
     "result": null,
     "resolutionAttempts": 5,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -25635,7 +25647,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872930",
       "player": "Najee Harris",
-      "market": "rushYards"
+      "market": "rushYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -30495,7 +30508,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872946",
       "player": "Michael Pittman Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "Pittsburgh Steelers"
     }
   },
   {
@@ -30535,7 +30549,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872946",
       "player": "Michael Pittman Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "Pittsburgh Steelers"
     }
   },
   {
@@ -30723,7 +30738,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872946",
       "player": "Michael Pittman Jr.",
-      "market": "receptions"
+      "market": "receptions",
+      "expectedTeam": "Pittsburgh Steelers"
     }
   },
   {
@@ -36657,7 +36673,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872946",
       "player": "Michael Pittman Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "Pittsburgh Steelers"
     }
   },
   {
@@ -36697,7 +36714,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872946",
       "player": "Michael Pittman Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "Pittsburgh Steelers"
     }
   },
   {
@@ -64144,7 +64162,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872947",
       "player": "Odell Beckham Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
@@ -64184,7 +64203,8 @@
     "resolutionFailureEvidence": {
       "espnEventId": "401872947",
       "player": "Odell Beckham Jr.",
-      "market": "receptionYards"
+      "market": "receptionYards",
+      "expectedTeam": "New York Giants"
     }
   },
   {
