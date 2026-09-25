@@ -688,9 +688,14 @@
     "runId": "2026-09-09T20:47:46.327Z",
     "evaluatedAt": "2026-09-09T20:47:46.462Z",
     "firstEvaluatedAt": "2026-09-06T18:01:47.092Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:20:48.138Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -6236,15 +6241,21 @@
     "runId": "2026-09-07T21:23:02.359Z",
     "evaluatedAt": "2026-09-07T21:23:02.537Z",
     "firstEvaluatedAt": "2026-09-06T18:01:47.093Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:20:50.175Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|George Pickens|receptions|5.5|Under",
@@ -6380,9 +6391,14 @@
     "runId": "2026-09-14T00:24:27.536Z",
     "evaluatedAt": "2026-09-14T00:24:27.681Z",
     "firstEvaluatedAt": "2026-09-06T18:01:47.093Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:20:50.722Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -7822,9 +7838,14 @@
     "runId": "2026-09-10T20:42:32.398Z",
     "evaluatedAt": "2026-09-10T20:42:32.560Z",
     "firstEvaluatedAt": "2026-09-07T21:23:02.536Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:20:52.362Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -10190,9 +10211,14 @@
     "runId": "2026-09-12T20:24:53.264Z",
     "evaluatedAt": "2026-09-12T20:24:53.445Z",
     "firstEvaluatedAt": "2026-09-07T21:23:02.537Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:20:53.409Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -10223,9 +10249,14 @@
     "runId": "2026-09-12T20:24:53.264Z",
     "evaluatedAt": "2026-09-12T20:24:53.445Z",
     "firstEvaluatedAt": "2026-09-07T21:23:02.537Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:20:53.768Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -10849,15 +10880,21 @@
     "runId": "2026-09-11T20:47:48.844Z",
     "evaluatedAt": "2026-09-11T20:47:48.958Z",
     "firstEvaluatedAt": "2026-09-07T21:23:02.537Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:20:54.329Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Odell Beckham Jr.|receptionYards|9.5|Over",
@@ -10882,15 +10919,21 @@
     "runId": "2026-09-14T00:24:27.536Z",
     "evaluatedAt": "2026-09-14T00:24:27.681Z",
     "firstEvaluatedAt": "2026-09-07T21:23:02.537Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:20:54.769Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Odell Beckham Jr.|receptionYards|10.5|Over",
@@ -10915,9 +10958,14 @@
     "runId": "2026-09-14T00:24:27.536Z",
     "evaluatedAt": "2026-09-14T00:24:27.681Z",
     "firstEvaluatedAt": "2026-09-07T21:23:02.537Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:20:55.198Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -11207,9 +11255,14 @@
     "runId": "2026-09-14T21:40:18.449Z",
     "evaluatedAt": "2026-09-14T21:40:18.577Z",
     "firstEvaluatedAt": "2026-09-07T21:23:02.537Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:20:56.800Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -13092,15 +13145,21 @@
     "runId": "2026-09-09T20:47:46.327Z",
     "evaluatedAt": "2026-09-09T20:47:46.463Z",
     "firstEvaluatedAt": "2026-09-08T20:59:48.659Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:20:57.392Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Javonte Williams|receptions|1.5|Over",
@@ -18352,9 +18411,14 @@
     "runId": "2026-09-10T20:42:32.398Z",
     "evaluatedAt": "2026-09-10T20:42:32.560Z",
     "firstEvaluatedAt": "2026-09-10T20:42:32.560Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:20:57.940Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -19421,9 +19485,14 @@
     "runId": "2026-09-12T20:24:53.264Z",
     "evaluatedAt": "2026-09-12T20:24:53.445Z",
     "firstEvaluatedAt": "2026-09-10T20:42:32.561Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:20:58.566Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -22343,9 +22412,14 @@
     "runId": "2026-09-12T20:24:53.264Z",
     "evaluatedAt": "2026-09-12T20:24:53.445Z",
     "firstEvaluatedAt": "2026-09-12T20:24:53.445Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:20:58.891Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -23969,15 +24043,21 @@
     "runId": "2026-09-13T20:35:24.000Z",
     "evaluatedAt": "2026-09-13T20:35:24.159Z",
     "firstEvaluatedAt": "2026-09-13T20:35:24.159Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:20:59.313Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Najee Harris|rushYards|18.5|Over",
@@ -24002,15 +24082,21 @@
     "runId": "2026-09-13T20:35:24.000Z",
     "evaluatedAt": "2026-09-13T20:35:24.159Z",
     "firstEvaluatedAt": "2026-09-13T20:35:24.159Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:20:59.723Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Najee Harris|rushYards|17.5|Over",
@@ -24035,15 +24121,21 @@
     "runId": "2026-09-13T20:35:24.000Z",
     "evaluatedAt": "2026-09-13T20:35:24.159Z",
     "firstEvaluatedAt": "2026-09-13T20:35:24.159Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:00.107Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Najee Harris|rushYards|16.5|Over",
@@ -24068,15 +24160,21 @@
     "runId": "2026-09-13T20:35:24.000Z",
     "evaluatedAt": "2026-09-13T20:35:24.159Z",
     "firstEvaluatedAt": "2026-09-13T20:35:24.159Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:00.644Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "5ad8135dc2b5f27de0b777acd317855a|Bo Nix|passYards|238.5|Under",
@@ -25433,15 +25531,21 @@
     "runId": "2026-09-14T00:24:27.536Z",
     "evaluatedAt": "2026-09-14T00:24:27.681Z",
     "firstEvaluatedAt": "2026-09-13T23:45:37.969Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:01.050Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Odell Beckham Jr.|receptions|0.5|Over",
@@ -25466,15 +25570,21 @@
     "runId": "2026-09-14T00:24:27.536Z",
     "evaluatedAt": "2026-09-14T00:24:27.681Z",
     "firstEvaluatedAt": "2026-09-13T23:45:37.969Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:01.660Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Najee Harris|rushYards|15.5|Over",
@@ -25499,15 +25609,21 @@
     "runId": "2026-09-14T00:24:27.536Z",
     "evaluatedAt": "2026-09-14T00:24:27.681Z",
     "firstEvaluatedAt": "2026-09-13T23:45:37.969Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:02.059Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3e646c7479c57f5d9752d8c7dfe7059b|Dak Prescott|passYards|274.5|Under",
@@ -26605,9 +26721,14 @@
     "runId": "2026-09-14T21:40:18.449Z",
     "evaluatedAt": "2026-09-14T21:40:18.577Z",
     "firstEvaluatedAt": "2026-09-14T21:40:18.577Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:02.705Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -26638,9 +26759,14 @@
     "runId": "2026-09-14T21:40:18.449Z",
     "evaluatedAt": "2026-09-14T21:40:18.577Z",
     "firstEvaluatedAt": "2026-09-14T21:40:18.577Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:03.112Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -26671,9 +26797,14 @@
     "runId": "2026-09-14T21:40:18.449Z",
     "evaluatedAt": "2026-09-14T21:40:18.577Z",
     "firstEvaluatedAt": "2026-09-14T21:40:18.577Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:03.673Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -26741,9 +26872,14 @@
     "runId": "2026-09-14T21:40:18.449Z",
     "evaluatedAt": "2026-09-14T21:40:18.577Z",
     "firstEvaluatedAt": "2026-09-14T21:40:18.577Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:04.097Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -26774,9 +26910,14 @@
     "runId": "2026-09-14T21:40:18.449Z",
     "evaluatedAt": "2026-09-14T21:40:18.577Z",
     "firstEvaluatedAt": "2026-09-14T21:40:18.577Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:04.784Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -26955,9 +27096,14 @@
     "runId": "2026-09-14T21:40:18.449Z",
     "evaluatedAt": "2026-09-14T21:40:18.577Z",
     "firstEvaluatedAt": "2026-09-14T21:40:18.577Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:05.222Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -29802,9 +29948,14 @@
     "runId": "2026-09-19T20:18:37.577Z",
     "evaluatedAt": "2026-09-19T20:18:37.802Z",
     "firstEvaluatedAt": "2026-09-16T21:05:19.042Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:06.582Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -29909,9 +30060,14 @@
     "runId": "2026-09-19T20:18:37.577Z",
     "evaluatedAt": "2026-09-19T20:18:37.802Z",
     "firstEvaluatedAt": "2026-09-16T21:05:19.042Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:06.925Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -30312,15 +30468,21 @@
     "runId": "2026-09-16T21:05:18.816Z",
     "evaluatedAt": "2026-09-16T21:05:19.042Z",
     "firstEvaluatedAt": "2026-09-16T21:05:19.042Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:08.004Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Michael Pittman Jr.|receptionYards|32.5|Over",
@@ -30345,15 +30507,21 @@
     "runId": "2026-09-17T21:07:47.917Z",
     "evaluatedAt": "2026-09-17T21:07:48.065Z",
     "firstEvaluatedAt": "2026-09-16T21:05:19.042Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:08.471Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Darnell Washington|receptionYards|18.5|Under",
@@ -30526,15 +30694,21 @@
     "runId": "2026-09-17T21:07:47.917Z",
     "evaluatedAt": "2026-09-17T21:07:48.065Z",
     "firstEvaluatedAt": "2026-09-16T21:05:19.042Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:08.815Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Pat Freiermuth|receptions|2.5|Over",
@@ -33557,15 +33731,21 @@
     "runId": "2026-09-17T21:07:47.917Z",
     "evaluatedAt": "2026-09-17T21:07:48.064Z",
     "firstEvaluatedAt": "2026-09-17T21:07:48.064Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:10.629Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|DJ Moore|receptionYards|72.5|Over",
@@ -33590,15 +33770,21 @@
     "runId": "2026-09-17T21:07:47.917Z",
     "evaluatedAt": "2026-09-17T21:07:48.064Z",
     "firstEvaluatedAt": "2026-09-17T21:07:48.064Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:11.034Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "56e8897681915f7ec92baeee952bb1ae|Sam LaPorta|receptionYards|35.5|Under",
@@ -33956,9 +34142,14 @@
     "runId": "2026-09-17T21:07:47.917Z",
     "evaluatedAt": "2026-09-17T21:07:48.064Z",
     "firstEvaluatedAt": "2026-09-17T21:07:48.064Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:11.425Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -33989,9 +34180,14 @@
     "runId": "2026-09-17T21:07:47.917Z",
     "evaluatedAt": "2026-09-17T21:07:48.064Z",
     "firstEvaluatedAt": "2026-09-17T21:07:48.064Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:11.880Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 5,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -36171,9 +36367,14 @@
     "runId": "2026-09-19T20:18:37.577Z",
     "evaluatedAt": "2026-09-19T20:18:37.802Z",
     "firstEvaluatedAt": "2026-09-17T21:07:48.065Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:12.444Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -36426,15 +36627,21 @@
     "runId": "2026-09-17T21:07:47.917Z",
     "evaluatedAt": "2026-09-17T21:07:48.065Z",
     "firstEvaluatedAt": "2026-09-17T21:07:48.065Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:12.784Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Michael Pittman Jr.|receptionYards|34.5|Over",
@@ -36459,15 +36666,21 @@
     "runId": "2026-09-17T21:07:47.917Z",
     "evaluatedAt": "2026-09-17T21:07:48.065Z",
     "firstEvaluatedAt": "2026-09-17T21:07:48.065Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:13.126Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Rhamondre Stevenson|receptionYards|16.5|Under",
@@ -38047,9 +38260,14 @@
     "runId": "2026-09-19T20:18:37.577Z",
     "evaluatedAt": "2026-09-19T20:18:37.803Z",
     "firstEvaluatedAt": "2026-09-17T21:07:48.065Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:14.110Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -46337,15 +46555,21 @@
     "runId": "2026-09-19T20:18:37.577Z",
     "evaluatedAt": "2026-09-19T20:18:37.802Z",
     "firstEvaluatedAt": "2026-09-18T20:40:01.444Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:14.564Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|TreVeyon Henderson|receptions|1.5|Over",
@@ -46370,9 +46594,14 @@
     "runId": "2026-09-19T20:18:37.577Z",
     "evaluatedAt": "2026-09-19T20:18:37.803Z",
     "firstEvaluatedAt": "2026-09-18T20:40:01.444Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:14.894Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -49587,9 +49816,14 @@
     "runId": "2026-09-19T20:18:37.577Z",
     "evaluatedAt": "2026-09-19T20:18:37.803Z",
     "firstEvaluatedAt": "2026-09-18T20:40:01.444Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:15.410Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -58134,9 +58368,14 @@
     "runId": "2026-09-19T20:18:37.577Z",
     "evaluatedAt": "2026-09-19T20:18:37.802Z",
     "firstEvaluatedAt": "2026-09-19T20:18:37.802Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:15.746Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -58574,15 +58813,21 @@
     "runId": "2026-09-19T20:18:37.577Z",
     "evaluatedAt": "2026-09-19T20:18:37.802Z",
     "firstEvaluatedAt": "2026-09-19T20:18:37.802Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-09-25T00:21:16.144Z",
+      "motivo": "estatistica_zerada_no_boxscore"
+    },
     "resolutionAttempts": 3,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9d14f87600f6edc74dbcb5c74edf6246|Rhamondre Stevenson|rushYards|37.5|Under",
@@ -63867,15 +64112,21 @@
     "runId": "2026-09-20T20:33:33.744Z",
     "evaluatedAt": "2026-09-20T20:33:33.923Z",
     "firstEvaluatedAt": "2026-09-19T20:18:37.805Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:17.322Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 2,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "32367f882fac1a0c20a6335619922025|Odell Beckham Jr.|receptionYards|6.5|Over",
@@ -63900,15 +64151,21 @@
     "runId": "2026-09-20T20:33:33.744Z",
     "evaluatedAt": "2026-09-20T20:33:33.923Z",
     "firstEvaluatedAt": "2026-09-19T20:18:37.805Z",
-    "result": null,
+    "result": {
+      "status": "cancelado",
+      "valorReal": null,
+      "apuradoEm": "2026-09-25T00:21:17.726Z",
+      "motivo": "jogador_nao_jogou"
+    },
     "resolutionAttempts": 2,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "32367f882fac1a0c20a6335619922025|Kyren Williams|rushYards|64.5|Over",
