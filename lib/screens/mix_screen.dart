@@ -68,8 +68,7 @@ class _MixScreenState extends State<MixScreen> {
       setState(() => _status = '');
       _showError(e.toString());
     } finally {
-      if (!mounted) return;
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -558,6 +557,7 @@ class _MixScreenState extends State<MixScreen> {
     );
 
     if (confirmedStakes != null) {
+      if (!mounted) return;
       await _submitAllBets(props, confirmedStakes!, isVirtual);
     }
   }
@@ -636,7 +636,9 @@ class _MixScreenState extends State<MixScreen> {
       if (dt == null) return false;
       if (dt.year != _selectedDate!.year ||
           dt.month != _selectedDate!.month ||
-          dt.day != _selectedDate!.day) return false;
+          dt.day != _selectedDate!.day) {
+        return false;
+      }
     }
     return true;
   }
@@ -688,7 +690,9 @@ class _MixScreenState extends State<MixScreen> {
             if (dt == null) return false;
             if (dt.year != _selectedDate!.year ||
                 dt.month != _selectedDate!.month ||
-                dt.day != _selectedDate!.day) return false;
+                dt.day != _selectedDate!.day) {
+              return false;
+            }
           }
           return true;
         })

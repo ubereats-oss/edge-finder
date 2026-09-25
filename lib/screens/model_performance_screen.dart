@@ -42,8 +42,7 @@ class _ModelPerformanceScreenState extends State<ModelPerformanceScreen> {
       final message = e.toString().replaceFirst('Exception: ', '');
       setState(() => _error = 'Falha ao carregar o relatório: $message');
     } finally {
-      if (!mounted) return;
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 

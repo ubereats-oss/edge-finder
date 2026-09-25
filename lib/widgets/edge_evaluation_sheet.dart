@@ -63,8 +63,7 @@ class _EdgeEvaluationSheetState extends State<EdgeEvaluationSheet>
       setState(
           () => _geminiError = e.toString().replaceFirst('Exception: ', ''));
     } finally {
-      if (!mounted) return;
-      setState(() => _geminiLoading = false);
+      if (mounted) setState(() => _geminiLoading = false);
     }
   }
 

@@ -56,18 +56,18 @@ Future<void> showBetDialog({
     text: originalLine != null ? originalLine.toStringAsFixed(1) : '',
   );
 
-  double? _recalcEdge;
-  double? _recalcKelly;
-  bool _isVirtual = false;
+  double? recalcEdge;
+  double? recalcKelly;
+  bool isVirtual = false;
 
-  void _recalculate([StateSetter? setState]) {
+  void recalculate([StateSetter? setState]) {
     final oddsVal = double.tryParse(oddsController.text.replaceAll(',', '.'));
     final lineVal = double.tryParse(lineController.text.replaceAll(',', '.'));
     void update(VoidCallback fn) => setState != null ? setState(fn) : fn();
     if (oddsVal == null || oddsVal <= 1) {
       update(() {
-        _recalcEdge = null;
-        _recalcKelly = null;
+        recalcEdge = null;
+        recalcKelly = null;
       });
       return;
     }
@@ -92,8 +92,8 @@ Future<void> showBetDialog({
     }
     if (prob == null) {
       update(() {
-        _recalcEdge = null;
-        _recalcKelly = null;
+        recalcEdge = null;
+        recalcKelly = null;
       });
       return;
     }
@@ -104,12 +104,12 @@ Future<void> showBetDialog({
         ? ((prob * b - (1 - prob)) / b * RiskConfig.kellyFraction * 100)
         : 0.0;
     update(() {
-      _recalcEdge = edge;
-      _recalcKelly = kelly.clamp(0.0, 100.0);
+      recalcEdge = edge;
+      recalcKelly = kelly.clamp(0.0, 100.0);
     });
   }
 
-  _recalculate();
+  recalculate();
 
   await showDialog(
     context: context,
@@ -123,8 +123,8 @@ Future<void> showBetDialog({
             (oddsVal != null && stakeVal != null && oddsVal > 0 && stakeVal > 0)
                 ? oddsVal * stakeVal
                 : null;
-        final edgeSnap = _recalcEdge;
-        final kellySnap = _recalcKelly;
+        final edgeSnap = recalcEdge;
+        final kellySnap = recalcKelly;
         return AlertDialog(
           backgroundColor: const Color(0xFF1E1E2E),
           title: Text(title,
@@ -202,7 +202,7 @@ Future<void> showBetDialog({
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   style: const TextStyle(color: Colors.white),
-                  onChanged: (_) => _recalculate(setState),
+                  onChanged: (_) => recalculate(setState),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: const Color(0xFF2A2A3E),
@@ -223,7 +223,7 @@ Future<void> showBetDialog({
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   style: const TextStyle(color: Colors.white),
-                  onChanged: (_) => _recalculate(setState),
+                  onChanged: (_) => recalculate(setState),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: const Color(0xFF2A2A3E),
@@ -345,8 +345,8 @@ Future<void> showBetDialog({
                         style:
                             TextStyle(color: Color(0xFF888888), fontSize: 12)),
                     Switch(
-                      value: _isVirtual,
-                      onChanged: (v) => setState(() => _isVirtual = v),
+                      value: isVirtual,
+                      onChanged: (v) => setState(() => isVirtual = v),
                       activeThumbColor: const Color(0xFF00B0FF),
                       activeTrackColor:
                           const Color(0xFF00B0FF).withValues(alpha: 0.4),
@@ -419,7 +419,9 @@ Future<void> showBetDialog({
                     double.tryParse(oddsController.text.replaceAll(',', '.'));
                 if (stake == null || stake <= 0) return;
                 if (selectedBookmaker == null ||
-                    selectedBookmaker!.trim().isEmpty) return;
+                    selectedBookmaker!.trim().isEmpty) {
+                  return;
+                }
                 Navigator.pop(ctx);
                 if (!context.mounted) return;
                 PrefsService.setLastBookmaker(selectedBookmaker!);
@@ -430,7 +432,7 @@ Future<void> showBetDialog({
                     'odds': oddsVal2 ?? betData['odds'],
                     'side': hasSides ? selectedSide : betData['side'],
                     'bookmaker': selectedBookmaker!.trim(),
-                    'virtual': _isVirtual,
+                    'virtual': isVirtual,
                   });
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
