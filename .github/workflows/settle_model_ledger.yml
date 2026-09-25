@@ -43,6 +43,7 @@ jobs:
           git fetch origin data 2>/dev/null || true
           mkdir -p odds_history
           git checkout origin/data -- 'odds_history/model_ledger_*.json' 2>/dev/null || true
+          git checkout origin/data -- nfl_player_team.json 2>/dev/null || true
 
       - name: Reprocessar histórico (push/void, invalidação NHL, esquema)
         run: node pipeline/reprocess_ledger_history.js

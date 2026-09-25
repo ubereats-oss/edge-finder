@@ -12,6 +12,17 @@ const axios = require('axios');
 const fs = require('fs');
 const ledger = require('./model_ledger');
 
+function readJsonSafe(file, fallback) {
+  if (!fs.existsSync(file)) return fallback;
+  try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return fallback; }
+}
+
+const PLAYER_TEAM_BY_SPORT = {
+  'americanfootball/nfl': readJsonSafe('nfl_player_team.json', {}),
+};
+
+const PLAYER_NOT_FOUND_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
 const SPORTS = [
   { esporte: 'basketball/nba', espnSport: 'basketball/nba' },
   { esporte: 'baseball/mlb',   espnSport: 'baseball/mlb' },
@@ -144,23 +155,51 @@ const EXTRACTORS = {
     },
   },
   'americanfootball/nfl': {
-    passYards:      (box, p) => findFlatStat(box, p, ['YDS'], 'passing'),
-    passTDs:        (box, p) => findFlatStat(box, p, ['TD'], 'passing'),
-    rushYards:      (box, p) => findFlatStat(box, p, ['YDS'], 'rushing'),
-    receptions:     (box, p) => findFlatStat(box, p, ['REC'], 'receiving'),
-    receptionYards: (box, p) => findFlatStat(box, p, ['YDS'], 'receiving'),
+    passYards:      (box, p, entry) => findFlatStat(box, p, ['YDS'], 'passing', expectedPlayerTeam(entry)),
+    passTDs:        (box, p, entry) => findFlatStat(box, p, ['TD'], 'passing', expectedPlayerTeam(entry)),
+    rushYards:      (box, p, entry) => findFlatStat(box, p, ['YDS'], 'rushing', expectedPlayerTeam(entry)),
+    receptions:     (box, p, entry) => findFlatStat(box, p, ['REC'], 'receiving', expectedPlayerTeam(entry)),
+    receptionYards: (box, p, entry) => findFlatStat(box, p, ['YDS'], 'receiving', expectedPlayerTeam(entry)),
   },
 };
+
+function expectedPlayerTeam(entry) {
+  return entry.playerTeam ?? PLAYER_TEAM_BY_SPORT[entry.esporte]?.[entry.player] ?? null;
+}
+
+function athleteNameMatches(name, playerNeedle, teamName, expectedTeam, teamAthletes) {
+  const display = normalizeText(name);
+  const needle = normalizeText(playerNeedle);
+  if (display === needle || display.includes(needle) || needle.includes(display)) return true;
+  if (!expectedTeam || !teamMatchesGame(teamName, expectedTeam)) return false;
+  const lastNeedle = lastWord(normalizeText(playerNeedle));
+  if (!lastNeedle) return false;
+  const matches = teamAthletes.filter(a => lastWord(normalizeText(a)) === lastNeedle);
+  return matches.length === 1 && normalizeText(matches[0]) === normalizeText(name);
+}
+
+function teamAthleteNames(team) {
+  const names = [];
+  for (const group of team.statistics || []) {
+    for (const athlete of group.athletes || []) {
+      const name = athlete.athlete?.displayName;
+      if (name) names.push(name);
+    }
+  }
+  return [...new Set(names)];
+}
 
 // Procura o jogador nos grupos de estatística do boxscore e devolve o valor
 // numérico da(s) coluna(s) `labelCandidates`. `groupFilter` (string ou array)
 // filtra por `statGroup.type` (MLB) ou `statGroup.name` (NHL/NFL) quando o
 // mesmo label aparece em mais de um grupo (ex.: 'H' em batting e pitching,
 // 'YDS' em passing/rushing/receiving).
-function findFlatStat(box, playerNeedle, labelCandidates, groupFilter) {
+function findFlatStat(box, playerNeedle, labelCandidates, groupFilter, expectedTeam) {
   const allowed = groupFilter == null ? null : (Array.isArray(groupFilter) ? groupFilter : [groupFilter]);
   const teams = box.boxscore?.players || [];
   for (const team of teams) {
+    const teamName = team.team?.displayName || team.team?.name || team.team?.abbreviation || '';
+    const namesOnTeam = teamAthleteNames(team);
     for (const group of team.statistics || []) {
       if (allowed && !allowed.includes(group.type) && !allowed.includes(group.name)) continue;
       const labels = group.labels || [];
@@ -168,7 +207,7 @@ function findFlatStat(box, playerNeedle, labelCandidates, groupFilter) {
       if (idx === undefined) continue;
       for (const athlete of group.athletes || []) {
         const name = athlete.athlete?.displayName || '';
-        if (!nameMatches(name, playerNeedle)) continue;
+        if (!athleteNameMatches(name, playerNeedle, teamName, expectedTeam, namesOnTeam)) continue;
         const val = parseFloat(athlete.stats?.[idx]);
         if (!isNaN(val)) return val;
       }
@@ -198,12 +237,14 @@ function findMadeAttempted(box, playerNeedle, label) {
 
 // Alguém apareceu no boxscore (em qualquer grupo)? Usado só pra decidir entre
 // "jogador não jogou" (cancelado) e "coluna/valor indisponível" (tentativa).
-function playerAppearsInBox(box, playerNeedle) {
+function playerAppearsInBox(box, playerNeedle, expectedTeam) {
   const teams = box.boxscore?.players || [];
   for (const team of teams) {
+    const teamName = team.team?.displayName || team.team?.name || team.team?.abbreviation || '';
+    const namesOnTeam = teamAthleteNames(team);
     for (const group of team.statistics || []) {
       for (const athlete of group.athletes || []) {
-        if (nameMatches(athlete.athlete?.displayName || '', playerNeedle)) return true;
+        if (athleteNameMatches(athlete.athlete?.displayName || '', playerNeedle, teamName, expectedTeam, namesOnTeam)) return true;
       }
     }
   }
@@ -355,10 +396,11 @@ async function settleSport({ esporte, espnSport }) {
 
         const summary = await getSummary(espnSport, event.id);
         await sleep(250);
-        const value = extractor(summary, entry.player);
+        const value = extractor(summary, entry.player, entry);
 
         if (value === null) {
-          if (playerAppearsInBox(summary, entry.player)) {
+          const expectedTeam = expectedPlayerTeam(entry);
+          if (playerAppearsInBox(summary, entry.player, expectedTeam)) {
             // NFL/ESPN omite grupos/colunas zeradas para alguns jogadores
             // (ex.: recebedor sem recepção, QB sem corrida). Se o jogador
             // apareceu no boxscore e o jogo terminou, o realizado do prop é 0.
@@ -377,8 +419,14 @@ async function settleSport({ esporte, espnSport }) {
             entry.resolutionStatus = ledger.RESOLUTION_STATUS.PENDENTE;
             entry.result = null;
             entry.resolutionFailureReason = 'jogador_nao_encontrado';
-            entry.resolutionFailureEvidence = { espnEventId: event.id, player: entry.player, market: entry.market };
-            aindaPendentes++;
+            entry.resolutionFailureEvidence = { espnEventId: event.id, player: entry.player, market: entry.market, expectedTeam };
+            if (Date.now() - commence >= PLAYER_NOT_FOUND_MAX_AGE_MS) {
+              setNotResolvable(entry, 'jogador_nao_encontrado', entry.resolutionFailureEvidence);
+              summarizeCounter(naoApuravelPorMercado, entry.market, entry.resolutionFailureReason);
+              naoApuraveis++;
+            } else {
+              aindaPendentes++;
+            }
           }
           changed = true;
           continue;
