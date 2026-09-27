@@ -1131,14 +1131,21 @@
     "firstEvaluatedAt": "2026-09-25T21:18:30.278Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817097",
+      "player": "Jacob deGrom",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "9f08a9d734982153de27326c32e8be0e|Joe Ryan|strikeouts|6.5|Over",
@@ -1171,14 +1178,21 @@
     "firstEvaluatedAt": "2026-09-25T21:18:30.278Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817097",
+      "player": "Joe Ryan",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "eb8b9160f66fc6d5f6bd58bf4a888011|Brandon Pfaadt|strikeouts|3.5|Over",
@@ -1211,14 +1225,21 @@
     "firstEvaluatedAt": "2026-09-25T21:18:30.278Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817099",
+      "player": "Brandon Pfaadt",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "de8bbf8d379bf416df612c557ddd338a|Hunter Brown|strikeouts|5.5|Over",
@@ -1251,14 +1272,21 @@
     "firstEvaluatedAt": "2026-09-25T21:18:30.278Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817100",
+      "player": "Hunter Brown",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "de8bbf8d379bf416df612c557ddd338a|Jacob Lopez|strikeouts|4.5|Over",
@@ -1291,14 +1319,21 @@
     "firstEvaluatedAt": "2026-09-25T21:18:30.278Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817100",
+      "player": "Jacob Lopez",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "60b3d02ac77cf6a81e234358cfe187bb|Bryce Miller|strikeouts|6.5|Over",
@@ -1331,14 +1366,21 @@
     "firstEvaluatedAt": "2026-09-25T21:18:30.278Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817098",
+      "player": "Bryce Miller",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "60b3d02ac77cf6a81e234358cfe187bb|Reid Detmers|strikeouts|6.5|Over",
@@ -1371,14 +1413,21 @@
     "firstEvaluatedAt": "2026-09-25T21:18:30.278Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817098",
+      "player": "Reid Detmers",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "e47efe97f629cae0287ca6f3ea6d6794|Tarik Skubal|strikeouts|7.5|Over",
@@ -1411,14 +1460,21 @@
     "firstEvaluatedAt": "2026-09-25T21:18:30.278Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817101",
+      "player": "Tarik Skubal",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "f02fbe7c7bb8a6741f285b306e7d8fa8|Bailey Ober|strikeouts|4.5|Over",
@@ -1449,16 +1505,20 @@
     "runId": "2026-09-26T20:51:04.067Z",
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 5,
+      "apuradoEm": "2026-09-27T15:10:24.747Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "f02fbe7c7bb8a6741f285b306e7d8fa8|Nathan Eovaldi|strikeouts|3.5|Over",
@@ -1489,16 +1549,20 @@
     "runId": "2026-09-26T20:51:04.067Z",
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 3,
+      "apuradoEm": "2026-09-27T15:10:25.262Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "6b474c64214114311f42d90b1a674c02|Michael Wacha|strikeouts|3.5|Over",
@@ -1529,16 +1593,20 @@
     "runId": "2026-09-26T20:51:04.067Z",
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 4,
+      "apuradoEm": "2026-09-27T15:10:25.963Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "6b474c64214114311f42d90b1a674c02|Tanner Bibee|strikeouts|3.5|Over",
@@ -1569,16 +1637,20 @@
     "runId": "2026-09-26T20:51:04.067Z",
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 6,
+      "apuradoEm": "2026-09-27T15:10:26.449Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "5e96347a5c09f2be46dc616aa404bf27|Davis Martin|strikeouts|4.5|Over",
@@ -1609,16 +1681,20 @@
     "runId": "2026-09-26T20:51:04.067Z",
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 1,
+      "apuradoEm": "2026-09-27T15:10:27.004Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "5e96347a5c09f2be46dc616aa404bf27|Jose Quintana|strikeouts|3.5|Over",
@@ -1649,16 +1725,20 @@
     "runId": "2026-09-26T20:51:04.067Z",
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 3,
+      "apuradoEm": "2026-09-27T15:10:27.561Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "bff2944df94a062f85abadcd9aab1086|Dustin May|strikeouts|3.5|Over",
@@ -1689,16 +1769,20 @@
     "runId": "2026-09-26T20:51:04.067Z",
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 5,
+      "apuradoEm": "2026-09-27T15:10:28.279Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "bff2944df94a062f85abadcd9aab1086|Quinn Mathews|strikeouts|4.5|n/a",
@@ -1729,16 +1813,20 @@
     "runId": "2026-09-26T20:51:04.067Z",
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 7,
+      "apuradoEm": "2026-09-27T15:10:28.788Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "a0fc8eb52d64679d94e7eaa311299d74|Walker Buehler|strikeouts|3.5|Over",
@@ -1770,7 +1858,7 @@
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -1778,7 +1866,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9b8ec8bc261ab6b47fd213703849325e|Hayden Wesneski|strikeouts|4.5|Over",
@@ -1810,7 +1898,7 @@
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -1818,7 +1906,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9b8ec8bc261ab6b47fd213703849325e|Jack Perkins|strikeouts|4.5|Over",
@@ -1850,7 +1938,7 @@
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -1858,7 +1946,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "eba81e8f90abe50ccdfcee55fe0080b8|Kade Anderson|strikeouts|5.5|n/a",
@@ -1890,7 +1978,7 @@
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -1898,7 +1986,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "eba81e8f90abe50ccdfcee55fe0080b8|Ryan Johnson|strikeouts|4.5|Over",
@@ -1930,7 +2018,7 @@
     "evaluatedAt": "2026-09-26T20:51:04.420Z",
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -1938,6 +2026,6 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   }
 ]
