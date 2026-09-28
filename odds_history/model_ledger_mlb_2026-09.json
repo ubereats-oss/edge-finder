@@ -1859,14 +1859,21 @@
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817114",
+      "player": "Walker Buehler",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "9b8ec8bc261ab6b47fd213703849325e|Hayden Wesneski|strikeouts|4.5|Over",
@@ -1899,14 +1906,21 @@
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817115",
+      "player": "Hayden Wesneski",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "9b8ec8bc261ab6b47fd213703849325e|Jack Perkins|strikeouts|4.5|Over",
@@ -1939,14 +1953,21 @@
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817115",
+      "player": "Jack Perkins",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "eba81e8f90abe50ccdfcee55fe0080b8|Kade Anderson|strikeouts|5.5|n/a",
@@ -1979,14 +2000,21 @@
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817113",
+      "player": "Kade Anderson",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "eba81e8f90abe50ccdfcee55fe0080b8|Ryan Johnson|strikeouts|4.5|Over",
@@ -2019,13 +2047,20 @@
     "firstEvaluatedAt": "2026-09-26T20:51:04.420Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401817113",
+      "player": "Ryan Johnson",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   }
 ]
