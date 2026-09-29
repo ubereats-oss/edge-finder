@@ -2141,7 +2141,9 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "closingOddsLastAttemptAt": "2026-09-29T17:33:04.792Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "4cb76cceb16eb603c683038d132f4642|Cam Schlittler|strikeouts|7.5|Over",
