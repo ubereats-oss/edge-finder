@@ -2092,16 +2092,20 @@
     "runId": "2026-09-28T23:04:33.520Z",
     "evaluatedAt": "2026-09-28T23:04:33.925Z",
     "firstEvaluatedAt": "2026-09-28T23:04:33.925Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 9,
+      "apuradoEm": "2026-09-30T16:25:39.521Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "08d9219713246e3edff39b4f549085d8|Jesus Luzardo|strikeouts|2.5|Over",
@@ -2132,16 +2136,20 @@
     "runId": "2026-09-28T23:04:33.520Z",
     "evaluatedAt": "2026-09-28T23:04:33.926Z",
     "firstEvaluatedAt": "2026-09-28T23:04:33.926Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 6,
+      "apuradoEm": "2026-09-30T16:25:39.999Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-09-29T17:33:04.792Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
@@ -2175,7 +2183,7 @@
     "evaluatedAt": "2026-09-29T22:03:15.490Z",
     "firstEvaluatedAt": "2026-09-28T23:04:33.926Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -2183,7 +2191,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -2223,7 +2231,7 @@
     "evaluatedAt": "2026-09-28T23:04:33.926Z",
     "firstEvaluatedAt": "2026-09-28T23:04:33.926Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -2231,7 +2239,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "98adc841e3aababc93878e3cf743a2d4|Michael King|strikeouts|4.5|Over",
@@ -2263,7 +2271,7 @@
     "evaluatedAt": "2026-09-29T22:03:15.491Z",
     "firstEvaluatedAt": "2026-09-28T23:04:33.926Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -2271,7 +2279,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -2311,7 +2319,7 @@
     "evaluatedAt": "2026-09-29T22:03:15.490Z",
     "firstEvaluatedAt": "2026-09-29T22:03:15.490Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -2319,7 +2327,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "98adc841e3aababc93878e3cf743a2d4|Matthew Boyd|strikeouts|3.5|Over",
@@ -2351,7 +2359,7 @@
     "evaluatedAt": "2026-09-29T22:03:15.491Z",
     "firstEvaluatedAt": "2026-09-29T22:03:15.491Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -2359,6 +2367,6 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   }
 ]
