@@ -2184,7 +2184,7 @@
     "firstEvaluatedAt": "2026-09-28T23:04:33.926Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -2199,7 +2199,14 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401907963",
+      "player": "Cam Schlittler",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "4cb76cceb16eb603c683038d132f4642|Payton Tolle|strikeouts|7.5|Over",
@@ -2232,14 +2239,21 @@
     "firstEvaluatedAt": "2026-09-28T23:04:33.926Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401907963",
+      "player": "Payton Tolle",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "98adc841e3aababc93878e3cf743a2d4|Michael King|strikeouts|4.5|Over",
@@ -2272,7 +2286,7 @@
     "firstEvaluatedAt": "2026-09-28T23:04:33.926Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -2287,7 +2301,14 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401907975",
+      "player": "Michael King",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "4cb76cceb16eb603c683038d132f4642|Payton Tolle|strikeouts|6.5|Over",
@@ -2320,14 +2341,21 @@
     "firstEvaluatedAt": "2026-09-29T22:03:15.490Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401907963",
+      "player": "Payton Tolle",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "98adc841e3aababc93878e3cf743a2d4|Matthew Boyd|strikeouts|3.5|Over",
@@ -2360,13 +2388,20 @@
     "firstEvaluatedAt": "2026-09-29T22:03:15.491Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401907975",
+      "player": "Matthew Boyd",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   }
 ]
