@@ -1,4 +1,7 @@
 {
+  "Atlanta Hawks": [
+    "Henri Veesaar"
+  ],
   "Golden State Warriors": [
     "Jimmy Butler III",
     "Moses Moody"
@@ -7,13 +10,15 @@
     "Johnny Furphy"
   ],
   "LA Clippers": [
+    "Yanic Konan Niederhauser",
+    "Brandon Ingram",
     "Jordan Miller"
-  ],
-  "Memphis Grizzlies": [
-    "Richie Saunders"
   ],
   "Minnesota Timberwolves": [
     "Donte DiVincenzo"
+  ],
+  "Orlando Magic": [
+    "Izaiyah Nelson"
   ],
   "Phoenix Suns": [
     "Mark Williams"
@@ -25,6 +30,7 @@
     "Jayden Quaintance"
   ],
   "Washington Wizards": [
+    "Tristan Vukcevic",
     "Jamir Watkins"
   ]
 }
