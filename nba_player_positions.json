@@ -311,14 +311,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Peter Suder": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Marquel Sutton": {
-    "position": "F",
-    "group": "forward"
-  },
   "Dailyn Swain": {
     "position": "G",
     "group": "guard"
@@ -559,6 +551,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Ryan Nembhard": {
+    "position": "G",
+    "group": "guard"
+  },
   "Zeke Nnaji": {
     "position": "F",
     "group": "forward"
@@ -744,10 +740,6 @@
     "group": "guard"
   },
   "Clint Capela": {
-    "position": "C",
-    "group": "center"
-  },
-  "Rafael Castro": {
     "position": "C",
     "group": "center"
   },
