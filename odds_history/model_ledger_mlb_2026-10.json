@@ -561,6 +561,8 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "closingOddsLastAttemptAt": "2026-10-04T00:02:31.655Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   }
 ]
