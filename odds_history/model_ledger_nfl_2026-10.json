@@ -2353,7 +2353,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 203.5,
     "adjustedClosingOverOdds": 1.88,
     "adjustedClosingUnderOdds": 1.88,
@@ -2406,7 +2406,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -2454,7 +2454,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -2502,7 +2502,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -2550,7 +2550,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -2598,7 +2598,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 70.5,
     "adjustedClosingOverOdds": 1.87,
     "adjustedClosingUnderOdds": 1.87,
@@ -2651,7 +2651,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 6.5,
     "adjustedClosingOverOdds": 2.02,
     "adjustedClosingUnderOdds": 1.77,
@@ -2704,7 +2704,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -2752,7 +2752,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 6.5,
     "adjustedClosingOverOdds": 2.17,
     "adjustedClosingUnderOdds": 1.67,
@@ -2805,7 +2805,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -2853,7 +2853,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -2901,7 +2901,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Jonathan Taylor|rushYards|92.5|Under",
@@ -2941,7 +2941,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 94.5,
     "adjustedClosingOverOdds": 1.88,
     "adjustedClosingUnderOdds": 1.85,
@@ -2994,7 +2994,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -4340,7 +4340,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -4388,7 +4388,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 197.5,
     "adjustedClosingOverOdds": 1.87,
     "adjustedClosingUnderOdds": 1.87,
@@ -4441,7 +4441,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 70.5,
     "adjustedClosingOverOdds": 1.88,
     "adjustedClosingUnderOdds": 1.85,
@@ -4494,7 +4494,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -4542,7 +4542,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 54.5,
     "adjustedClosingOverOdds": 1.85,
     "adjustedClosingUnderOdds": 1.88,
@@ -4595,7 +4595,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Stefon Diggs|receptionYards|41.5|Over",
@@ -4635,7 +4635,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -4683,7 +4683,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -4731,7 +4731,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 21.5,
     "adjustedClosingOverOdds": 1.92,
     "adjustedClosingUnderOdds": 1.87,
@@ -4784,7 +4784,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -4832,7 +4832,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -4880,7 +4880,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 93.5,
     "adjustedClosingOverOdds": 1.9,
     "adjustedClosingUnderOdds": 1.88,
@@ -4933,7 +4933,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 89.5,
     "adjustedClosingOverOdds": 1.88,
     "adjustedClosingUnderOdds": 1.88,
@@ -4986,7 +4986,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -5034,7 +5034,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -5082,7 +5082,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -5130,7 +5130,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -14242,7 +14242,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -14290,7 +14290,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -14338,7 +14338,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 208.5,
     "adjustedClosingOverOdds": 1.87,
     "adjustedClosingUnderOdds": 1.87,
@@ -14391,7 +14391,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 208.5,
     "adjustedClosingOverOdds": 1.87,
     "adjustedClosingUnderOdds": 1.87,
@@ -14444,7 +14444,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 70.5,
     "adjustedClosingOverOdds": 1.88,
     "adjustedClosingUnderOdds": 1.91,
@@ -14497,7 +14497,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.321Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -14550,7 +14550,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -14598,7 +14598,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 59.5,
     "adjustedClosingOverOdds": 1.89,
     "adjustedClosingUnderOdds": 1.89,
@@ -14651,7 +14651,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Stefon Diggs|receptionYards|44.5|Over",
@@ -14691,7 +14691,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -14739,7 +14739,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -14787,7 +14787,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.321Z",
     "closingOddsMissingReason": "jogador_indisponivel_no_mercado"
   },
@@ -14829,7 +14829,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -14877,7 +14877,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 93.5,
     "adjustedClosingOverOdds": 1.9,
     "adjustedClosingUnderOdds": 1.88,
@@ -14930,7 +14930,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Jacory Croskey-Merritt|rushYards|56.5|Over",
@@ -14970,7 +14970,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "664e6bda5721dc63be16bcf7d962a436|Jacoby Brissett|passTDs|1.5|Over",
@@ -38688,7 +38688,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Daniel Jones|passYards|227.5|Over",
@@ -38728,7 +38728,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Marcus Mariota|passYards|214.5|Under",
@@ -38768,7 +38768,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 208.5,
     "adjustedClosingOverOdds": 1.87,
     "adjustedClosingUnderOdds": 1.87,
@@ -38821,7 +38821,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Terry McLaurin|receptionYards|52.5|Over",
@@ -38861,7 +38861,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Tyler Warren|receptionYards|49.5|Under",
@@ -38901,7 +38901,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.321Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -38954,7 +38954,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -39002,7 +39002,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -39050,7 +39050,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Antonio Williams|receptionYards|18.5|n/a",
@@ -39090,7 +39090,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Laquon Treadwell|receptionYards|14.5|n/a",
@@ -39130,7 +39130,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -39178,7 +39178,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -39226,7 +39226,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Antonio Williams|receptions|1.5|n/a",
@@ -39266,7 +39266,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Laquon Treadwell|receptions|1.5|n/a",
@@ -39306,7 +39306,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -39354,7 +39354,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 91.5,
     "adjustedClosingOverOdds": 1.87,
     "adjustedClosingUnderOdds": 1.87,
@@ -39407,7 +39407,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -39455,7 +39455,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -39503,7 +39503,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -39551,7 +39551,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -39599,7 +39599,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -58951,7 +58951,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -58999,7 +58999,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.321Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -59052,7 +59052,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 55.5,
     "adjustedClosingOverOdds": 1.87,
     "adjustedClosingUnderOdds": 1.87,
@@ -59105,7 +59105,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.321Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -59158,7 +59158,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.321Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -59211,7 +59211,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.322Z",
     "closingOddsMissingReason": "jogador_indisponivel_no_mercado"
   },
@@ -59253,7 +59253,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -59301,7 +59301,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -59349,7 +59349,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.322Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -59402,7 +59402,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Darius Slayton|receptions|1.5|Over",
@@ -59442,7 +59442,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -59490,7 +59490,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.322Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -59543,7 +59543,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -59591,7 +59591,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "664e6bda5721dc63be16bcf7d962a436|Jacoby Brissett|passYards|230.5|Over",
@@ -71271,7 +71271,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Daniel Jones|passYards|219.5|Over",
@@ -71311,7 +71311,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Daniel Jones|passYards|218.5|Over",
@@ -71351,7 +71351,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Marcus Mariota|passYards|205.5|Under",
@@ -71438,7 +71438,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.322Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -71491,7 +71491,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.322Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -71591,7 +71591,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.322Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -71644,7 +71644,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Laquon Treadwell|receptionYards|25.5|n/a",
@@ -71684,7 +71684,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Laquon Treadwell|receptionYards|22.5|n/a",
@@ -71724,7 +71724,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Laquon Treadwell|receptionYards|23.5|n/a",
@@ -71764,7 +71764,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Treylon Burks|receptionYards|15.5|Over",
@@ -71804,7 +71804,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Jacory Croskey-Merritt|receptionYards|5.5|Under",
@@ -71891,7 +71891,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.322Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -71944,7 +71944,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Stefon Diggs|receptionYards|53.5|Over",
@@ -71984,7 +71984,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Antonio Williams|receptionYards|30.5|n/a",
@@ -72024,7 +72024,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Josh Downs|receptions|6.5|Under",
@@ -72111,7 +72111,7 @@
     "invalidReason": "sigma_baixo",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Jacory Croskey-Merritt|receptions|1.5|n/a",
@@ -72151,7 +72151,7 @@
     "invalidReason": "sigma_baixo",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Chig Okonkwo|receptions|3.5|Over",
@@ -72191,7 +72191,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Dyami Brown|receptions|1.5|n/a",
@@ -72231,7 +72231,7 @@
     "invalidReason": "sigma_baixo",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Jacory Croskey-Merritt|rushYards|66.5|Under",
@@ -72271,7 +72271,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T13:02:28.322Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
@@ -72324,7 +72324,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Daniel Jones|rushYards|10.5|Over",
@@ -72364,7 +72364,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c9d8ed8aa4889486eaf10a630138ede0|Kaytron Allen|rushYards|13.5|n/a",
@@ -72404,7 +72404,7 @@
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "664e6bda5721dc63be16bcf7d962a436|Jacoby Brissett|passYards|231.5|Over",

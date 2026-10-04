@@ -248,16 +248,20 @@
     "runId": "2026-10-02T21:59:32.260Z",
     "evaluatedAt": "2026-10-02T21:59:32.689Z",
     "firstEvaluatedAt": "2026-10-01T22:29:52.386Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 6,
+      "apuradoEm": "2026-10-04T15:23:11.912Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -296,16 +300,20 @@
     "runId": "2026-10-03T20:48:14.875Z",
     "evaluatedAt": "2026-10-03T20:48:15.208Z",
     "firstEvaluatedAt": "2026-10-01T22:29:52.386Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 10,
+      "apuradoEm": "2026-10-04T15:23:12.399Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -345,7 +353,7 @@
     "evaluatedAt": "2026-10-01T22:29:52.386Z",
     "firstEvaluatedAt": "2026-10-01T22:29:52.386Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -353,7 +361,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "5d13b613a334039f0694d8c95af28728|Hagen Smith|strikeouts|1.5|n/a",
@@ -384,16 +392,20 @@
     "runId": "2026-10-02T21:59:32.260Z",
     "evaluatedAt": "2026-10-02T21:59:32.689Z",
     "firstEvaluatedAt": "2026-10-02T21:59:32.689Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 4,
+      "apuradoEm": "2026-10-04T15:23:12.874Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "cb4d07dc15440acf3d9ebe1ad41756c1|Gerrit Cole|strikeouts|4.5|Over",
@@ -424,16 +436,20 @@
     "runId": "2026-10-02T21:59:32.260Z",
     "evaluatedAt": "2026-10-02T21:59:32.689Z",
     "firstEvaluatedAt": "2026-10-02T21:59:32.689Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 5,
+      "apuradoEm": "2026-10-04T15:23:13.340Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "347a2e725dd11a54a1d964eae3d04dd2|Jacob Misiorowski|strikeouts|7.5|Over",
@@ -465,7 +481,7 @@
     "evaluatedAt": "2026-10-03T20:48:15.208Z",
     "firstEvaluatedAt": "2026-10-02T21:59:32.689Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -473,7 +489,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -512,16 +528,20 @@
     "runId": "2026-10-03T20:48:14.875Z",
     "evaluatedAt": "2026-10-03T20:48:15.208Z",
     "firstEvaluatedAt": "2026-10-03T20:48:15.208Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 5,
+      "apuradoEm": "2026-10-04T15:23:13.813Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "347a2e725dd11a54a1d964eae3d04dd2|Robbie Ray|strikeouts|3.5|Over",
@@ -553,7 +573,7 @@
     "evaluatedAt": "2026-10-03T20:48:15.208Z",
     "firstEvaluatedAt": "2026-10-03T20:48:15.208Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": true,
@@ -561,7 +581,7 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T00:02:31.655Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   }
