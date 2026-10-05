@@ -354,14 +354,21 @@
     "firstEvaluatedAt": "2026-10-01T22:29:52.386Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401908003",
+      "player": "Jacob Misiorowski",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "5d13b613a334039f0694d8c95af28728|Hagen Smith|strikeouts|1.5|n/a",
@@ -482,7 +489,7 @@
     "firstEvaluatedAt": "2026-10-02T21:59:32.689Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -497,7 +504,14 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401908003",
+      "player": "Jacob Misiorowski",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "cb4d07dc15440acf3d9ebe1ad41756c1|Gerrit Cole|strikeouts|5.5|Over",
@@ -583,7 +597,14 @@
     "clv": null,
     "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-04T00:02:31.655Z",
-    "closingOddsMissingReason": "bookmaker_indisponivel"
+    "closingOddsMissingReason": "bookmaker_indisponivel",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401908003",
+      "player": "Robbie Ray",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "583202487b52f61769b2404a64e01c77|Blake Snell|strikeouts|6.5|Over",
@@ -615,7 +636,7 @@
     "evaluatedAt": "2026-10-04T21:03:48.976Z",
     "firstEvaluatedAt": "2026-10-04T21:03:48.976Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -623,7 +644,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ccd487a87bb73145e3f12dd3a765ad47|Gavin Williams|strikeouts|7.5|Over",
