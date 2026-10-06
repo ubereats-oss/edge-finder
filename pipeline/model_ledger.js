@@ -196,6 +196,7 @@ function recordEvaluation(rec) {
     // modelProb = probabilidade CALIBRADA (é o que edge/Kelly usam). rawProb
     // = probabilidade bruta do modelo, antes da calibração, só para auditoria.
     modelProb, rawProb, odds, bookmaker, edge, kelly, published, rejectionReason,
+    oddsOver, oddsUnder, bookmakerOver, bookmakerUnder,
     playerTeam,
     playerAvg, playerStd, playerAvg5, playerAvg10,
     runId,
@@ -246,6 +247,10 @@ function recordEvaluation(rec) {
     rawProb: rawProb ?? null,
     odds,
     bookmaker: bookmaker ?? null,
+    oddsOver: oddsOver ?? existing?.oddsOver ?? null,
+    oddsUnder: oddsUnder ?? existing?.oddsUnder ?? null,
+    bookmakerOver: bookmakerOver ?? existing?.bookmakerOver ?? null,
+    bookmakerUnder: bookmakerUnder ?? existing?.bookmakerUnder ?? null,
     edge,
     kelly,
     published: published ?? null,
