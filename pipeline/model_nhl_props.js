@@ -126,8 +126,8 @@ const PROP_MAP = {
 
 if (!props.length) { console.log('nhl_props.json vazio.'); process.exit(0); }
 if (Object.keys(playerStats).length === 0) {
-  console.error('nhl_player_stats.json ausente.');
-  process.exit(1);
+  console.warn('AVISO: nhl_player_stats.json ausente ou vazio — pulando modelo NHL nesta execução.');
+  process.exit(0);
 }
 
 const NOW = Date.now();

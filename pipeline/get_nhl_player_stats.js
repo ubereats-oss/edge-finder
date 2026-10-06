@@ -26,7 +26,45 @@ const FULL_MONTHS = [
   { start: '20260201', end: '20260228', season: 2026 },
   { start: '20260301', end: '20260331', season: 2026 },
   { start: '20260401', end: '20260430', season: 2026 },
+  { start: '20260501', end: '20260531', season: 2026 },
+  { start: '20260601', end: '20260630', season: 2026 },
+  { start: '20261001', end: '20261031', season: 2027 },
+  { start: '20261101', end: '20261130', season: 2027 },
+  { start: '20261201', end: '20261231', season: 2027 },
+  { start: '20270101', end: '20270131', season: 2027 },
+  { start: '20270201', end: '20270228', season: 2027 },
+  { start: '20270301', end: '20270331', season: 2027 },
+  { start: '20270401', end: '20270430', season: 2027 },
+  { start: '20270501', end: '20270531', season: 2027 },
+  { start: '20270601', end: '20270630', season: 2027 },
 ];
+
+// ESPN passou a rejeitar o parâmetro dates=INICIO-FIM com HTTP 400
+// ("Failed to get events endpoint"); só aceita um dia por chamada.
+const DAY_FETCH_DELAY_MS = 80;
+const DAY_FAILURE_ABORT_RATE = 0.5;
+
+function toUtcDate(ymd) {
+  return new Date(Date.UTC(parseInt(ymd.slice(0, 4)), parseInt(ymd.slice(4, 6)) - 1, parseInt(ymd.slice(6, 8))));
+}
+
+function formatYmd(date) {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(date.getUTCDate()).padStart(2, '0');
+  return `${y}${m}${d}`;
+}
+
+function dateRangeDays(start, end) {
+  const days = [];
+  let cur = toUtcDate(start);
+  const last = toUtcDate(end);
+  while (cur <= last) {
+    days.push(formatYmd(cur));
+    cur = new Date(cur.getTime() + 86400000);
+  }
+  return days;
+}
 
 const STAT_KEYS = ['goals', 'assists', 'points', 'shots', 'blocked'];
 const MIN_TOI_SECONDS = 300;
@@ -89,8 +127,8 @@ function getIncrementalRange(lastDate) {
   return [{ start, end, season }];
 }
 
-async function fetchEventIds(start, end) {
-  const url = `https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard?limit=200&dates=${start}-${end}`;
+async function fetchDayEvents(day) {
+  const url = `https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard?limit=200&dates=${day}`;
   const res = await axios.get(url);
   return (res.data.events || [])
     .filter(e => e.competitions[0].status.type.completed)
@@ -113,6 +151,24 @@ async function fetchEventIds(start, end) {
         homeWon: home?.winner === true,
       };
     });
+}
+
+// Retorna { events, attempted, failed } — uma chamada por dia, nunca lança,
+// para permitir detectar no chamador quando a maioria das requisições falhou.
+async function fetchEventIds(start, end) {
+  const days = dateRangeDays(start, end);
+  const events = [];
+  let failed = 0;
+  for (const day of days) {
+    try {
+      events.push(...await fetchDayEvents(day));
+    } catch (e) {
+      failed++;
+      console.error(`Erro ${day}:`, e.response ? `HTTP ${e.response.status} ${JSON.stringify(e.response.data)}` : e.message);
+    }
+    await sleep(DAY_FETCH_DELAY_MS);
+  }
+  return { events, attempted: days.length, failed };
 }
 
 async function fetchBoxScore(eventId) {
@@ -241,20 +297,27 @@ async function getPlayerStats() {
   }
 
   const allEvents = [];
+  let totalDaysAttempted = 0;
+  let totalDaysFailed = 0;
   for (const { start, end, season } of months) {
     console.log(`Buscando ${start}–${end} (temporada ${season})...`);
-    try {
-      const events = await fetchEventIds(start, end);
-      for (const ev of events) ev._season = season;
-      allEvents.push(...events);
-      console.log(`  ${events.length} jogos`);
-    } catch (e) {
-      console.error(`Erro ${start}:`, e.message);
-    }
+    const { events, attempted, failed } = await fetchEventIds(start, end);
+    totalDaysAttempted += attempted;
+    totalDaysFailed += failed;
+    for (const ev of events) ev._season = season;
+    allEvents.push(...events);
+    console.log(`  ${events.length} jogos${failed ? ` (${failed}/${attempted} dias com erro)` : ''}`);
   }
 
   allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
   console.log(`Total: ${allEvents.length} jogos`);
+
+  const failureRate = totalDaysAttempted > 0 ? totalDaysFailed / totalDaysAttempted : 0;
+  if (totalDaysFailed > 0 && failureRate >= DAY_FAILURE_ABORT_RATE) {
+    console.error(`ERRO: ${totalDaysFailed}/${totalDaysAttempted} requisições de dia falharam (${Math.round(failureRate * 100)}%). Coleta NHL abortada sem sobrescrever nhl_player_stats.json.`);
+    process.exitCode = 1;
+    return;
+  }
 
   if (!allEvents.length) {
     console.log('Nenhum jogo novo. Stats já atualizados.');
