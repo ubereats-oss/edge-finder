@@ -636,7 +636,7 @@
     "evaluatedAt": "2026-10-04T21:03:48.976Z",
     "firstEvaluatedAt": "2026-10-04T21:03:48.976Z",
     "result": null,
-    "resolutionAttempts": 1,
+    "resolutionAttempts": 2,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -675,16 +675,20 @@
     "runId": "2026-10-04T21:03:48.609Z",
     "evaluatedAt": "2026-10-04T21:03:48.977Z",
     "firstEvaluatedAt": "2026-10-04T21:03:48.977Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 11,
+      "apuradoEm": "2026-10-06T16:49:44.832Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "4be245ad03895bcafcdc42d7d926b675|Cam Schlittler|strikeouts|6.5|Over",
@@ -716,7 +720,7 @@
     "evaluatedAt": "2026-10-05T23:53:52.869Z",
     "firstEvaluatedAt": "2026-10-04T21:03:48.977Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -724,7 +728,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": null,
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
@@ -764,7 +768,7 @@
     "evaluatedAt": "2026-10-04T21:03:48.977Z",
     "firstEvaluatedAt": "2026-10-04T21:03:48.977Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -772,7 +776,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "4be245ad03895bcafcdc42d7d926b675|Freddy Peralta|strikeouts|4.5|Over",
@@ -804,7 +808,7 @@
     "evaluatedAt": "2026-10-05T23:53:52.869Z",
     "firstEvaluatedAt": "2026-10-05T23:53:52.869Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -812,7 +816,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "1bc3bf1d3034010bdfb31d928a71177a|Chris Sale|strikeouts|7.5|Over",
