@@ -81,7 +81,8 @@ async function getNhlProps() {
 
     console.log(`Jogos NHL encontrados: ${events.length}`);
     const allProps = [];
-    let descartadosLinhaDivergente = 0;
+    const linhasSemPar = {};
+    let totalLinhasSemPar = 0;
 
     for (const event of events) {
       if (oddsApi.allExhausted()) {
@@ -130,7 +131,15 @@ async function getNhlProps() {
 
           for (const [player, lines] of Object.entries(playerLines)) {
             for (const sides of Object.values(lines)) {
-              if (!sides.Over || !sides.Under) { descartadosLinhaDivergente++; continue; }
+              if (!sides.Over || !sides.Under) {
+                totalLinhasSemPar++;
+                if (!linhasSemPar[market.key]) {
+                  linhasSemPar[market.key] = { semOver: 0, semUnder: 0 };
+                }
+                if (!sides.Over) linhasSemPar[market.key].semOver++;
+                if (!sides.Under) linhasSemPar[market.key].semUnder++;
+                continue;
+              }
               const team = playerTeam[player];
               let location = 'unknown';
               if (team) {
@@ -165,7 +174,7 @@ async function getNhlProps() {
 
     fs.writeFileSync('nhl_props.json', JSON.stringify(allProps, null, 2));
     console.log(`Props NHL salvas: ${allProps.length} entradas.`);
-    console.log(`Descartados por divergência de linha (NHL): ${descartadosLinhaDivergente}`);
+    console.log(`Linhas NHL sem par Over/Under: ${totalLinhasSemPar} (${JSON.stringify(linhasSemPar)})`);
   } catch (e) {
     console.error('Erro ao buscar props NHL:', e.response?.data || e.message);
   }
