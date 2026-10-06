@@ -25,8 +25,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -45,7 +45,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "26b036ff107f3c658258eaf4a6f26228|Jayson Tatum|assists|5.5|Over",
@@ -73,8 +77,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -93,7 +97,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "26b036ff107f3c658258eaf4a6f26228|Cade Cunningham|points|24.5|Over",
@@ -121,8 +129,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -141,7 +149,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "26b036ff107f3c658258eaf4a6f26228|Jayson Tatum|points|26.5|Over",
@@ -169,8 +181,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -189,7 +201,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "26b036ff107f3c658258eaf4a6f26228|Cade Cunningham|rebounds|5.5|Over",
@@ -217,8 +233,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -237,7 +253,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "26b036ff107f3c658258eaf4a6f26228|Jayson Tatum|rebounds|8.5|Over",
@@ -265,8 +285,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -285,7 +305,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Jalen Brunson|assists|6.5|Over",
@@ -313,8 +337,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -333,7 +357,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Jalen Brunson|points|25.5|Over",
@@ -361,8 +389,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -381,7 +409,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Jalen Brunson|rebounds|2.5|Over",
@@ -409,8 +441,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -429,7 +461,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Shai Gilgeous-Alexander|assists|5.5|Over",
@@ -457,8 +493,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -477,7 +513,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Victor Wembanyama|assists|2.5|Over",
@@ -505,8 +545,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -525,7 +565,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Shai Gilgeous-Alexander|points|29.5|Over",
@@ -553,8 +597,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.324Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -573,7 +617,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Victor Wembanyama|points|26.5|Over",
@@ -601,8 +649,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.325Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -621,7 +669,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Shai Gilgeous-Alexander|rebounds|4.5|Over",
@@ -649,8 +701,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.325Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -669,7 +721,11 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Victor Wembanyama|rebounds|11.5|Over",
@@ -697,8 +753,8 @@
     "rejectionReason": "margem_insuficiente",
     "segmentState": null,
     "sampleSize": null,
-    "runId": "2026-10-06T21:54:18.697Z",
-    "evaluatedAt": "2026-10-06T21:54:19.325Z",
+    "runId": "2026-10-06T22:31:32.359Z",
+    "evaluatedAt": "2026-10-06T22:31:32.791Z",
     "firstEvaluatedAt": "2026-10-02T21:59:46.909Z",
     "result": null,
     "resolutionAttempts": 0,
@@ -717,6 +773,10 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "oddsOver": null,
+    "oddsUnder": null,
+    "bookmakerOver": null,
+    "bookmakerUnder": null
   }
 ]
