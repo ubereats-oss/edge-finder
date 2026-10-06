@@ -50,6 +50,7 @@ const MIN_TOI_SECONDS = 300;
 // salva o progresso e para; a próxima execução retoma de onde parou (ver
 // __meta.backfillMonthsCompleted em getPlayerStats).
 const TIME_BUDGET_MS = parseInt(process.env.NHL_STATS_TIME_BUDGET_MS, 10) || 20 * 60 * 1000;
+const IS_GITHUB_ACTIONS = process.env.GITHUB_ACTIONS === 'true';
 
 function parseToi(toi) {
   if (!toi) return 0;
@@ -264,6 +265,7 @@ function saveCheckpoint(existing, meta) {
 async function getPlayerStats() {
   let existing = {};
   let meta = { backfillVersion: BACKFILL_VERSION, backfillMonthsCompleted: 0 };
+  let invalidCheckpointReason = null;
   if (fs.existsSync('nhl_player_stats.json')) {
     try {
       const parsed = JSON.parse(fs.readFileSync('nhl_player_stats.json', 'utf-8'));
@@ -274,6 +276,7 @@ async function getPlayerStats() {
       }
       existing = parsed;
       if (!parsedMeta || parsedMeta.backfillVersion !== BACKFILL_VERSION) {
+        invalidCheckpointReason = `checkpoint NHL ausente/antigo (versão ${parsedMeta?.backfillVersion || 'sem versão'}; esperado ${BACKFILL_VERSION})`;
         console.warn(`Versão do backfill NHL mudou (${parsedMeta?.backfillVersion || 'sem versão'} → ${BACKFILL_VERSION}) — reiniciando histórico para reconstruir stats de defensores.`);
         existing = {};
         meta = { backfillVersion: BACKFILL_VERSION, backfillMonthsCompleted: 0 };
@@ -281,11 +284,20 @@ async function getPlayerStats() {
       console.log(`Stats NHL existentes: ${Object.keys(existing).length} jogadores.`);
     } catch {
       console.warn('nhl_player_stats.json inválido — iniciando do zero.');
+      invalidCheckpointReason = 'nhl_player_stats.json inválido';
     }
+  } else {
+    invalidCheckpointReason = 'nhl_player_stats.json ausente';
   }
 
   const lastDate = getLastProcessedDate(existing);
   const playerCount = Object.keys(existing).length;
+  if (IS_GITHUB_ACTIONS && (invalidCheckpointReason || !lastDate || playerCount === 0)) {
+    const detail = invalidCheckpointReason || 'checkpoint NHL sem jogos reais';
+    console.error(`ERRO: ${detail}. Backfill NHL completo deve ser refeito localmente e publicado na branch data; o GitHub Actions não reconstrói histórico.`);
+    process.exitCode = 1;
+    return;
+  }
   if (!lastDate && playerCount === 0 && fs.existsSync('nhl_player_stats.json') && meta.backfillMonthsCompleted === 0) {
     console.warn('nhl_player_stats.json presente mas sem dados — pode indicar arquivo corrompido na branch data. Processando histórico completo (pode demorar).');
   }
@@ -293,7 +305,7 @@ async function getPlayerStats() {
   let months;
   let isBackfill = false;
   const availableBackfillMonths = FULL_MONTHS.filter(m => m.start <= todayYmd());
-  if (meta.backfillMonthsCompleted < availableBackfillMonths.length) {
+  if (!IS_GITHUB_ACTIONS && meta.backfillMonthsCompleted < availableBackfillMonths.length) {
     isBackfill = true;
     months = availableBackfillMonths.slice(meta.backfillMonthsCompleted);
     console.log(`Histórico completo: retomando do período ${meta.backfillMonthsCompleted + 1}/${availableBackfillMonths.length} disponível (${FULL_MONTHS.length} total; meses futuros ainda não concluídos).`);
