@@ -101,10 +101,6 @@ jobs:
       - run: node pipeline/model_nba.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nba'
 
-      - name: Verificar frescor dos stats NBA
-        if: steps.season.outputs.in_season == 'true'
-        run: node pipeline/check_stats_freshness.js nba
-
       - name: Empacotar artefatos NBA
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nba'
         run: |
@@ -125,6 +121,10 @@ jobs:
           path: /tmp/nba-out/
           if-no-files-found: warn
           retention-days: 1
+
+      - name: Verificar frescor dos stats NBA
+        if: steps.season.outputs.in_season == 'true'
+        run: node pipeline/check_stats_freshness.js nba
 
   # ── MLB (mar-out) ──────────────────────────────────────────────────────────
   mlb:
@@ -200,10 +200,6 @@ jobs:
       - run: node pipeline/model_mlb.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
 
-      - name: Verificar frescor dos stats MLB
-        if: steps.season.outputs.in_season == 'true'
-        run: node pipeline/check_stats_freshness.js mlb
-
       - name: Empacotar artefatos MLB
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'mlb'
         run: |
@@ -224,6 +220,10 @@ jobs:
           path: /tmp/mlb-out/
           if-no-files-found: warn
           retention-days: 1
+
+      - name: Verificar frescor dos stats MLB
+        if: steps.season.outputs.in_season == 'true'
+        run: node pipeline/check_stats_freshness.js mlb
 
   # ── NHL (out-mai) ──────────────────────────────────────────────────────────
   nhl:
@@ -302,10 +302,6 @@ jobs:
       - run: node pipeline/model_nhl_props.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nhl'
 
-      - name: Verificar frescor dos stats NHL
-        if: steps.season.outputs.in_season == 'true'
-        run: node pipeline/check_stats_freshness.js nhl
-
       - name: Empacotar artefatos NHL
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nhl'
         run: |
@@ -326,6 +322,10 @@ jobs:
           path: /tmp/nhl-out/
           if-no-files-found: warn
           retention-days: 1
+
+      - name: Verificar frescor dos stats NHL
+        if: steps.season.outputs.in_season == 'true'
+        run: node pipeline/check_stats_freshness.js nhl
 
   # ── NFL (set-fev) ──────────────────────────────────────────────────────────
   nfl:
@@ -402,10 +402,6 @@ jobs:
       - run: node pipeline/model_nfl_props.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nfl'
 
-      - name: Verificar frescor dos stats NFL
-        if: steps.season.outputs.in_season == 'true'
-        run: node pipeline/check_stats_freshness.js nfl
-
       - name: Empacotar artefatos NFL
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nfl'
         run: |
@@ -426,6 +422,10 @@ jobs:
           path: /tmp/nfl-out/
           if-no-files-found: warn
           retention-days: 1
+
+      - name: Verificar frescor dos stats NFL
+        if: steps.season.outputs.in_season == 'true'
+        run: node pipeline/check_stats_freshness.js nfl
 
   # ── TÊNIS (ano inteiro) ────────────────────────────────────────────────────
   tennis:
