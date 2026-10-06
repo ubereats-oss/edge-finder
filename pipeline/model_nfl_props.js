@@ -5,6 +5,7 @@ const calibration = require('./calibration');
 const riskGuards = require('./risk_guards');
 const riskConfig = require('./risk_config');
 const { currentSeasonSepFeb } = require('./season_util');
+const { findByNormalizedName } = require('./name_match');
 
 const ESPORTE = 'americanfootball/nfl';
 const RUN_ID = new Date().toISOString();
@@ -79,12 +80,7 @@ function calcKelly(p, odd, stakeFraction = 1) {
 }
 
 function findPlayer(name) {
-  if (playerStats[name]) return playerStats[name];
-  const lower = name.toLowerCase();
-  for (const key of Object.keys(playerStats)) {
-    if (key.toLowerCase().includes(lower) || lower.includes(key.toLowerCase())) return playerStats[key];
-  }
-  return null;
+  return findByNormalizedName(playerStats, name);
 }
 
 function calcRecentAvg(playerData, statKey, n) {

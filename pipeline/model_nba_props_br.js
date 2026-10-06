@@ -5,6 +5,7 @@ const calibration = require('./calibration');
 const riskGuards = require('./risk_guards');
 const riskConfig = require('./risk_config');
 const { currentSeasonOctJun } = require('./season_util');
+const { findByNormalizedName, normalizeName } = require('./name_match');
 
 const ESPORTE = 'basketball/nba';
 const RUN_ID = new Date().toISOString();
@@ -43,9 +44,10 @@ function getPlayerGroup(playerName) {
   if (!playerName) return 'unknown';
   const direct = playerPositions[playerName];
   if (direct) return direct.group;
-  const lower = playerName.toLowerCase();
+  const lower = normalizeName(playerName);
   for (const [key, val] of Object.entries(playerPositions)) {
-    if (key.toLowerCase().includes(lower) || lower.includes(key.toLowerCase())) {
+    const current = normalizeName(key);
+    if (current.includes(lower) || lower.includes(current)) {
       return val.group;
     }
   }
@@ -103,8 +105,8 @@ function matchesAbsentContext(entryAbsentStarters, absentToday) {
   if (absentToday.length === 0) return false;
   return absentToday.some(absent =>
     entryAbsentStarters.some(h =>
-      h.toLowerCase().includes(absent.toLowerCase()) ||
-      absent.toLowerCase().includes(h.toLowerCase())
+      normalizeName(h).includes(normalizeName(absent)) ||
+      normalizeName(absent).includes(normalizeName(h))
     )
   );
 }
@@ -196,14 +198,7 @@ function combineContexts(playerData, statKey, locations, gameTypes, absentToday)
 }
 
 function findPlayer(name) {
-  if (playerStats[name]) return playerStats[name];
-  const lower = name.toLowerCase();
-  for (const key of Object.keys(playerStats)) {
-    if (key.toLowerCase().includes(lower) || lower.includes(key.toLowerCase())) {
-      return playerStats[key];
-    }
-  }
-  return null;
+  return findByNormalizedName(playerStats, name);
 }
 
 // calcRecentAvg definida fora do loop — corrigido
@@ -310,8 +305,8 @@ for (const prop of props) {
 
   const isPlayerAbsent = Object.values(injuriesToday).some(players =>
     players.some(absent =>
-      absent.toLowerCase().includes(prop.player.toLowerCase()) ||
-      prop.player.toLowerCase().includes(absent.toLowerCase())
+      normalizeName(absent).includes(normalizeName(prop.player)) ||
+      normalizeName(prop.player).includes(normalizeName(absent))
     )
   );
   if (isPlayerAbsent) {
