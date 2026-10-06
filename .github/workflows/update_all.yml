@@ -271,12 +271,14 @@ jobs:
         run: |
           git fetch origin data 2>/dev/null || true
           git show origin/data:nhl_player_stats.json.gz > /tmp/nhl_ps.gz 2>/dev/null || true
-          GZ_SIZE=$(wc -c < /tmp/nhl_ps.gz 2>/dev/null || echo 0)
-          if [ "$GZ_SIZE" -gt 1000 ]; then
-            gunzip -c /tmp/nhl_ps.gz > nhl_player_stats.json 2>/dev/null || true
+          # Valida pelo conteúdo (JSON parseável), não por tamanho em bytes —
+          # um checkpoint de backfill parcial pode ser legitimamente pequeno
+          # (ex.: só __meta, sem nenhum jogador com 8+ jogos ainda).
+          if [ -s /tmp/nhl_ps.gz ] && gunzip -c /tmp/nhl_ps.gz > /tmp/nhl_player_stats.json 2>/dev/null && node -e "JSON.parse(require('fs').readFileSync('/tmp/nhl_player_stats.json','utf8'))"; then
+            cp /tmp/nhl_player_stats.json nhl_player_stats.json
             echo "nhl_player_stats.json restaurado: $(wc -c < nhl_player_stats.json) bytes"
           else
-            echo "nhl_player_stats.json.gz ausente ou inválido ($GZ_SIZE bytes) — histórico incremental do zero"
+            echo "nhl_player_stats.json.gz ausente ou inválido — histórico completo do zero"
             rm -f nhl_player_stats.json
           fi
           git show origin/data:nhl_player_team.json > nhl_player_team.json 2>/dev/null || true

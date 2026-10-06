@@ -1,5 +1,6 @@
 const axios = require('axios');
 const fs = require('fs');
+const { sleep, fetchDayRange, tooManyDayFailures } = require('./espn_scoreboard_util');
 
 const FULL_MONTHS = [
   { start: '20231001', end: '20231031', season: 2024 },
@@ -39,39 +40,14 @@ const FULL_MONTHS = [
   { start: '20270601', end: '20270630', season: 2027 },
 ];
 
-// ESPN passou a rejeitar o parâmetro dates=INICIO-FIM com HTTP 400
-// ("Failed to get events endpoint"); só aceita um dia por chamada.
-const DAY_FETCH_DELAY_MS = 80;
-const DAY_FAILURE_ABORT_RATE = 0.5;
-
-function toUtcDate(ymd) {
-  return new Date(Date.UTC(parseInt(ymd.slice(0, 4)), parseInt(ymd.slice(4, 6)) - 1, parseInt(ymd.slice(6, 8))));
-}
-
-function formatYmd(date) {
-  const y = date.getUTCFullYear();
-  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const d = String(date.getUTCDate()).padStart(2, '0');
-  return `${y}${m}${d}`;
-}
-
-function dateRangeDays(start, end) {
-  const days = [];
-  let cur = toUtcDate(start);
-  const last = toUtcDate(end);
-  while (cur <= last) {
-    days.push(formatYmd(cur));
-    cur = new Date(cur.getTime() + 86400000);
-  }
-  return days;
-}
-
 const STAT_KEYS = ['goals', 'assists', 'points', 'shots', 'blocked'];
 const MIN_TOI_SECONDS = 300;
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+// Orçamento de tempo para a reconstrução do histórico completo (dia a dia,
+// ~3 temporadas) — evita ultrapassar o limite do job. Ao atingir o limite,
+// salva o progresso e para; a próxima execução retoma de onde parou (ver
+// __meta.backfillMonthsCompleted em getPlayerStats).
+const TIME_BUDGET_MS = parseInt(process.env.NHL_STATS_TIME_BUDGET_MS, 10) || 20 * 60 * 1000;
 
 function parseToi(toi) {
   if (!toi) return 0;
@@ -153,22 +129,10 @@ async function fetchDayEvents(day) {
     });
 }
 
-// Retorna { events, attempted, failed } — uma chamada por dia, nunca lança,
-// para permitir detectar no chamador quando a maioria das requisições falhou.
+// ESPN rejeita dates=INICIO-FIM (HTTP 400) — busca dia a dia via espn_scoreboard_util.
 async function fetchEventIds(start, end) {
-  const days = dateRangeDays(start, end);
-  const events = [];
-  let failed = 0;
-  for (const day of days) {
-    try {
-      events.push(...await fetchDayEvents(day));
-    } catch (e) {
-      failed++;
-      console.error(`Erro ${day}:`, e.response ? `HTTP ${e.response.status} ${JSON.stringify(e.response.data)}` : e.message);
-    }
-    await sleep(DAY_FETCH_DELAY_MS);
-  }
-  return { events, attempted: days.length, failed };
+  const { items, attempted, failed } = await fetchDayRange(start, end, fetchDayEvents);
+  return { events: items, attempted, failed };
 }
 
 async function fetchBoxScore(eventId) {
@@ -269,66 +233,11 @@ function stripInternalFields(raw) {
   }
 }
 
-async function getPlayerStats() {
-  let existing = {};
-  if (fs.existsSync('nhl_player_stats.json')) {
-    try {
-      existing = JSON.parse(fs.readFileSync('nhl_player_stats.json', 'utf-8'));
-      console.log(`Stats NHL existentes: ${Object.keys(existing).length} jogadores.`);
-    } catch {
-      console.warn('nhl_player_stats.json inválido — iniciando do zero.');
-    }
-  }
-
-  const lastDate = getLastProcessedDate(existing);
-  const playerCount = Object.keys(existing).length;
-  if (!lastDate && playerCount === 0 && fs.existsSync('nhl_player_stats.json')) {
-    console.warn('nhl_player_stats.json presente mas sem dados — pode indicar arquivo corrompido na branch data. Processando histórico completo (pode demorar).');
-  }
-  let months;
-
-  if (lastDate) {
-    console.log(`Última data: ${lastDate}`);
-    months = getIncrementalRange(lastDate);
-    console.log(`Incremental: ${months[0].start} → ${months[0].end} (range de ${Math.round((new Date(months[0].end) - new Date(months[0].start)) / 86400000)} dias)`);
-  } else {
-    console.log('Histórico completo...');
-    months = FULL_MONTHS;
-  }
-
-  const allEvents = [];
-  let totalDaysAttempted = 0;
-  let totalDaysFailed = 0;
-  for (const { start, end, season } of months) {
-    console.log(`Buscando ${start}–${end} (temporada ${season})...`);
-    const { events, attempted, failed } = await fetchEventIds(start, end);
-    totalDaysAttempted += attempted;
-    totalDaysFailed += failed;
-    for (const ev of events) ev._season = season;
-    allEvents.push(...events);
-    console.log(`  ${events.length} jogos${failed ? ` (${failed}/${attempted} dias com erro)` : ''}`);
-  }
-
-  allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
-  console.log(`Total: ${allEvents.length} jogos`);
-
-  const failureRate = totalDaysAttempted > 0 ? totalDaysFailed / totalDaysAttempted : 0;
-  if (totalDaysFailed > 0 && failureRate >= DAY_FAILURE_ABORT_RATE) {
-    console.error(`ERRO: ${totalDaysFailed}/${totalDaysAttempted} requisições de dia falharam (${Math.round(failureRate * 100)}%). Coleta NHL abortada sem sobrescrever nhl_player_stats.json.`);
-    process.exitCode = 1;
-    return;
-  }
-
-  if (!allEvents.length) {
-    console.log('Nenhum jogo novo. Stats já atualizados.');
-    return;
-  }
-
-  const total = await processEvents(allEvents, existing);
-  console.log(`${total} box scores processados.`);
-  stripInternalFields(existing);
-
-  const playerStats = {};
+// Grava um snapshot filtrado (>= 8 jogos) de `existing` + o progresso do
+// backfill, sem alterar `existing` em memória (ele continua acumulando sem
+// filtro, para não perder jogadores com poucos jogos entre execuções).
+function saveCheckpoint(existing, meta) {
+  const snapshot = { __meta: meta };
   for (const [name, seasons] of Object.entries(existing)) {
     let totalGames = 0;
     for (const seasonData of Object.values(seasons)) {
@@ -337,11 +246,105 @@ async function getPlayerStats() {
       }
     }
     if (totalGames < 8) continue;
-    playerStats[name] = seasons;
+    snapshot[name] = seasons;
+  }
+  fs.writeFileSync('nhl_player_stats.json', JSON.stringify(snapshot, null, 2));
+  return Object.keys(snapshot).length - 1; // -1 por causa do __meta
+}
+
+async function getPlayerStats() {
+  let existing = {};
+  let meta = { backfillMonthsCompleted: 0 };
+  if (fs.existsSync('nhl_player_stats.json')) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync('nhl_player_stats.json', 'utf-8'));
+      if (parsed.__meta) {
+        meta = { ...meta, ...parsed.__meta };
+        delete parsed.__meta;
+      }
+      existing = parsed;
+      console.log(`Stats NHL existentes: ${Object.keys(existing).length} jogadores.`);
+    } catch {
+      console.warn('nhl_player_stats.json inválido — iniciando do zero.');
+    }
   }
 
-  fs.writeFileSync('nhl_player_stats.json', JSON.stringify(playerStats, null, 2));
-  console.log(`Stats NHL salvos: ${Object.keys(playerStats).length} jogadores.`);
+  const lastDate = getLastProcessedDate(existing);
+  const playerCount = Object.keys(existing).length;
+  if (!lastDate && playerCount === 0 && fs.existsSync('nhl_player_stats.json') && meta.backfillMonthsCompleted === 0) {
+    console.warn('nhl_player_stats.json presente mas sem dados — pode indicar arquivo corrompido na branch data. Processando histórico completo (pode demorar).');
+  }
+
+  let months;
+  let isBackfill = false;
+  if (meta.backfillMonthsCompleted < FULL_MONTHS.length) {
+    isBackfill = true;
+    months = FULL_MONTHS.slice(meta.backfillMonthsCompleted);
+    console.log(`Histórico completo: retomando do período ${meta.backfillMonthsCompleted + 1}/${FULL_MONTHS.length}.`);
+  } else if (lastDate) {
+    console.log(`Última data: ${lastDate}`);
+    months = getIncrementalRange(lastDate);
+    console.log(`Incremental: ${months[0].start} → ${months[0].end} (range de ${Math.round((new Date(months[0].end) - new Date(months[0].start)) / 86400000)} dias)`);
+  } else {
+    // Histórico completo "concluído" mas sem nenhum jogo encontrado — refaz.
+    console.warn('Histórico completo marcado como concluído mas sem dados — reiniciando do zero.');
+    meta.backfillMonthsCompleted = 0;
+    isBackfill = true;
+    months = FULL_MONTHS;
+  }
+
+  const startedAt = Date.now();
+  let totalDaysAttempted = 0;
+  let totalDaysFailed = 0;
+  let totalBoxScores = 0;
+  let totalGamesFound = 0;
+  let monthsAttempted = 0;
+  let stoppedEarly = false;
+
+  for (const { start, end, season } of months) {
+    console.log(`Buscando ${start}–${end} (temporada ${season})...`);
+    const { events, attempted, failed } = await fetchEventIds(start, end);
+    totalDaysAttempted += attempted;
+    totalDaysFailed += failed;
+    monthsAttempted++;
+    for (const ev of events) ev._season = season;
+    events.sort((a, b) => new Date(a.date) - new Date(b.date));
+    totalGamesFound += events.length;
+    console.log(`  ${events.length} jogos${failed ? ` (${failed}/${attempted} dias com erro)` : ''}`);
+
+    if (events.length) {
+      totalBoxScores += await processEvents(events, existing);
+      stripInternalFields(existing);
+    }
+
+    if (isBackfill && failed === 0) {
+      meta.backfillMonthsCompleted++;
+    }
+
+    const saved = saveCheckpoint(existing, meta);
+    console.log(`  checkpoint salvo: ${saved} jogadores.`);
+
+    if (tooManyDayFailures(totalDaysAttempted, totalDaysFailed)) {
+      console.error(`ERRO: ${totalDaysFailed}/${totalDaysAttempted} requisições de dia falharam. Coleta NHL abortada nesta execução — progresso salvo até aqui será retomado na próxima.`);
+      process.exitCode = 1;
+      return;
+    }
+
+    if (isBackfill && Date.now() - startedAt > TIME_BUDGET_MS && monthsAttempted < months.length) {
+      stoppedEarly = true;
+      console.warn(`Orçamento de tempo (${Math.round(TIME_BUDGET_MS / 60000)} min) atingido após ${meta.backfillMonthsCompleted}/${FULL_MONTHS.length} períodos do histórico completo — parando aqui. Próxima execução retoma de onde parou.`);
+      break;
+    }
+  }
+
+  if (!totalGamesFound && !stoppedEarly) {
+    console.log('Nenhum jogo novo. Stats já atualizados.');
+    return;
+  }
+
+  console.log(`${totalBoxScores} box scores processados no total.`);
+  const finalCount = saveCheckpoint(existing, meta);
+  console.log(`Stats NHL salvos: ${finalCount} jogadores.${stoppedEarly ? ' (histórico parcial — continua na próxima execução)' : ''}`);
 }
 
 getPlayerStats();

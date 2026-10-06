@@ -3,6 +3,7 @@ const ledger = require('./model_ledger');
 const calibration = require('./calibration');
 const riskGuards = require('./risk_guards');
 const riskConfig = require('./risk_config');
+const { currentSeasonCalendarYear } = require('./season_util');
 
 const ESPORTE = 'baseball/mlb';
 const RUN_ID = new Date().toISOString();
@@ -29,8 +30,9 @@ if (!odds) {
   process.exit(0);
 }
 
-const SEASON_WEIGHT = { 2023: 1, 2024: 2, 2025: 3, 2026: 4 };
-const CURRENT_SEASON = 2026;
+const EARLIEST_SEASON = 2023;
+const CURRENT_SEASON = currentSeasonCalendarYear();
+const seasonWeight = season => Math.max(1, season - EARLIEST_SEASON + 1);
 const KELLY_FRACTION = riskConfig.KELLY_FRACTION;
 
 function calcProb(r1, r2) {
@@ -56,7 +58,7 @@ function getWeightedRating(teamName, location) {
   let hasCurrentSeason = false;
   for (const [seasonStr, seasonData] of Object.entries(data)) {
     const season = parseInt(seasonStr);
-    const w = SEASON_WEIGHT[season] || 1;
+    const w = seasonWeight(season);
     const r = seasonData?.regular?.[location];
     if (r === undefined) continue;
     weightedSum += r * w;

@@ -4,6 +4,7 @@
 
 const axios = require('axios');
 const fs    = require('fs');
+const { fetchDayRange, tooManyDayFailures } = require('./espn_scoreboard_util');
 
 const MONTHS_TO_REPAIR = [
   { start: '20240320', end: '20240331', season: 2024 },
@@ -24,8 +25,8 @@ const MONTHS_TO_REPAIR = [
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-async function fetchEvents(start, end) {
-  const url = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard?limit=200&dates=${start}-${end}`;
+async function fetchDayEvents(day) {
+  const url = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard?limit=200&dates=${day}`;
   const res = await axios.get(url);
   return (res.data.events || [])
     .filter(e => e.competitions?.[0]?.status?.type?.completed)
@@ -41,6 +42,12 @@ async function fetchEvents(start, end) {
         awayTeam: away?.team?.displayName,
       };
     });
+}
+
+// ESPN rejeita dates=INICIO-FIM (HTTP 400) — busca dia a dia via espn_scoreboard_util.
+async function fetchEvents(start, end) {
+  const { items, attempted, failed } = await fetchDayRange(start, end, fetchDayEvents);
+  return { events: items, attempted, failed };
 }
 
 async function fetchPitcherK(eventId) {
@@ -98,17 +105,15 @@ async function main() {
 
   let totalPatched = 0;
   let totalGames   = 0;
+  let totalDaysAttempted = 0;
+  let totalDaysFailed = 0;
 
   for (const { start, end, season } of MONTHS_TO_REPAIR) {
     console.log(`Processando ${start}–${end} (season ${season})...`);
-    let events;
-    try {
-      events = await fetchEvents(start, end);
-    } catch (e) {
-      console.warn(`  Erro ao buscar eventos: ${e.message}`);
-      continue;
-    }
-    console.log(`  ${events.length} jogos completos`);
+    const { events, attempted, failed } = await fetchEvents(start, end);
+    totalDaysAttempted += attempted;
+    totalDaysFailed += failed;
+    console.log(`  ${events.length} jogos completos${failed ? ` (${failed}/${attempted} dias com erro)` : ''}`);
 
     for (const event of events) {
       totalGames++;
@@ -139,6 +144,13 @@ async function main() {
   }
 
   console.log(`\nTotal: ${totalGames} jogos processados, ${totalPatched} valores de K corrigidos.`);
+
+  if (tooManyDayFailures(totalDaysAttempted, totalDaysFailed)) {
+    console.error(`ERRO: ${totalDaysFailed}/${totalDaysAttempted} requisições de dia falharam. mlb_player_stats.json NÃO foi sobrescrito.`);
+    process.exitCode = 1;
+    return;
+  }
+
   fs.writeFileSync('mlb_player_stats.json', JSON.stringify(data));
   console.log('mlb_player_stats.json salvo.');
 }
