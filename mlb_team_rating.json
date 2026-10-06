@@ -1,0 +1,235 @@
+{
+  "Boston Red Sox": {
+    "2026": {
+      "regular": {
+        "home": 0.5,
+        "away": 0.3333
+      }
+    }
+  },
+  "Pittsburgh Pirates": {
+    "2026": {
+      "regular": {
+        "home": 0.6667
+      }
+    }
+  },
+  "Cincinnati Reds": {
+    "2026": {
+      "regular": {
+        "home": 0.2857,
+        "away": 0.5
+      }
+    }
+  },
+  "Cleveland Guardians": {
+    "2026": {
+      "regular": {
+        "home": 1,
+        "away": 0.7143
+      }
+    }
+  },
+  "New York Yankees": {
+    "2026": {
+      "regular": {
+        "home": 0.6667,
+        "away": 0.5
+      }
+    }
+  },
+  "Detroit Tigers": {
+    "2026": {
+      "regular": {
+        "home": 0.5714,
+        "away": 0.4286
+      }
+    }
+  },
+  "Los Angeles Angels": {
+    "2026": {
+      "regular": {
+        "home": 0.5,
+        "away": 0.2857
+      }
+    }
+  },
+  "Los Angeles Dodgers": {
+    "2026": {
+      "regular": {
+        "home": 0.6667,
+        "away": 0.75
+      }
+    }
+  },
+  "St. Louis Cardinals": {
+    "2026": {
+      "regular": {
+        "home": 0.4286,
+        "away": 0.1667
+      }
+    }
+  },
+  "Arizona Diamondbacks": {
+    "2026": {
+      "regular": {
+        "home": 0.4,
+        "away": 0.6667
+      }
+    }
+  },
+  "Tampa Bay Rays": {
+    "2026": {
+      "regular": {
+        "home": 0.8571,
+        "away": 0.4286
+      }
+    }
+  },
+  "New York Mets": {
+    "2026": {
+      "regular": {
+        "home": 0.2857,
+        "away": 0.4286
+      }
+    }
+  },
+  "Baltimore Orioles": {
+    "2026": {
+      "regular": {
+        "home": 0.5
+      }
+    }
+  },
+  "Chicago White Sox": {
+    "2026": {
+      "regular": {
+        "home": 0.7143,
+        "away": 0.4286
+      }
+    }
+  },
+  "Atlanta Braves": {
+    "2026": {
+      "regular": {
+        "away": 0.625
+      }
+    }
+  },
+  "Minnesota Twins": {
+    "2026": {
+      "regular": {
+        "home": 0.4286,
+        "away": 0.5714
+      }
+    }
+  },
+  "Texas Rangers": {
+    "2026": {
+      "regular": {
+        "home": 0.5556
+      }
+    }
+  },
+  "Miami Marlins": {
+    "2026": {
+      "regular": {
+        "away": 0.5
+      }
+    }
+  },
+  "Kansas City Royals": {
+    "2026": {
+      "regular": {
+        "home": 0.3333,
+        "away": 0.1667
+      }
+    }
+  },
+  "Houston Astros": {
+    "2026": {
+      "regular": {
+        "home": 0.3333,
+        "away": 0.6667
+      }
+    }
+  },
+  "Chicago Cubs": {
+    "2026": {
+      "regular": {
+        "home": 0.4,
+        "away": 0.5
+      }
+    }
+  },
+  "Philadelphia Phillies": {
+    "2026": {
+      "regular": {
+        "home": 0.3333,
+        "away": 0.5714
+      }
+    }
+  },
+  "Seattle Mariners": {
+    "2026": {
+      "regular": {
+        "home": 0.5,
+        "away": 0.4286
+      }
+    }
+  },
+  "San Diego Padres": {
+    "2026": {
+      "regular": {
+        "home": 0.8333,
+        "away": 0.7143
+      }
+    }
+  },
+  "Milwaukee Brewers": {
+    "2026": {
+      "regular": {
+        "away": 0.7778
+      }
+    }
+  },
+  "Washington Nationals": {
+    "2026": {
+      "regular": {
+        "home": 0.6667,
+        "away": 0.6667
+      }
+    }
+  },
+  "Toronto Blue Jays": {
+    "2026": {
+      "regular": {
+        "home": 0.5714,
+        "away": 0.1667
+      }
+    }
+  },
+  "San Francisco Giants": {
+    "2026": {
+      "regular": {
+        "home": 0.1429,
+        "away": 0.3333
+      }
+    }
+  },
+  "Athletics": {
+    "2026": {
+      "regular": {
+        "home": 0.5,
+        "away": 0
+      }
+    }
+  },
+  "Colorado Rockies": {
+    "2026": {
+      "regular": {
+        "home": 0.2
+      }
+    }
+  }
+}
