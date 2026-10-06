@@ -4,6 +4,7 @@ const calibration = require('./calibration');
 const riskGuards = require('./risk_guards');
 const riskConfig = require('./risk_config');
 const { currentSeasonOctJun } = require('./season_util');
+const { findByNormalizedName } = require('./name_match');
 
 const ESPORTE = 'basketball/nba';
 const RUN_ID = new Date().toISOString();
@@ -89,14 +90,7 @@ function combineContexts(playerData, statKey, locations, gameTypes) {
 }
 
 function findPlayer(name) {
-  if (playerStats[name]) return playerStats[name];
-  const lower = name.toLowerCase();
-  for (const key of Object.keys(playerStats)) {
-    if (key.toLowerCase().includes(lower) || lower.includes(key.toLowerCase())) {
-      return playerStats[key];
-    }
-  }
-  return null;
+  return findByNormalizedName(playerStats, name);
 }
 
 const PROP_MAP = {

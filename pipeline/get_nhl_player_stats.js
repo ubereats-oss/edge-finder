@@ -2,6 +2,8 @@ const axios = require('axios');
 const fs = require('fs');
 const { sleep, fetchDayRange, tooManyDayFailures } = require('./espn_scoreboard_util');
 
+const BACKFILL_VERSION = 2;
+
 const FULL_MONTHS = [
   { start: '20231001', end: '20231031', season: 2024 },
   { start: '20231101', end: '20231130', season: 2024 },
@@ -103,6 +105,10 @@ function getIncrementalRange(lastDate) {
   return [{ start, end, season }];
 }
 
+function todayYmd() {
+  return new Date().toISOString().slice(0, 10).replace(/-/g, '');
+}
+
 async function fetchDayEvents(day) {
   const url = `https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard?limit=200&dates=${day}`;
   const res = await axios.get(url);
@@ -160,52 +166,55 @@ async function processEvents(allEvents, raw) {
         const teamScore = isHome ? event.homeScore : event.awayScore;
         const oppScore = isHome ? event.awayScore : event.homeScore;
 
-        const group = team.statistics?.[0];
-        if (!group) continue;
+        for (const group of team.statistics || []) {
+          const labels = group.labels || [];
+          const upperLabels = labels.map(l => String(l).toUpperCase());
+          const groupName = String(group.name || '').toLowerCase();
+          if (groupName.includes('goalie') || upperLabels.includes('SV') || upperLabels.includes('GA')) continue;
 
-        const labels = group.labels || [];
-        const idxToi = labels.findIndex(l => l.toUpperCase() === 'TOI');
-        const idxG   = labels.findIndex(l => l.toUpperCase() === 'G');
-        const idxA   = labels.findIndex(l => l.toUpperCase() === 'A');
-        const idxPts = labels.findIndex(l => l.toUpperCase() === 'PTS');
-        const idxS   = labels.findIndex(l => l.toUpperCase() === 'SOG' || l.toUpperCase() === 'S');
-        const idxBs  = labels.findIndex(l => l.toUpperCase() === 'BS' || l.toUpperCase() === 'BLK');
+          const idxToi = upperLabels.findIndex(l => l === 'TOI');
+          const idxG   = upperLabels.findIndex(l => l === 'G');
+          const idxA   = upperLabels.findIndex(l => l === 'A');
+          const idxS   = upperLabels.findIndex(l => l === 'SOG' || l === 'S');
+          const idxBs  = upperLabels.findIndex(l => l === 'BS' || l === 'BLK');
+          if (idxToi === -1 || idxG === -1 || idxA === -1) continue;
 
-        for (const athlete of group.athletes || []) {
-          const stats = athlete.stats || [];
-          const toiSecs = parseToi(stats[idxToi]);
-          if (toiSecs < MIN_TOI_SECONDS) continue;
+          for (const athlete of group.athletes || []) {
+            const stats = athlete.stats || [];
+            const toiSecs = parseToi(stats[idxToi]);
+            if (toiSecs < MIN_TOI_SECONDS) continue;
 
-          const name = athlete.athlete?.displayName;
-          if (!name) continue;
+            const name = athlete.athlete?.displayName;
+            if (!name) continue;
 
-          const ctx = ensurePath(raw, name, season, event.seasonType, location);
-          const alreadyExists = ctx.goals.some(e => e.date === event.date && e.opponent === opponent);
-          if (alreadyExists) continue;
+            const ctx = ensurePath(raw, name, season, event.seasonType, location);
+            const alreadyExists = ctx.goals.some(e => e.date === event.date && e.opponent === opponent);
+            if (alreadyExists) continue;
 
-          ctx.games++;
+            ctx.games++;
 
-          const meta = {
-            date: event.date,
-            toiSeconds: toiSecs,
-            blowout: event.blowout,
-            won,
-            teamScore,
-            oppScore,
-            opponent,
-            _team: teamName,
-            _eventDate: event.date,
-          };
+            const meta = {
+              date: event.date,
+              toiSeconds: toiSecs,
+              blowout: event.blowout,
+              won,
+              teamScore,
+              oppScore,
+              opponent,
+              _team: teamName,
+              _eventDate: event.date,
+            };
 
-          const mkEntry = v => ({ ...meta, value: v });
-          const gv = parseInt(stats[idxG]) || 0;
-          const av = parseInt(stats[idxA]) || 0;
+            const mkEntry = v => ({ ...meta, value: v });
+            const gv = parseInt(stats[idxG]) || 0;
+            const av = parseInt(stats[idxA]) || 0;
 
-          ctx.goals.push(mkEntry(gv));
-          ctx.assists.push(mkEntry(av));
-          ctx.points.push(mkEntry(gv + av));
-          ctx.shots.push(mkEntry(parseInt(stats[idxS]) || 0));
-          ctx.blocked.push(mkEntry(parseInt(stats[idxBs]) || 0));
+            ctx.goals.push(mkEntry(gv));
+            ctx.assists.push(mkEntry(av));
+            ctx.points.push(mkEntry(gv + av));
+            ctx.shots.push(mkEntry(idxS === -1 ? 0 : parseInt(stats[idxS]) || 0));
+            ctx.blocked.push(mkEntry(idxBs === -1 ? 0 : parseInt(stats[idxBs]) || 0));
+          }
         }
       }
     } catch {
@@ -254,15 +263,21 @@ function saveCheckpoint(existing, meta) {
 
 async function getPlayerStats() {
   let existing = {};
-  let meta = { backfillMonthsCompleted: 0 };
+  let meta = { backfillVersion: BACKFILL_VERSION, backfillMonthsCompleted: 0 };
   if (fs.existsSync('nhl_player_stats.json')) {
     try {
       const parsed = JSON.parse(fs.readFileSync('nhl_player_stats.json', 'utf-8'));
+      const parsedMeta = parsed.__meta;
       if (parsed.__meta) {
         meta = { ...meta, ...parsed.__meta };
         delete parsed.__meta;
       }
       existing = parsed;
+      if (!parsedMeta || parsedMeta.backfillVersion !== BACKFILL_VERSION) {
+        console.warn(`Versão do backfill NHL mudou (${parsedMeta?.backfillVersion || 'sem versão'} → ${BACKFILL_VERSION}) — reiniciando histórico para reconstruir stats de defensores.`);
+        existing = {};
+        meta = { backfillVersion: BACKFILL_VERSION, backfillMonthsCompleted: 0 };
+      }
       console.log(`Stats NHL existentes: ${Object.keys(existing).length} jogadores.`);
     } catch {
       console.warn('nhl_player_stats.json inválido — iniciando do zero.');
@@ -277,10 +292,11 @@ async function getPlayerStats() {
 
   let months;
   let isBackfill = false;
-  if (meta.backfillMonthsCompleted < FULL_MONTHS.length) {
+  const availableBackfillMonths = FULL_MONTHS.filter(m => m.start <= todayYmd());
+  if (meta.backfillMonthsCompleted < availableBackfillMonths.length) {
     isBackfill = true;
-    months = FULL_MONTHS.slice(meta.backfillMonthsCompleted);
-    console.log(`Histórico completo: retomando do período ${meta.backfillMonthsCompleted + 1}/${FULL_MONTHS.length}.`);
+    months = availableBackfillMonths.slice(meta.backfillMonthsCompleted);
+    console.log(`Histórico completo: retomando do período ${meta.backfillMonthsCompleted + 1}/${availableBackfillMonths.length} disponível (${FULL_MONTHS.length} total; meses futuros ainda não concluídos).`);
   } else if (lastDate) {
     console.log(`Última data: ${lastDate}`);
     months = getIncrementalRange(lastDate);
