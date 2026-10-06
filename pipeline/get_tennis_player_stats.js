@@ -1,5 +1,6 @@
 const axios = require('axios');
 const fs = require('fs');
+const { fetchDayRange, tooManyDayFailures } = require('./espn_scoreboard_util');
 
 const TOURS = ['atp', 'wta'];
 
@@ -38,15 +39,10 @@ function ensurePath(raw, player, surface, statKey) {
   return raw[player][surface];
 }
 
-async function processScoreboard(tour, startDate, endDate, raw) {
-  const url = `https://site.api.espn.com/apis/site/v2/sports/tennis/${tour}/scoreboard?limit=200&dates=${startDate}-${endDate}`;
-  let res;
-  try {
-    res = await axios.get(url);
-  } catch (e) {
-    console.error(`Erro scoreboard ${tour} ${startDate}:`, e.message);
-    return;
-  }
+async function fetchDayMatches(tour, day) {
+  const url = `https://site.api.espn.com/apis/site/v2/sports/tennis/${tour}/scoreboard?limit=200&dates=${day}`;
+  const res = await axios.get(url);
+  const matches = [];
 
   for (const event of (res.data.events || [])) {
     const surface = detectSurface(event);
@@ -69,29 +65,45 @@ async function processScoreboard(tour, startDate, endDate, raw) {
         const ls1 = c1.linescores || [];
         const ls2 = c2.linescores || [];
 
-        const p1Sets  = ls1.filter(ls => ls.winner).length;
-        const p2Sets  = ls2.filter(ls => ls.winner).length;
-        const p1Games = ls1.reduce((s, ls) => s + (parseInt(ls.value) || 0), 0);
-        const p2Games = ls2.reduce((s, ls) => s + (parseInt(ls.value) || 0), 0);
-
-        const date = comp.date || event.date || new Date().toISOString();
-
-        const alreadyP1 = (raw[p1]?.[surface]?.sets || []).some(e => e.date === date && e.opponent === p2);
-        if (!alreadyP1) {
-          const ctx1 = ensurePath(raw, p1, surface);
-          ctx1.sets.push({ value: p1Sets, date, opponent: p2 });
-          ctx1.games.push({ value: p1Games, date, opponent: p2 });
-        }
-
-        const alreadyP2 = (raw[p2]?.[surface]?.sets || []).some(e => e.date === date && e.opponent === p1);
-        if (!alreadyP2) {
-          const ctx2 = ensurePath(raw, p2, surface);
-          ctx2.sets.push({ value: p2Sets, date, opponent: p1 });
-          ctx2.games.push({ value: p2Games, date, opponent: p1 });
-        }
+        matches.push({
+          surface,
+          p1, p2,
+          p1Sets: ls1.filter(ls => ls.winner).length,
+          p2Sets: ls2.filter(ls => ls.winner).length,
+          p1Games: ls1.reduce((s, ls) => s + (parseInt(ls.value) || 0), 0),
+          p2Games: ls2.reduce((s, ls) => s + (parseInt(ls.value) || 0), 0),
+          date: comp.date || event.date || new Date().toISOString(),
+        });
       }
     }
   }
+
+  return matches;
+}
+
+function mergeMatches(raw, matches) {
+  for (const { surface, p1, p2, p1Sets, p2Sets, p1Games, p2Games, date } of matches) {
+    const alreadyP1 = (raw[p1]?.[surface]?.sets || []).some(e => e.date === date && e.opponent === p2);
+    if (!alreadyP1) {
+      const ctx1 = ensurePath(raw, p1, surface);
+      ctx1.sets.push({ value: p1Sets, date, opponent: p2 });
+      ctx1.games.push({ value: p1Games, date, opponent: p2 });
+    }
+
+    const alreadyP2 = (raw[p2]?.[surface]?.sets || []).some(e => e.date === date && e.opponent === p1);
+    if (!alreadyP2) {
+      const ctx2 = ensurePath(raw, p2, surface);
+      ctx2.sets.push({ value: p2Sets, date, opponent: p1 });
+      ctx2.games.push({ value: p2Games, date, opponent: p1 });
+    }
+  }
+}
+
+// ESPN rejeita dates=INICIO-FIM (HTTP 400) — busca dia a dia via espn_scoreboard_util.
+async function processScoreboard(tour, startDate, endDate, raw) {
+  const { items, attempted, failed } = await fetchDayRange(startDate, endDate, day => fetchDayMatches(tour, day));
+  mergeMatches(raw, items);
+  return { attempted, failed };
 }
 
 async function getPlayerStats() {
@@ -122,10 +134,21 @@ async function getPlayerStats() {
 
   console.log(`Buscando tênis ${startDate} → ${endDate}`);
 
+  let totalDaysAttempted = 0;
+  let totalDaysFailed = 0;
   for (const tour of TOURS) {
     console.log(`Processando ${tour.toUpperCase()}...`);
-    await processScoreboard(tour, startDate, endDate, existing);
+    const { attempted, failed } = await processScoreboard(tour, startDate, endDate, existing);
+    totalDaysAttempted += attempted;
+    totalDaysFailed += failed;
+    if (failed) console.log(`  ${failed}/${attempted} dias com erro`);
     await sleep(500);
+  }
+
+  if (tooManyDayFailures(totalDaysAttempted, totalDaysFailed)) {
+    console.error(`ERRO: ${totalDaysFailed}/${totalDaysAttempted} requisições de dia falharam. Coleta de tênis abortada sem sobrescrever tennis_player_stats.json.`);
+    process.exitCode = 1;
+    return;
   }
 
   const filtered = {};

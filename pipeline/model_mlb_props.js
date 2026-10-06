@@ -4,6 +4,7 @@ const ledger = require('./model_ledger');
 const calibration = require('./calibration');
 const riskGuards = require('./risk_guards');
 const riskConfig = require('./risk_config');
+const { currentSeasonCalendarYear } = require('./season_util');
 
 const ESPORTE = 'baseball/mlb';
 const RUN_ID = new Date().toISOString();
@@ -27,7 +28,9 @@ if (!Object.keys(injuriesToday).length) {
   console.warn('mlb_injuries_today.json não encontrado ou vazio — filtro de ausentes desativado.');
 }
 
-const SEASON_WEIGHT = { 2023: 1, 2024: 2, 2025: 3, 2026: 4 };
+const EARLIEST_SEASON = 2023;
+const CURRENT_SEASON = currentSeasonCalendarYear();
+const seasonWeight = season => Math.max(1, season - EARLIEST_SEASON + 1);
 const MIN_GAMES_CONTEXT = 10;
 const INEFFICIENT_MARKET_EDGE = 20;
 const KELLY_FRACTION = riskConfig.KELLY_FRACTION;
@@ -113,7 +116,7 @@ function combineContexts(playerData, statKey, locations, absentToday) {
     let fSum = 0, fSumSq = 0, fWeight = 0, fGames = 0, fContext = 0;
     for (const [seasonStr, seasonData] of Object.entries(playerData)) {
       const season = parseInt(seasonStr);
-      const w = SEASON_WEIGHT[season] || 1;
+      const w = seasonWeight(season);
       for (const loc of locations) {
         const ctx = seasonData?.regular?.[loc];
         if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
@@ -122,7 +125,7 @@ function combineContexts(playerData, statKey, locations, absentToday) {
           if (!matchesAbsentContext(entry.absentStarters || [], absentToday)) continue;
           fSum += entry.value * w; fSumSq += entry.value * entry.value * w;
           fWeight += w; fGames++;
-          if (season === 2026) fContext++;
+          if (season === CURRENT_SEASON) fContext++;
         }
       }
     }
@@ -136,7 +139,7 @@ function combineContexts(playerData, statKey, locations, absentToday) {
   if (!usedAbsentFilter) {
     for (const [seasonStr, seasonData] of Object.entries(playerData)) {
       const season = parseInt(seasonStr);
-      const w = SEASON_WEIGHT[season] || 1;
+      const w = seasonWeight(season);
       for (const loc of locations) {
         const ctx = seasonData?.regular?.[loc];
         if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
@@ -145,7 +148,7 @@ function combineContexts(playerData, statKey, locations, absentToday) {
           const value = typeof entry === 'object' ? entry.value : entry;
           weightedSum += value * w; weightedSumSq += value * value * w;
           totalWeight += w; totalGames++;
-          if (season === 2026) contextGames++;
+          if (season === CURRENT_SEASON) contextGames++;
         }
       }
     }

@@ -4,6 +4,7 @@ const ledger = require('./model_ledger');
 const calibration = require('./calibration');
 const riskGuards = require('./risk_guards');
 const riskConfig = require('./risk_config');
+const { currentSeasonSepFeb } = require('./season_util');
 
 const ESPORTE = 'americanfootball/nfl';
 const RUN_ID = new Date().toISOString();
@@ -22,7 +23,9 @@ const playerStats   = readJsonSafe('nfl_player_stats.json', {});
 const props         = readJsonSafe('nfl_props.json', []);
 const playerTeamMap = readJsonSafe('nfl_player_team.json', {});
 
-const SEASON_WEIGHT = { 2024: 1, 2025: 2, 2026: 3 };
+const EARLIEST_SEASON = 2024;
+const CURRENT_SEASON = currentSeasonSepFeb();
+const seasonWeight = season => Math.max(1, season - EARLIEST_SEASON + 1);
 const MIN_GAMES_CONTEXT = 6;
 const INEFFICIENT_MARKET_EDGE = 20;
 const KELLY_FRACTION = riskConfig.KELLY_FRACTION;
@@ -109,7 +112,7 @@ function combineContexts(playerData, statKey, locations) {
 
   for (const [seasonStr, seasonData] of Object.entries(playerData)) {
     const season = parseInt(seasonStr);
-    const w = SEASON_WEIGHT[season] || 1;
+    const w = seasonWeight(season);
     for (const loc of locations) {
       const ctx = seasonData?.regular?.[loc];
       if (!ctx || !ctx[statKey] || !Array.isArray(ctx[statKey])) continue;
@@ -120,7 +123,7 @@ function combineContexts(playerData, statKey, locations) {
         weightedSumSq  += value * value * w;
         totalWeight    += w;
         totalGames++;
-        if (season === 2026) contextGames++;
+        if (season === CURRENT_SEASON) contextGames++;
       }
     }
   }

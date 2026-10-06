@@ -1,5 +1,6 @@
 const axios = require('axios');
 const fs = require('fs');
+const { fetchDayRange, tooManyDayFailures } = require('./espn_scoreboard_util');
 
 const FULL_MONTHS = [
   { start: '20230901', end: '20230930', season: 2024 },
@@ -75,8 +76,8 @@ function getIncrementalRange(lastDate) {
   return [{ start, end, season }];
 }
 
-async function fetchEventIds(start, end) {
-  const url = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?limit=200&dates=${start}-${end}`;
+async function fetchDayEvents(day) {
+  const url = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?limit=200&dates=${day}`;
   const res = await axios.get(url);
   return (res.data.events || [])
     .filter(e => e.competitions[0].status.type.completed)
@@ -99,6 +100,12 @@ async function fetchEventIds(start, end) {
         homeWon: home?.winner === true,
       };
     });
+}
+
+// ESPN rejeita dates=INICIO-FIM (HTTP 400) — busca dia a dia via espn_scoreboard_util.
+async function fetchEventIds(start, end) {
+  const { items, attempted, failed } = await fetchDayRange(start, end, fetchDayEvents);
+  return { events: items, attempted, failed };
 }
 
 async function fetchBoxScore(eventId) {
@@ -257,20 +264,26 @@ async function getPlayerStats() {
   }
 
   const allEvents = [];
+  let totalDaysAttempted = 0;
+  let totalDaysFailed = 0;
   for (const { start, end, season } of months) {
     console.log(`Buscando ${start}–${end} (temporada ${season})...`);
-    try {
-      const events = await fetchEventIds(start, end);
-      for (const ev of events) ev._season = season;
-      allEvents.push(...events);
-      console.log(`  ${events.length} jogos`);
-    } catch (e) {
-      console.error(`Erro ${start}:`, e.message);
-    }
+    const { events, attempted, failed } = await fetchEventIds(start, end);
+    totalDaysAttempted += attempted;
+    totalDaysFailed += failed;
+    for (const ev of events) ev._season = season;
+    allEvents.push(...events);
+    console.log(`  ${events.length} jogos${failed ? ` (${failed}/${attempted} dias com erro)` : ''}`);
   }
 
   allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
   console.log(`Total: ${allEvents.length} jogos NFL`);
+
+  if (tooManyDayFailures(totalDaysAttempted, totalDaysFailed)) {
+    console.error(`ERRO: ${totalDaysFailed}/${totalDaysAttempted} requisições de dia falharam. Coleta NFL abortada sem sobrescrever nfl_player_stats.json.`);
+    process.exitCode = 1;
+    return;
+  }
 
   if (!allEvents.length) {
     console.log('Nenhum jogo novo.');

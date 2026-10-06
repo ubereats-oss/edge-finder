@@ -154,6 +154,7 @@ function main() {
   }
 
   const playerStats = JSON.parse(fs.readFileSync('nhl_player_stats.json'));
+  delete playerStats.__meta; // progresso do backfill de get_nhl_player_stats.js, não é jogador
   console.log(`Jogadores carregados: ${Object.keys(playerStats).length}`);
 
   const baseGames = extractPlayerGames(playerStats, [BASE_SEASON]);
