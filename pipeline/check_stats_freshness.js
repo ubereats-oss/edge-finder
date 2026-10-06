@@ -3,7 +3,7 @@ const fs = require('fs');
 const CONFIG = {
   nba: { label: 'NBA', file: 'nba_player_stats.json', maxAgeDays: 3 },
   mlb: { label: 'MLB', file: 'mlb_player_stats.json', maxAgeDays: 3 },
-  nhl: { label: 'NHL', file: 'nhl_player_stats.json', maxAgeDays: 3 },
+  nhl: { label: 'NHL', file: 'nhl_player_stats.json', maxAgeDays: 3, backfillMonths: 35 },
   nfl: { label: 'NFL', file: 'nfl_player_stats.json', maxAgeDays: 8 },
 };
 
@@ -70,11 +70,20 @@ function main() {
     process.exit(1);
   }
 
-  const latest = new Date(Math.max(...dates.map(date => date.getTime())));
+  let latest = dates[0];
+  for (const date of dates) {
+    if (date > latest) latest = date;
+  }
   const latestDay = dateOnlyUtc(latest);
   const today = dateOnlyUtc(new Date());
   const ageDays = Math.floor((today - latestDay) / 86400000);
   const latestIsoDate = latestDay.toISOString().slice(0, 10);
+
+  const backfillDone = stats.__meta?.backfillMonthsCompleted;
+  if (sport === 'nhl' && Number.isInteger(backfillDone) && backfillDone < config.backfillMonths) {
+    console.warn(`AVISO: stats ${config.label} em backfill (${backfillDone}/${config.backfillMonths} períodos). Último jogo nos dados: ${latestIsoDate}. Frescor não bloqueia esta execução.`);
+    return;
+  }
 
   if (ageDays > config.maxAgeDays) {
     console.error(`ERRO: stats ${config.label} atrasados. Último jogo nos dados: ${latestIsoDate}. Limite: ${config.maxAgeDays} dia(s). Atraso atual: ${ageDays} dia(s).`);
