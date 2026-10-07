@@ -1,6 +1,6 @@
 # Relatório de desempenho — histórico central de indicações
 
-Gerado em: 2026-10-06T16:51:48.083Z
+Gerado em: 2026-10-07T17:32:29.971Z
 
 Só inclui indicações publicadas, resolvidas e válidas para calibração (mesmo critério da calibração — NHL pré-correção da agregação de odds fica de fora, por exemplo). Push e cancelado entram no lucro/ROI mas não na taxa de acerto.
 
