@@ -1,6 +1,6 @@
 # Relatório de desempenho — histórico central de indicações
 
-Gerado em: 2026-10-07T17:32:29.971Z
+Gerado em: 2026-10-08T17:27:08.889Z
 
 Só inclui indicações publicadas, resolvidas e válidas para calibração (mesmo critério da calibração — NHL pré-correção da agregação de odds fica de fora, por exemplo). Push e cancelado entram no lucro/ROI mas não na taxa de acerto.
 
@@ -28,6 +28,11 @@ Só inclui indicações publicadas, resolvidas e válidas para calibração (mes
 | americanfootball/nfl | rushYards | 15-20% | 9 | 11.1% (9 decididas) | 58.0% (bruta 62.4%) | -72.8% | -0.4% (4/9 exata); ajustado 3.6% (1/9 ajustada); mov. favor 25.0% (1/4) | calibrado | 0 |
 | americanfootball/nfl | rushYards | 20-25% | 6 | 66.7% (6 decididas) | 63.4% (bruta 92.9%) | 73.7% | 0.0% (1/6 exata); ajustado -3.4% (2/6 ajustada); mov. favor 50.0% (1/2) | calibrado | 0 |
 | americanfootball/nfl | rushYards | 25-30% | 4 | 25.0% (4 decididas) | 78.7% (bruta 97.1%) | -50.3% | —; ajustado -17.1% (4/4 ajustada); mov. favor 0.0% (0/4) | calibrado | 0 |
+| hockey/nhl | assists | 15-20% | 2 | 100.0% (2 decididas) | 99.4% (bruta 88.4%) | 21.0% | 0.0% (2/2 exata); ajustado —; mov. favor 0.0% (0/2) | calibrado | 0 |
+| hockey/nhl | assists | 20-25% | 3 | 100.0% (3 decididas) | 81.8% (bruta 64.7%) | 58.7% | 0.3% (3/3 exata); ajustado —; mov. favor 0.0% (0/3) | calibrado | 0 |
+| hockey/nhl | assists | 30-35% | 1 | 100.0% (1 decididas) | 61.4% (bruta 33.4%) | 220.0% | 0.0% (1/1 exata); ajustado —; mov. favor 0.0% (0/1) | calibrado | 0 |
+| hockey/nhl | assists | 35-40% | 1 | 100.0% (1 decididas) | 62.5% (bruta 33.5%) | 290.0% | 0.0% (1/1 exata); ajustado —; mov. favor 0.0% (0/1) | calibrado | 0 |
+| hockey/nhl | points | 15-20% | 1 | 100.0% (1 decididas) | 83.6% (bruta 74.3%) | 51.0% | 0.0% (1/1 exata); ajustado —; mov. favor 0.0% (0/1) | calibrado | 0 |
 
 ## Cobertura de CLV por coorte
 
@@ -36,7 +41,7 @@ Só inclui indicações publicadas, resolvidas e válidas para calibração (mes
 | antes_primeira_captura | 3 | 0 | 0 | 0.0% | registrada_antes_da_captura_existir: 3 |
 | captura_inicial_pre_jit | 86 | 30 | 0 | 34.9% | registrada_antes_do_controle_de_status_da_captura: 56 |
 | jit_pre_controle_status | 27 | 12 | 1 | 48.1% | registrada_antes_do_controle_de_status_da_captura: 10; cota_api_esgotada_na_captura_pre_fix: 3; captura_expirada_sem_odd_gravada: 1 |
-| apos_fix_dependencia_be2ab14 | 46 | 33 | 10 | 93.5% | jogador_indisponivel_no_mercado: 1; linha_mudou_ate_fechamento: 2 |
+| apos_fix_dependencia_be2ab14 | 54 | 41 | 10 | 94.4% | jogador_indisponivel_no_mercado: 1; linha_mudou_ate_fechamento: 2 |
 
 ## Apostas reais
 

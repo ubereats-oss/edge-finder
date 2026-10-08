@@ -728,7 +728,7 @@
     "firstEvaluatedAt": "2026-10-04T21:03:48.977Z",
     "result": null,
     "resolutionAttempts": 2,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -743,7 +743,14 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401907987",
+      "player": "Cam Schlittler",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "4be245ad03895bcafcdc42d7d926b675|Freddy Peralta|strikeouts|5.5|Over",
@@ -776,14 +783,21 @@
     "firstEvaluatedAt": "2026-10-04T21:03:48.977Z",
     "result": null,
     "resolutionAttempts": 2,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401907987",
+      "player": "Freddy Peralta",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "4be245ad03895bcafcdc42d7d926b675|Freddy Peralta|strikeouts|4.5|Over",
@@ -816,14 +830,21 @@
     "firstEvaluatedAt": "2026-10-05T23:53:52.869Z",
     "result": null,
     "resolutionAttempts": 2,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401907987",
+      "player": "Freddy Peralta",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "1bc3bf1d3034010bdfb31d928a71177a|Chris Sale|strikeouts|7.5|Over",
@@ -979,7 +1000,14 @@
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
-    "bookmakerUnder": null
+    "bookmakerUnder": null,
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401908005",
+      "player": "Dustin May",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "62d8e1c18355ab6b3913d7a28fa677c2|Nick Pivetta|strikeouts|3.5|Over",
@@ -1012,7 +1040,7 @@
     "firstEvaluatedAt": "2026-10-05T23:53:52.869Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -1031,7 +1059,14 @@
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
-    "bookmakerUnder": null
+    "bookmakerUnder": null,
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401908005",
+      "player": "Nick Pivetta",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "aa266da6f8d98646bc59d18ddbc5b2de|Max Fried|strikeouts|4.5|Over",
@@ -1062,16 +1097,20 @@
     "runId": "2026-10-07T22:55:00.195Z",
     "evaluatedAt": "2026-10-07T22:55:00.608Z",
     "firstEvaluatedAt": "2026-10-06T21:54:07.750Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 7,
+      "apuradoEm": "2026-10-08T17:25:09.367Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -1114,16 +1153,20 @@
     "runId": "2026-10-06T23:55:13.255Z",
     "evaluatedAt": "2026-10-06T23:55:13.595Z",
     "firstEvaluatedAt": "2026-10-06T21:54:07.750Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-08T17:25:09.885Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -1278,9 +1321,13 @@
     "runId": "2026-10-06T23:55:13.995Z",
     "evaluatedAt": "2026-10-06T23:55:13.998Z",
     "firstEvaluatedAt": "2026-10-06T21:54:08.200Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Milwaukee Brewers",
+      "apuradoEm": "2026-10-08T17:25:10.112Z"
+    },
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -1330,9 +1377,13 @@
     "runId": "2026-10-06T23:55:13.995Z",
     "evaluatedAt": "2026-10-06T23:55:13.998Z",
     "firstEvaluatedAt": "2026-10-06T21:54:08.200Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "San Diego Padres",
+      "apuradoEm": "2026-10-08T17:25:10.142Z"
+    },
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -1382,9 +1433,13 @@
     "runId": "2026-10-07T22:55:01.008Z",
     "evaluatedAt": "2026-10-07T22:55:01.011Z",
     "firstEvaluatedAt": "2026-10-06T21:54:08.200Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "Chicago White Sox",
+      "apuradoEm": "2026-10-08T17:25:10.177Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -1434,9 +1489,13 @@
     "runId": "2026-10-07T22:55:01.008Z",
     "evaluatedAt": "2026-10-07T22:55:01.012Z",
     "firstEvaluatedAt": "2026-10-06T21:54:08.200Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Cleveland Guardians",
+      "apuradoEm": "2026-10-08T17:25:10.234Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -1486,9 +1545,13 @@
     "runId": "2026-10-07T22:55:01.008Z",
     "evaluatedAt": "2026-10-07T22:55:01.012Z",
     "firstEvaluatedAt": "2026-10-06T21:54:08.200Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "New York Yankees",
+      "apuradoEm": "2026-10-08T17:25:10.336Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -1538,9 +1601,13 @@
     "runId": "2026-10-07T22:55:01.008Z",
     "evaluatedAt": "2026-10-07T22:55:01.012Z",
     "firstEvaluatedAt": "2026-10-06T21:54:08.200Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Tampa Bay Rays",
+      "apuradoEm": "2026-10-08T17:25:10.437Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -1594,16 +1661,20 @@
     "runId": "2026-10-07T22:55:00.195Z",
     "evaluatedAt": "2026-10-07T22:55:00.608Z",
     "firstEvaluatedAt": "2026-10-07T22:55:00.608Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-08T17:25:10.931Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3c71012ad7a75e6c11575285e6841e14|Walker Buehler|strikeouts|2.5|Over",
@@ -1638,16 +1709,20 @@
     "runId": "2026-10-07T22:55:00.195Z",
     "evaluatedAt": "2026-10-07T22:55:00.608Z",
     "firstEvaluatedAt": "2026-10-07T22:55:00.608Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:11.480Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "2f041c00e4bddc69bd1bbfbd40cc3c09|Atlanta Braves|h2h|0|Win",
@@ -1682,16 +1757,20 @@
     "runId": "2026-10-07T22:55:01.008Z",
     "evaluatedAt": "2026-10-07T22:55:01.012Z",
     "firstEvaluatedAt": "2026-10-07T22:55:01.012Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "Atlanta Braves",
+      "apuradoEm": "2026-10-08T17:25:11.651Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "2f041c00e4bddc69bd1bbfbd40cc3c09|Los Angeles Dodgers|h2h|0|Win",
@@ -1726,16 +1805,20 @@
     "runId": "2026-10-07T22:55:01.008Z",
     "evaluatedAt": "2026-10-07T22:55:01.012Z",
     "firstEvaluatedAt": "2026-10-07T22:55:01.012Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Los Angeles Dodgers",
+      "apuradoEm": "2026-10-08T17:25:11.675Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "3c71012ad7a75e6c11575285e6841e14|Milwaukee Brewers|h2h|0|Win",
@@ -1770,9 +1853,13 @@
     "runId": "2026-10-07T22:55:01.008Z",
     "evaluatedAt": "2026-10-07T22:55:01.012Z",
     "firstEvaluatedAt": "2026-10-07T22:55:01.012Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Milwaukee Brewers",
+      "apuradoEm": "2026-10-08T17:25:11.756Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -1821,9 +1908,13 @@
     "runId": "2026-10-07T22:55:01.008Z",
     "evaluatedAt": "2026-10-07T22:55:01.012Z",
     "firstEvaluatedAt": "2026-10-07T22:55:01.012Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "San Diego Padres",
+      "apuradoEm": "2026-10-08T17:25:11.845Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,

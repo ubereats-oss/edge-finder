@@ -27553,16 +27553,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:14.365Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -27605,16 +27609,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:14.811Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -27657,16 +27665,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:15.255Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -27709,9 +27721,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:15.700Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -27761,16 +27777,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.553Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:16.144Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -27813,16 +27833,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.553Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:16.580Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -27865,16 +27889,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:25:17.033Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -27917,16 +27945,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:17.530Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -27969,16 +28001,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:18.002Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -28021,9 +28057,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:18.442Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -28073,16 +28113,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:18.979Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -28125,16 +28169,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:19.484Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -28177,16 +28225,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:19.960Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -28229,16 +28281,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:20.447Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -28281,16 +28337,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:25:20.929Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "oddsOver": null,
     "oddsUnder": null,
     "bookmakerOver": null,
@@ -28333,9 +28393,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-06T22:07:36.181Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:21.420Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -35645,16 +35709,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.553Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.553Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:21.874Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Gabriel Vilardi|goals|0.5|Over",
@@ -35689,16 +35757,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:22.330Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Mark Scheifele|points|0.5|Over",
@@ -35733,9 +35805,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:25:22.781Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -35784,16 +35860,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:23.224Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Cale Makar|points|0.5|Over",
@@ -35828,9 +35908,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:23.686Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -35879,16 +35963,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:24.131Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Nazem Kadri|points|0.5|Over",
@@ -35923,16 +36011,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:24.591Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Josh Morrissey|points|0.5|Over",
@@ -35967,16 +36059,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:25.063Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Artturi Lehkonen|points|0.5|Over",
@@ -36011,16 +36107,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:25.535Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Gabriel Vilardi|points|0.5|Over",
@@ -36055,16 +36155,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:26.032Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Martin Necas|points|1.5|Under",
@@ -36099,9 +36203,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:26.508Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -36150,9 +36258,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:26.973Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -36201,16 +36313,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:27.555Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Viggo Bjorck|points|0.5|n/a",
@@ -36245,16 +36361,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:28.044Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Devon Toews|points|0.5|Over",
@@ -36289,16 +36409,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:28.620Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Gabriel Landeskog|points|0.5|Over",
@@ -36333,16 +36457,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:29.078Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Kyle Connor|points|0.5|Over",
@@ -36377,9 +36505,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:25:29.524Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -36428,9 +36560,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:29.965Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -36479,16 +36615,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:30.404Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Jaden Schwartz|points|0.5|Over",
@@ -36523,16 +36663,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:25:30.861Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Alex Iafallo|points|0.5|Over",
@@ -36567,16 +36711,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:31.353Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Adam Lowry|points|0.5|Over",
@@ -36611,16 +36759,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:31.824Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|T.J. Hughes|points|0.5|n/a",
@@ -36655,16 +36807,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:32.305Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Morgan Barron|points|0.5|Over",
@@ -36699,9 +36855,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:32.779Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -36750,9 +36910,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:33.225Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -36801,16 +36965,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:33.672Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Martin Necas|assists|0.5|Over",
@@ -36845,16 +37013,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:34.125Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Mark Scheifele|assists|0.5|Over",
@@ -36889,16 +37061,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:25:34.610Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Kyle Connor|assists|0.5|Over",
@@ -36933,16 +37109,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:35.064Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Josh Morrissey|assists|0.5|Over",
@@ -36977,16 +37157,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:35.515Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Nazem Kadri|assists|0.5|Over",
@@ -37021,16 +37205,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:35.962Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Artturi Lehkonen|assists|0.5|Over",
@@ -37065,16 +37253,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:36.428Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Devon Toews|assists|0.5|Over",
@@ -37109,16 +37301,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:36.888Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Cole Perfetti|assists|0.5|Over",
@@ -37153,16 +37349,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:37.342Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Brock Nelson|assists|0.5|Over",
@@ -37197,16 +37397,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:37.796Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Gabriel Vilardi|assists|0.5|Over",
@@ -37241,16 +37445,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:38.343Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Gabriel Landeskog|assists|0.5|Over",
@@ -37285,16 +37493,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:38.788Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Jaden Schwartz|assists|0.5|Over",
@@ -37329,9 +37541,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:39.235Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -37380,16 +37596,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:39.733Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Josh Manson|assists|0.5|Under",
@@ -37424,9 +37644,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:40.177Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -37475,16 +37699,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:40.613Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c8c270e79cd56ca57baa21a49a0d1d9d|Sam Malinski|assists|0.5|Over",
@@ -37519,9 +37747,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:41.052Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -37570,9 +37802,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:41.510Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -37621,9 +37857,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:41.960Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -37672,9 +37912,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:42.507Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -37723,16 +37967,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:43.012Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Erik Karlsson|assists|0.5|Over",
@@ -37767,16 +38015,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:43.465Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Jakob Chychrun|assists|0.5|Over",
@@ -37811,16 +38063,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:43.913Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Dylan Strome|assists|0.5|Over",
@@ -37855,16 +38111,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:44.399Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Tom Wilson|assists|0.5|Over",
@@ -37899,16 +38159,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:25:44.869Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Pierre-Luc Dubois|assists|0.5|Over",
@@ -37943,16 +38207,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:45.337Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Evgeni Malkin|assists|0.5|Over",
@@ -37987,16 +38255,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:45.908Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Alex Tuch|assists|0.5|Over",
@@ -38031,16 +38303,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:46.385Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Alex Ovechkin|assists|0.5|Over",
@@ -38075,16 +38351,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:46.879Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Jordan Kyrou|assists|0.5|Over",
@@ -38119,16 +38399,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:47.354Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Rickard Rakell|assists|0.5|Over",
@@ -38163,16 +38447,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:47.822Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Cole Hutson|assists|0.5|Over",
@@ -38207,16 +38495,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:48.266Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Tommy Novak|assists|0.5|Over",
@@ -38251,16 +38543,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:48.717Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Kris Letang|assists|0.5|Over",
@@ -38295,16 +38591,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:49.163Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Bryan Rust|assists|0.5|Over",
@@ -38339,16 +38639,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:49.609Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Ilya Protas|assists|0.5|n/a",
@@ -38383,16 +38687,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:50.114Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Aliaksei Protas|assists|0.5|Over",
@@ -38427,16 +38735,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:50.640Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Justin Sourdif|assists|0.5|Under",
@@ -38471,9 +38783,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:51.084Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -38522,16 +38838,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:51.529Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Ben Kindel|assists|0.5|Over",
@@ -38566,9 +38886,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:51.972Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -38617,9 +38941,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:52.439Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -38668,9 +38996,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:52.897Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -38719,9 +39051,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:53.363Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -38770,9 +39106,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:53.812Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -38821,9 +39161,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:54.249Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -38872,16 +39216,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:54.701Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Hendrix Lapierre|assists|0.5|Under",
@@ -38916,9 +39264,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:55.168Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -38967,9 +39319,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:55.634Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39018,9 +39374,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:56.087Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39069,9 +39429,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:56.529Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39120,9 +39484,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:56.975Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39171,9 +39539,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:57.419Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39222,9 +39594,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:57.882Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39273,9 +39649,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:58.331Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39324,9 +39704,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:25:58.776Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39375,9 +39759,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:59.221Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39426,9 +39814,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:25:59.665Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39477,9 +39869,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:00.107Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39528,16 +39924,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:00.589Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Tom Wilson|points|0.5|Over",
@@ -39572,16 +39972,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-08T17:26:01.061Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Alex Ovechkin|points|0.5|Over",
@@ -39616,16 +40020,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:01.506Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Dylan Strome|points|0.5|Over",
@@ -39660,16 +40068,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:01.967Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Erik Karlsson|points|0.5|Over",
@@ -39704,9 +40116,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:02.418Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39755,9 +40171,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:02.861Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39806,16 +40226,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:26:03.347Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Bryan Rust|points|0.5|Over",
@@ -39850,9 +40274,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:03.801Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -39901,16 +40329,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:04.242Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Jordan Kyrou|points|0.5|Over",
@@ -39945,16 +40377,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:04.716Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Ilya Protas|points|0.5|n/a",
@@ -39989,16 +40425,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:05.172Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Tommy Novak|points|0.5|Over",
@@ -40033,16 +40473,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:05.624Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Aliaksei Protas|points|0.5|Over",
@@ -40077,16 +40521,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:06.067Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Cole Hutson|points|0.5|Over",
@@ -40121,16 +40569,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:06.522Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Ryan Leonard|points|0.5|Over",
@@ -40165,16 +40617,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:06.982Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Yegor Chinakhov|points|0.5|Over",
@@ -40209,16 +40665,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:07.420Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Ben Kindel|points|0.5|Over",
@@ -40253,16 +40713,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:07.865Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Anthony Beauvillier|points|0.5|Under",
@@ -40297,9 +40761,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:08.304Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -40348,16 +40816,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:08.752Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Kris Letang|points|0.5|Over",
@@ -40392,16 +40864,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:09.194Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Boone Jenner|points|0.5|Over",
@@ -40436,16 +40912,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:09.651Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Ville Koivunen|points|0.5|Over",
@@ -40480,16 +40960,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:10.087Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Martin Fehervary|points|0.5|Over",
@@ -40524,9 +41008,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:10.554Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -40575,9 +41063,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:10.999Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -40626,9 +41118,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:11.498Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -40677,16 +41173,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:11.943Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Timothy Liljegren|points|0.5|Under",
@@ -40721,9 +41221,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:12.396Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -40772,16 +41276,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:12.833Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Declan Carlile|points|0.5|Under",
@@ -40816,9 +41324,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:13.276Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -40867,9 +41379,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:13.723Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -40918,16 +41434,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:14.163Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "8112572f236320d4d4c99b6eb0989b94|Vincent Desharnais|points|0.5|Under",
@@ -40962,9 +41482,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:14.600Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -41013,9 +41537,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:15.058Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -41064,9 +41592,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:15.508Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -41115,16 +41647,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 4,
+      "apuradoEm": "2026-10-08T17:26:16.157Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Leo Carlsson|points|0.5|Over",
@@ -41159,16 +41695,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:26:16.680Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Alex Killorn|points|0.5|Over",
@@ -41203,16 +41743,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:17.179Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Evan Bouchard|points|1.5|Under",
@@ -41247,9 +41791,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-08T17:26:17.660Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -41298,9 +41846,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-08T17:26:18.171Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -41349,16 +41901,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:18.666Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Mattias Ekholm|points|0.5|Over",
@@ -41393,16 +41949,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:19.158Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Connor McDavid|points|1.5|Over",
@@ -41437,16 +41997,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.554Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.554Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-08T17:26:19.678Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Vasily Podkolzin|points|0.5|Over",
@@ -41481,16 +42045,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:20.210Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Mikael Granlund|points|0.5|Over",
@@ -41525,16 +42093,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:20.770Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Kasperi Kapanen|points|0.5|Over",
@@ -41569,16 +42141,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:21.297Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Beckett Sennecke|points|0.5|Over",
@@ -41613,16 +42189,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:26:21.811Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Cutter Gauthier|points|0.5|Over",
@@ -41657,16 +42237,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:22.390Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|A.J. Greer|points|0.5|Under",
@@ -41701,9 +42285,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:22.903Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -41752,16 +42340,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:23.428Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Pavel Mintyukov|points|0.5|Over",
@@ -41796,16 +42388,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:23.949Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Tristan Luneau|points|0.5|Over",
@@ -41840,16 +42436,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:24.468Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Trent Frederic|points|0.5|Under",
@@ -41884,9 +42484,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:24.994Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -41935,9 +42539,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:25.517Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -41986,16 +42594,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:26.091Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Jason Dickinson|points|0.5|Over",
@@ -42030,16 +42642,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:26.624Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Nikita Nesterenko|points|0.5|Over",
@@ -42074,16 +42690,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:27.134Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Connor Murphy|points|0.5|Over",
@@ -42118,9 +42738,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:27.655Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -42169,9 +42793,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:28.176Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -42220,9 +42848,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:26:28.795Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -42271,16 +42903,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:29.343Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Leon Draisaitl|assists|0.5|Over",
@@ -42315,16 +42951,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 4,
+      "apuradoEm": "2026-10-08T17:26:29.843Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Jackson LaCombe|assists|0.5|Over",
@@ -42359,16 +42999,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:30.475Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Leo Carlsson|assists|0.5|Over",
@@ -42403,16 +43047,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-08T17:26:30.981Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Beckett Sennecke|assists|0.5|Over",
@@ -42447,16 +43095,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:31.481Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Cutter Gauthier|assists|0.5|Over",
@@ -42491,16 +43143,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:31.981Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Vasily Podkolzin|assists|0.5|Under",
@@ -42535,9 +43191,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:32.586Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -42586,16 +43246,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:33.128Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Ryan Shea|assists|0.5|Under",
@@ -42630,9 +43294,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:33.755Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -42681,9 +43349,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:34.247Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -42732,9 +43404,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:34.771Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -42783,9 +43459,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:35.268Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -42834,9 +43514,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:35.760Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -42885,16 +43569,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-08T17:26:36.310Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Alex Killorn|assists|0.5|Under",
@@ -42929,9 +43617,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:36.828Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -42980,16 +43672,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:37.359Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db23cd7cb712b5c14c297aa6eece3627|Jason Dickinson|assists|0.5|Under",
@@ -43024,9 +43720,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:37.857Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -43075,9 +43775,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:38.372Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -43126,9 +43830,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:38.866Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -43177,9 +43885,13 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:39.372Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -43228,16 +43940,20 @@
     "runId": "2026-10-07T22:55:15.719Z",
     "evaluatedAt": "2026-10-07T22:55:16.555Z",
     "firstEvaluatedAt": "2026-10-07T22:55:16.555Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-08T17:26:39.908Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sigma_baixo",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "100868f90e5446c13a23eb2b7710724d|Logan Cooley|goals|0.5|Over",
