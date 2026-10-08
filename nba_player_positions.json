@@ -255,6 +255,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Jalen Bridges": {
+    "position": "F",
+    "group": "forward"
+  },
   "Matas Buzelis": {
     "position": "F",
     "group": "forward"
@@ -272,6 +276,10 @@
     "group": "forward"
   },
   "Josh Giddey": {
+    "position": "G",
+    "group": "guard"
+  },
+  "Jordan Hawkins": {
     "position": "G",
     "group": "guard"
   },
@@ -310,6 +318,10 @@
   "Jalen Smith": {
     "position": "F",
     "group": "forward"
+  },
+  "Isaiah Stevens": {
+    "position": "G",
+    "group": "guard"
   },
   "Dailyn Swain": {
     "position": "G",
@@ -1063,10 +1075,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Jordan Hawkins": {
-    "position": "G",
-    "group": "guard"
-  },
   "Taylor Hendricks": {
     "position": "F",
     "group": "forward"
@@ -1211,13 +1219,13 @@
     "position": "F",
     "group": "forward"
   },
+  "Johni Broome": {
+    "position": "F",
+    "group": "forward"
+  },
   "Brayden Burries": {
     "position": "G",
     "group": "guard"
-  },
-  "John Butler Jr.": {
-    "position": "F",
-    "group": "forward"
   },
   "Ousmane Dieng": {
     "position": "F",
@@ -1911,6 +1919,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Jaylen Martin": {
+    "position": "G",
+    "group": "guard"
+  },
   "Ja Morant": {
     "position": "G",
     "group": "guard"
@@ -2295,6 +2307,10 @@
     "position": "F",
     "group": "forward"
   },
+  "Jazian Gortman": {
+    "position": "G",
+    "group": "guard"
+  },
   "Tre Johnson": {
     "position": "G",
     "group": "guard"
@@ -2302,6 +2318,10 @@
   "Trevor Keels": {
     "position": "G",
     "group": "guard"
+  },
+  "Skal Labissiere": {
+    "position": "C",
+    "group": "center"
   },
   "Chris Livingston": {
     "position": "F",
