@@ -1964,7 +1964,7 @@
     "evaluatedAt": "2026-10-08T23:07:07.760Z",
     "firstEvaluatedAt": "2026-10-08T23:07:07.760Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -1972,7 +1972,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "b57e790481f2b8e5eaf9e0f3eab816bc|Hagen Smith|strikeouts|2.5|n/a",
@@ -2008,7 +2008,7 @@
     "evaluatedAt": "2026-10-08T23:07:07.760Z",
     "firstEvaluatedAt": "2026-10-08T23:07:07.760Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -2016,7 +2016,7 @@
     "invalidReason": "sigma_baixo",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "b57e790481f2b8e5eaf9e0f3eab816bc|Chicago White Sox|h2h|0|Win",
@@ -2052,7 +2052,7 @@
     "evaluatedAt": "2026-10-08T23:07:08.137Z",
     "firstEvaluatedAt": "2026-10-08T23:07:08.137Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": true,
@@ -2103,7 +2103,7 @@
     "evaluatedAt": "2026-10-08T23:07:08.137Z",
     "firstEvaluatedAt": "2026-10-08T23:07:08.137Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": true,
