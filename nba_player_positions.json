@@ -1159,10 +1159,6 @@
     "position": "C",
     "group": "center"
   },
-  "J'Vonne Hadley": {
-    "position": "F",
-    "group": "forward"
-  },
   "Tim Hardaway Jr.": {
     "position": "G",
     "group": "guard"
@@ -1175,7 +1171,15 @@
     "position": "F",
     "group": "forward"
   },
+  "Kylor Kelley": {
+    "position": "C",
+    "group": "center"
+  },
   "Pelle Larsson": {
+    "position": "G",
+    "group": "guard"
+  },
+  "Gabe Madsen": {
     "position": "G",
     "group": "guard"
   },
@@ -1190,10 +1194,6 @@
   "Bobby Portis": {
     "position": "F",
     "group": "forward"
-  },
-  "Lester Quinones": {
-    "position": "G",
-    "group": "guard"
   },
   "Nick Richards": {
     "position": "C",
@@ -2306,10 +2306,6 @@
   "Anthony Gill": {
     "position": "F",
     "group": "forward"
-  },
-  "Jazian Gortman": {
-    "position": "G",
-    "group": "guard"
   },
   "Tre Johnson": {
     "position": "G",
