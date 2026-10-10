@@ -85243,7 +85243,9 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "closingOddsLastAttemptAt": "2026-10-10T17:02:40.938Z",
+    "closingOddsMissingReason": "jogador_indisponivel_no_mercado"
   },
   {
     "_key": "d85b0a6ad02d473031876a3286f80638|JJ Peterka|goals|0.5|Over",
@@ -85285,9 +85287,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 3.35,
+    "clv": -1.49,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "d85b0a6ad02d473031876a3286f80638|David Pastrnak|goals|0.5|Over",
