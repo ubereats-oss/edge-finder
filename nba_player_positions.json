@@ -399,6 +399,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Jaxson Robinson": {
+    "position": "F",
+    "group": "forward"
+  },
   "Meleek Thomas": {
     "position": "G",
     "group": "guard"
@@ -418,6 +422,10 @@
   "Peyton Watson": {
     "position": "G",
     "group": "guard"
+  },
+  "Noam Yaacov": {
+    "position": "F",
+    "group": "forward"
   },
   "Santi Aldama": {
     "position": "F",
@@ -931,6 +939,10 @@
     "position": "C",
     "group": "center"
   },
+  "Fletcher Loyer": {
+    "position": "G",
+    "group": "guard"
+  },
   "Nick Martinelli": {
     "position": "F",
     "group": "forward"
@@ -958,6 +970,10 @@
   "Max Strus": {
     "position": "G",
     "group": "guard"
+  },
+  "Jahmyl Telfort": {
+    "position": "F",
+    "group": "forward"
   },
   "Keaton Wagler": {
     "position": "G",
@@ -1159,6 +1175,10 @@
     "position": "C",
     "group": "center"
   },
+  "J'Vonne Hadley": {
+    "position": "F",
+    "group": "forward"
+  },
   "Tim Hardaway Jr.": {
     "position": "G",
     "group": "guard"
@@ -1195,6 +1215,10 @@
     "position": "F",
     "group": "forward"
   },
+  "Lester Quinones": {
+    "position": "G",
+    "group": "guard"
+  },
   "Nick Richards": {
     "position": "C",
     "group": "center"
@@ -1204,6 +1228,10 @@
     "group": "forward"
   },
   "Dru Smith": {
+    "position": "G",
+    "group": "guard"
+  },
+  "Dennis Smith Jr.": {
     "position": "G",
     "group": "guard"
   },
@@ -2139,11 +2167,19 @@
     "position": "G",
     "group": "guard"
   },
+  "Tyson Degenhart": {
+    "position": "F",
+    "group": "forward"
+  },
   "Allen Graves": {
     "position": "F",
     "group": "forward"
   },
   "Chucky Hepburn": {
+    "position": "G",
+    "group": "guard"
+  },
+  "Andre Jackson Jr.": {
     "position": "G",
     "group": "guard"
   },
@@ -2306,6 +2342,10 @@
   "Anthony Gill": {
     "position": "F",
     "group": "forward"
+  },
+  "Jazian Gortman": {
+    "position": "G",
+    "group": "guard"
   },
   "Tre Johnson": {
     "position": "G",
