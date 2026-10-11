@@ -354,7 +354,7 @@
     "firstEvaluatedAt": "2026-10-01T22:29:52.386Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -489,7 +489,7 @@
     "firstEvaluatedAt": "2026-10-02T21:59:32.689Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -588,7 +588,7 @@
     "firstEvaluatedAt": "2026-10-03T20:48:15.208Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -1965,14 +1965,21 @@
     "firstEvaluatedAt": "2026-10-08T23:07:07.760Z",
     "result": null,
     "resolutionAttempts": 2,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401907994",
+      "player": "Parker Messick",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "b57e790481f2b8e5eaf9e0f3eab816bc|Hagen Smith|strikeouts|2.5|n/a",
@@ -2009,14 +2016,21 @@
     "firstEvaluatedAt": "2026-10-08T23:07:07.760Z",
     "result": null,
     "resolutionAttempts": 2,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sigma_baixo",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401907994",
+      "player": "Hagen Smith",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "b57e790481f2b8e5eaf9e0f3eab816bc|Chicago White Sox|h2h|0|Win",
@@ -2051,9 +2065,13 @@
     "runId": "2026-10-08T23:07:08.134Z",
     "evaluatedAt": "2026-10-08T23:07:08.137Z",
     "firstEvaluatedAt": "2026-10-08T23:07:08.137Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "Chicago White Sox",
+      "apuradoEm": "2026-10-11T16:20:10.176Z"
+    },
     "resolutionAttempts": 2,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -2102,9 +2120,13 @@
     "runId": "2026-10-08T23:07:08.134Z",
     "evaluatedAt": "2026-10-08T23:07:08.137Z",
     "firstEvaluatedAt": "2026-10-08T23:07:08.137Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Cleveland Guardians",
+      "apuradoEm": "2026-10-11T16:20:10.211Z"
+    },
     "resolutionAttempts": 2,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -2153,9 +2175,13 @@
     "runId": "2026-10-10T21:22:31.925Z",
     "evaluatedAt": "2026-10-10T21:22:31.929Z",
     "firstEvaluatedAt": "2026-10-09T22:27:23.328Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "Chicago White Sox",
+      "apuradoEm": "2026-10-11T16:20:10.342Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -2205,9 +2231,13 @@
     "runId": "2026-10-10T21:22:31.925Z",
     "evaluatedAt": "2026-10-10T21:22:31.929Z",
     "firstEvaluatedAt": "2026-10-09T22:27:23.328Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Cleveland Guardians",
+      "apuradoEm": "2026-10-11T16:20:10.410Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -2257,16 +2287,20 @@
     "runId": "2026-10-10T21:22:31.080Z",
     "evaluatedAt": "2026-10-10T21:22:31.517Z",
     "firstEvaluatedAt": "2026-10-10T21:22:31.517Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 4,
+      "apuradoEm": "2026-10-11T16:20:10.727Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "62bf363a77455f7a8b48838e7792f60b|Gavin Williams|strikeouts|6.5|Over",
@@ -2301,16 +2335,20 @@
     "runId": "2026-10-10T21:22:31.080Z",
     "evaluatedAt": "2026-10-10T21:22:31.518Z",
     "firstEvaluatedAt": "2026-10-10T21:22:31.518Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 12,
+      "apuradoEm": "2026-10-11T16:20:11.197Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c43e98d4effc9181f21e21225fcbd47a|Jacob Misiorowski|strikeouts|7.5|Over",
