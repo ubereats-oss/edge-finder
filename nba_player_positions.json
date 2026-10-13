@@ -59,6 +59,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Isaac McKneely": {
+    "position": "G",
+    "group": "guard"
+  },
   "Asa Newell": {
     "position": "F",
     "group": "forward"
@@ -424,8 +428,8 @@
     "group": "guard"
   },
   "Noam Yaacov": {
-    "position": "F",
-    "group": "forward"
+    "position": "G",
+    "group": "guard"
   },
   "Santi Aldama": {
     "position": "F",
@@ -1255,6 +1259,10 @@
     "position": "G",
     "group": "guard"
   },
+  "John Butler Jr.": {
+    "position": "F",
+    "group": "forward"
+  },
   "Ousmane Dieng": {
     "position": "F",
     "group": "forward"
@@ -1414,6 +1422,10 @@
   "Tyler Bilodeau": {
     "position": "F",
     "group": "forward"
+  },
+  "Dion Brown": {
+    "position": "G",
+    "group": "guard"
   },
   "Mikel Brown Jr.": {
     "position": "G",
@@ -1607,6 +1619,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Robert McCray V": {
+    "position": "G",
+    "group": "guard"
+  },
   "Ajay Mitchell": {
     "position": "G",
     "group": "guard"
@@ -1720,6 +1736,10 @@
     "group": "forward"
   },
   "Jase Richardson": {
+    "position": "G",
+    "group": "guard"
+  },
+  "Mike Sharavjamts": {
     "position": "G",
     "group": "guard"
   },
@@ -2307,6 +2327,10 @@
     "position": "F",
     "group": "forward"
   },
+  "Mohamed Wague": {
+    "position": "F",
+    "group": "forward"
+  },
   "Deandre Ayton": {
     "position": "C",
     "group": "center"
@@ -2392,6 +2416,10 @@
     "group": "forward"
   },
   "Jamir Watkins": {
+    "position": "G",
+    "group": "guard"
+  },
+  "Alondes Williams": {
     "position": "G",
     "group": "guard"
   },
