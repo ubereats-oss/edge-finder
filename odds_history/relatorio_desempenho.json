@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-12T19:59:50.317Z",
+  "generatedAt": "2026-10-13T17:38:42.440Z",
   "rows": [
     {
       "esporte": "americanfootball/nfl",
@@ -26,7 +26,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 49,
+      "sampleSize": 50,
       "faltamParaCalibrar": 0
     },
     {
@@ -54,7 +54,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 49,
+      "sampleSize": 50,
       "faltamParaCalibrar": 0
     },
     {
@@ -82,7 +82,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 49,
+      "sampleSize": 50,
       "faltamParaCalibrar": 0
     },
     {
@@ -110,7 +110,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 49,
+      "sampleSize": 50,
       "faltamParaCalibrar": 0
     },
     {
@@ -229,7 +229,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 417,
+      "sampleSize": 422,
       "faltamParaCalibrar": 0
     },
     {
@@ -260,7 +260,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 417,
+      "sampleSize": 422,
       "faltamParaCalibrar": 0
     },
     {
@@ -291,7 +291,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 417,
+      "sampleSize": 422,
       "faltamParaCalibrar": 0
     },
     {
@@ -321,7 +321,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 417,
+      "sampleSize": 422,
       "faltamParaCalibrar": 0
     },
     {
@@ -351,7 +351,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 417,
+      "sampleSize": 422,
       "faltamParaCalibrar": 0
     },
     {
@@ -381,7 +381,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 417,
+      "sampleSize": 422,
       "faltamParaCalibrar": 0
     },
     {
@@ -411,7 +411,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1691,
+      "sampleSize": 1704,
       "faltamParaCalibrar": 0
     },
     {
@@ -442,7 +442,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1691,
+      "sampleSize": 1704,
       "faltamParaCalibrar": 0
     },
     {
@@ -474,7 +474,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1691,
+      "sampleSize": 1704,
       "faltamParaCalibrar": 0
     },
     {
@@ -506,7 +506,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1691,
+      "sampleSize": 1704,
       "faltamParaCalibrar": 0
     },
     {
@@ -536,7 +536,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1691,
+      "sampleSize": 1704,
       "faltamParaCalibrar": 0
     },
     {
@@ -564,7 +564,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1691,
+      "sampleSize": 1704,
       "faltamParaCalibrar": 0
     },
     {
@@ -594,7 +594,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1691,
+      "sampleSize": 1704,
       "faltamParaCalibrar": 0
     },
     {
@@ -624,7 +624,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1691,
+      "sampleSize": 1704,
       "faltamParaCalibrar": 0
     },
     {
@@ -656,7 +656,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 893,
+      "sampleSize": 895,
       "faltamParaCalibrar": 0
     },
     {
@@ -687,7 +687,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 893,
+      "sampleSize": 895,
       "faltamParaCalibrar": 0
     },
     {
@@ -717,7 +717,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 893,
+      "sampleSize": 895,
       "faltamParaCalibrar": 0
     },
     {
