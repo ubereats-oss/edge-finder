@@ -100518,7 +100518,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.752Z",
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.127Z",
     "oddsOver": 1.88,
     "oddsUnder": 1.88,
     "bookmakerOver": "fanduel",
@@ -100575,7 +100575,7 @@
         "price": 2.16
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.753Z",
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z",
     "oddsOver": 1.62,
     "oddsUnder": 2.2,
     "bookmakerOver": "fanduel",
@@ -109219,18 +109219,18 @@
     "bookmakerOver": "draftkings",
     "bookmakerUnder": "draftkings",
     "adjustedClosingLine": 95.5,
-    "adjustedClosingOverOdds": 1.88,
-    "adjustedClosingUnderOdds": 1.9,
+    "adjustedClosingOverOdds": 1.89,
+    "adjustedClosingUnderOdds": 1.89,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -1.86,
+    "lineAdjustedClv": -2.36,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 95.5,
-        "price": 1.88
+        "price": 1.89
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.753Z"
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z"
   },
   {
     "_key": "e6d00eedd87d367e510314bd8cab8f6f|Davante Adams|receptionYards|61.5|Over",
@@ -110851,19 +110851,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 93.5,
-    "adjustedClosingOverOdds": 1.88,
-    "adjustedClosingUnderOdds": 1.88,
-    "closingLineMovement": "contra",
-    "lineAdjustedClv": -7.82,
+    "adjustedClosingLine": 95.5,
+    "adjustedClosingOverOdds": 1.83,
+    "adjustedClosingUnderOdds": 1.93,
+    "closingLineMovement": "a_favor",
+    "lineAdjustedClv": -1.68,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 93.5,
-        "price": 1.88
+        "line": 95.5,
+        "price": 1.83
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.753Z"
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z"
   },
   {
     "_key": "e6d00eedd87d367e510314bd8cab8f6f|Dalton Kincaid|receptionYards|48.5|Over",
@@ -133434,7 +133434,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.753Z",
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -154912,19 +154912,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 41.5,
+    "adjustedClosingLine": 42.5,
     "adjustedClosingOverOdds": 1.88,
     "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -19.11,
+    "lineAdjustedClv": -22.93,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 41.5,
+        "line": 42.5,
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.754Z"
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z"
   },
   {
     "_key": "e6d00eedd87d367e510314bd8cab8f6f|Joshua Palmer|receptionYards|19.5|Over",
@@ -154969,7 +154969,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.754Z",
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z",
     "closingOddsMissingReason": "jogador_indisponivel_no_mercado"
   },
   {
@@ -155068,18 +155068,18 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "adjustedClosingLine": 11.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
+    "adjustedClosingOverOdds": 1.93,
+    "adjustedClosingUnderOdds": 1.85,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": 1.31,
+    "lineAdjustedClv": -0.7,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 11.5,
-        "price": 1.89
+        "price": 1.93
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.754Z"
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z"
   },
   {
     "_key": "e6d00eedd87d367e510314bd8cab8f6f|James Cook|receptionYards|9.5|Over",
@@ -155495,7 +155495,7 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": "jogador_indisponivel_no_mercado",
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.754Z"
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z"
   },
   {
     "_key": "e6d00eedd87d367e510314bd8cab8f6f|Jordan Whittington|receptions|0.5|Over",
@@ -172181,18 +172181,18 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "adjustedClosingLine": 39.5,
-    "adjustedClosingOverOdds": 1.91,
-    "adjustedClosingUnderOdds": 1.88,
+    "adjustedClosingOverOdds": 1.88,
+    "adjustedClosingUnderOdds": 1.91,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -8.11,
+    "lineAdjustedClv": -9.62,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 39.5,
-        "price": 1.88
+        "price": 1.91
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.755Z"
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z"
   },
   {
     "_key": "e6d00eedd87d367e510314bd8cab8f6f|Tyler Higbee|receptionYards|24.5|Over",
@@ -172289,7 +172289,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.755Z",
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z",
     "closingOddsMissingReason": "jogador_indisponivel_no_mercado"
   },
   {
@@ -172599,7 +172599,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.755Z"
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z"
   },
   {
     "_key": "e6d00eedd87d367e510314bd8cab8f6f|Jordan Whittington|receptionYards|6.5|Over",
@@ -172656,7 +172656,7 @@
         "price": 1.91
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.755Z"
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z"
   },
   {
     "_key": "e6d00eedd87d367e510314bd8cab8f6f|Keon Coleman|receptions|3.5|n/a",
@@ -180491,7 +180491,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.755Z"
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z"
   },
   {
     "_key": "e6d00eedd87d367e510314bd8cab8f6f|Tyler Higbee|receptionYards|23.5|Over",
@@ -181543,7 +181543,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.755Z",
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.128Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -181600,7 +181600,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-12T23:03:03.755Z",
+    "closingOddsLastAttemptAt": "2026-10-13T00:02:36.129Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
