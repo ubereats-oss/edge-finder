@@ -183,10 +183,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Caleb Houstan": {
-    "position": "F",
-    "group": "forward"
-  },
   "AJ Johnson": {
     "position": "G",
     "group": "guard"
@@ -584,10 +580,6 @@
     "group": "forward"
   },
   "Julian Strawther": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Lonnie Walker IV": {
     "position": "G",
     "group": "guard"
   },
@@ -2235,6 +2227,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Jamarion Sharp": {
+    "position": "C",
+    "group": "center"
+  },
   "Jamal Shead": {
     "position": "G",
     "group": "guard"
@@ -2264,6 +2260,10 @@
     "group": "center"
   },
   "Tamar Bates": {
+    "position": "G",
+    "group": "guard"
+  },
+  "Terrell Brown Jr.": {
     "position": "G",
     "group": "guard"
   },
