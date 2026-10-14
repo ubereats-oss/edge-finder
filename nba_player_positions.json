@@ -3,6 +3,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Giorgi Bezhanishvili": {
+    "position": "F",
+    "group": "forward"
+  },
   "Cameron Corhen": {
     "position": "F",
     "group": "forward"
@@ -56,10 +60,6 @@
     "group": "center"
   },
   "CJ McCollum": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Isaac McKneely": {
     "position": "G",
     "group": "guard"
   },
@@ -667,6 +667,10 @@
     "position": "C",
     "group": "center"
   },
+  "Tyler Burton": {
+    "position": "F",
+    "group": "forward"
+  },
   "Jimmy Butler III": {
     "position": "F",
     "group": "forward"
@@ -690,10 +694,6 @@
   "Graham Ike": {
     "position": "F",
     "group": "forward"
-  },
-  "Miles Kelly": {
-    "position": "G",
-    "group": "guard"
   },
   "Yaxel Lendeborg": {
     "position": "F",
@@ -927,10 +927,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Yuki Kawamura": {
-    "position": "G",
-    "group": "guard"
-  },
   "Brook Lopez": {
     "position": "C",
     "group": "center"
@@ -1012,6 +1008,10 @@
     "group": "center"
   },
   "Dalton Knecht": {
+    "position": "F",
+    "group": "forward"
+  },
+  "William Kyle III": {
     "position": "F",
     "group": "forward"
   },
@@ -1415,19 +1415,11 @@
     "position": "F",
     "group": "forward"
   },
-  "Dion Brown": {
-    "position": "G",
-    "group": "guard"
-  },
   "Mikel Brown Jr.": {
     "position": "G",
     "group": "guard"
   },
   "Noah Clowney": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Dain Dainja": {
     "position": "F",
     "group": "forward"
   },
@@ -2023,6 +2015,10 @@
     "position": "F",
     "group": "forward"
   },
+  "Viktor Lakhin": {
+    "position": "F",
+    "group": "forward"
+  },
   "Zach LaVine": {
     "position": "G",
     "group": "guard"
@@ -2086,10 +2082,6 @@
   "Julian Champagnie": {
     "position": "F",
     "group": "forward"
-  },
-  "RJ Davis": {
-    "position": "G",
-    "group": "guard"
   },
   "Jon Elmore": {
     "position": "G",
@@ -2186,10 +2178,6 @@
   "Allen Graves": {
     "position": "F",
     "group": "forward"
-  },
-  "Chucky Hepburn": {
-    "position": "G",
-    "group": "guard"
   },
   "Andre Jackson Jr.": {
     "position": "G",
@@ -2324,10 +2312,6 @@
     "group": "guard"
   },
   "Brice Sensabaugh": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Mohamed Wague": {
     "position": "F",
     "group": "forward"
   },
