@@ -3206,7 +3206,9 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "closingOddsLastAttemptAt": "2026-10-15T23:02:47.515Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "b9d2e07cf437b5643307aba274c45a74|Cleveland Guardians|h2h|0|Win",
