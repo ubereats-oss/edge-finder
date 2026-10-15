@@ -164545,17 +164545,17 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-14T23:32:44.464Z",
+    "closingOddsLastAttemptAt": "2026-10-15T00:32:57.955Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 0.5,
-        "price": 2.65
+        "price": 2.61
       }
     ],
     "adjustedClosingLine": 0.5,
-    "adjustedClosingOverOdds": 1.46,
-    "adjustedClosingUnderOdds": 2.65,
+    "adjustedClosingOverOdds": 1.47,
+    "adjustedClosingUnderOdds": 2.61,
     "closingLineMovement": "a_favor",
     "lineAdjustedClv": null
   },
@@ -164653,7 +164653,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-14T23:32:44.464Z",
+    "closingOddsLastAttemptAt": "2026-10-15T00:32:57.956Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
