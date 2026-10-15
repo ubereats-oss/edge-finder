@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T15:18:47.622Z",
+  "generatedAt": "2026-10-15T15:05:31.242Z",
   "rows": [
     {
       "esporte": "americanfootball/nfl",
@@ -747,37 +747,37 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 515,
+      "sampleSize": 543,
       "faltamParaCalibrar": 0
     },
     {
       "esporte": "hockey/nhl",
       "market": "assists",
       "edgeBucket": "20-25%",
-      "nResolvidasValidas": 15,
-      "nBinarias": 15,
-      "winRateReal": 66.7,
-      "winRateModelo": 70,
-      "winRateModeloBruto": 56.3,
-      "roi": 30.8,
-      "clvMedio": -0.13,
-      "clvComOdd": 12,
+      "nResolvidasValidas": 16,
+      "nBinarias": 16,
+      "winRateReal": 62.5,
+      "winRateModelo": 68.7,
+      "winRateModeloBruto": 54.9,
+      "roi": 25.7,
+      "clvMedio": -0.32,
+      "clvComOdd": 13,
       "clvAjustadoMedio": null,
       "clvComLinhaAjustada": 0,
-      "clvCoberturaTotal": 12,
-      "movimentoLinhaTotal": 12,
+      "clvCoberturaTotal": 13,
+      "movimentoLinhaTotal": 13,
       "movimentoLinhaFavor": 0,
       "movimentoLinhaFavorPct": 0,
       "semClv": 3,
-      "clvCoveragePct": 80,
-      "clvExactCoveragePct": 80,
+      "clvCoveragePct": 81.3,
+      "clvExactCoveragePct": 81.3,
       "clvAdjustedCoveragePct": 0,
       "semClvMotivos": {
         "captura_expirada_sem_odd_gravada": 3
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 515,
+      "sampleSize": 543,
       "faltamParaCalibrar": 0
     },
     {
@@ -807,7 +807,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 515,
+      "sampleSize": 543,
       "faltamParaCalibrar": 0
     },
     {
@@ -837,7 +837,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 515,
+      "sampleSize": 543,
       "faltamParaCalibrar": 0
     },
     {
@@ -865,7 +865,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 515,
+      "sampleSize": 543,
       "faltamParaCalibrar": 0
     },
     {
@@ -895,7 +895,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 342,
+      "sampleSize": 366,
       "faltamParaCalibrar": 0
     },
     {
@@ -923,7 +923,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 342,
+      "sampleSize": 366,
       "faltamParaCalibrar": 0
     },
     {
@@ -951,7 +951,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 342,
+      "sampleSize": 366,
       "faltamParaCalibrar": 0
     }
   ],
@@ -996,12 +996,12 @@
     },
     {
       "cohort": "apos_fix_dependencia_be2ab14",
-      "nPublicadasResolvidas": 130,
-      "clvExato": 96,
+      "nPublicadasResolvidas": 131,
+      "clvExato": 97,
       "clvAjustado": 15,
-      "clvTotal": 111,
+      "clvTotal": 112,
       "semClv": 19,
-      "clvCoveragePct": 85.4,
+      "clvCoveragePct": 85.5,
       "semClvMotivos": {
         "jogador_indisponivel_no_mercado": 1,
         "linha_mudou_ate_fechamento": 2,
