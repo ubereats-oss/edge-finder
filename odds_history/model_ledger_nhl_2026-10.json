@@ -189285,21 +189285,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOdds": 1.4,
+    "clv": 0.71,
+    "closingOddsStatus": "capturada",
     "closingOddsLastAttemptAt": "2026-10-16T00:02:54.419Z",
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 1.5,
-        "price": 2.8
-      }
-    ],
-    "adjustedClosingLine": 1.5,
-    "adjustedClosingOverOdds": 2.8,
-    "adjustedClosingUnderOdds": 1.41,
-    "closingLineMovement": "a_favor",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
     "lineAdjustedClv": null
   },
   {
