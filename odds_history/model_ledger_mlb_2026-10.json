@@ -1965,7 +1965,7 @@
     "firstEvaluatedAt": "2026-10-08T23:07:07.760Z",
     "result": null,
     "resolutionAttempts": 2,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -2016,7 +2016,7 @@
     "firstEvaluatedAt": "2026-10-08T23:07:07.760Z",
     "result": null,
     "resolutionAttempts": 2,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -2723,7 +2723,14 @@
     "adjustedClosingOverOdds": null,
     "adjustedClosingUnderOdds": null,
     "closingLineMovement": "neutro",
-    "lineAdjustedClv": null
+    "lineAdjustedClv": null,
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401908025",
+      "player": "Freddy Peralta",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "38049724abb5fcb2b69405bbe4bb3d72|Parker Messick|strikeouts|4.5|Over",
@@ -2760,14 +2767,21 @@
     "firstEvaluatedAt": "2026-10-13T22:27:08.078Z",
     "result": null,
     "resolutionAttempts": 2,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401908025",
+      "player": "Parker Messick",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "622fd31d2c8178b025455656e0d2fb89|Robert Gasser|strikeouts|3.5|Over",
@@ -2804,7 +2818,7 @@
     "firstEvaluatedAt": "2026-10-13T22:27:08.078Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -2819,7 +2833,14 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": null,
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": null,
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401908033",
+      "player": "Robert Gasser",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "38049724abb5fcb2b69405bbe4bb3d72|Cleveland Guardians|h2h|0|Win",
@@ -2854,9 +2875,13 @@
     "runId": "2026-10-13T22:27:08.416Z",
     "evaluatedAt": "2026-10-13T22:27:08.420Z",
     "firstEvaluatedAt": "2026-10-13T22:27:08.420Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Cleveland Guardians",
+      "apuradoEm": "2026-10-16T14:52:41.387Z"
+    },
     "resolutionAttempts": 2,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -2905,9 +2930,13 @@
     "runId": "2026-10-13T22:27:08.416Z",
     "evaluatedAt": "2026-10-13T22:27:08.420Z",
     "firstEvaluatedAt": "2026-10-13T22:27:08.420Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "Tampa Bay Rays",
+      "apuradoEm": "2026-10-16T14:52:41.406Z"
+    },
     "resolutionAttempts": 2,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -2958,14 +2987,21 @@
     "firstEvaluatedAt": "2026-10-14T21:26:11.965Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401908033",
+      "player": "Blake Snell",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "a681025734060bef9fcce7ea7175674c|Gavin Williams|strikeouts|6.5|Over",
@@ -3000,16 +3036,20 @@
     "runId": "2026-10-14T21:26:11.734Z",
     "evaluatedAt": "2026-10-14T21:26:11.965Z",
     "firstEvaluatedAt": "2026-10-14T21:26:11.965Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 9,
+      "apuradoEm": "2026-10-16T14:52:41.960Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "a681025734060bef9fcce7ea7175674c|Griffin Jax|strikeouts|3.5|Under",
@@ -3044,9 +3084,13 @@
     "runId": "2026-10-14T21:26:11.734Z",
     "evaluatedAt": "2026-10-14T21:26:11.965Z",
     "firstEvaluatedAt": "2026-10-14T21:26:11.965Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-16T14:52:42.387Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -3095,9 +3139,13 @@
     "runId": "2026-10-14T21:26:12.242Z",
     "evaluatedAt": "2026-10-14T21:26:12.244Z",
     "firstEvaluatedAt": "2026-10-14T21:26:12.244Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Cleveland Guardians",
+      "apuradoEm": "2026-10-16T14:52:42.548Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -3146,9 +3194,13 @@
     "runId": "2026-10-14T21:26:12.242Z",
     "evaluatedAt": "2026-10-14T21:26:12.244Z",
     "firstEvaluatedAt": "2026-10-14T21:26:12.244Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "Tampa Bay Rays",
+      "apuradoEm": "2026-10-16T14:52:42.556Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -3197,16 +3249,20 @@
     "runId": "2026-10-15T21:07:24.800Z",
     "evaluatedAt": "2026-10-15T21:07:25.202Z",
     "firstEvaluatedAt": "2026-10-15T21:07:25.202Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 6,
+      "apuradoEm": "2026-10-16T14:52:42.849Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "closingOddsLastAttemptAt": "2026-10-16T00:02:54.090Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
