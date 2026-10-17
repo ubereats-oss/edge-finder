@@ -3300,7 +3300,7 @@
     "evaluatedAt": "2026-10-16T20:44:06.332Z",
     "firstEvaluatedAt": "2026-10-15T21:07:25.542Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": true,
@@ -3352,7 +3352,7 @@
     "evaluatedAt": "2026-10-16T20:44:06.332Z",
     "firstEvaluatedAt": "2026-10-15T21:07:25.542Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": true,
@@ -3404,7 +3404,7 @@
     "evaluatedAt": "2026-10-16T20:44:05.780Z",
     "firstEvaluatedAt": "2026-10-16T20:44:05.780Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -3412,6 +3412,6 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   }
 ]
