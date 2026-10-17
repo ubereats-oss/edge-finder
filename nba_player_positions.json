@@ -63,6 +63,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Isaac McKneely": {
+    "position": "G",
+    "group": "guard"
+  },
   "Asa Newell": {
     "position": "F",
     "group": "forward"
@@ -182,10 +186,6 @@
   "Jeremiah Fears": {
     "position": "G",
     "group": "guard"
-  },
-  "Caleb Houstan": {
-    "position": "F",
-    "group": "forward"
   },
   "AJ Johnson": {
     "position": "G",
@@ -431,6 +431,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Quincy Acy": {
+    "position": "F",
+    "group": "forward"
+  },
   "Santi Aldama": {
     "position": "F",
     "group": "forward"
@@ -448,10 +452,6 @@
     "group": "center"
   },
   "Sergio de Larrea": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Jorge Diaz Graham": {
     "position": "F",
     "group": "forward"
   },
@@ -711,6 +711,10 @@
     "position": "F",
     "group": "forward"
   },
+  "Miles Kelly": {
+    "position": "G",
+    "group": "guard"
+  },
   "Yaxel Lendeborg": {
     "position": "F",
     "group": "forward"
@@ -772,6 +776,10 @@
     "group": "guard"
   },
   "Clint Capela": {
+    "position": "C",
+    "group": "center"
+  },
+  "Tyson Chandler": {
     "position": "C",
     "group": "center"
   },
@@ -1071,6 +1079,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Aniwaniwa Tait-Jones": {
+    "position": "G",
+    "group": "guard"
+  },
   "Adou Thiero": {
     "position": "F",
     "group": "forward"
@@ -1094,6 +1106,10 @@
   "Walter Clayton Jr.": {
     "position": "G",
     "group": "guard"
+  },
+  "Zach Cleveland": {
+    "position": "F",
+    "group": "forward"
   },
   "Carson Cooper": {
     "position": "C",
@@ -1211,19 +1227,7 @@
     "position": "F",
     "group": "forward"
   },
-  "Kylor Kelley": {
-    "position": "C",
-    "group": "center"
-  },
   "Pelle Larsson": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Gabe Madsen": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Bez Mbeng": {
     "position": "G",
     "group": "guard"
   },
@@ -1611,10 +1615,6 @@
     "position": "C",
     "group": "center"
   },
-  "Andrew Holifield": {
-    "position": "F",
-    "group": "forward"
-  },
   "Chet Holmgren": {
     "position": "C",
     "group": "center"
@@ -1636,14 +1636,6 @@
     "group": "guard"
   },
   "Otega Oweh": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Anthony Pritchard": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Zhaire Smith": {
     "position": "G",
     "group": "guard"
   },
@@ -1695,10 +1687,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Malaki Branham": {
-    "position": "F",
-    "group": "forward"
-  },
   "Jamal Cain": {
     "position": "F",
     "group": "forward"
@@ -1719,15 +1707,7 @@
     "position": "F",
     "group": "forward"
   },
-  "JD Davison": {
-    "position": "G",
-    "group": "guard"
-  },
   "Jonathan Isaac": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Kevin Knox II": {
     "position": "F",
     "group": "forward"
   },
@@ -1779,6 +1759,10 @@
     "position": "G",
     "group": "guard"
   },
+  "Cris Carroll": {
+    "position": "F",
+    "group": "forward"
+  },
   "VJ Edgecombe": {
     "position": "G",
     "group": "guard"
@@ -1794,6 +1778,10 @@
   "Tacko Fall": {
     "position": "C",
     "group": "center"
+  },
+  "Taye Fields": {
+    "position": "G",
+    "group": "guard"
   },
   "Ariel Hukporti": {
     "position": "C",
@@ -2107,14 +2095,6 @@
     "position": "F",
     "group": "forward"
   },
-  "RJ Davis": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Jon Elmore": {
-    "position": "G",
-    "group": "guard"
-  },
   "De'Aaron Fox": {
     "position": "G",
     "group": "guard"
@@ -2154,10 +2134,6 @@
   "Tarris Reed Jr.": {
     "position": "C",
     "group": "center"
-  },
-  "Terry Taylor": {
-    "position": "F",
-    "group": "forward"
   },
   "Devin Vassell": {
     "position": "G",
@@ -2451,10 +2427,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Pat Connaughton": {
-    "position": "G",
-    "group": "guard"
-  },
   "Moussa Diabate": {
     "position": "F",
     "group": "forward"
@@ -2518,5 +2490,9 @@
   "Grant Williams": {
     "position": "F",
     "group": "forward"
+  },
+  "Latrell Wrightsell Jr.": {
+    "position": "G",
+    "group": "guard"
   }
 }
