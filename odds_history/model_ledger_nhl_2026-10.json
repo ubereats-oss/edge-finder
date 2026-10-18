@@ -224583,9 +224583,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.43,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Zach Werenski|assists|0.5|Over",
@@ -224847,9 +224854,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.41,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Maxim Shabanov|assists|0.5|Under",
@@ -224891,9 +224905,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.43,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Matthew Knies|assists|0.5|Over",
@@ -225111,9 +225132,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.29,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Ryan Hartman|assists|0.5|Under",
@@ -225155,9 +225183,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.33,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Jonas Brodin|assists|0.5|Under",
@@ -225199,9 +225234,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.25,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Bobby Brink|assists|0.5|Over",
@@ -225243,9 +225285,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 3.85,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Damon Severson|assists|0.5|Over",
@@ -225419,9 +225468,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.25,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Conor Garland|assists|0.5|Over",
@@ -225507,9 +225563,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.2,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Kirill Kaprizov|points|1.5|Over",
@@ -225595,9 +225658,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.52,
+    "clv": 1.32,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Matt Boldy|points|0.5|Over",
@@ -225639,9 +225709,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.45,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Matt Boldy|points|1.5|Under",
@@ -225683,9 +225760,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.38,
+    "clv": 0.72,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Zach Werenski|points|0.5|Over",
@@ -225727,9 +225811,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 1.61,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Joel Eriksson Ek|points|0.5|Over",
@@ -226607,9 +226698,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 3.35,
+    "clv": -1.49,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Valeri Nichushkin|goals|0.5|Over",
@@ -226783,9 +226881,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOdds": 4.7,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "3af4496cf626dc3538fb93001aa2fba0|Matthew Knies|goals|0.5|Over",
