@@ -3,14 +3,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Giorgi Bezhanishvili": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Cameron Corhen": {
-    "position": "F",
-    "group": "forward"
-  },
   "Dyson Daniels": {
     "position": "G",
     "group": "guard"
@@ -47,10 +39,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Kobe Johnson": {
-    "position": "G",
-    "group": "guard"
-  },
   "Corey Kispert": {
     "position": "F",
     "group": "forward"
@@ -60,10 +48,6 @@
     "group": "center"
   },
   "CJ McCollum": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Isaac McKneely": {
     "position": "G",
     "group": "guard"
   },
@@ -99,10 +83,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Tucker DeVries": {
-    "position": "F",
-    "group": "forward"
-  },
   "Luka Garza": {
     "position": "C",
     "group": "center"
@@ -115,19 +95,11 @@
     "position": "G",
     "group": "guard"
   },
-  "Hayden Gray": {
-    "position": "G",
-    "group": "guard"
-  },
   "Ron Harper Jr.": {
     "position": "G",
     "group": "guard"
   },
   "Sam Hauser": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Gabe McGlothan": {
     "position": "F",
     "group": "forward"
   },
@@ -155,10 +127,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Milos Uzan": {
-    "position": "G",
-    "group": "guard"
-  },
   "Jordan Walsh": {
     "position": "G",
     "group": "guard"
@@ -172,10 +140,6 @@
     "group": "forward"
   },
   "Saddiq Bey": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Kobe Bufkin": {
     "position": "G",
     "group": "guard"
   },
@@ -219,10 +183,6 @@
     "position": "C",
     "group": "center"
   },
-  "Jalon Moore": {
-    "position": "F",
-    "group": "forward"
-  },
   "Trey Murphy III": {
     "position": "F",
     "group": "forward"
@@ -256,14 +216,6 @@
     "group": "forward"
   },
   "Tobe Awaka": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Brandon Boston Jr.": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Jalen Bridges": {
     "position": "F",
     "group": "forward"
   },
@@ -307,17 +259,9 @@
     "position": "F",
     "group": "forward"
   },
-  "Drew Peterson": {
-    "position": "F",
-    "group": "forward"
-  },
   "Norman Powell": {
     "position": "G",
     "group": "guard"
-  },
-  "Orlando Robinson": {
-    "position": "C",
-    "group": "center"
   },
   "Jaylin Sellers": {
     "position": "G",
@@ -343,17 +287,9 @@
     "position": "F",
     "group": "forward"
   },
-  "Rashaun Agee": {
-    "position": "F",
-    "group": "forward"
-  },
   "Jarrett Allen": {
     "position": "C",
     "group": "center"
-  },
-  "Zack Austin": {
-    "position": "F",
-    "group": "forward"
   },
   "Thomas Bryant": {
     "position": "C",
@@ -374,10 +310,6 @@
   "Mario Hezonja": {
     "position": "F",
     "group": "forward"
-  },
-  "Curtis Jones": {
-    "position": "G",
-    "group": "guard"
   },
   "Sam Merrill": {
     "position": "G",
@@ -403,10 +335,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Kadary Richmond": {
-    "position": "G",
-    "group": "guard"
-  },
   "Meleek Thomas": {
     "position": "G",
     "group": "guard"
@@ -424,10 +352,6 @@
     "group": "center"
   },
   "Peyton Watson": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Noam Yaacov": {
     "position": "G",
     "group": "guard"
   },
@@ -483,10 +407,6 @@
     "position": "C",
     "group": "center"
   },
-  "Seth Lundy": {
-    "position": "G",
-    "group": "guard"
-  },
   "Naji Marshall": {
     "position": "F",
     "group": "forward"
@@ -494,10 +414,6 @@
   "Caleb Martin": {
     "position": "F",
     "group": "forward"
-  },
-  "John Poulakidas": {
-    "position": "G",
-    "group": "guard"
   },
   "Dwight Powell": {
     "position": "F",
@@ -527,10 +443,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Steven Crowl": {
-    "position": "C",
-    "group": "center"
-  },
   "DeMar DeRozan": {
     "position": "G",
     "group": "guard"
@@ -539,15 +451,7 @@
     "position": "F",
     "group": "forward"
   },
-  "Dane Goodwin": {
-    "position": "G",
-    "group": "guard"
-  },
   "Aaron Gordon": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Coleman Hawkins": {
     "position": "F",
     "group": "forward"
   },
@@ -575,10 +479,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Emanuel Miller": {
-    "position": "F",
-    "group": "forward"
-  },
   "Jamal Murray": {
     "position": "G",
     "group": "guard"
@@ -592,10 +492,6 @@
     "group": "forward"
   },
   "Julian Strawther": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Lonnie Walker IV": {
     "position": "G",
     "group": "guard"
   },
@@ -675,17 +571,9 @@
     "position": "G",
     "group": "guard"
   },
-  "Brice Williams": {
-    "position": "F",
-    "group": "forward"
-  },
   "Charles Bassey": {
     "position": "C",
     "group": "center"
-  },
-  "Tyler Burton": {
-    "position": "F",
-    "group": "forward"
   },
   "Jimmy Butler III": {
     "position": "F",
@@ -710,10 +598,6 @@
   "Graham Ike": {
     "position": "F",
     "group": "forward"
-  },
-  "Miles Kelly": {
-    "position": "G",
-    "group": "guard"
   },
   "Yaxel Lendeborg": {
     "position": "F",
@@ -755,14 +639,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Dalen Terry": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Alex Toohey": {
-    "position": "F",
-    "group": "forward"
-  },
   "Brandon Williams": {
     "position": "G",
     "group": "guard"
@@ -796,10 +672,6 @@
     "group": "forward"
   },
   "Tari Eason": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Cameron Matthews": {
     "position": "F",
     "group": "forward"
   },
@@ -866,10 +738,6 @@
   "Quenton Jackson": {
     "position": "G",
     "group": "guard"
-  },
-  "James Johnson": {
-    "position": "F",
-    "group": "forward"
   },
   "T.J. McConnell": {
     "position": "G",
@@ -955,17 +823,9 @@
     "position": "F",
     "group": "forward"
   },
-  "Yuki Kawamura": {
-    "position": "G",
-    "group": "guard"
-  },
   "Brook Lopez": {
     "position": "C",
     "group": "center"
-  },
-  "Fletcher Loyer": {
-    "position": "G",
-    "group": "guard"
   },
   "Nick Martinelli": {
     "position": "F",
@@ -995,29 +855,13 @@
     "position": "G",
     "group": "guard"
   },
-  "Jahmyl Telfort": {
-    "position": "F",
-    "group": "forward"
-  },
   "Keaton Wagler": {
     "position": "G",
     "group": "guard"
   },
-  "Blake Wesley": {
-    "position": "G",
-    "group": "guard"
-  },
-  "DeAndre Williams": {
-    "position": "F",
-    "group": "forward"
-  },
   "Cameron Carr": {
     "position": "G",
     "group": "guard"
-  },
-  "Rafael Castro": {
-    "position": "F",
-    "group": "forward"
   },
   "Luka Doncic": {
     "position": "G",
@@ -1044,10 +888,6 @@
     "group": "center"
   },
   "Dalton Knecht": {
-    "position": "F",
-    "group": "forward"
-  },
-  "William Kyle III": {
     "position": "F",
     "group": "forward"
   },
@@ -1079,10 +919,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Aniwaniwa Tait-Jones": {
-    "position": "G",
-    "group": "guard"
-  },
   "Adou Thiero": {
     "position": "F",
     "group": "forward"
@@ -1106,10 +942,6 @@
   "Walter Clayton Jr.": {
     "position": "G",
     "group": "guard"
-  },
-  "Zach Cleveland": {
-    "position": "F",
-    "group": "forward"
   },
   "Carson Cooper": {
     "position": "C",
@@ -1247,10 +1079,6 @@
     "position": "C",
     "group": "center"
   },
-  "Ian Schieffelin": {
-    "position": "F",
-    "group": "forward"
-  },
   "Dru Smith": {
     "position": "G",
     "group": "guard"
@@ -1268,10 +1096,6 @@
     "group": "forward"
   },
   "Nate Ament": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Johni Broome": {
     "position": "F",
     "group": "forward"
   },
@@ -1319,10 +1143,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Pete Nance": {
-    "position": "F",
-    "group": "forward"
-  },
   "Kevin Porter Jr.": {
     "position": "G",
     "group": "guard"
@@ -1336,10 +1156,6 @@
     "group": "guard"
   },
   "Jericho Sims": {
-    "position": "C",
-    "group": "center"
-  },
-  "Jake Stephens": {
     "position": "C",
     "group": "center"
   },
@@ -1383,10 +1199,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Enrique Freeman": {
-    "position": "F",
-    "group": "forward"
-  },
   "Rudy Gobert": {
     "position": "C",
     "group": "center"
@@ -1403,15 +1215,7 @@
     "position": "F",
     "group": "forward"
   },
-  "KJ Martin": {
-    "position": "F",
-    "group": "forward"
-  },
   "Jaden McDaniels": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Norchad Omier": {
     "position": "F",
     "group": "forward"
   },
@@ -1419,17 +1223,9 @@
     "position": "G",
     "group": "guard"
   },
-  "Antonio Reeves": {
-    "position": "G",
-    "group": "guard"
-  },
   "Terrence Shannon Jr.": {
     "position": "G",
     "group": "guard"
-  },
-  "Drew Timme": {
-    "position": "F",
-    "group": "forward"
   },
   "Cody Williams": {
     "position": "F",
@@ -1511,10 +1307,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Ochai Agbaji": {
-    "position": "G",
-    "group": "guard"
-  },
   "Jaden Akins": {
     "position": "G",
     "group": "guard"
@@ -1527,15 +1319,7 @@
     "position": "F",
     "group": "forward"
   },
-  "Tony Bradley": {
-    "position": "C",
-    "group": "center"
-  },
   "Mikal Bridges": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Bruce Brown": {
     "position": "G",
     "group": "guard"
   },
@@ -1558,10 +1342,6 @@
   "Andre Drummond": {
     "position": "C",
     "group": "center"
-  },
-  "Drew Eubanks": {
-    "position": "F",
-    "group": "forward"
   },
   "Josh Hart": {
     "position": "G",
@@ -1646,10 +1426,6 @@
   "Bennett Stirtz": {
     "position": "G",
     "group": "guard"
-  },
-  "Christoph Tilly": {
-    "position": "C",
-    "group": "center"
   },
   "Nikola Topic": {
     "position": "G",
@@ -1759,10 +1535,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Cris Carroll": {
-    "position": "F",
-    "group": "forward"
-  },
   "VJ Edgecombe": {
     "position": "G",
     "group": "guard"
@@ -1779,10 +1551,6 @@
     "position": "C",
     "group": "center"
   },
-  "Taye Fields": {
-    "position": "G",
-    "group": "guard"
-  },
   "Ariel Hukporti": {
     "position": "C",
     "group": "center"
@@ -1791,23 +1559,11 @@
     "position": "F",
     "group": "forward"
   },
-  "Dillon Jones": {
-    "position": "F",
-    "group": "forward"
-  },
   "Caleb Love": {
     "position": "G",
     "group": "guard"
   },
   "Tyrese Maxey": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Duke Miles": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Jameer Nelson Jr.": {
     "position": "G",
     "group": "guard"
   },
@@ -1822,10 +1578,6 @@
   "Anfernee Simons": {
     "position": "G",
     "group": "guard"
-  },
-  "Saint Thomas": {
-    "position": "F",
-    "group": "forward"
   },
   "Dean Wade": {
     "position": "F",
@@ -1855,10 +1607,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Kennedy Chandler": {
-    "position": "G",
-    "group": "guard"
-  },
   "Ryan Dunn": {
     "position": "F",
     "group": "forward"
@@ -1878,10 +1626,6 @@
   "Jalen Green": {
     "position": "G",
     "group": "guard"
-  },
-  "Haywood Highsmith": {
-    "position": "F",
-    "group": "forward"
   },
   "CJ Huntley": {
     "position": "F",
@@ -1910,10 +1654,6 @@
   "Pat Spencer": {
     "position": "G",
     "group": "guard"
-  },
-  "Phillip Wheeler": {
-    "position": "F",
-    "group": "forward"
   },
   "Mark Williams": {
     "position": "C",
@@ -1979,10 +1719,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Jeremy Sochan": {
-    "position": "F",
-    "group": "forward"
-  },
   "John Tonje": {
     "position": "F",
     "group": "forward"
@@ -2027,10 +1763,6 @@
     "position": "F",
     "group": "forward"
   },
-  "Viktor Lakhin": {
-    "position": "F",
-    "group": "forward"
-  },
   "Zach LaVine": {
     "position": "G",
     "group": "guard"
@@ -2046,14 +1778,6 @@
   "Keegan Murray": {
     "position": "F",
     "group": "forward"
-  },
-  "Tristen Newton": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Elfrid Payton": {
-    "position": "G",
-    "group": "guard"
   },
   "Daeqwon Plowden": {
     "position": "G",
@@ -2167,37 +1891,13 @@
     "position": "G",
     "group": "guard"
   },
-  "Nimari Burnett": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Tyson Degenhart": {
-    "position": "F",
-    "group": "forward"
-  },
   "Allen Graves": {
     "position": "F",
     "group": "forward"
   },
-  "Chucky Hepburn": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Andre Jackson Jr.": {
-    "position": "G",
-    "group": "guard"
-  },
   "Trayce Jackson-Davis": {
     "position": "F",
     "group": "forward"
-  },
-  "Trey Jemison III": {
-    "position": "C",
-    "group": "center"
-  },
-  "Tyreke Key": {
-    "position": "G",
-    "group": "guard"
   },
   "Kawhi Leonard": {
     "position": "F",
@@ -2219,10 +1919,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Jamarion Sharp": {
-    "position": "C",
-    "group": "center"
-  },
   "Jamal Shead": {
     "position": "G",
     "group": "guard"
@@ -2234,10 +1930,6 @@
   "Ja'Kobe Walter": {
     "position": "G",
     "group": "guard"
-  },
-  "Jonas Aidoo": {
-    "position": "C",
-    "group": "center"
   },
   "Trey Alexander": {
     "position": "G",
@@ -2251,9 +1943,9 @@
     "position": "C",
     "group": "center"
   },
-  "Tamar Bates": {
-    "position": "G",
-    "group": "guard"
+  "Tony Bradley": {
+    "position": "C",
+    "group": "center"
   },
   "Terrell Brown Jr.": {
     "position": "G",
@@ -2264,10 +1956,6 @@
     "group": "guard"
   },
   "Kyle Filipowski": {
-    "position": "F",
-    "group": "forward"
-  },
-  "Taylor Funk": {
     "position": "F",
     "group": "forward"
   },
@@ -2363,18 +2051,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Trevor Keels": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Skal Labissiere": {
-    "position": "C",
-    "group": "center"
-  },
-  "Chris Livingston": {
-    "position": "F",
-    "group": "forward"
-  },
   "Tre Mann": {
     "position": "G",
     "group": "guard"
@@ -2407,10 +2083,6 @@
     "position": "G",
     "group": "guard"
   },
-  "Alondes Williams": {
-    "position": "G",
-    "group": "guard"
-  },
   "Trae Young": {
     "position": "G",
     "group": "guard"
@@ -2431,19 +2103,11 @@
     "position": "F",
     "group": "forward"
   },
-  "Wyatt Fricks": {
-    "position": "F",
-    "group": "forward"
-  },
   "PJ Hall": {
     "position": "C",
     "group": "center"
   },
   "Sion James": {
-    "position": "G",
-    "group": "guard"
-  },
-  "Jarkel Joiner": {
     "position": "G",
     "group": "guard"
   },
@@ -2490,9 +2154,5 @@
   "Grant Williams": {
     "position": "F",
     "group": "forward"
-  },
-  "Latrell Wrightsell Jr.": {
-    "position": "G",
-    "group": "guard"
   }
 }
