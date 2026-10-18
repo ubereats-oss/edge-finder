@@ -1,6 +1,6 @@
 # Relatório de desempenho — histórico central de indicações
 
-Gerado em: 2026-10-17T13:46:13.274Z
+Gerado em: 2026-10-18T14:07:02.180Z
 
 Só inclui indicações publicadas, resolvidas e válidas para calibração (mesmo critério da calibração — NHL pré-correção da agregação de odds fica de fora, por exemplo). Push e cancelado entram no lucro/ROI mas não na taxa de acerto.
 
@@ -30,14 +30,14 @@ Só inclui indicações publicadas, resolvidas e válidas para calibração (mes
 | americanfootball/nfl | rushYards | 15-20% | 9 | 11.1% (9 decididas) | 58.0% (bruta 62.4%) | -72.8% | -0.4% (4/9 exata); ajustado 3.6% (1/9 ajustada); mov. favor 25.0% (1/4) | calibrado | 0 |
 | americanfootball/nfl | rushYards | 20-25% | 7 | 57.1% (7 decididas) | 61.0% (bruta 89.5%) | 54.3% | -0.9% (2/7 exata); ajustado -3.4% (2/7 ajustada); mov. favor 33.3% (1/3) | calibrado | 0 |
 | americanfootball/nfl | rushYards | 25-30% | 4 | 25.0% (4 decididas) | 78.7% (bruta 97.1%) | -50.3% | —; ajustado -17.1% (4/4 ajustada); mov. favor 0.0% (0/4) | calibrado | 0 |
-| hockey/nhl | assists | 15-20% | 35 | 60.0% (35 decididas) | 75.2% (bruta 67.2%) | 3.6% | 0.1% (29/35 exata); ajustado —; mov. favor 0.0% (0/29) | calibrado | 0 |
+| hockey/nhl | assists | 15-20% | 38 | 60.5% (38 decididas) | 75.2% (bruta 67.6%) | 3.9% | 0.2% (32/38 exata); ajustado —; mov. favor 0.0% (0/32) | calibrado | 0 |
 | hockey/nhl | assists | 20-25% | 16 | 62.5% (16 decididas) | 68.7% (bruta 54.9%) | 25.7% | -0.3% (13/16 exata); ajustado —; mov. favor 0.0% (0/13) | calibrado | 0 |
 | hockey/nhl | assists | 25-30% | 3 | 33.3% (3 decididas) | 70.9% (bruta 52.1%) | -24.7% | 0.0% (1/3 exata); ajustado —; mov. favor 0.0% (0/1) | calibrado | 0 |
 | hockey/nhl | assists | 30-35% | 4 | 75.0% (4 decididas) | 73.5% (bruta 50.1%) | 74.9% | 0.0% (1/4 exata); ajustado —; mov. favor 0.0% (0/1) | calibrado | 0 |
 | hockey/nhl | assists | 35-40% | 3 | 33.3% (3 decididas) | 71.0% (bruta 34.0%) | 12.4% | 0.6% (3/3 exata); ajustado —; mov. favor 0.0% (0/3) | calibrado | 0 |
-| hockey/nhl | points | 15-20% | 8 | 50.0% (8 decididas) | 84.5% (bruta 78.8%) | -23.1% | 0.1% (6/8 exata); ajustado —; mov. favor 0.0% (0/6) | calibrado | 0 |
+| hockey/nhl | points | 15-20% | 9 | 44.4% (9 decididas) | 81.9% (bruta 77.5%) | -27.7% | 0.1% (7/9 exata); ajustado —; mov. favor 0.0% (0/7) | calibrado | 0 |
 | hockey/nhl | points | 20-25% | 2 | 0.0% (2 decididas) | 66.0% (bruta 54.1%) | -100.0% | 0.0% (2/2 exata); ajustado —; mov. favor 0.0% (0/2) | calibrado | 0 |
-| hockey/nhl | points | 25-30% | 1 | 0.0% (1 decididas) | 66.3% (bruta 69.9%) | -100.0% | 2.1% (1/1 exata); ajustado —; mov. favor 0.0% (0/1) | calibrado | 0 |
+| hockey/nhl | points | 25-30% | 3 | 33.3% (3 decididas) | 76.6% (bruta 76.2%) | -28.1% | 0.7% (3/3 exata); ajustado —; mov. favor 0.0% (0/3) | calibrado | 0 |
 
 ## Cobertura de CLV por coorte
 
@@ -46,7 +46,7 @@ Só inclui indicações publicadas, resolvidas e válidas para calibração (mes
 | antes_primeira_captura | 3 | 0 | 0 | 0.0% | registrada_antes_da_captura_existir: 3 |
 | captura_inicial_pre_jit | 86 | 30 | 0 | 34.9% | registrada_antes_do_controle_de_status_da_captura: 56 |
 | jit_pre_controle_status | 27 | 12 | 1 | 48.1% | registrada_antes_do_controle_de_status_da_captura: 10; cota_api_esgotada_na_captura_pre_fix: 3; captura_expirada_sem_odd_gravada: 1 |
-| apos_fix_dependencia_be2ab14 | 136 | 102 | 15 | 86.0% | jogador_indisponivel_no_mercado: 1; linha_mudou_ate_fechamento: 2; captura_expirada_sem_odd_gravada: 16 |
+| apos_fix_dependencia_be2ab14 | 142 | 108 | 15 | 86.6% | jogador_indisponivel_no_mercado: 1; linha_mudou_ate_fechamento: 2; captura_expirada_sem_odd_gravada: 16 |
 
 ## Apostas reais
 

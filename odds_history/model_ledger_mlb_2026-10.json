@@ -3299,9 +3299,13 @@
     "runId": "2026-10-16T20:44:06.328Z",
     "evaluatedAt": "2026-10-16T20:44:06.332Z",
     "firstEvaluatedAt": "2026-10-15T21:07:25.542Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "Cleveland Guardians",
+      "apuradoEm": "2026-10-18T14:02:18.444Z"
+    },
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -3351,9 +3355,13 @@
     "runId": "2026-10-16T20:44:06.328Z",
     "evaluatedAt": "2026-10-16T20:44:06.332Z",
     "firstEvaluatedAt": "2026-10-15T21:07:25.542Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Tampa Bay Rays",
+      "apuradoEm": "2026-10-18T14:02:18.468Z"
+    },
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -3403,9 +3411,13 @@
     "runId": "2026-10-16T20:44:05.335Z",
     "evaluatedAt": "2026-10-16T20:44:05.780Z",
     "firstEvaluatedAt": "2026-10-16T20:44:05.780Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-18T14:02:18.788Z"
+    },
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -3448,7 +3460,7 @@
     "evaluatedAt": "2026-10-17T20:21:07.793Z",
     "firstEvaluatedAt": "2026-10-17T20:21:07.793Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
@@ -3456,7 +3468,7 @@
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "bf41baaebfa23a202d2f3a6811425ff9|Cleveland Guardians|h2h|0|Win",
@@ -3492,7 +3504,7 @@
     "evaluatedAt": "2026-10-17T20:21:08.093Z",
     "firstEvaluatedAt": "2026-10-17T20:21:08.093Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": true,
@@ -3543,7 +3555,7 @@
     "evaluatedAt": "2026-10-17T20:21:08.093Z",
     "firstEvaluatedAt": "2026-10-17T20:21:08.093Z",
     "result": null,
-    "resolutionAttempts": 0,
+    "resolutionAttempts": 1,
     "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": true,
