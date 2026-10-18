@@ -195659,21 +195659,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 224.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
-    "closingLineMovement": "contra",
-    "lineAdjustedClv": -7.11,
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 224.5,
-        "price": 1.89
-      }
-    ],
+    "closingOdds": 1.89,
+    "clv": 0.53,
+    "closingOddsStatus": "capturada",
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null,
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
     "closingOddsLastAttemptAt": "2026-10-18T19:32:52.986Z"
   },
   {
@@ -195731,7 +195726,7 @@
         "price": 1.87
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.986Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.418Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Justin Herbert|passYards|186.5|Over",
@@ -195776,19 +195771,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.986Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.418Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 197.5,
-        "price": 1.89
+        "line": 196.5,
+        "price": 1.9
       }
     ],
-    "adjustedClosingLine": 197.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
+    "adjustedClosingLine": 196.5,
+    "adjustedClosingOverOdds": 1.9,
+    "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": 7.81
+    "lineAdjustedClv": 6.08
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Justin Herbert|passYards|192.5|Over",
@@ -195885,19 +195880,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 197.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
+    "adjustedClosingLine": 196.5,
+    "adjustedClosingOverOdds": 1.9,
+    "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": 2.1,
+    "lineAdjustedClv": 0.34,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 197.5,
-        "price": 1.89
+        "line": 196.5,
+        "price": 1.9
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.986Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.418Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Kenneth Walker III|rushYards|86.5|Under",
@@ -195943,18 +195938,18 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "adjustedClosingLine": 94.5,
-    "adjustedClosingOverOdds": 1.91,
-    "adjustedClosingUnderOdds": 1.88,
+    "adjustedClosingOverOdds": 1.89,
+    "adjustedClosingUnderOdds": 1.89,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -22.46,
+    "lineAdjustedClv": -23.19,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 94.5,
-        "price": 1.88
+        "price": 1.89
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.986Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.418Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Kenneth Walker III|rushYards|84.5|Under",
@@ -196011,7 +196006,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.986Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.418Z"
   },
   {
     "_key": "82fd5a159fa130e67abab93a9537f70b|Jordan Love|passTDs|1.5|Over",
@@ -209120,18 +209115,18 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "adjustedClosingLine": 92.5,
-    "adjustedClosingOverOdds": 1.83,
-    "adjustedClosingUnderOdds": 1.93,
+    "adjustedClosingOverOdds": 1.86,
+    "adjustedClosingUnderOdds": 1.9,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -6.38,
+    "lineAdjustedClv": -7.87,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 92.5,
-        "price": 1.83
+        "price": 1.86
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Puka Nacua|receptionYards|92.5|Over",
@@ -209272,7 +209267,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -210157,19 +210152,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 20.5,
-        "price": 1.92
+        "price": 1.93
       }
     ],
     "adjustedClosingLine": 20.5,
-    "adjustedClosingOverOdds": 1.92,
-    "adjustedClosingUnderOdds": 1.87,
+    "adjustedClosingOverOdds": 1.93,
+    "adjustedClosingUnderOdds": 1.86,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": 16.74
+    "lineAdjustedClv": 16.25
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Jalen Brooks|receptionYards|13.5|Over",
@@ -210214,7 +210209,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -210271,7 +210266,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -210496,7 +210491,7 @@
         "price": 1.83
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Jeremiyah Love|receptionYards|10.5|Over",
@@ -210789,7 +210784,7 @@
         "price": 1.87
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Puka Nacua|receptions|7.5|Over",
@@ -211250,7 +211245,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -211307,7 +211302,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "jogador_indisponivel_no_mercado"
   },
   {
@@ -211769,7 +211764,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "jogador_indisponivel_no_mercado"
   },
   {
@@ -211815,19 +211810,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 42.5,
+        "line": 44.5,
         "price": 1.9
       }
     ],
-    "adjustedClosingLine": 42.5,
+    "adjustedClosingLine": 44.5,
     "adjustedClosingOverOdds": 1.88,
     "adjustedClosingUnderOdds": 1.9,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -9.94
+    "lineAdjustedClv": -16.78
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Blake Corum|rushYards|43.5|Under",
@@ -211924,19 +211919,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 47.5,
-        "price": 1.89
+        "line": 48.5,
+        "price": 1.92
       }
     ],
-    "adjustedClosingLine": 47.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
+    "adjustedClosingLine": 48.5,
+    "adjustedClosingOverOdds": 1.92,
+    "adjustedClosingUnderOdds": 1.87,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": 63.11
+    "lineAdjustedClv": 64.08
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Tyler Allgeier|rushYards|21.5|Over",
@@ -211981,7 +211976,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -212550,7 +212545,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -212607,7 +212602,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -213344,7 +213339,7 @@
         "price": 1.9
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z"
   },
   {
     "_key": "45b2690b350ed45145c7a716b18e8e66|James Cook|receptionYards|8.5|Over",
@@ -213401,7 +213396,7 @@
         "price": 1.89
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z"
   },
   {
     "_key": "45b2690b350ed45145c7a716b18e8e66|James Cook|receptionYards|7.5|Over",
@@ -214230,7 +214225,7 @@
         "price": 1.86
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z"
   },
   {
     "_key": "45b2690b350ed45145c7a716b18e8e66|Josh Allen|rushYards|33.5|Over",
@@ -214599,7 +214594,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z"
   },
   {
     "_key": "82fd5a159fa130e67abab93a9537f70b|Dak Prescott|passYards|275.5|Under",
@@ -226308,19 +226303,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 96.5,
-    "adjustedClosingOverOdds": 1.88,
-    "adjustedClosingUnderOdds": 1.91,
+    "adjustedClosingLine": 97.5,
+    "adjustedClosingOverOdds": 1.9,
+    "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -0.98,
+    "lineAdjustedClv": -0.35,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 96.5,
-        "price": 1.88
+        "line": 97.5,
+        "price": 1.9
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Puka Nacua|receptionYards|95.5|Over",
@@ -226365,7 +226360,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.321Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -226626,7 +226621,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Kendrick Bourne|receptionYards|34.5|Over",
@@ -226683,7 +226678,7 @@
         "price": 1.83
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Kendrick Bourne|receptionYards|33.5|Over",
@@ -226740,7 +226735,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Tyler Higbee|receptionYards|34.5|Over",
@@ -226849,7 +226844,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Jalen Brooks|receptionYards|22.5|Over",
@@ -227165,7 +227160,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Blake Corum|receptionYards|6.5|Over",
@@ -227274,7 +227269,7 @@
         "price": 2.25
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Davis Allen|receptions|1.5|Over",
@@ -227583,7 +227578,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z"
   },
   {
     "_key": "45b2690b350ed45145c7a716b18e8e66|Dalton Kincaid|receptionYards|49.5|Over",
@@ -228224,7 +228219,7 @@
         "price": 1.85
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z"
   },
   {
     "_key": "45b2690b350ed45145c7a716b18e8e66|Mike Washington Jr.|rushYards|14.5|Over",
@@ -228281,7 +228276,7 @@
         "price": 1.85
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z"
   },
   {
     "_key": "45b2690b350ed45145c7a716b18e8e66|Mike Washington Jr.|rushYards|15.5|Over",
@@ -228338,7 +228333,7 @@
         "price": 1.83
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z"
   },
   {
     "_key": "45b2690b350ed45145c7a716b18e8e66|Ray Davis|rushYards|6.5|Over",
@@ -228395,7 +228390,7 @@
         "price": 1.86
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Patrick Mahomes|passYards|227.5|Over",
@@ -228440,19 +228435,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.418Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 223.5,
-        "price": 1.88
+        "price": 1.86
       }
     ],
     "adjustedClosingLine": 223.5,
-    "adjustedClosingOverOdds": 1.88,
-    "adjustedClosingUnderOdds": 1.88,
+    "adjustedClosingOverOdds": 1.86,
+    "adjustedClosingUnderOdds": 1.9,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -10.18
+    "lineAdjustedClv": -9.18
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Patrick Mahomes|passYards|224.5|Over",
@@ -228498,42 +228493,42 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "adjustedClosingLine": 223.5,
-    "adjustedClosingOverOdds": 1.87,
-    "adjustedClosingUnderOdds": 1.87,
+    "adjustedClosingOverOdds": 1.83,
+    "adjustedClosingUnderOdds": 1.91,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -7.54,
+    "lineAdjustedClv": -5.54,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 193.5,
-        "price": 1.4
+        "price": 1.38
       },
       {
         "line": 203.5,
-        "price": 1.53
+        "price": 1.5
       },
       {
         "line": 213.5,
-        "price": 1.69
+        "price": 1.67
       },
       {
         "line": 223.5,
-        "price": 1.87
+        "price": 1.83
       },
       {
         "line": 233.5,
-        "price": 2.1
+        "price": 2.05
       },
       {
         "line": 243.5,
-        "price": 2.4
+        "price": 2.35
       },
       {
         "line": 253.5,
-        "price": 2.75
+        "price": 2.65
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.418Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Patrick Mahomes|passYards|230.5|Over",
@@ -228578,7 +228573,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.418Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -228635,19 +228630,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 197.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
+    "adjustedClosingLine": 196.5,
+    "adjustedClosingOverOdds": 1.9,
+    "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -2.96,
+    "lineAdjustedClv": -4.73,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 197.5,
-        "price": 1.89
+        "line": 196.5,
+        "price": 1.9
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Justin Herbert|passYards|190.5|Over",
@@ -228692,7 +228687,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -228956,7 +228951,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -229389,7 +229384,7 @@
         "price": 1.91
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Kenneth Walker III|rushYards|89.5|Under",
@@ -229446,7 +229441,7 @@
         "price": 1.91
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Omarion Hampton|rushYards|32.5|Over",
@@ -229492,18 +229487,18 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "adjustedClosingLine": 33.5,
-    "adjustedClosingOverOdds": 1.91,
-    "adjustedClosingUnderOdds": 1.88,
+    "adjustedClosingOverOdds": 1.88,
+    "adjustedClosingUnderOdds": 1.91,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -2.34,
+    "lineAdjustedClv": -0.82,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 33.5,
-        "price": 1.91
+        "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Omarion Hampton|rushYards|31.5|Over",
@@ -229560,7 +229555,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Omarion Hampton|rushYards|30.5|Over",
@@ -229633,7 +229628,7 @@
         "price": 2.9
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Justin Herbert|rushYards|24.5|Over",
@@ -229846,7 +229841,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Keaton Mitchell|rushYards|17.5|Over",
@@ -229903,7 +229898,7 @@
         "price": 1.87
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Kimani Vidal|rushYards|16.5|Over",
@@ -230116,7 +230111,7 @@
         "price": 1.85
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Emmett Johnson|rushYards|14.5|n/a",
@@ -242044,7 +242039,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -242329,19 +242324,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 28.5,
-    "adjustedClosingOverOdds": 1.87,
-    "adjustedClosingUnderOdds": 1.92,
+    "adjustedClosingLine": 29.5,
+    "adjustedClosingOverOdds": 1.9,
+    "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -11.38,
+    "lineAdjustedClv": -11.34,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 28.5,
-        "price": 1.87
+        "line": 29.5,
+        "price": 1.9
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Jalen Brooks|receptionYards|21.5|Over",
@@ -242387,18 +242382,18 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "adjustedClosingLine": 20.5,
-    "adjustedClosingOverOdds": 1.92,
-    "adjustedClosingUnderOdds": 1.87,
+    "adjustedClosingOverOdds": 1.93,
+    "adjustedClosingUnderOdds": 1.86,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -10.18,
+    "lineAdjustedClv": -10.69,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 20.5,
-        "price": 1.92
+        "price": 1.93
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Kyren Williams|rushYards|71.5|Over",
@@ -242484,21 +242479,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 43.5,
-    "adjustedClosingOverOdds": 1.86,
-    "adjustedClosingUnderOdds": 1.9,
-    "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -3.56,
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 43.5,
-        "price": 1.9
-      }
-    ],
+    "closingOdds": 1.94,
+    "clv": -3.09,
+    "closingOddsStatus": "capturada",
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null,
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
     "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z"
   },
   {
@@ -242556,7 +242546,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z"
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Matthew Stafford|rushYards|0.5|Over",
@@ -243385,19 +243375,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 197.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
+    "adjustedClosingLine": 196.5,
+    "adjustedClosingOverOdds": 1.9,
+    "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -0.43,
+    "lineAdjustedClv": -2.19,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 197.5,
-        "price": 1.89
+        "line": 196.5,
+        "price": 1.9
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Justin Herbert|passYards|196.5|Over",
@@ -243442,7 +243432,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -243552,18 +243542,18 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "adjustedClosingLine": 50.5,
-    "adjustedClosingOverOdds": 1.88,
-    "adjustedClosingUnderOdds": 1.91,
+    "adjustedClosingOverOdds": 1.9,
+    "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -10,
+    "lineAdjustedClv": -8.76,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 50.5,
-        "price": 1.91
+        "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Xavier Worthy|receptionYards|51.5|Under",
@@ -243620,7 +243610,7 @@
         "price": 1.85
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Ladd McConkey|receptionYards|41.5|Over",
@@ -243766,21 +243756,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 36.5,
-    "adjustedClosingOverOdds": 1.91,
-    "adjustedClosingUnderOdds": 1.88,
-    "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -4.57,
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 36.5,
-        "price": 1.91
-      }
-    ],
+    "closingOdds": 1.92,
+    "clv": -1.56,
+    "closingOddsStatus": "capturada",
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null,
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
     "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
   },
   {
@@ -244282,7 +244267,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z"
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z"
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Oronde Gadsden II|receptionYards|15.5|Over",
@@ -244327,7 +244312,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -245348,19 +245333,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 94.5,
-        "price": 1.88
+        "price": 1.89
       }
     ],
     "adjustedClosingLine": 94.5,
-    "adjustedClosingOverOdds": 1.91,
-    "adjustedClosingUnderOdds": 1.88,
+    "adjustedClosingOverOdds": 1.89,
+    "adjustedClosingUnderOdds": 1.89,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -7.42
+    "lineAdjustedClv": -8.17
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Kenneth Walker III|rushYards|88.5|Under",
@@ -245405,7 +245390,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -254634,7 +254619,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -254691,19 +254676,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.322Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.776Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 9.5,
-        "price": 1.93
+        "line": 8.5,
+        "price": 1.84
       }
     ],
-    "adjustedClosingLine": 9.5,
-    "adjustedClosingOverOdds": 1.93,
-    "adjustedClosingUnderOdds": 1.85,
+    "adjustedClosingLine": 8.5,
+    "adjustedClosingOverOdds": 1.84,
+    "adjustedClosingUnderOdds": 1.94,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": 9.96
+    "lineAdjustedClv": 5.48
   },
   {
     "_key": "3729ac6d2a66b642850caf2044cdc658|Jacoby Brissett|rushYards|10.5|Over",
@@ -255012,7 +254997,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -255164,7 +255149,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -255265,7 +255250,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -255366,7 +255351,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:53.656Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:56.238Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -255423,19 +255408,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 224.5,
+        "line": 226.5,
         "price": 1.89
       }
     ],
-    "adjustedClosingLine": 224.5,
+    "adjustedClosingLine": 226.5,
     "adjustedClosingOverOdds": 1.89,
     "adjustedClosingUnderOdds": 1.89,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -4.96
+    "lineAdjustedClv": -2.87
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Patrick Mahomes|passYards|225.5|Over",
@@ -255531,7 +255516,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -255720,7 +255705,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -255821,19 +255806,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 16.5,
-        "price": 1.89
+        "price": 1.85
       }
     ],
     "adjustedClosingLine": 16.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
+    "adjustedClosingOverOdds": 1.93,
+    "adjustedClosingUnderOdds": 1.85,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -16.49
+    "lineAdjustedClv": -14.47
   },
   {
     "_key": "20fefae8c296247460ba5773caa42218|Keaton Mitchell|receptionYards|13.5|Over",
@@ -255966,7 +255951,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -256111,7 +256096,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-18T19:32:52.987Z",
+    "closingOddsLastAttemptAt": "2026-10-18T20:02:55.419Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
