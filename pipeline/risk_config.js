@@ -66,6 +66,15 @@ module.exports = {
   // mas continuam visíveis no histórico e no cálculo de lucro.
   NHL_ODDS_FIX_CUTOFF: '2026-09-06T00:00:00Z',
 
+  // Apostas de NHL avaliadas antes deste instante usaram stats de jogador
+  // (gols/assistências/pontos) coletadas pelo bug corrigido no commit
+  // 469888e ("rebuild NHL skater stats and normalize player names",
+  // 2026-10-06 22:25 UTC) — médias/desvio por jogador vinham erradas (grupo
+  // de estatísticas errado da API do ESPN, nomes não normalizados). Mesmo
+  // tratamento do NHL_ODDS_FIX_CUTOFF acima: fora da calibração e das
+  // estatísticas de acerto, visível no histórico e no lucro.
+  NHL_STATS_FIX_CUTOFF: '2026-10-06T22:25:11Z',
+
   // Função auxiliar: um segmento (esporte+mercado) está na lista de
   // desabilitados?
   isSegmentDisabled(esporte, market) {

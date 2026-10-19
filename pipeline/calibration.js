@@ -9,6 +9,16 @@
 // nada pra ficar dessincronizado, o ajuste É o histórico no momento em que é
 // consultado. O cache abaixo é só pra não reler o mesmo segmento várias
 // vezes dentro da mesma execução de um script.
+//
+// Duas salvaguardas contra overfitting de amostra pequena (ver
+// pipeline/backtest_calibration_methods.js pra validação com dados reais):
+//  1. Nenhum nó da isotônica se apoia em menos de MIN_SAMPLE_TO_CALIBRATE
+//     resolvidas — blocos adjacentes do Pool Adjacent Violators são
+//     fundidos até atingir o mínimo (ver enforceMinBlockSize).
+//  2. Mesmo calibrado, a probabilidade final é uma mistura entre a saída da
+//     isotônica e a bruta, com peso (`trust`) que cresce gradualmente com o
+//     tamanho da amostra — sem salto abrupto ao cruzar o mínimo — e nunca
+//     sai do intervalo [5%, 95%].
 
 const ledger = require('./model_ledger');
 const config = require('./risk_config');
@@ -38,11 +48,37 @@ function poolAdjacentViolators(points) {
   return blocks.map(b => ({ x: b.xSum / b.n, y: b.ySum / b.n, n: b.n }));
 }
 
+// Funde blocos vizinhos (na ordem, preservando monotonicidade — a média
+// ponderada de dois blocos adjacentes sempre fica entre os dois, então nunca
+// viola quem está fora do par) até que cada um tenha pelo menos `minN`.
+// Um resto final menor que minN é incorporado de volta ao bloco anterior, pra
+// nenhum trecho da curva nunca se apoiar em menos de minN resolvidas.
+function mergeBlocks(a, b) {
+  const n = a.n + b.n;
+  return { x: (a.x * a.n + b.x * b.n) / n, y: (a.y * a.n + b.y * b.n) / n, n };
+}
+
+function enforceMinBlockSize(blocks, minN) {
+  if (!blocks.length) return blocks;
+  const merged = [];
+  let current = null;
+  for (const b of blocks) {
+    current = current ? mergeBlocks(current, b) : { x: b.x, y: b.y, n: b.n };
+    if (current.n >= minN) { merged.push(current); current = null; }
+  }
+  if (current) {
+    if (merged.length) merged[merged.length - 1] = mergeBlocks(merged[merged.length - 1], current);
+    else merged.push(current); // amostra total < minN — um único bloco cobrindo tudo
+  }
+  return merged;
+}
+
 // samples: [{rawProb, won}] (won: 1 ganhou, 0 perdeu) — devolve os nós
-// (knots) ordenados por x, já com y monotônico não-decrescente.
-function buildIsotonicKnots(samples) {
+// (knots) ordenados por x, já com y monotônico não-decrescente e cada nó
+// apoiado em pelo menos minN resolvidas.
+function buildIsotonicKnots(samples, minN = config.MIN_SAMPLE_TO_CALIBRATE) {
   const points = samples.map(s => ({ x: s.rawProb, y: s.won })).sort((a, b) => a.x - b.x);
-  return poolAdjacentViolators(points);
+  return enforceMinBlockSize(poolAdjacentViolators(points), minN);
 }
 
 // Interpola linearmente entre nós; fora do intervalo observado, mantém o
@@ -110,10 +146,24 @@ function getSegmentFit(esporte, market) {
   const key = `${esporte}|${market}`;
   if (fitCache.has(key)) return fitCache.get(key);
   const samples = loadSegmentSamples(esporte, market);
-  const knots = samples.length >= 2 ? buildIsotonicKnots(samples) : [];
+  const knots = samples.length >= 2 ? buildIsotonicKnots(samples, config.MIN_SAMPLE_TO_CALIBRATE) : [];
   const fit = { sampleSize: samples.length, knots };
   fitCache.set(key, fit);
   return fit;
+}
+
+const MIN_CALIBRATED_PROB = 0.05;
+const MAX_CALIBRATED_PROB = 0.95;
+function clampProb(p) {
+  return Math.min(MAX_CALIBRATED_PROB, Math.max(MIN_CALIBRATED_PROB, p));
+}
+
+// Confiança na isotônica acima do mínimo de amostra: 0 bem no limiar (onde
+// cai pra bruta, sem salto — contínuo com o fim da mistura em_amostra, que
+// termina em shrinkToRaw=1 = puro bruta) e cresce assintoticamente até 1
+// conforme a amostra acumula muito além do mínimo. Nunca é tudo-ou-nada.
+function trustAboveMinSample(sampleSize, minSample) {
+  return sampleSize <= minSample ? 0 : 1 - minSample / sampleSize;
 }
 
 /**
@@ -128,8 +178,11 @@ function calibrate({ esporte, market, rawProb, impliedProb }) {
 
   if (segmentState === ledger.SEGMENT_STATE.CALIBRADO) {
     const applied = applyIsotonic(fit.knots, rawProb);
+    const isotonicProb = applied === null ? rawProb : applied;
+    const trust = trustAboveMinSample(fit.sampleSize, config.MIN_SAMPLE_TO_CALIBRATE);
+    const calibratedProb = trust * isotonicProb + (1 - trust) * rawProb;
     return {
-      calibratedProb: applied === null ? rawProb : applied,
+      calibratedProb: clampProb(calibratedProb),
       segmentState,
       sampleSize: fit.sampleSize,
       stakeFraction: 1,
@@ -138,7 +191,7 @@ function calibrate({ esporte, market, rawProb, impliedProb }) {
 
   const { shrinkToRaw, stakeFraction } = inSampleAdjustment(fit.sampleSize);
   const calibratedProb = shrinkToRaw * rawProb + (1 - shrinkToRaw) * impliedProb;
-  return { calibratedProb, segmentState, sampleSize: fit.sampleSize, stakeFraction };
+  return { calibratedProb: clampProb(calibratedProb), segmentState, sampleSize: fit.sampleSize, stakeFraction };
 }
 
 /** Limpa o cache de ajuste — só é preciso entre execuções de teste. */
@@ -154,4 +207,8 @@ module.exports = {
   segmentStateFor,
   inSampleAdjustment,
   clearCache,
+  poolAdjacentViolators,
+  enforceMinBlockSize,
+  trustAboveMinSample,
+  clampProb,
 };
