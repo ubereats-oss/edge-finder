@@ -2,7 +2,10 @@ import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, Tar
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_config.dart';
 import 'screens/sport_selector_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/access_denied_screen.dart';
 import 'services/prefs_service.dart';
 
 const _webFirebaseOptions = FirebaseOptions(
@@ -35,9 +38,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await PrefsService.init();
   await Firebase.initializeApp(options: _firebaseOptions);
-  if (FirebaseAuth.instance.currentUser == null) {
-    await FirebaseAuth.instance.signInAnonymously();
-  }
   runApp(const OddsApp());
 }
 
@@ -56,7 +56,27 @@ class OddsApp extends StatelessWidget {
           secondary: Color(0xFF00C853),
         ),
       ),
-      home: const SportSelectorScreen(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              backgroundColor: Color(0xFF12121F),
+              body: Center(
+                child: CircularProgressIndicator(color: Color(0xFF7C4DFF)),
+              ),
+            );
+          }
+          final user = snapshot.data;
+          if (user == null) {
+            return const LoginScreen();
+          }
+          if (user.email != kOwnerEmail) {
+            return AccessDeniedScreen(signedInEmail: user.email);
+          }
+          return const SportSelectorScreen();
+        },
+      ),
     );
   }
 }

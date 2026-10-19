@@ -2,6 +2,17 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Dono único do app — login Google restrito a esta conta (main.dart
+    // bloqueia qualquer outra no cliente; isto é a garantia no servidor).
+    // UID não é usado aqui porque criar o usuário Google antes do primeiro
+    // login real não é possível; o claim de e-mail do token, verificado,
+    // é equivalente em segurança e não exige conhecer o UID de antemão.
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email == 'sallesconsultant@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
     // results/ e odds_history/ — somente leitura pública
     match /results/{document=**} {
       allow read: if true;
@@ -15,40 +26,33 @@ service cloud.firestore {
 
     // model_report/ — relatório de desempenho do modelo, gravado só pelo
     // pipeline (Admin SDK, ignora estas regras). Leitura para usuário
-    // autenticado (todo usuário do app já é autenticado — login anônimo
-    // automático em main.dart), sem escrita nenhuma do cliente.
+    // autenticado (login Google — ver isOwner() acima), sem escrita
+    // nenhuma do cliente.
     match /model_report/{document=**} {
       allow read: if request.auth != null;
       allow write: if false;
     }
 
     // pinnacle_reference/ — referência de odds da Pinnacle (tela "Conferir
-    // odds"), gravada só pelo pipeline (Admin SDK). Leitura para usuário
-    // autenticado, sem escrita do cliente — mesmo padrão de model_report/.
+    // odds"), gravada só pelo pipeline (Admin SDK). Leitura restrita ao
+    // dono (repositório é público; qualquer um podia ler antes).
     match /pinnacle_reference/{document=**} {
-      allow read: if request.auth != null;
+      allow read: if isOwner();
       allow write: if false;
     }
 
     // pt_value_report/ — relatório "Valor real nas casas que posso usar",
-    // gravado só pelo pipeline. Mesmo padrão de model_report/.
+    // gravado só pelo pipeline. Leitura restrita ao dono.
     match /pt_value_report/{document=**} {
-      allow read: if request.auth != null;
+      allow read: if isOwner();
       allow write: if false;
     }
 
-    // odds_checks/ — conferências de odds da tela "Conferir odds". O
-    // próprio usuário cria e marca como feita; o pipeline
-    // (sync_pt_odds_checks.js, Admin SDK) também atualiza syncedToLedger,
-    // ignorando estas regras. Mesmo modelo de bets/: só o dono lê/edita.
+    // odds_checks/ — conferências de odds da tela "Conferir odds". Só o
+    // dono (única conta autorizada a logar no app) lê/escreve; o pipeline
+    // (sync_pt_odds_checks.js, Admin SDK) ignora estas regras.
     match /odds_checks/{checkId} {
-      allow read, delete: if request.auth != null
-        && resource.data.uid == request.auth.uid;
-      allow create: if request.auth != null
-        && request.resource.data.uid == request.auth.uid;
-      allow update: if request.auth != null
-        && resource.data.uid == request.auth.uid
-        && request.resource.data.uid == resource.data.uid;
+      allow read, write: if isOwner();
     }
 
     // bets/ — usuário autenticado acessa apenas as próprias apostas

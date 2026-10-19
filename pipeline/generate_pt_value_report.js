@@ -21,6 +21,8 @@ const ledger = require('./model_ledger');
 const OUT_FILE = path.join(ledger.HISTORY_DIR, 'relatorio_valor_pt.md');
 const OUT_JSON = path.join(ledger.HISTORY_DIR, 'relatorio_valor_pt.json');
 const IC95_Z = 1.96;
+// Única conta autorizada a usar o app (login Google) — ver lib/auth_config.dart.
+const OWNER_EMAIL = 'sallesconsultant@gmail.com';
 
 function mean(values) { return values.reduce((s, v) => s + v, 0) / values.length; }
 
@@ -129,7 +131,12 @@ function renderMarkdown(rows, generatedAt) {
 }
 
 async function main() {
-  const checks = await loadChecks();
+  const allChecks = await loadChecks();
+  const checks = allChecks.filter(c => c.ownerEmail === OWNER_EMAIL);
+  const descartadas = allChecks.length - checks.length;
+  if (descartadas > 0) {
+    console.log(`${descartadas} conferência(s) de outro dono (ownerEmail != ${OWNER_EMAIL}) descartada(s) do relatório.`);
+  }
   const ledgerEntries = loadPtLedgerEntries();
   const rows = computeRows(checks, ledgerEntries);
   const generatedAt = new Date().toISOString();

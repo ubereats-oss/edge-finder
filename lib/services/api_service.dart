@@ -280,6 +280,7 @@ class ApiService {
       ...data,
       'id': id,
       'uid': _uid,
+      'ownerEmail': FirebaseAuth.instance.currentUser?.email,
       'createdAt': DateTime.now().toIso8601String(),
       'apostaFeita': false,
       'syncedToLedger': false,
