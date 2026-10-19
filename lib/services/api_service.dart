@@ -19,7 +19,9 @@ class FetchResult {
 class ModelReportResult {
   final List<Map<String, dynamic>> rows;
   final DateTime? generatedAt;
-  const ModelReportResult({required this.rows, this.generatedAt});
+  final Map<String, dynamic>? testeNflReceptions;
+  const ModelReportResult(
+      {required this.rows, this.generatedAt, this.testeNflReceptions});
 }
 
 class ApiService {
@@ -155,6 +157,7 @@ class ApiService {
     final token = await _authToken();
     final rows = <Map<String, dynamic>>[];
     DateTime? generatedAt;
+    Map<String, dynamic>? testeNflReceptions;
     for (int i = -1; i < 20; i++) {
       final docId = i == -1 ? 'summary' : 'summary_p$i';
       final url = '$_firestoreBase/model_report/$docId';
@@ -177,6 +180,11 @@ class ApiService {
       if (i == -1) {
         final genStr = fields['generatedAt']?['stringValue'] as String?;
         if (genStr != null) generatedAt = DateTime.tryParse(genStr);
+        final testeField = fields['testeNflReceptions'] as Map<String, dynamic>?;
+        if (testeField != null) {
+          final decoded = _firestoreValue(testeField);
+          if (decoded is Map<String, dynamic>) testeNflReceptions = decoded;
+        }
       }
 
       final dataField = fields['data'];
@@ -186,7 +194,10 @@ class ApiService {
             item['mapValue']?['fields'] as Map<String, dynamic>? ?? {}));
       }
     }
-    return ModelReportResult(rows: rows, generatedAt: generatedAt);
+    return ModelReportResult(
+        rows: rows,
+        generatedAt: generatedAt,
+        testeNflReceptions: testeNflReceptions);
   }
 
   static Future<FetchResult> _safeFetch(Future<FetchResult> f) async {

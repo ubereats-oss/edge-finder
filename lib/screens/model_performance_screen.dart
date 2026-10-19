@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import '../services/risk_config.dart';
 import '../widgets/last_updated_bar.dart';
 
 /// Tela de desempenho do modelo — mostra o relatório periódico (histórico
 /// central de indicações) sincronizado do Firestore: taxa de acerto real x
 /// prevista, ROI, CLV e estado de calibração por esporte/mercado/faixa de
-/// edge.
+/// edge. Segmentos desabilitados (RiskConfig.disabledSegmentKeys) ficam de
+/// fora do acompanhamento ativo — não são mais ofertados como aposta, só
+/// continuam acumulando histórico nos bastidores.
 class ModelPerformanceScreen extends StatefulWidget {
   const ModelPerformanceScreen({super.key});
 
@@ -18,6 +21,7 @@ class _ModelPerformanceScreenState extends State<ModelPerformanceScreen> {
   String? _error;
   List<Map<String, dynamic>> _rows = [];
   DateTime? _generatedAt;
+  Map<String, dynamic>? _testeNflReceptions;
 
   @override
   void initState() {
@@ -34,8 +38,12 @@ class _ModelPerformanceScreenState extends State<ModelPerformanceScreen> {
       final result = await ApiService.fetchModelReport();
       if (!mounted) return;
       setState(() {
-        _rows = result.rows;
+        _rows = result.rows.where((r) {
+          final key = '${r['esporte']}|${r['market']}';
+          return !RiskConfig.disabledSegmentKeys.contains(key);
+        }).toList();
         _generatedAt = result.generatedAt;
+        _testeNflReceptions = result.testeNflReceptions;
       });
     } catch (e) {
       if (!mounted) return;
@@ -107,6 +115,8 @@ class _ModelPerformanceScreenState extends State<ModelPerformanceScreen> {
               color: Color(0xFF7C4DFF),
             ),
           LastUpdatedBar(lastUpdated: _generatedAt),
+          if (_testeNflReceptions != null)
+            _NflReceptionsTestCard(teste: _testeNflReceptions!),
           Expanded(child: _buildBody(bySport)),
         ],
       ),
@@ -157,6 +167,92 @@ class _ModelPerformanceScreenState extends State<ModelPerformanceScreen> {
           ],
         );
       },
+    );
+  }
+}
+
+/// Bloco fixo de acompanhamento do único candidato sobrando após desabilitar
+/// NHL props e NFL receptionYards (CLV ~0%, ver RiskConfig.disabledSegmentKeys)
+/// — nº de indicações com CLV, CLV médio, IC95 e veredito automático
+/// (pipeline/generate_report.js recalcula a cada geração do relatório).
+class _NflReceptionsTestCard extends StatelessWidget {
+  final Map<String, dynamic> teste;
+  const _NflReceptionsTestCard({required this.teste});
+
+  @override
+  Widget build(BuildContext context) {
+    final n = (teste['n'] as num?)?.toInt() ?? 0;
+    final nAlvo = (teste['nAlvo'] as num?)?.toInt() ?? 100;
+    final clvMedio = (teste['clvMedio'] as num?)?.toDouble();
+    final icLower = (teste['ic95Lower'] as num?)?.toDouble();
+    final icUpper = (teste['ic95Upper'] as num?)?.toDouble();
+    final veredito = (teste['veredito'] as String?) ?? 'em_teste';
+
+    const vereditoInfo = {
+      'confirmado': (Color(0xFF00C853), Icons.check_circle, 'Confirmado'),
+      'reprovado': (Color(0xFFFF5252), Icons.cancel, 'Reprovado'),
+      'em_teste': (Color(0xFFFFA000), Icons.hourglass_top, 'Em teste'),
+    };
+    final (color, icon, label) = vereditoInfo[veredito] ?? vereditoInfo['em_teste']!;
+
+    String fmtPct(double? v) => v == null ? '—' : '${v >= 0 ? '+' : ''}${v.toStringAsFixed(2)}%';
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E2E),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.5), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Teste NFL receptions',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: color.withValues(alpha: 0.5)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, color: color, size: 13),
+                    const SizedBox(width: 4),
+                    Text(label,
+                        style: TextStyle(
+                            color: color,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Indicações com CLV: $n/$nAlvo · CLV médio: ${fmtPct(clvMedio)}',
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'IC95%: ${fmtPct(icLower)} a ${fmtPct(icUpper)}',
+            style: const TextStyle(color: Color(0xFF888888), fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 }

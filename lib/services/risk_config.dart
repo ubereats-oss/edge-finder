@@ -11,5 +11,10 @@ class RiskConfig {
   static const List<String> disabledSegmentKeys = [
     'baseball/mlb|strikeouts',
     'baseball/mlb|hitsAllowed',
+    'hockey/nhl|goals',
+    'hockey/nhl|assists',
+    'hockey/nhl|points',
+    'hockey/nhl|blocked',
+    'americanfootball/nfl|receptionYards',
   ];
 }

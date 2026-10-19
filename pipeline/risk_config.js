@@ -53,9 +53,17 @@ module.exports = {
   // no histórico central (com o motivo), só não é oferecida como aposta.
   // Início: props de arremessador do MLB (strikeouts e hitsAllowed), que
   // acertaram 1 de 15 no histórico real com o modelo emitindo 70%-89%.
+  // Depois: todos os props de NHL e receptionYards do NFL, por CLV médio
+  // ~0% com teto do IC95 abaixo de +0,6% (análise de CLV por segmento do
+  // histórico central) — sem indício de edge real contra o fechamento.
   DISABLED_SEGMENTS: [
     { esporte: 'baseball/mlb', market: 'strikeouts' },
     { esporte: 'baseball/mlb', market: 'hitsAllowed' },
+    { esporte: 'hockey/nhl', market: 'goals' },
+    { esporte: 'hockey/nhl', market: 'assists' },
+    { esporte: 'hockey/nhl', market: 'points' },
+    { esporte: 'hockey/nhl', market: 'blocked' },
+    { esporte: 'americanfootball/nfl', market: 'receptionYards' },
   ],
 
   // ── Invalidação de histórico pré-correção ────────────────────────────────
