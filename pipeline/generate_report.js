@@ -304,27 +304,35 @@ function methodVersionBreakdown(entries) {
 // risk_config.js): acompanha se NFL receptions de fato bate o fechamento,
 // com meta de amostra (N_ALVO) e veredito automático — nunca editado à mão,
 // só recalculado a cada geração do relatório a partir do histórico real.
+// CLV não depende do resultado do jogo (é só aposta vs. fechamento), então
+// conta toda indicação publicada, válida e com CLV exato já capturado —
+// resolvida ou não.
 const TESTE_NFL_RECEPTIONS = { esporte: 'americanfootball/nfl', market: 'receptions' };
 const TESTE_N_ALVO = 100;
 const TESTE_IC95_Z = 1.96;
 const TESTE_LIMIAR_CONFIRMADO_PCT = 0.5;
+const TESTE_N_RECENTES = 20;
 
-function testeNflReceptions(countableEntries) {
-  const segment = countableEntries.filter(e =>
-    e.esporte === TESTE_NFL_RECEPTIONS.esporte && e.market === TESTE_NFL_RECEPTIONS.market
+function mean(values) {
+  return values.reduce((s, v) => s + v, 0) / values.length;
+}
+
+function testeNflReceptions(allEntries) {
+  const segment = allEntries.filter(e =>
+    e.esporte === TESTE_NFL_RECEPTIONS.esporte && e.market === TESTE_NFL_RECEPTIONS.market &&
+    e.published && e.hasModelProb && e.validForCalibration !== false && typeof e.clv === 'number'
   );
-  const clvValues = segment.filter(e => typeof e.clv === 'number').map(e => e.clv);
-  const n = clvValues.length;
+  const n = segment.length;
 
-  if (n === 0) {
-    return {
-      esporte: TESTE_NFL_RECEPTIONS.esporte, market: TESTE_NFL_RECEPTIONS.market,
-      n, nAlvo: TESTE_N_ALVO, clvMedio: null, ic95Lower: null, ic95Upper: null,
-      veredito: 'em_teste',
-    };
-  }
+  const base = {
+    esporte: TESTE_NFL_RECEPTIONS.esporte, market: TESTE_NFL_RECEPTIONS.market,
+    n, nAlvo: TESTE_N_ALVO, clvMedio: null, ic95Lower: null, ic95Upper: null,
+    veredito: 'em_teste', nRecentes: 0, clvMedioRecentes: null,
+  };
+  if (n === 0) return base;
 
-  const clvMedio = clvValues.reduce((s, v) => s + v, 0) / n;
+  const clvValues = segment.map(e => e.clv);
+  const clvMedio = mean(clvValues);
   let ic95Lower = null, ic95Upper = null;
   if (n >= 2) {
     const variancia = clvValues.reduce((s, v) => s + (v - clvMedio) ** 2, 0) / (n - 1);
@@ -339,13 +347,20 @@ function testeNflReceptions(countableEntries) {
     else if (ic95Lower <= 0) veredito = 'reprovado';
   }
 
+  // CLV médio das N mais recentes (por data do evento) — detecta
+  // deterioração que a média de todo o histórico ainda não mostra.
+  const porData = [...segment].sort((a, b) => new Date(b.commenceTime) - new Date(a.commenceTime));
+  const recentes = porData.slice(0, TESTE_N_RECENTES);
+  const clvMedioRecentes = recentes.length ? mean(recentes.map(e => e.clv)) : null;
+
   return {
-    esporte: TESTE_NFL_RECEPTIONS.esporte, market: TESTE_NFL_RECEPTIONS.market,
-    n, nAlvo: TESTE_N_ALVO,
+    ...base,
     clvMedio: parseFloat(clvMedio.toFixed(2)),
     ic95Lower: ic95Lower === null ? null : parseFloat(ic95Lower.toFixed(2)),
     ic95Upper: ic95Upper === null ? null : parseFloat(ic95Upper.toFixed(2)),
     veredito,
+    nRecentes: recentes.length,
+    clvMedioRecentes: clvMedioRecentes === null ? null : parseFloat(clvMedioRecentes.toFixed(2)),
   };
 }
 
@@ -363,7 +378,7 @@ async function main() {
   const betsLoad = await loadBets();
   const countable = all.filter(isCountable);
   const clvCoverage = clvCoverageRows(countable);
-  const teste = testeNflReceptions(countable);
+  const teste = testeNflReceptions(all);
   const realBets = betsLoad.available
     ? realBetRows(betsLoad.bets, all)
     : { rows: [], manualWithoutIndication: 0, unresolvedLinked: 0, linked: 0, unavailable: true, reason: betsLoad.reason };
@@ -440,12 +455,13 @@ async function main() {
   lines.push('');
   lines.push('## Teste NFL receptions');
   lines.push('');
-  lines.push(`Candidato único sobrando após desabilitar todos os props de NHL e NFL receptionYards por CLV ~0% (ver DISABLED_SEGMENTS em pipeline/risk_config.js). Meta de amostra: ${teste.nAlvo} indicações com CLV exato.`);
+  lines.push(`Candidato único sobrando após desabilitar todos os props de NHL e NFL receptionYards por CLV ~0% (ver DISABLED_SEGMENTS em pipeline/risk_config.js). Meta de amostra: ${teste.nAlvo} indicações com CLV exato (publicadas e válidas, resolvidas ou não — CLV independe do resultado do jogo).`);
   lines.push('');
   const vereditoLabel = { confirmado: 'CONFIRMADO ✅', reprovado: 'REPROVADO ❌', em_teste: 'EM TESTE ⏳' }[teste.veredito] ?? teste.veredito;
   lines.push(`- Indicações com CLV: **${teste.n}/${teste.nAlvo}**`);
   lines.push(`- CLV médio: **${teste.clvMedio === null ? '—' : fmt(teste.clvMedio, 2) + '%'}**`);
   lines.push(`- IC95%: **${teste.ic95Lower === null ? '—' : fmt(teste.ic95Lower, 2) + '%'} a ${teste.ic95Upper === null ? '—' : fmt(teste.ic95Upper, 2) + '%'}**`);
+  lines.push(`- CLV médio das ${teste.nRecentes} mais recentes: **${teste.clvMedioRecentes === null ? '—' : fmt(teste.clvMedioRecentes, 2) + '%'}**`);
   lines.push(`- Veredito: **${vereditoLabel}**`);
   lines.push('');
   lines.push('Só inclui indicações publicadas, resolvidas e válidas para calibração (mesmo critério da calibração — NHL pré-correção da agregação de odds fica de fora, por exemplo). Push e cancelado entram no lucro/ROI mas não na taxa de acerto.');
