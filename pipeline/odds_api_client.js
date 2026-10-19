@@ -32,6 +32,27 @@ function isQuotaError(error) {
   return status === 429 || msg.includes('quota') || msg.includes('usage');
 }
 
+// Toda chamada real à The Odds API passa por aqui — é o único lugar que
+// precisa bloquear execução fora do GitHub Actions (CI define GITHUB_ACTIONS
+// automaticamente; local/dev não). Protege contra .env local com chaves
+// reais sendo usado sem querer em teste ou verificação (já aconteceu).
+// ALLOW_LIVE_ODDS_API=1 é a liberação explícita, só quando o usuário pedir
+// uma chamada real na mensagem atual — nunca em teste/comparação automática.
+function isRunningOutsideGithubActions() {
+  return process.env.GITHUB_ACTIONS !== 'true';
+}
+
+function assertLiveCallAllowed(label) {
+  if (!isRunningOutsideGithubActions()) return;
+  if (process.env.ALLOW_LIVE_ODDS_API === '1') return;
+  throw new Error(
+    `[${label}] chamada real à The Odds API bloqueada — rodando fora do GitHub Actions ` +
+    `(local, possivelmente com .env com chaves reais). Defina ALLOW_LIVE_ODDS_API=1 nesta ` +
+    `execução se a chamada real for mesmo intencional. Nunca use isso em teste ou comparação ` +
+    `automática — só quando o usuário pedir explicitamente na mensagem atual.`
+  );
+}
+
 function createOddsApiClient({
   keys = defaultKeysFromEnv(),
   label = 'The Odds API',
@@ -40,6 +61,7 @@ function createOddsApiClient({
   onKeyUsed = null,
   disabled = process.env.ODDS_API_DISABLE === '1',
 } = {}) {
+  assertLiveCallAllowed(label);
   if (!keys.length) {
     throw new Error('Nenhuma chave THE_ODDS_API_KEYS ou ODDS_API_KEY configurada.');
   }

@@ -56,10 +56,10 @@ function loadPtLedgerEntries() {
   return entries;
 }
 
-async function main() {
-  const checks = await loadChecks();
-  const ledgerEntries = loadPtLedgerEntries();
-
+// Pura (sem I/O) — por isso testável sem Firebase nem histórico central
+// reais: dado o array de conferências (odds_checks) e de entradas do ledger
+// já filtradas por source:'pt_odds_check', devolve as linhas do relatório.
+function computeRows(checks, ledgerEntries) {
   // indicationId -> entrada do ledger (pra achar CLV de uma conferência marcada como feita)
   const byIndicationId = new Map();
   for (const e of ledgerEntries) {
@@ -105,8 +105,10 @@ async function main() {
   }
 
   rows.sort((a, b) => a.bookmaker.localeCompare(b.bookmaker) || a.esporte.localeCompare(b.esporte) || a.market.localeCompare(b.market));
+  return rows;
+}
 
-  const generatedAt = new Date().toISOString();
+function renderMarkdown(rows, generatedAt) {
   const fmt = (n, d = 1) => n === null || n === undefined ? '—' : n.toFixed(d);
   const lines = [];
   lines.push('# Valor real nas casas que posso usar');
@@ -123,11 +125,23 @@ async function main() {
     lines.push(`| ${r.bookmaker} | ${r.esporte} | ${r.market} | ${r.nConferencias} | ${r.pctAcimaMinimo === null ? '—' : fmt(r.pctAcimaMinimo) + '%'} | ${clvCell} | ${icCell} | ${r.nAmostrasClv} |`);
   }
   if (!rows.length) lines.push('| _sem conferências ainda_ | | | | | | | |');
+  return lines.join('\n') + '\n';
+}
+
+async function main() {
+  const checks = await loadChecks();
+  const ledgerEntries = loadPtLedgerEntries();
+  const rows = computeRows(checks, ledgerEntries);
+  const generatedAt = new Date().toISOString();
 
   if (!fs.existsSync(ledger.HISTORY_DIR)) fs.mkdirSync(ledger.HISTORY_DIR, { recursive: true });
-  fs.writeFileSync(OUT_FILE, lines.join('\n') + '\n');
+  fs.writeFileSync(OUT_FILE, renderMarkdown(rows, generatedAt));
   fs.writeFileSync(OUT_JSON, JSON.stringify({ generatedAt, rows }, null, 2));
   console.log(`Relatório de valor PT salvo — ${rows.length} grupo(s) casa+esporte+mercado.`);
 }
 
-main().catch(e => { console.error('ERRO FATAL:', e.message); process.exit(1); });
+module.exports = { computeRows, renderMarkdown, ci95, mean };
+
+if (require.main === module) {
+  main().catch(e => { console.error('ERRO FATAL:', e.message); process.exit(1); });
+}

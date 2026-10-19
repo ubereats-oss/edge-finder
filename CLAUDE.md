@@ -45,7 +45,7 @@ App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges
 - **Dados jogadores**: `get_*_player_teams.js`, `get_*_player_stats.js`, `get_*_injuries.js`
 - **Análise**: `backtest_*_props.js`, `model_prob.js`, `backtest_calibration_methods.js` (valida calibração antiga vs nova por Brier/log-loss)
 - **Sincronização**: `firebase_sync.js`, `save_odds_history.js`, `get_tennis_ranking.js`
-- **Conferir odds (casas PT vs Pinnacle)**: `get_pinnacle_reference.js` (odds da Pinnacle H2H+props, próximas 24h, probabilidade justa por método de potência), `sync_pt_odds_checks.js` (conferências marcadas como feitas → histórico central), `generate_pt_value_report.js` (relatório "Valor real nas casas que posso usar")
+- **Conferir odds (casas PT vs Pinnacle)**: `get_pinnacle_reference.js` (odds da Pinnacle H2H+props, próximas 24h, probabilidade justa por método de potência), `sync_pt_odds_checks.js` (conferências marcadas como feitas → histórico central), `generate_pt_value_report.js` (relatório "Valor real nas casas que posso usar"), `test_pt_odds_e2e.js` (teste de ponta a ponta simulado, sem rede nem Firebase)
 
 ### Backend
 - `functions/` — Cloud Functions Firebase

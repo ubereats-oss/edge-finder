@@ -74,7 +74,15 @@ async function main() {
       modelProb: d.fairProbPct,
       rawProb: d.fairProbPct,
       odds: d.oddDigitada,
-      bookmaker: d.bookmaker,
+      // A odd de fechamento tem que vir da Pinnacle (é o que o usuário
+      // escolheu como referência de valor) — The Odds API não cobre a
+      // versão PT de Betano/Bwin/Betclic/etc. (ver pesquisa de
+      // viabilidade), e mesmo que cobrisse, capture_closing_odds.js casa
+      // bookmaker por igualdade exata de chave (ex.: 'pinnacle'), não por
+      // nome de exibição como 'Betano'. A casa PT real já fica registrada
+      // em odds_checks (Firestore) — generate_pt_value_report.js agrupa por
+      // ela, não por este campo.
+      bookmaker: 'pinnacle',
       edge: d.edgePct,
       kelly: kellyPercentOf(d),
       published: true,
