@@ -57,57 +57,23 @@ jobs:
       - name: Verify data save helper dependencies
         run: bash scripts/check_data_save_helpers.sh
 
-  detect-firestore-rules:
-    name: Detect changed Firestore rules
-    if: github.repository == 'ubereats-oss/edge-finder'
-    runs-on: ubuntu-latest
-    outputs:
-      should_deploy: ${{ steps.detect.outputs.should_deploy }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Detect firestore.rules change
-        id: detect
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            if [[ "${{ inputs.force_firestore_rules_deploy }}" == "true" ]]; then
-              echo "should_deploy=true" >> "$GITHUB_OUTPUT"
-              echo "Deploy de firestore.rules forçado via workflow_dispatch."
-            else
-              echo "should_deploy=false" >> "$GITHUB_OUTPUT"
-              echo "workflow_dispatch sem force_firestore_rules_deploy=true — não força deploy de regras."
-            fi
-            exit 0
-          fi
-          before="${{ github.event.before }}"
-          after="${{ github.sha }}"
-          if [[ "$before" =~ ^0+$ ]]; then
-            mapfile -t changed < <(git diff-tree --no-commit-id --name-only -r "$after")
-          else
-            mapfile -t changed < <(git diff --name-only "$before" "$after")
-          fi
-          if printf '%s\n' "${changed[@]}" | grep -qx 'firestore.rules'; then
-            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
-            echo "firestore.rules mudou nesta push."
-          else
-            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
-            echo "firestore.rules não mudou nesta push."
-          fi
-
   deploy-firestore-rules:
-    name: Deploy Firestore rules
+    # Publicação de firestore.rules é manual, local, pela conta pessoal de
+    # quem mantém o projeto (firebase deploy --only firestore:rules, login
+    # já existente na máquina) — não pela service account de CI, que não
+    # tem (e não deve ganhar) permissão de publicar regras. Este job é só
+    # uma via alternativa opcional pra quando for mais prático disparar
+    # pelo GitHub Actions: nunca roda sozinho (só com
+    # force_firestore_rules_deploy=true no workflow_dispatch) e, por ser
+    # condicionado a esse input, fica "skipped" (não falha o workflow) em
+    # toda push normal e em todo workflow_dispatch sem o input marcado.
+    name: Deploy Firestore rules (manual)
     needs:
       - verify-mirrors
-      - detect-firestore-rules
     if: >
       github.repository == 'ubereats-oss/edge-finder' &&
-      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
-      needs.detect-firestore-rules.outputs.should_deploy == 'true'
+      github.event_name == 'workflow_dispatch' &&
+      inputs.force_firestore_rules_deploy == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -120,10 +86,6 @@ jobs:
           service_account: github-functions-deployer@odds-app-edge.iam.gserviceaccount.com
 
       - name: Deploy Firestore rules
-        # Mesma service account usada pro deploy de Functions. Se faltar
-        # permissão (roles/firebaserules.admin ou equivalente), este step
-        # falha com erro de permissão explícito no log — não foi possível
-        # confirmar com antecedência se a permissão já está concedida.
         run: npx -y firebase-tools@latest deploy --project odds-app-edge --only firestore:rules
 
   detect-functions:
