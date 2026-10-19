@@ -18,7 +18,7 @@ const fs = require('fs');
 const path = require('path');
 const ledger = require('./model_ledger');
 const closingOddsRules = require('./closing_odds_rules');
-const { describeClosingPriceMatch, computeClv } = require('./capture_closing_odds');
+const { describeClosingPriceMatch, computeClv, splitCaptureGroup, applyClosingOddsToGroup } = require('./capture_closing_odds');
 const { computeRows, renderMarkdown } = require('./generate_pt_value_report');
 
 const TEST_EVENT_ID = 'teste-e2e-simulado-0001';
@@ -254,6 +254,39 @@ function main() {
     const md = renderMarkdown(reportRows, new Date().toISOString());
     assert(md.includes('Betano'), 'markdown renderizado não contém a casa');
     return `casa=${row.bookmaker} clvMedio=${row.clvMedio}% nConferencias=${row.nConferencias}`;
+  });
+
+  // 8) Validar a região extra 'eu' na captura de fechamento pra conferências
+  // PT de prop com referência Pinnacle (item 2) — grupo misto: indicação de
+  // modelo + conferência PT de h2h (ambas devem continuar no caminho
+  // original, sem mudança) + conferência PT de prop com Pinnacle (só essa
+  // deve ir pro subgrupo extra).
+  step('8. Separar grupo de captura: só conferência PT de prop com Pinnacle pede região extra', () => {
+    const markets = { h2h: 'h2h', points: 'player_points' };
+    const modelEntry = { source: 'model', bookmaker: 'draftkings', market: 'points' };
+    const ptH2hEntry = { source: 'pt_odds_check', bookmaker: 'pinnacle', market: 'h2h' };
+    const ptPropEntry = { source: 'pt_odds_check', bookmaker: 'pinnacle', market: 'points' };
+    const { rest, ptPinnacleProps } = splitCaptureGroup([modelEntry, ptH2hEntry, ptPropEntry], markets);
+    assert(ptPinnacleProps.length === 1 && ptPinnacleProps[0] === ptPropEntry, 'subgrupo extra deveria conter só a conferência PT de prop');
+    assert(rest.length === 2 && rest.includes(modelEntry) && rest.includes(ptH2hEntry), 'indicação de modelo e conferência PT de h2h deveriam ficar no caminho original');
+    return `rest=${rest.length} (modelo+h2h, caminho original inalterado), extra=${ptPinnacleProps.length} (prop Pinnacle, região 'eu' adicional)`;
+  });
+
+  step('9. Capturar fechamento do subgrupo extra com applyClosingOddsToGroup (função real)', () => {
+    const markets = { points: 'player_points' };
+    const extraEntry = { source: 'pt_odds_check', bookmaker: 'pinnacle', market: 'points', player: TEST_PLAYER, line: TEST_LINE, side: TEST_SIDE, odds: 2.05, commenceTime };
+    const fakeOddsDataEu = {
+      bookmakers: [{ key: 'pinnacle', markets: [{ key: 'player_points', outcomes: [
+        { description: TEST_PLAYER, point: TEST_LINE, name: 'Over', price: 1.87 },
+        { description: TEST_PLAYER, point: TEST_LINE, name: 'Under', price: 1.98 },
+      ] }] }],
+    };
+    const counters = { capturadas: 0, semOddDisponivel: 0 };
+    const changed = applyClosingOddsToGroup(fakeOddsDataEu, [extraEntry], markets, TEST_ESPORTE, counters);
+    assert(changed === true, 'applyClosingOddsToGroup deveria reportar mudança');
+    assert(counters.capturadas === 1, 'deveria ter capturado 1 odd de fechamento no subgrupo extra');
+    assert(extraEntry.clv === computeClv(2.05, 1.87), 'CLV do subgrupo extra não bate com computeClv direto');
+    return `closingOdds=${extraEntry.closingOdds} clv=${extraEntry.clv}%`;
   });
 
   cleanupTestEntries(check.commenceTime);

@@ -107,7 +107,13 @@ class _ConferirOddsScreenState extends State<ConferirOddsScreen> {
 
   List<Map<String, dynamic>> get _filtered {
     final q = _search.trim().toLowerCase();
+    final now = DateTime.now();
     return _rows.where((r) {
+      // Referência pode estar desatualizada (pipeline diário atrasado ou
+      // parado) — nunca mostra jogo cujo início já passou, mesmo que ainda
+      // esteja na última referência publicada.
+      final commence = DateTime.tryParse(r['commenceTime'] as String? ?? '');
+      if (commence == null || commence.isBefore(now)) return false;
       if (_sportFilter != null && r['esporte'] != _sportFilter) return false;
       if (_marketFilter != null && r['market'] != _marketFilter) return false;
       if (q.isEmpty) return true;
@@ -118,6 +124,10 @@ class _ConferirOddsScreenState extends State<ConferirOddsScreen> {
       ..sort((a, b) => (a['commenceTime'] as String? ?? '')
           .compareTo(b['commenceTime'] as String? ?? ''));
   }
+
+  static const _staleAfter = Duration(hours: 30);
+  bool get _isStale =>
+      _generatedAt != null && DateTime.now().difference(_generatedAt!) > _staleAfter;
 
   List<String> get _availableSports {
     final set = _rows.map((r) => r['esporte'] as String? ?? '').toSet()
@@ -270,6 +280,24 @@ class _ConferirOddsScreenState extends State<ConferirOddsScreen> {
               color: Color(0xFF7C4DFF),
             ),
           LastUpdatedBar(lastUpdated: _generatedAt),
+          if (_isStale && !_loading)
+            Container(
+              width: double.infinity,
+              color: const Color(0xFFFFA000).withValues(alpha: 0.15),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: const Row(
+                children: [
+                  Icon(Icons.warning_amber, color: Color(0xFFFFA000), size: 14),
+                  SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Referência desatualizada — confira o workflow "Histórico de Odds".',
+                      style: TextStyle(color: Color(0xFFFFA000), fontSize: 11),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           _buildFilters(),
           Expanded(child: _buildBody(rows)),
         ],
@@ -358,13 +386,26 @@ class _ConferirOddsScreenState extends State<ConferirOddsScreen> {
       );
     }
     if (rows.isEmpty) {
-      return const Center(
+      final String message;
+      if (_generatedAt == null) {
+        message = 'A referência da Pinnacle ainda não foi gerada.\n'
+            'O workflow "Histórico de Odds" publica isso 1x/dia — se acabou de ser configurado, '
+            'pode levar até a próxima execução agendada.';
+      } else if (_isStale) {
+        final horas = DateTime.now().difference(_generatedAt!).inHours;
+        message = 'Referência desatualizada — última geração há ${horas}h '
+            '(${_generatedAt!.toLocal().toString().substring(0, 16)}).\n'
+            'O workflow "Histórico de Odds" deveria rodar 1x/dia — confira se ele está rodando.';
+      } else {
+        message = 'Nenhum evento com odds da Pinnacle nas próximas 24h pros filtros escolhidos.';
+      }
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(32),
+          padding: const EdgeInsets.all(32),
           child: Text(
-            'Nenhum evento com odds da Pinnacle nas próximas 24h pros filtros escolhidos.',
+            message,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Color(0xFF888888), fontSize: 15),
+            style: const TextStyle(color: Color(0xFF888888), fontSize: 15),
           ),
         ),
       );
