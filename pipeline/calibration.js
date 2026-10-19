@@ -23,6 +23,14 @@
 const ledger = require('./model_ledger');
 const config = require('./risk_config');
 
+// Identifica qual versão do método gerou calibratedProb — gravado em cada
+// indicação (model_ledger.recordEvaluation) pra relatório de desempenho e
+// app poderem ler a taxa prevista calibrada separada por versão, sem o
+// método antigo contaminar a leitura do novo. Indicações gravadas antes
+// deste campo existir não têm essa chave — tratadas como 'antigo' por quem
+// lê (nunca reescritas retroativamente).
+const CALIBRATION_METHOD_VERSION = 'novo';
+
 // ── Regressão isotônica (Pool Adjacent Violators) ──────────────────────────
 
 // points: [{x, y}] — devolve blocos monotônicos não-decrescentes em y.
@@ -186,12 +194,19 @@ function calibrate({ esporte, market, rawProb, impliedProb }) {
       segmentState,
       sampleSize: fit.sampleSize,
       stakeFraction: 1,
+      methodVersion: CALIBRATION_METHOD_VERSION,
     };
   }
 
   const { shrinkToRaw, stakeFraction } = inSampleAdjustment(fit.sampleSize);
   const calibratedProb = shrinkToRaw * rawProb + (1 - shrinkToRaw) * impliedProb;
-  return { calibratedProb: clampProb(calibratedProb), segmentState, sampleSize: fit.sampleSize, stakeFraction };
+  return {
+    calibratedProb: clampProb(calibratedProb),
+    segmentState,
+    sampleSize: fit.sampleSize,
+    stakeFraction,
+    methodVersion: CALIBRATION_METHOD_VERSION,
+  };
 }
 
 /** Limpa o cache de ajuste — só é preciso entre execuções de teste. */
@@ -200,6 +215,7 @@ function clearCache() {
 }
 
 module.exports = {
+  CALIBRATION_METHOD_VERSION,
   calibrate,
   buildIsotonicKnots,
   applyIsotonic,
