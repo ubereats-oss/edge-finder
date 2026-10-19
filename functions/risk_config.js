@@ -12,6 +12,11 @@ module.exports = {
   DISABLED_SEGMENTS: [
     { esporte: 'baseball/mlb', market: 'strikeouts' },
     { esporte: 'baseball/mlb', market: 'hitsAllowed' },
+    { esporte: 'hockey/nhl', market: 'goals' },
+    { esporte: 'hockey/nhl', market: 'assists' },
+    { esporte: 'hockey/nhl', market: 'points' },
+    { esporte: 'hockey/nhl', market: 'blocked' },
+    { esporte: 'americanfootball/nfl', market: 'receptionYards' },
   ],
   NHL_ODDS_FIX_CUTOFF: '2026-09-06T00:00:00Z',
 

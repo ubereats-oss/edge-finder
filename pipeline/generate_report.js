@@ -299,6 +299,56 @@ function methodVersionBreakdown(entries) {
   return out;
 }
 
+// Bloco fixo de validação do candidato único sobrando após desabilitar NHL
+// props e NFL receptionYards por CLV ~0% (ver DISABLED_SEGMENTS em
+// risk_config.js): acompanha se NFL receptions de fato bate o fechamento,
+// com meta de amostra (N_ALVO) e veredito automático — nunca editado à mão,
+// só recalculado a cada geração do relatório a partir do histórico real.
+const TESTE_NFL_RECEPTIONS = { esporte: 'americanfootball/nfl', market: 'receptions' };
+const TESTE_N_ALVO = 100;
+const TESTE_IC95_Z = 1.96;
+const TESTE_LIMIAR_CONFIRMADO_PCT = 0.5;
+
+function testeNflReceptions(countableEntries) {
+  const segment = countableEntries.filter(e =>
+    e.esporte === TESTE_NFL_RECEPTIONS.esporte && e.market === TESTE_NFL_RECEPTIONS.market
+  );
+  const clvValues = segment.filter(e => typeof e.clv === 'number').map(e => e.clv);
+  const n = clvValues.length;
+
+  if (n === 0) {
+    return {
+      esporte: TESTE_NFL_RECEPTIONS.esporte, market: TESTE_NFL_RECEPTIONS.market,
+      n, nAlvo: TESTE_N_ALVO, clvMedio: null, ic95Lower: null, ic95Upper: null,
+      veredito: 'em_teste',
+    };
+  }
+
+  const clvMedio = clvValues.reduce((s, v) => s + v, 0) / n;
+  let ic95Lower = null, ic95Upper = null;
+  if (n >= 2) {
+    const variancia = clvValues.reduce((s, v) => s + (v - clvMedio) ** 2, 0) / (n - 1);
+    const erroPadrao = Math.sqrt(variancia) / Math.sqrt(n);
+    ic95Lower = clvMedio - TESTE_IC95_Z * erroPadrao;
+    ic95Upper = clvMedio + TESTE_IC95_Z * erroPadrao;
+  }
+
+  let veredito = 'em_teste';
+  if (n >= TESTE_N_ALVO && ic95Lower !== null) {
+    if (ic95Lower > TESTE_LIMIAR_CONFIRMADO_PCT) veredito = 'confirmado';
+    else if (ic95Lower <= 0) veredito = 'reprovado';
+  }
+
+  return {
+    esporte: TESTE_NFL_RECEPTIONS.esporte, market: TESTE_NFL_RECEPTIONS.market,
+    n, nAlvo: TESTE_N_ALVO,
+    clvMedio: parseFloat(clvMedio.toFixed(2)),
+    ic95Lower: ic95Lower === null ? null : parseFloat(ic95Lower.toFixed(2)),
+    ic95Upper: ic95Upper === null ? null : parseFloat(ic95Upper.toFixed(2)),
+    veredito,
+  };
+}
+
 function segmentSampleSize(esporte, market, allEntries) {
   // mesma contagem usada pela calibração: resolvidas, válidas, binárias.
   return allEntries.filter(e =>
@@ -313,6 +363,7 @@ async function main() {
   const betsLoad = await loadBets();
   const countable = all.filter(isCountable);
   const clvCoverage = clvCoverageRows(countable);
+  const teste = testeNflReceptions(countable);
   const realBets = betsLoad.available
     ? realBetRows(betsLoad.bets, all)
     : { rows: [], manualWithoutIndication: 0, unresolvedLinked: 0, linked: 0, unavailable: true, reason: betsLoad.reason };
@@ -387,6 +438,16 @@ async function main() {
   lines.push('');
   lines.push(`Gerado em: ${generatedAt}`);
   lines.push('');
+  lines.push('## Teste NFL receptions');
+  lines.push('');
+  lines.push(`Candidato único sobrando após desabilitar todos os props de NHL e NFL receptionYards por CLV ~0% (ver DISABLED_SEGMENTS em pipeline/risk_config.js). Meta de amostra: ${teste.nAlvo} indicações com CLV exato.`);
+  lines.push('');
+  const vereditoLabel = { confirmado: 'CONFIRMADO ✅', reprovado: 'REPROVADO ❌', em_teste: 'EM TESTE ⏳' }[teste.veredito] ?? teste.veredito;
+  lines.push(`- Indicações com CLV: **${teste.n}/${teste.nAlvo}**`);
+  lines.push(`- CLV médio: **${teste.clvMedio === null ? '—' : fmt(teste.clvMedio, 2) + '%'}**`);
+  lines.push(`- IC95%: **${teste.ic95Lower === null ? '—' : fmt(teste.ic95Lower, 2) + '%'} a ${teste.ic95Upper === null ? '—' : fmt(teste.ic95Upper, 2) + '%'}**`);
+  lines.push(`- Veredito: **${vereditoLabel}**`);
+  lines.push('');
   lines.push('Só inclui indicações publicadas, resolvidas e válidas para calibração (mesmo critério da calibração — NHL pré-correção da agregação de odds fica de fora, por exemplo). Push e cancelado entram no lucro/ROI mas não na taxa de acerto.');
   lines.push('');
   lines.push('Taxa prevista calibrada sempre separada por versão do método de calibração (antigo = isotônica pura, pré pipeline/calibration.js commit d048389; novo = com piso de amostra por nó, teto 5-95% e encolhimento gradual) — método antigo nunca contamina a leitura do novo. CLV/ROI da tabela principal continuam agregados; a coluna de CLV/ROI também traz o recorte só do método novo.');
@@ -442,7 +503,7 @@ async function main() {
 
   if (!fs.existsSync(ledger.HISTORY_DIR)) fs.mkdirSync(ledger.HISTORY_DIR, { recursive: true });
   fs.writeFileSync(OUT_FILE, lines.join('\n') + '\n');
-  fs.writeFileSync(OUT_JSON, JSON.stringify({ generatedAt, rows, clvCoverage, realBets }, null, 2));
+  fs.writeFileSync(OUT_JSON, JSON.stringify({ generatedAt, rows, clvCoverage, realBets, testeNflReceptions: teste }, null, 2));
   console.log(`Relatório salvo em ${OUT_FILE} e ${OUT_JSON} — ${rows.length} grupo(s) esporte+mercado+faixa de edge.`);
 }
 

@@ -195,7 +195,7 @@ async function syncReport() {
   const MAX_CHUNKS_TO_CHECK = 20; // generoso o bastante pra nunca faltar limpeza
 
   try {
-    const { generatedAt, rows } = JSON.parse(fs.readFileSync(filePath));
+    const { generatedAt, rows, testeNflReceptions } = JSON.parse(fs.readFileSync(filePath));
     const chunks = [];
     for (let i = 0; i < rows.length; i += CHUNK) chunks.push(rows.slice(i, i + CHUNK));
     if (!chunks.length) chunks.push([]); // sem linhas ainda — grava o doc mesmo assim, com data:[]
@@ -206,6 +206,9 @@ async function syncReport() {
         data: chunks[i],
         generatedAt,
         lastUpdated: generatedAt,
+        // Bloco fixo "Teste NFL receptions" — só faz sentido uma vez, grava
+        // só no doc 'summary' (i===0), onde o app já lê generatedAt.
+        ...(i === 0 ? { testeNflReceptions: testeNflReceptions ?? null } : {}),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
     }
