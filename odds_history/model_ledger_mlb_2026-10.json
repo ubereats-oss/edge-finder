@@ -2385,7 +2385,7 @@
     "firstEvaluatedAt": "2026-10-10T21:22:31.518Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -2444,7 +2444,7 @@
     "firstEvaluatedAt": "2026-10-10T21:22:31.518Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -2495,7 +2495,7 @@
     "firstEvaluatedAt": "2026-10-11T21:40:52.695Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -3461,14 +3461,21 @@
     "firstEvaluatedAt": "2026-10-17T20:21:07.793Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "pendente",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "expirada"
+    "closingOddsStatus": "expirada",
+    "resolutionFailureReason": "jogador_nao_encontrado",
+    "resolutionFailureEvidence": {
+      "espnEventId": "401930515",
+      "player": "Nick Martinez",
+      "market": "strikeouts",
+      "expectedTeam": null
+    }
   },
   {
     "_key": "bf41baaebfa23a202d2f3a6811425ff9|Cleveland Guardians|h2h|0|Win",
@@ -3503,9 +3510,13 @@
     "runId": "2026-10-17T20:21:08.089Z",
     "evaluatedAt": "2026-10-17T20:21:08.093Z",
     "firstEvaluatedAt": "2026-10-17T20:21:08.093Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "Cleveland Guardians",
+      "apuradoEm": "2026-10-19T17:00:01.946Z"
+    },
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -3554,9 +3565,13 @@
     "runId": "2026-10-17T20:21:08.089Z",
     "evaluatedAt": "2026-10-17T20:21:08.093Z",
     "firstEvaluatedAt": "2026-10-17T20:21:08.093Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Tampa Bay Rays",
+      "apuradoEm": "2026-10-19T17:00:01.963Z"
+    },
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -3605,16 +3620,20 @@
     "runId": "2026-10-18T20:20:55.586Z",
     "evaluatedAt": "2026-10-18T20:20:55.805Z",
     "firstEvaluatedAt": "2026-10-18T20:20:55.805Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 6,
+      "apuradoEm": "2026-10-19T17:00:02.286Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "f4ca2d8a09898a94722dde0633e0a7e1|Parker Messick|strikeouts|4.5|Over",
@@ -3649,16 +3668,20 @@
     "runId": "2026-10-18T20:20:55.586Z",
     "evaluatedAt": "2026-10-18T20:20:55.806Z",
     "firstEvaluatedAt": "2026-10-18T20:20:55.806Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-19T17:00:02.746Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "f4ca2d8a09898a94722dde0633e0a7e1|Cleveland Guardians|h2h|0|Win",
@@ -3693,9 +3716,13 @@
     "runId": "2026-10-18T20:20:56.113Z",
     "evaluatedAt": "2026-10-18T20:20:56.115Z",
     "firstEvaluatedAt": "2026-10-18T20:20:56.115Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "Cleveland Guardians",
+      "apuradoEm": "2026-10-19T17:00:02.914Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -3744,9 +3771,13 @@
     "runId": "2026-10-18T20:20:56.113Z",
     "evaluatedAt": "2026-10-18T20:20:56.115Z",
     "firstEvaluatedAt": "2026-10-18T20:20:56.115Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Tampa Bay Rays",
+      "apuradoEm": "2026-10-19T17:00:02.932Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
