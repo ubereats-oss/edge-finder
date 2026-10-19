@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'tennis_screen.dart';
 import 'basketball_mode_screen.dart';
 import 'baseball_screen.dart';
 import 'hockey_screen.dart';
@@ -156,17 +155,6 @@ class SportSelectorScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              _SportCard(
-                emoji: '🎾',
-                title: 'Tênis',
-                subtitle: 'ATP Singles · Odds + Modelo ELO',
-                color: const Color(0xFF7C4DFF),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const TennisScreen()),
-                ),
-              ),
-              const SizedBox(height: 16),
               _SportCard(
                 emoji: '🏀',
                 title: 'Basquete',

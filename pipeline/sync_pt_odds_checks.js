@@ -34,6 +34,11 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 
+// Única conta autorizada a usar o app (login Google) — ver lib/auth_config.dart.
+// Defesa em profundidade: mesmo via Admin SDK (ignora firestore.rules), nunca
+// gravar no histórico central um documento que não seja desta conta.
+const OWNER_EMAIL = 'sallesconsultant@gmail.com';
+
 // Kelly já vem calculado (25% fixo, igual risk_config.KELLY_FRACTION) e
 // gravado pelo app no momento da conferência — aqui só repassamos pro
 // ledger, nunca recalculamos nem alteramos a fração.
@@ -43,7 +48,12 @@ function kellyPercentOf(doc) {
 
 async function main() {
   const snap = await db.collection('odds_checks').where('apostaFeita', '==', true).get();
-  const pendentes = snap.docs.filter(d => d.data().syncedToLedger !== true);
+  const candidatas = snap.docs.filter(d => d.data().syncedToLedger !== true);
+  const pendentes = candidatas.filter(d => d.data().ownerEmail === OWNER_EMAIL);
+  const descartadas = candidatas.length - pendentes.length;
+  if (descartadas > 0) {
+    console.warn(`${descartadas} conferência(s) de outro dono (ownerEmail != ${OWNER_EMAIL}) descartada(s), não sincronizadas no histórico central.`);
+  }
 
   if (!pendentes.length) {
     console.log(`Nenhuma conferência marcada como feita pendente de sincronização (${snap.size} feita(s) no total, já sincronizadas).`);
