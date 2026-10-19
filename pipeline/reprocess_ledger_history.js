@@ -5,8 +5,10 @@
 //     como ganhou/perdeu por engano em algum momento.
 //  2. Invalidação retroativa das apostas de NHL registradas antes da
 //     correção da agregação de odds entre casas (NHL_ODDS_FIX_CUTOFF em
-//     risk_config.js) — ficam de fora da calibração e das estatísticas de
-//     acerto por segmento, mas continuam visíveis no histórico e no lucro.
+//     risk_config.js) OU antes da correção das stats de jogador
+//     (NHL_STATS_FIX_CUTOFF) — ficam de fora da calibração e das
+//     estatísticas de acerto por segmento, mas continuam visíveis no
+//     histórico e no lucro.
 //  3. Deduplicação defensiva por chave (evento+jogador+mercado+linha+lado) —
 //     o ledger já faz upsert por chave em condições normais; isto é só uma
 //     rede de segurança caso algum arquivo tenha sido editado manualmente.
@@ -29,7 +31,8 @@ function main() {
     return;
   }
 
-  const cutoff = new Date(riskConfig.NHL_ODDS_FIX_CUTOFF).getTime();
+  const oddsFixCutoff = new Date(riskConfig.NHL_ODDS_FIX_CUTOFF).getTime();
+  const statsFixCutoff = new Date(riskConfig.NHL_STATS_FIX_CUTOFF).getTime();
   let totalEntradas = 0, totalDedup = 0, totalPushCorrigido = 0, totalNhlInvalidado = 0, totalMigrado = 0, arquivosAlterados = 0;
 
   for (const file of files) {
@@ -56,20 +59,28 @@ function main() {
         changed = true;
       }
 
-      // 3) Invalidação retroativa do NHL pré-correção da agregação de odds.
+      // 3) Invalidação retroativa do NHL pré-correção da agregação de odds OU
+      // pré-correção das stats de jogador (o que for mais tarde dos dois).
       // Pra indicações do modelo, o que importa é quando o PIPELINE rodou
-      // (qual código de agregação estava ativo); pra histórico importado de
-      // fora (source != 'model'), evaluatedAt é só a data da importação, não
-      // diz nada sobre quando a odd foi capturada — usa commenceTime como
-      // aproximação de quando o mercado foi mesmo consultado.
+      // (qual código de agregação/coleta de stats estava ativo); pra
+      // histórico importado de fora (source != 'model'), evaluatedAt é só a
+      // data da importação, não diz nada sobre quando a odd foi capturada —
+      // usa commenceTime como aproximação de quando o mercado foi mesmo
+      // consultado.
       if (entry.esporte === 'hockey/nhl' && entry.validForCalibration !== false) {
         const isModelSourced = entry.source === 'model';
         const marca = isModelSourced
           ? (entry.firstEvaluatedAt || entry.evaluatedAt)
           : (entry.commenceTime || entry.firstEvaluatedAt || entry.evaluatedAt);
-        if (marca && new Date(marca).getTime() < cutoff) {
+        const marcaMs = marca ? new Date(marca).getTime() : NaN;
+        if (!isNaN(marcaMs) && marcaMs < oddsFixCutoff) {
           entry.validForCalibration = false;
           entry.invalidReason = 'pre_fix_agregacao_odds';
+          totalNhlInvalidado++;
+          changed = true;
+        } else if (!isNaN(marcaMs) && marcaMs < statsFixCutoff) {
+          entry.validForCalibration = false;
+          entry.invalidReason = 'pre_fix_stats_nhl';
           totalNhlInvalidado++;
           changed = true;
         }

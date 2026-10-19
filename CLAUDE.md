@@ -40,7 +40,7 @@ App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges
 - **Coleta props**: `get_nba_props.js`, `get_nba_props_br.js`, `get_mlb_props.js`
 - **Modelos**: `model_nba.js`, `model_mlb.js`, `model_nhl_props.js`, `model_tennis_props.js`
 - **Dados jogadores**: `get_*_player_teams.js`, `get_*_player_stats.js`, `get_*_injuries.js`
-- **Análise**: `backtest_*_props.js`, `model_prob.js`
+- **Análise**: `backtest_*_props.js`, `model_prob.js`, `backtest_calibration_methods.js` (valida calibração antiga vs nova por Brier/log-loss)
 - **Sincronização**: `firebase_sync.js`, `save_odds_history.js`, `get_tennis_ranking.js`
 
 ### Backend
