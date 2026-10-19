@@ -74,6 +74,7 @@ function isCountable(e) {
   return e.published
     && e.hasModelProb
     && e.validForCalibration !== false
+    && e.source !== 'pt_odds_check'
     && e.resolutionStatus === ledger.RESOLUTION_STATUS.RESOLVIDO
     && e.result;
 }
@@ -368,7 +369,8 @@ function segmentSampleSize(esporte, market, allEntries) {
   // mesma contagem usada pela calibração: resolvidas, válidas, binárias.
   return allEntries.filter(e =>
     e.esporte === esporte && e.market === market && e.hasModelProb &&
-    e.validForCalibration !== false && e.resolutionStatus === ledger.RESOLUTION_STATUS.RESOLVIDO &&
+    e.validForCalibration !== false && e.source !== 'pt_odds_check' &&
+    e.resolutionStatus === ledger.RESOLUTION_STATUS.RESOLVIDO &&
     e.result && isWinLoss(e)
   ).length;
 }

@@ -8,6 +8,7 @@ import 'mix_screen.dart';
 import 'settings_screen.dart';
 import 'bets_screen.dart';
 import 'model_performance_screen.dart';
+import 'conferir_odds_screen.dart';
 
 class SportSelectorScreen extends StatelessWidget {
   const SportSelectorScreen({super.key});
@@ -75,6 +76,16 @@ class SportSelectorScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (_) => const ModelPerformanceScreen()),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  IconButton(
+                    icon: const Icon(Icons.fact_check,
+                        color: Color(0xFF888888), size: 26),
+                    tooltip: 'Conferir odds',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ConferirOddsScreen()),
                     ),
                   ),
                   const SizedBox(width: 4),

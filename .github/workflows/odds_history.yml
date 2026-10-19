@@ -72,6 +72,16 @@ jobs:
         run: node pipeline/firebase_sync.js history
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - name: Gerar referência de odds da Pinnacle (tela Conferir odds)
+        # Sem reserva dinâmica de cota própria (ver save_odds_history.js) —
+        # roda depois da coleta diária e da captura de fechamento já terem
+        # prioridade nesta execução. Se a cota apertar, desabilitar via
+        # ODDS_API_DISABLE=1 neste step ou comentar o cron deste workflow.
+        run: node pipeline/get_pinnacle_reference.js
+      - name: Sincronizar referência da Pinnacle com Firestore
+        run: node pipeline/firebase_sync.js pinnacle_reference
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       - name: Empacotar e salvar na branch history
         run: |
           tar -czf /tmp/odds_history.tar.gz odds_snapshots/

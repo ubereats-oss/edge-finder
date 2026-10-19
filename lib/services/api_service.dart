@@ -24,6 +24,12 @@ class ModelReportResult {
       {required this.rows, this.generatedAt, this.testeNflReceptions});
 }
 
+class PinnacleReferenceResult {
+  final List<Map<String, dynamic>> rows;
+  final DateTime? generatedAt;
+  const PinnacleReferenceResult({required this.rows, this.generatedAt});
+}
+
 class ApiService {
   // ── Token Firebase Auth ────────────────────────────────────────────────────
   static Future<String> _authToken() async {
@@ -198,6 +204,120 @@ class ApiService {
         rows: rows,
         generatedAt: generatedAt,
         testeNflReceptions: testeNflReceptions);
+  }
+
+  // ── Conferir odds (referência da Pinnacle + conferências PT) ──────────────
+  // Documento 'current' + continuação em 'current_p1', 'current_p2'... quando
+  // não couber num documento só (mesmo padrão de model_report).
+  static Future<PinnacleReferenceResult> fetchPinnacleReference() async {
+    final token = await _authToken();
+    final rows = <Map<String, dynamic>>[];
+    DateTime? generatedAt;
+    for (int i = -1; i < 20; i++) {
+      final docId = i == -1 ? 'current' : 'current_p$i';
+      final url = '$_firestoreBase/pinnacle_reference/$docId';
+      final res = await http.get(
+        Uri.parse(url),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      if (res.statusCode != 200) {
+        if (res.statusCode == 404 && i == -1) {
+          return const PinnacleReferenceResult(rows: []);
+        }
+        if (res.statusCode == 404) break;
+        throw Exception('Erro ao buscar referência da Pinnacle: ${res.statusCode}');
+      }
+      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      final fields = body['fields'] as Map<String, dynamic>?;
+      if (fields == null) break;
+
+      if (i == -1) {
+        final genStr = fields['generatedAt']?['stringValue'] as String?;
+        if (genStr != null) generatedAt = DateTime.tryParse(genStr);
+      }
+
+      final dataField = fields['data'];
+      final values = dataField?['arrayValue']?['values'] as List? ?? [];
+      for (final item in values) {
+        rows.add(_firestoreToMap(
+            item['mapValue']?['fields'] as Map<String, dynamic>? ?? {}));
+      }
+    }
+    return PinnacleReferenceResult(rows: rows, generatedAt: generatedAt);
+  }
+
+  static Future<Map<String, dynamic>> fetchPtValueReport() async {
+    final token = await _authToken();
+    final url = '$_firestoreBase/pt_value_report/summary';
+    final res = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      if (res.statusCode == 404) return {'rows': <Map<String, dynamic>>[], 'generatedAt': null};
+      throw Exception('Erro ao buscar relatório de valor PT: ${res.statusCode}');
+    }
+    final body = jsonDecode(res.body) as Map<String, dynamic>;
+    final fields = body['fields'] as Map<String, dynamic>? ?? {};
+    final dataField = fields['data'];
+    final values = dataField?['arrayValue']?['values'] as List? ?? [];
+    final rows = values
+        .map((item) => _firestoreToMap(
+            item['mapValue']?['fields'] as Map<String, dynamic>? ?? {}))
+        .toList();
+    final genStr = fields['generatedAt']?['stringValue'] as String?;
+    return {'rows': rows, 'generatedAt': genStr != null ? DateTime.tryParse(genStr) : null};
+  }
+
+  /// Grava uma conferência de odds (tela "Conferir odds"). `data` já deve
+  /// trazer esporte, eventId, game, commenceTime, market, line, side, player,
+  /// bookmaker, oddDigitada, fairProbPct, minValueOdds, edgePct, kellyPct.
+  static Future<Map<String, dynamic>> createOddsCheck(
+      Map<String, dynamic> data) async {
+    final token = await _authToken();
+    final id = DateTime.now().millisecondsSinceEpoch.toString();
+    final check = {
+      ...data,
+      'id': id,
+      'uid': _uid,
+      'createdAt': DateTime.now().toIso8601String(),
+      'apostaFeita': false,
+      'syncedToLedger': false,
+    };
+    final url = '$_firestoreBase/odds_checks/$id';
+    final res = await http.patch(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'fields': _mapToFirestore(check)}),
+    );
+    if (res.statusCode != 200) {
+      throw Exception('Erro ao salvar conferência de odds');
+    }
+    return check;
+  }
+
+  /// Marca uma conferência já salva como aposta feita — sync_pt_odds_checks.js
+  /// (workflow "Sincronizar Conferências de Odds PT") lê isso pra gravar no
+  /// histórico central e habilitar captura de fechamento/CLV reais.
+  static Future<void> markOddsCheckAsFeita(String id) async {
+    final token = await _authToken();
+    final url = '$_firestoreBase/odds_checks/$id?updateMask.fieldPaths=apostaFeita';
+    final res = await http.patch(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'fields': {'apostaFeita': const {'booleanValue': true}},
+      }),
+    );
+    if (res.statusCode != 200) {
+      throw Exception('Erro ao marcar conferência como aposta feita');
+    }
   }
 
   static Future<FetchResult> _safeFetch(Future<FetchResult> f) async {

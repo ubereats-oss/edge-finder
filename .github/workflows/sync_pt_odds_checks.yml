@@ -1,0 +1,109 @@
+name: Sincronizar Conferências de Odds PT
+
+# Lê a coleção Firestore odds_checks (tela "Conferir odds" do app) e grava no
+# histórico central toda conferência marcada como aposta feita ainda não
+# sincronizada — sem isso, capture_closing_odds.js/closingOddsScheduler
+# nunca saberiam que essa indicação existe pra capturar a odd de fechamento.
+# Frequência baixa (a cada 20 min) é suficiente: é um registro manual do
+# usuário, não precisa de tempo real, só precisa chegar no ledger bem antes
+# da janela de captura de fechamento (até 2h antes do início do evento).
+
+on:
+  schedule:
+    - cron: '*/20 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: sync-pt-odds-checks
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-firebase-${{ runner.os }}
+
+      - run: npm install firebase-admin
+
+      - name: Restaurar histórico central da branch data
+        run: |
+          git fetch origin data 2>/dev/null || true
+          mkdir -p odds_history
+          git checkout origin/data -- 'odds_history/model_ledger_*.json' 2>/dev/null || true
+
+      - name: Sincronizar conferências marcadas como feitas
+        id: sync
+        run: node pipeline/sync_pt_odds_checks.js
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Salvar histórico central atualizado na branch data
+        run: |
+          mkdir -p /tmp/odds_history_out
+          cp odds_history/model_ledger_*.json /tmp/odds_history_out/ 2>/dev/null || true
+          rm -rf /tmp/ledger_pipeline
+          cp -R pipeline /tmp/ledger_pipeline
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          attempt=1
+          max_attempts=6
+          delay=10
+          while true; do
+            git fetch origin data 2>/dev/null || true
+            git checkout -B data-work origin/data --force 2>/dev/null || \
+              (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+            mkdir -p odds_history
+            if [ "$attempt" -gt 1 ]; then
+              node /tmp/ledger_pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/odds_history_out --retry
+            else
+              node /tmp/ledger_pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/odds_history_out
+            fi
+            matched=false
+            for f in odds_history/model_ledger_*.json; do
+              [ -f "$f" ] || continue
+              git add "$f"
+              matched=true
+            done
+            if [ "$matched" = false ]; then
+              echo "Nenhum arquivo de odds_history nesta execução."
+            fi
+            if git diff --staged --quiet; then
+              echo "Sem mudanças no histórico central"
+              break
+            fi
+            git commit -m "pt-odds-checks: $(date -u '+%Y-%m-%d %H:%M') UTC"
+            if git push origin data-work:data; then
+              [ "$attempt" -gt 1 ] && echo "[recuperação] gravação concluída após $attempt tentativa(s)."
+              break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "Falha ao gravar histórico central na branch data após $max_attempts tentativas." >&2
+              exit 1
+            fi
+            echo "[recuperação] push rejeitado (branch data avançou) — tentativa $attempt/$max_attempts, nova tentativa em ${delay}s."
+            sleep "$delay"
+            delay=$((delay * 2))
+            attempt=$((attempt + 1))
+          done
