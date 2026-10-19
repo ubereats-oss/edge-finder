@@ -186,6 +186,8 @@ class _NflReceptionsTestCard extends StatelessWidget {
     final clvMedio = (teste['clvMedio'] as num?)?.toDouble();
     final icLower = (teste['ic95Lower'] as num?)?.toDouble();
     final icUpper = (teste['ic95Upper'] as num?)?.toDouble();
+    final nRecentes = (teste['nRecentes'] as num?)?.toInt() ?? 0;
+    final clvMedioRecentes = (teste['clvMedioRecentes'] as num?)?.toDouble();
     final veredito = (teste['veredito'] as String?) ?? 'em_teste';
 
     const vereditoInfo = {
@@ -249,6 +251,11 @@ class _NflReceptionsTestCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             'IC95%: ${fmtPct(icLower)} a ${fmtPct(icUpper)}',
+            style: const TextStyle(color: Color(0xFF888888), fontSize: 12),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'CLV médio das $nRecentes mais recentes: ${fmtPct(clvMedioRecentes)}',
             style: const TextStyle(color: Color(0xFF888888), fontSize: 12),
           ),
         ],
