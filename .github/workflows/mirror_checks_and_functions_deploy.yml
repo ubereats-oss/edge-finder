@@ -49,6 +49,70 @@ jobs:
       - name: Verify data save helper dependencies
         run: bash scripts/check_data_save_helpers.sh
 
+  detect-firestore-rules:
+    name: Detect changed Firestore rules
+    if: github.repository == 'ubereats-oss/edge-finder'
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.detect.outputs.should_deploy }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect firestore.rules change
+        id: detect
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            echo "workflow_dispatch não força deploy de regras — só push que muda firestore.rules."
+            exit 0
+          fi
+          before="${{ github.event.before }}"
+          after="${{ github.sha }}"
+          if [[ "$before" =~ ^0+$ ]]; then
+            mapfile -t changed < <(git diff-tree --no-commit-id --name-only -r "$after")
+          else
+            mapfile -t changed < <(git diff --name-only "$before" "$after")
+          fi
+          if printf '%s\n' "${changed[@]}" | grep -qx 'firestore.rules'; then
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+            echo "firestore.rules mudou nesta push."
+          else
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            echo "firestore.rules não mudou nesta push."
+          fi
+
+  deploy-firestore-rules:
+    name: Deploy Firestore rules
+    needs:
+      - verify-mirrors
+      - detect-firestore-rules
+    if: >
+      github.repository == 'ubereats-oss/edge-finder' &&
+      github.event_name == 'push' &&
+      needs.detect-firestore-rules.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/29716291623/locations/global/workloadIdentityPools/github-actions/providers/edge-finder-main
+          service_account: github-functions-deployer@odds-app-edge.iam.gserviceaccount.com
+
+      - name: Deploy Firestore rules
+        # Mesma service account usada pro deploy de Functions. Se faltar
+        # permissão (roles/firebaserules.admin ou equivalente), este step
+        # falha com erro de permissão explícito no log — não foi possível
+        # confirmar com antecedência se a permissão já está concedida.
+        run: npx -y firebase-tools@latest deploy --project odds-app-edge --only firestore:rules
+
   detect-functions:
     name: Detect changed Functions
     if: github.repository == 'ubereats-oss/edge-finder'

@@ -22,6 +22,35 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // pinnacle_reference/ — referência de odds da Pinnacle (tela "Conferir
+    // odds"), gravada só pelo pipeline (Admin SDK). Leitura para usuário
+    // autenticado, sem escrita do cliente — mesmo padrão de model_report/.
+    match /pinnacle_reference/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // pt_value_report/ — relatório "Valor real nas casas que posso usar",
+    // gravado só pelo pipeline. Mesmo padrão de model_report/.
+    match /pt_value_report/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // odds_checks/ — conferências de odds da tela "Conferir odds". O
+    // próprio usuário cria e marca como feita; o pipeline
+    // (sync_pt_odds_checks.js, Admin SDK) também atualiza syncedToLedger,
+    // ignorando estas regras. Mesmo modelo de bets/: só o dono lê/edita.
+    match /odds_checks/{checkId} {
+      allow read, delete: if request.auth != null
+        && resource.data.uid == request.auth.uid;
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid;
+      allow update: if request.auth != null
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == resource.data.uid;
+    }
+
     // bets/ — usuário autenticado acessa apenas as próprias apostas
     // O pipeline (service account) tem acesso admin via SDK e ignora estas regras
     match /bets/{betId} {
