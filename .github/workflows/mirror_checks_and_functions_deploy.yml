@@ -22,6 +22,14 @@ on:
         options:
           - 'false'
           - 'true'
+      force_firestore_rules_deploy:
+        description: Force deploy firestore.rules without a new push (e.g. retry after fixing IAM permission)
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 permissions:
   contents: read
@@ -67,8 +75,13 @@ jobs:
         run: |
           set -euo pipefail
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
-            echo "workflow_dispatch não força deploy de regras — só push que muda firestore.rules."
+            if [[ "${{ inputs.force_firestore_rules_deploy }}" == "true" ]]; then
+              echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+              echo "Deploy de firestore.rules forçado via workflow_dispatch."
+            else
+              echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+              echo "workflow_dispatch sem force_firestore_rules_deploy=true — não força deploy de regras."
+            fi
             exit 0
           fi
           before="${{ github.event.before }}"
@@ -93,7 +106,7 @@ jobs:
       - detect-firestore-rules
     if: >
       github.repository == 'ubereats-oss/edge-finder' &&
-      github.event_name == 'push' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       needs.detect-firestore-rules.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     steps:
