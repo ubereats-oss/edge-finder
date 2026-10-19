@@ -202,6 +202,10 @@ function recordEvaluation(rec) {
     runId,
     // Estado do controle de risco por segmento no momento da avaliação.
     segmentState, sampleSize,
+    // Qual versão do método de calibração gerou modelProb — ver
+    // calibration.js (CALIBRATION_METHOD_VERSION). Indicações gravadas antes
+    // deste campo existir não têm essa chave (tratar como 'antigo').
+    calibrationMethodVersion,
     // Odd de fechamento (capturada perto do início do evento) e CLV — ficam
     // null até capture_closing_odds.js preencher, perto do começo do jogo.
     closingOdds, clv,
@@ -257,6 +261,7 @@ function recordEvaluation(rec) {
     rejectionReason: rejectionReason ?? null,
     segmentState: segmentState ?? null,
     sampleSize: sampleSize ?? null,
+    calibrationMethodVersion: calibrationMethodVersion ?? null,
     runId: runId ?? now,
     evaluatedAt: now,
   };

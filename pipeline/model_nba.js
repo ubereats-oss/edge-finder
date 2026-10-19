@@ -146,6 +146,7 @@ for (const c of candidates) {
     rejectionReason: c.rejectionReason,
     segmentState: c.calib.segmentState,
     sampleSize: c.calib.sampleSize,
+    calibrationMethodVersion: c.calib.methodVersion,
     runId: RUN_ID,
   });
 }

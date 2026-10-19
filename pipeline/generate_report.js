@@ -255,6 +255,50 @@ function realBetRows(bets, allEntries) {
   return { rows, manualWithoutIndication, unresolvedLinked, linked: linked.length };
 }
 
+// Versão do método de calibração que gerou modelProb (ver
+// pipeline/calibration.js, CALIBRATION_METHOD_VERSION). Indicações gravadas
+// antes do campo existir não têm essa chave — tratadas como 'antigo' pra
+// nunca misturar silenciosamente com a leitura do método novo.
+function methodVersionOf(e) {
+  return e.calibrationMethodVersion === 'novo' ? 'novo' : 'antigo';
+}
+
+// Taxa prevista calibrada (e, só pro método novo, ROI/CLV) calculada em
+// separado por versão do método — pra método antigo não contaminar a
+// leitura do novo. CLV/ROI "oficiais" continuam agregados (ver rows abaixo);
+// isto é só o recorte adicional.
+function methodVersionBreakdown(entries) {
+  const out = {};
+  for (const version of ['antigo', 'novo']) {
+    const subset = entries.filter(e => methodVersionOf(e) === version);
+    if (!subset.length) { out[version] = null; continue; }
+    const winLossSub = subset.filter(isWinLoss);
+    const acertosSub = winLossSub.filter(e => e.result.status === ledger.RESULT_STATUS.GANHOU).length;
+    const winRateRealSub = winLossSub.length ? acertosSub / winLossSub.length * 100 : null;
+    const winRateModeloSub = subset.reduce((s, e) => s + e.modelProb, 0) / subset.length;
+    const withRawSub = subset.filter(e => typeof e.rawProb === 'number');
+    const winRateModeloBrutoSub = withRawSub.length ? withRawSub.reduce((s, e) => s + e.rawProb, 0) / withRawSub.length : null;
+
+    const row = {
+      n: subset.length,
+      nBinarias: winLossSub.length,
+      winRateReal: winRateRealSub === null ? null : parseFloat(winRateRealSub.toFixed(1)),
+      winRateModelo: parseFloat(winRateModeloSub.toFixed(1)),
+      winRateModeloBruto: winRateModeloBrutoSub === null ? null : parseFloat(winRateModeloBrutoSub.toFixed(1)),
+    };
+    if (version === 'novo') {
+      const lucroSub = subset.reduce((s, e) => s + profitUnits(e), 0);
+      const stakeSub = subset.reduce((s, e) => s + (typeof e.kelly === 'number' ? e.kelly : 0), 0);
+      row.roi = stakeSub > 0 ? parseFloat(((lucroSub / stakeSub) * 100).toFixed(1)) : null;
+      const comClvSub = subset.filter(e => typeof e.clv === 'number');
+      row.clvMedio = comClvSub.length ? parseFloat((comClvSub.reduce((s, e) => s + e.clv, 0) / comClvSub.length).toFixed(2)) : null;
+      row.clvComOdd = comClvSub.length;
+    }
+    out[version] = row;
+  }
+  return out;
+}
+
 function segmentSampleSize(esporte, market, allEntries) {
   // mesma contagem usada pela calibração: resolvidas, válidas, binárias.
   return allEntries.filter(e =>
@@ -329,6 +373,7 @@ async function main() {
       semClvMotivos: missingClvReasons(entries),
       minSampleToCalibrate: riskConfig.MIN_SAMPLE_TO_CALIBRATE,
       segmentState, sampleSize, faltamParaCalibrar,
+      byMethodVersion: methodVersionBreakdown(entries),
     });
   }
 
@@ -344,14 +389,25 @@ async function main() {
   lines.push('');
   lines.push('Só inclui indicações publicadas, resolvidas e válidas para calibração (mesmo critério da calibração — NHL pré-correção da agregação de odds fica de fora, por exemplo). Push e cancelado entram no lucro/ROI mas não na taxa de acerto.');
   lines.push('');
-  lines.push('| Esporte | Mercado | Faixa de edge | Nº resolvidas válidas | Taxa de acerto real | Taxa prevista calibrada | ROI | CLV médio | Estado do segmento | Faltam p/ calibrar |');
+  lines.push('Taxa prevista calibrada sempre separada por versão do método de calibração (antigo = isotônica pura, pré pipeline/calibration.js commit d048389; novo = com piso de amostra por nó, teto 5-95% e encolhimento gradual) — método antigo nunca contamina a leitura do novo. CLV/ROI da tabela principal continuam agregados; a coluna de CLV/ROI também traz o recorte só do método novo.');
+  lines.push('');
+  lines.push('| Esporte | Mercado | Faixa de edge | Nº resolvidas válidas | Taxa de acerto real | Taxa prevista calibrada (por método) | ROI agregado | CLV médio agregado (+ recorte método novo) | Estado do segmento | Faltam p/ calibrar |');
   lines.push('|---|---|---|---|---|---|---|---|---|---|');
+  const fmtVersion = (label, v) => {
+    if (!v) return `${label}: sem dados`;
+    const bruto = v.winRateModeloBruto === null ? '' : ` (bruta ${fmt(v.winRateModeloBruto)}%)`;
+    return `${label} ${fmt(v.winRateModelo)}%${bruto} (n=${v.n})`;
+  };
   for (const r of rows) {
     const clvCell = r.clvMedio === null ? '—' : `${fmt(r.clvMedio)}% (${r.clvComOdd}/${r.nResolvidasValidas} exata)`;
     const clvAdjustedCell = r.clvAjustadoMedio === null ? '—' : `${fmt(r.clvAjustadoMedio)}% (${r.clvComLinhaAjustada}/${r.nResolvidasValidas} ajustada)`;
     const movementCell = r.movimentoLinhaFavorPct === null ? '—' : `${fmt(r.movimentoLinhaFavorPct)}% (${r.movimentoLinhaFavor}/${r.movimentoLinhaTotal})`;
-    const modelCell = r.winRateModeloBruto === null ? `${fmt(r.winRateModelo)}%` : `${fmt(r.winRateModelo)}% (bruta ${fmt(r.winRateModeloBruto)}%)`;
-    lines.push(`| ${r.esporte} | ${r.market} | ${r.edgeBucket} | ${r.nResolvidasValidas} | ${fmt(r.winRateReal)}% (${r.nBinarias} decididas) | ${modelCell} | ${r.roi === null ? '—' : fmt(r.roi) + '%'} | ${clvCell}; ajustado ${clvAdjustedCell}; mov. favor ${movementCell} | ${r.segmentState} | ${r.faltamParaCalibrar} |`);
+    const novo = r.byMethodVersion.novo;
+    const novoRoiClvCell = novo
+      ? ` · recorte novo: ROI ${novo.roi === null ? '—' : fmt(novo.roi) + '%'}, CLV ${novo.clvMedio === null ? '—' : fmt(novo.clvMedio, 2) + '%'} (${novo.clvComOdd}/${novo.n})`
+      : '';
+    const modelCell = `${fmtVersion('antigo', r.byMethodVersion.antigo)} · ${fmtVersion('novo', r.byMethodVersion.novo)}`;
+    lines.push(`| ${r.esporte} | ${r.market} | ${r.edgeBucket} | ${r.nResolvidasValidas} | ${fmt(r.winRateReal)}% (${r.nBinarias} decididas) | ${modelCell} | ${r.roi === null ? '—' : fmt(r.roi) + '%'} | ${clvCell}; ajustado ${clvAdjustedCell}; mov. favor ${movementCell}${novoRoiClvCell} | ${r.segmentState} | ${r.faltamParaCalibrar} |`);
   }
   if (!rows.length) lines.push('| _sem dados ainda_ | | | | | | | | | |');
   lines.push('');

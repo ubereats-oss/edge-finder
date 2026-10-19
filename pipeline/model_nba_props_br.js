@@ -432,6 +432,7 @@ for (const c of candidates) {
     rejectionReason: c.rejectionReason,
     segmentState: c.bestCalib.segmentState,
     sampleSize: c.bestCalib.sampleSize,
+    calibrationMethodVersion: c.bestCalib.methodVersion,
     hasModelProb,
     validForCalibration: c.validForCalibration ?? hasModelProb,
     invalidReason: c.invalidReason ?? (hasModelProb ? null : c.rejectionReason),

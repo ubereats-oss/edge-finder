@@ -217,6 +217,25 @@ class _ReportRowCard extends StatelessWidget {
     return v == null ? '—' : '${v.toStringAsFixed(decimals)}%';
   }
 
+  String _fmtNum(dynamic v, {int decimals = 1}) {
+    if (v is! num) return '—';
+    return '${v.toStringAsFixed(decimals)}%';
+  }
+
+  // Taxa prevista calibrada separada por versão do método (antigo = isotônica
+  // pura; novo = com piso de amostra por nó, teto 5-95% e encolhimento
+  // gradual — ver pipeline/calibration.js) — nunca misturada, pra método
+  // antigo não contaminar a leitura do novo.
+  String _versionSummary(Map? version, String label) {
+    if (version == null) return '$label: sem dados';
+    final modelo = version['winRateModelo'];
+    final bruto = version['winRateModeloBruto'];
+    final n = version['n'] ?? 0;
+    final modeloText = modelo is num ? '${modelo.toStringAsFixed(1)}%' : '—';
+    final brutoText = bruto is num ? ' (bruta ${bruto.toStringAsFixed(1)}%)' : '';
+    return '$label: $modeloText$brutoText, n=$n';
+  }
+
   String _missingClvText() {
     final raw = row['semClvMotivos'];
     if (raw is! Map || raw.isEmpty) return '';
@@ -271,8 +290,11 @@ class _ReportRowCard extends StatelessWidget {
     final sampleSize = (row['sampleSize'] as num?)?.toInt() ?? 0;
     final minSampleToCalibrate =
         (row['minSampleToCalibrate'] as num?)?.toInt() ?? 30;
-    final rawProb = _num('winRateModeloBruto');
     final missingClvText = _missingClvText();
+    final byVersion = row['byMethodVersion'];
+    final antigoVersion =
+        byVersion is Map ? byVersion['antigo'] as Map? : null;
+    final novoVersion = byVersion is Map ? byVersion['novo'] as Map? : null;
 
     final clvColor = clv == null
         ? const Color(0xFF888888)
@@ -376,19 +398,25 @@ class _ReportRowCard extends StatelessWidget {
                 style: const TextStyle(color: Color(0xFF888888), fontSize: 11),
               ),
             ],
+            const SizedBox(height: 6),
+            Text(
+              'Previsto calibrado — ${_versionSummary(antigoVersion, 'antigo')} · ${_versionSummary(novoVersion, 'novo')}',
+              style: const TextStyle(color: Color(0xFF888888), fontSize: 11),
+            ),
+            if (novoVersion != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Recorte método novo — ROI: ${_fmtNum(novoVersion['roi'])} · CLV: ${_fmtNum(novoVersion['clvMedio'], decimals: 2)} (${novoVersion['clvComOdd'] ?? 0}/${novoVersion['n'] ?? 0})',
+                style: const TextStyle(color: Color(0xFF888888), fontSize: 11),
+              ),
+            ],
             const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
                     child: _Stat(
                         label: 'Acerto real', value: _fmtPct('winRateReal'))),
-                Expanded(
-                    child: _Stat(
-                        label: rawProb == null
-                            ? 'Previsto calibrado'
-                            : 'Previsto calibrado · bruto ${rawProb.toStringAsFixed(1)}%',
-                        value: _fmtPct('winRateModelo'))),
-                Expanded(child: _Stat(label: 'ROI', value: _fmtPct('roi'))),
+                Expanded(child: _Stat(label: 'ROI agregado', value: _fmtPct('roi'))),
               ],
             ),
           ],
