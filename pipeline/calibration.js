@@ -122,6 +122,9 @@ function loadSegmentSamples(esporte, market) {
       if (e.market !== market) continue;
       if (!e.hasModelProb) continue;
       if (e.validForCalibration === false) continue;
+      // Conferências manuais de odds de casas PT (tela "Conferir odds") não
+      // são avaliação do modelo — nunca entram na calibração automática.
+      if (e.source === 'pt_odds_check') continue;
       if (e.resolutionStatus !== ledger.RESOLUTION_STATUS.RESOLVIDO) continue;
       if (!e.result) continue;
       if (e.result.status !== ledger.RESULT_STATUS.GANHOU && e.result.status !== ledger.RESULT_STATUS.PERDEU) continue;

@@ -224,6 +224,66 @@ async function syncReport() {
   }
 }
 
+// Referência de odds da Pinnacle (odds_history/pinnacle_reference.json, raiz
+// do projeto — ver pipeline/get_pinnacle_reference.js) → coleção
+// pinnacle_reference, doc 'current' (+ 'current_p1'... se não couber num
+// documento só). Mesmo padrão de chunk/limpeza do relatório de desempenho.
+async function syncPinnacleReference() {
+  const filePath = path.join(ROOT, 'pinnacle_reference.json');
+  if (!fs.existsSync(filePath)) {
+    console.log('  Pulando referência da Pinnacle — pinnacle_reference.json não encontrado (rode get_pinnacle_reference.js primeiro)');
+    return;
+  }
+
+  const CHUNK = 300;
+  const MAX_CHUNKS_TO_CHECK = 20;
+
+  try {
+    const { generatedAt, rows } = JSON.parse(fs.readFileSync(filePath));
+    const chunks = [];
+    for (let i = 0; i < rows.length; i += CHUNK) chunks.push(rows.slice(i, i + CHUNK));
+    if (!chunks.length) chunks.push([]);
+
+    for (let i = 0; i < chunks.length; i++) {
+      const docId = i === 0 ? 'current' : `current_p${i}`;
+      await db.collection('pinnacle_reference').doc(docId).set({
+        data: chunks[i],
+        generatedAt,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+    for (let i = chunks.length; i < MAX_CHUNKS_TO_CHECK; i++) {
+      await db.collection('pinnacle_reference').doc(`current_p${i}`).delete().catch(() => {});
+    }
+
+    console.log(`  ✅ pinnacle_reference.json → pinnacle_reference (${rows.length} linha(s) em ${chunks.length} documento(s))`);
+  } catch (e) {
+    console.error('  ❌ Erro ao sincronizar referência da Pinnacle:', e.message);
+  }
+}
+
+// Relatório "Valor real nas casas que posso usar"
+// (odds_history/relatorio_valor_pt.json — ver pipeline/generate_pt_value_report.js)
+// → coleção pt_value_report, doc 'summary'.
+async function syncPtValueReport() {
+  const filePath = path.join(ROOT, 'odds_history', 'relatorio_valor_pt.json');
+  if (!fs.existsSync(filePath)) {
+    console.log('  Pulando relatório de valor PT — relatorio_valor_pt.json não encontrado (rode generate_pt_value_report.js primeiro)');
+    return;
+  }
+  try {
+    const { generatedAt, rows } = JSON.parse(fs.readFileSync(filePath));
+    await db.collection('pt_value_report').doc('summary').set({
+      data: rows,
+      generatedAt,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    console.log(`  ✅ relatorio_valor_pt.json → pt_value_report/summary (${rows.length} grupo(s))`);
+  } catch (e) {
+    console.error('  ❌ Erro ao sincronizar relatório de valor PT:', e.message);
+  }
+}
+
 async function main() {
   console.log('Iniciando sincronização com Firestore...\n');
 
@@ -234,6 +294,8 @@ async function main() {
   if (syncType === 'all' || syncType === 'bets') await syncBets();
   if (syncType === 'all' || syncType === 'history') await syncOddsHistory();
   if (syncType === 'all' || syncType === 'report') await syncReport();
+  if (syncType === 'all' || syncType === 'pinnacle_reference') await syncPinnacleReference();
+  if (syncType === 'all' || syncType === 'pt_value_report') await syncPtValueReport();
 
   if (['nhl', 'nfl', 'tennis_props'].includes(syncType)) {
     const fileMap = {
