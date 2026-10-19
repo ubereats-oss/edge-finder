@@ -1,7 +1,7 @@
 # Edge Finder
 
 ## Sobre o projeto
-App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges) comparando odds entre casas. Integra pipeline Node.js que coleta odds/props de NBA, MLB, NHL e NFL via APIs e calcula modelos de probabilidade. GitHub Actions automatiza coleta diária, backtesting e atualização de dados para Firestore. Login Google restrito a uma única conta (lib/auth_config.dart) — demais contas veem tela de acesso negado.
+App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges) comparando odds entre casas. Integra pipeline Node.js que coleta odds/props de NBA, MLB, NHL e NFL via APIs e calcula modelos de probabilidade. GitHub Actions automatiza coleta diária, backtesting e atualização de dados para Firestore. Login e-mail/senha restrito a uma única conta (lib/auth_config.dart) — e-mail diferente ou não verificado veem tela de acesso negado / verificação pendente.
 
 ## Mapa do projeto
 
@@ -12,7 +12,9 @@ App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges
 - `hockey_screen.dart` — partidas NHL
 - `football_screen.dart` — partidas futebol
 - `mix_screen.dart` — resultados consolidados múltiplos esportes
-- `login_screen.dart` — login Google
+- `auth_gate.dart` — roteia entre login, verificação de e-mail, acesso negado e app
+- `login_screen.dart` — login e-mail/senha
+- `verify_email_screen.dart` — pede confirmação do e-mail antes de liberar o app
 - `access_denied_screen.dart` — bloqueio de contas não autorizadas
 - `bets_screen.dart` — histórico de apostas
 - `bet_planner_screen.dart` — planejador de apostas
