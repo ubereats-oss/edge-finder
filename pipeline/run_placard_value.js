@@ -1,7 +1,7 @@
 const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
 const { database } = require('./odds_api_monthly_budget');
 const { createBrowser, scrapeCompetition } = require('./get_placard_odds');
-const { compare, references, matchingEvents, report } = require('./placard_value');
+const { compare, references, matchingEvents, isNearValue, nearValueSelections, report } = require('./placard_value');
 const competitions = require('./placard_config');
 const fs = require('fs');
 
@@ -76,15 +76,74 @@ async function scan(db) {
           return delta > 0 && delta <= 12 * 3600000;
         });
         if (!games.length) { diagnostics.push({ competition: cfg.label, reason: 'sem_jogos_12h' }); continue; }
-        // Uma chamada para TODOS os jogos da competição, não uma por jogo.
-        const from = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
-        const to = new Date(Date.now() + 12 * 3600000).toISOString().replace(/\.\d{3}Z$/, 'Z');
-        const response = await api.get(`https://api.the-odds-api.com/v4/sports/${cfg.key}/odds`, {
-          timeout: 20000, params: { bookmakers: 'pinnacle', markets: 'h2h,totals', oddsFormat: 'decimal', commenceTimeFrom: from, commenceTimeTo: to },
-        });
-        const events = response.data.map(e => ({ ...e, sport_key: cfg.key }));
+        const cacheRef = db.collection('_placard_pinnacle_latest').doc(cfg.key);
+        const cacheSnap = await cacheRef.get();
+        let events = cacheSnap.data()?.events || [];
+        if (!events.length) {
+          const prior = await db.collection('_placard_reads').where('apiSport', '==', cfg.key)
+            .orderBy('observedAt', 'desc').limit(1).get();
+          if (!prior.empty) {
+            try { events = JSON.parse(prior.docs[0].data().pinnacle || '[]'); } catch (_) { events = []; }
+          }
+        }
+        events = events.map(e => ({ ...e, sport_key: cfg.key }));
+        const dueEvents = new Map();
+        const triggerSignatures = new Map();
         for (const game of games) {
           const matches = matchingEvents(game, events);
+          const event = matches.length === 1 ? matches[0] : null;
+          const delta = Date.parse(game.commenceTime) - Date.now();
+          const near = event && isNearValue(game, event);
+          const signature = near ? JSON.stringify(nearValueSelections(game, event)) : null;
+          if (near && event) {
+            const stateRef = db.collection('_placard_refresh_state').doc(`${cfg.key}_${event.id}`);
+            const state = (await stateRef.get()).data() || {};
+            if (state.nearSignature !== signature) triggerSignatures.set(event.id, { ref: stateRef, signature });
+          }
+          const bookmaker = event?.bookmakers?.find(b => b.key === 'pinnacle');
+          const marketUpdates = (bookmaker?.markets || [])
+            .map(m => Date.parse(m.last_update || bookmaker.last_update)).filter(Number.isFinite);
+          const stale = !event || !marketUpdates.length || marketUpdates.some(t => Date.now() - t > 2 * 3600000);
+          if (!event || triggerSignatures.has(event.id) || (delta <= 3 * 3600000 && stale)) {
+            if (event) dueEvents.set(event.id, event);
+            else dueEvents.set(`new:${game.teams.join('|')}|${game.commenceTime}`, null);
+          }
+        }
+        let refreshedEvents = [];
+        if (dueEvents.size) {
+          const knownIds = [...dueEvents.keys()].filter(id => !id.startsWith('new:'));
+          const params = { bookmakers: 'pinnacle', markets: 'h2h,totals', oddsFormat: 'decimal' };
+          if (knownIds.length === dueEvents.size) params.eventIds = knownIds.join(',');
+          else {
+            params.commenceTimeFrom = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+            params.commenceTimeTo = new Date(Date.now() + 12 * 3600000).toISOString().replace(/\.\d{3}Z$/, 'Z');
+          }
+          const response = await api.get(`https://api.the-odds-api.com/v4/sports/${cfg.key}/odds`, { timeout: 20000, params });
+          refreshedEvents = response.data.map(e => ({ ...e, sport_key: cfg.key }));
+          const merged = new Map(events.map(e => [e.id, e]));
+          for (const e of refreshedEvents) merged.set(e.id, e);
+          const expiresAt = Date.now() + 12 * 3600000;
+          events = [...merged.values()].filter(e => {
+            const start = Date.parse(e.commence_time);
+            return Number.isFinite(start) && start > Date.now() && start <= expiresAt;
+          });
+          await cacheRef.set({ events, updatedAt: new Date().toISOString() });
+          for (const [eventId, state] of triggerSignatures) {
+            if (refreshedEvents.some(e => e.id === eventId)) {
+              await state.ref.set({ nearSignature: state.signature, updatedAt: new Date().toISOString() }, { merge: true });
+            }
+          }
+          for (const game of games) {
+            const match = matchingEvents(game, refreshedEvents);
+            if (match.length !== 1 || !isNearValue(game, match[0])) continue;
+            const eventId = match[0].id;
+            const stateRef = db.collection('_placard_refresh_state').doc(`${cfg.key}_${eventId}`);
+            const signature = JSON.stringify(nearValueSelections(game, match[0]));
+            await stateRef.set({ nearSignature: signature, updatedAt: new Date().toISOString() }, { merge: true });
+          }
+        }
+        for (const game of games) {
+          const matches = matchingEvents(game, refreshedEvents);
           let alternateError = null;
           if (matches.length === 1) {
             const lines = game.markets.filter(m => ['TPOT', 'HCTG'].includes(m.type))
@@ -92,13 +151,14 @@ async function scan(db) {
             try { await exactTotals(api, cfg.key, matches[0], lines, attemptedAlternates); }
             catch (e) { alternateError = e.message; }
           }
-          const result = compare(game, events);
+          const result = compare(game, refreshedEvents);
           diagnostics.push({ competition: cfg.label, teams: game.teams, reason: result.reason,
             comparedSelections: result.comparedSelections ?? 0, alternateError });
           for (const row of result.rows) { await saveOpportunity(db, row); rows.push(row); }
         }
-        // Guarda a leitura integral, inclusive odds sem valor e nomes não casados.
-        await db.collection('_placard_reads').add({ observedAt: new Date().toISOString(), apiSport: cfg.key, games, pinnacle: JSON.stringify(events) });
+        if (refreshedEvents.length) await cacheRef.set({ events, updatedAt: new Date().toISOString() });
+        await db.collection('_placard_reads').add({ observedAt: new Date().toISOString(), apiSport: cfg.key,
+          games, pinnacle: JSON.stringify(events), refreshedEventIds: refreshedEvents.map(e => e.id) });
       } catch (e) { errors.push({ competition: cfg.label, error: e.message }); }
     }
   } finally { await browser.close(); }
@@ -171,7 +231,7 @@ async function publish(db, result, entries) {
   const payload = { generatedAt, runId, pageCount, report: report(entries), errors: result.errors,
     budget: { reserved: budget.reserved ?? 0, limit: 4000, baselineCredits: budget.baselineCredits ?? 0,
       readingAllowance: budget.nonClosingLimit ?? 0, startedAt: budget.startedAt ?? null },
-    cadenceHours: 6, priceMaxAgeSeconds: 120, closingWindowMinutes: 5 };
+    cadenceMinutes: 30, priceMaxAgeSeconds: 120, closingWindowMinutes: 5 };
   await run.set({ ...payload, diagnostics: result.diagnostics });
   await ref.set(payload);
 }
@@ -183,9 +243,9 @@ async function main() {
   const control = db.collection('_placard_control').doc('scan');
   if (process.argv.includes('--plan')) {
     const state = (await control.get()).data() || {};
-    const needsScan = process.env.PLACARD_FORCE_SCAN === '1' || !state.lastAttemptAt || Date.now() - Date.parse(state.lastAttemptAt) >= 6 * 3600000;
+    const needsScan = process.env.PLACARD_FORCE_SCAN === '1' || !state.lastAttemptAt || Date.now() - Date.parse(state.lastAttemptAt) >= 30 * 60000;
     const pending = await db.collection('_placard_opportunities').where('closingStatus', '==', 'pendente').get();
-    const needsClosing = pending.docs.some(d => Date.parse(d.data().commenceTime) - Date.now() <= 5 * 60000);
+    const needsClosing = process.env.PLACARD_CLOSING_ONLY === '1' || pending.docs.some(d => Date.parse(d.data().commenceTime) - Date.now() <= 5 * 60000);
     const output = `needs_scan=${needsScan}\nneeds_work=${needsScan || needsClosing}\n`;
     if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, output);
     else console.log(output);
@@ -195,8 +255,16 @@ async function main() {
   const existingIds = new Set(entries.map(e => e.id));
   // Fechamento tem prioridade sobre nova coleta.
   await captureClosing(db, entries);
+  if (process.env.PLACARD_CLOSING_ONLY === '1') {
+    entries = await allEntries(db);
+    const state = (await control.get()).data() || {};
+    const result = state.result || { rows: [], errors: [], diagnostics: [] };
+    await publish(db, result, entries);
+    fs.writeFileSync('placard_run_summary.json', JSON.stringify(report(entries), null, 2));
+    return;
+  }
   const state = (await control.get()).data() || {};
-  const due = process.env.PLACARD_FORCE_SCAN === '1' || !state.lastAttemptAt || Date.now() - Date.parse(state.lastAttemptAt) >= 6 * 3600000;
+  const due = process.env.PLACARD_FORCE_SCAN === '1' || !state.lastAttemptAt || Date.now() - Date.parse(state.lastAttemptAt) >= 30 * 60000;
   let result;
   if (due) {
     await control.set({ lastAttemptAt: new Date().toISOString() }, { merge: true });
@@ -211,6 +279,7 @@ async function main() {
     await captureClosing(db, entries.filter(e => !existingIds.has(e.id) || Date.parse(e.commenceTime) <= Date.now()));
     entries = await allEntries(db);
   }
+  result.rows = entries.filter(e => e.closingStatus === 'pendente' && Date.parse(e.commenceTime) > Date.now());
   await publish(db, result, entries);
   fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), scan: due,
     opportunities: result.rows.length, errors: result.errors }, null, 2));

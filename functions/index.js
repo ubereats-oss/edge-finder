@@ -358,7 +358,7 @@ exports.syncOddsBr = onRequest(
 // ── Disparo just-in-time de "Capturar Odd de Fechamento" ───────────────────
 //
 // Substitui a espera de até 5h dentro do runner do GitHub Actions: esta
-// function roda a cada poucos minutos, lê o histórico central
+// function roda a cada minuto, lê o histórico central
 // (odds_history/model_ledger_*.json) direto da branch `data` do GitHub e
 // reimplementa a mesma seleção de "próximo evento alcançável" de
 // pipeline/capture_closing_odds.js — futuro priorizado sobre já iniciado
@@ -646,8 +646,8 @@ async function loadLedgerEntries(token) {
 // "workflow disparado" o período inteiro, mas o GitHub não tem nenhuma
 // execução registrada nessas datas. Checar o estado antes de disparar troca
 // esse silêncio por um erro explícito nos logs.
-async function assertWorkflowEnabled(token) {
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}`;
+async function assertWorkflowEnabled(token, workflowFile = GH_WORKFLOW_FILE) {
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${workflowFile}`;
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -655,16 +655,20 @@ async function assertWorkflowEnabled(token) {
       'X-GitHub-Api-Version': '2022-11-28',
     },
   });
-  if (!res.ok) throw new Error(`checar estado do workflow ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  if (!res.ok) throw new Error(`checar estado do workflow ${workflowFile} ${res.status}: ${(await res.text()).slice(0, 300)}`);
   const body = await res.json();
   if (body.state !== 'active') {
-    throw new Error(`workflow ${GH_WORKFLOW_FILE} está "${body.state}" no GitHub (não ativo) — reative em Settings > Actions > Capturar Odd de Fechamento.`);
+    throw new Error(`workflow ${workflowFile} está "${body.state}" no GitHub (não ativo).`);
   }
 }
 
 async function dispatchCaptureWorkflow(token) {
-  await assertWorkflowEnabled(token);
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}/dispatches`;
+  return dispatchWorkflow(token, GH_WORKFLOW_FILE);
+}
+
+async function dispatchWorkflow(token, workflowFile, inputs = {}) {
+  await assertWorkflowEnabled(token, workflowFile);
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${workflowFile}/dispatches`;
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -673,22 +677,68 @@ async function dispatchCaptureWorkflow(token) {
       'X-GitHub-Api-Version': '2022-11-28',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ ref: GH_WORKFLOW_REF }),
+    body: JSON.stringify({ ref: GH_WORKFLOW_REF, ...(Object.keys(inputs).length ? { inputs } : {}) }),
   });
   if (!res.ok) throw new Error(`dispatch ${res.status}: ${(await res.text()).slice(0, 300)}`);
 }
 
+const PLACARD_SCHEDULER_STATE = db.collection('system').doc('placardValueScheduler');
+async function dispatchPlacardScanIfDue(token, now) {
+  const state = (await PLACARD_SCHEDULER_STATE.get()).data() || {};
+  if (now - (state.lastScanDispatchAt || 0) < 30 * 60 * 1000) return;
+  try {
+    await dispatchWorkflow(token, 'placard_value.yml', { force_scan: 'true', closing_only: 'false' });
+    await PLACARD_SCHEDULER_STATE.set({ lastScanDispatchAt: now }, { merge: true });
+    console.log('[closingOddsScheduler] disparo da leitura Placard (intervalo de 30min).');
+  } catch (e) { console.error(`[closingOddsScheduler] falha ao disparar leitura Placard: ${e.message}`); }
+}
+
+async function dispatchPlacardClosingIfDue(token, now) {
+  let pending;
+  try {
+    const from = new Date(now - 5 * 60 * 1000).toISOString();
+    const to = new Date(now + 5 * 60 * 1000).toISOString();
+    pending = await db.collection('_placard_opportunities')
+      .where('commenceTime', '>=', from)
+      .where('commenceTime', '<=', to)
+      .get();
+  } catch (e) {
+    console.error(`[closingOddsScheduler] falha ao consultar fechamentos Placard: ${e.message}`);
+    return;
+  }
+  const due = pending.docs.filter(d => {
+    const data = d.data();
+    const start = Date.parse(data.commenceTime);
+    return data.closingStatus === 'pendente' && Number.isFinite(start)
+      && start - now <= 5 * 60 * 1000 && start - now >= -5 * 60 * 1000;
+  });
+  if (!due.length) return;
+  const claim = await db.runTransaction(async tx => {
+    const snap = await tx.get(PLACARD_SCHEDULER_STATE);
+    const last = snap.data()?.lastClosingDispatchAt || 0;
+    if (now - last < 60 * 1000) return false;
+    tx.set(PLACARD_SCHEDULER_STATE, { lastClosingDispatchAt: now, lastClosingOpportunityCount: due.length }, { merge: true });
+    return true;
+  });
+  if (!claim) return;
+  try {
+    await dispatchWorkflow(token, 'placard_value.yml', { force_scan: 'false', closing_only: 'true' });
+    console.log(`[closingOddsScheduler] captura prioritária Placard disparada para ${due.length} oportunidade(s).`);
+  } catch (e) { console.error(`[closingOddsScheduler] falha ao disparar fechamento Placard: ${e.message}`); }
+}
+
 exports.closingOddsScheduler = onSchedule(
-  // Cron explícito em vez de 'every 30 minutes' — evita cair perto da hora
-  // cheia/meia hora, onde o agendador do Google (e o do GitHub, do lado do
-  // workflow disparado) enfileira mais execuções de outros projetos.
-  { region: 'southamerica-east1', schedule: '7,37 * * * *', secrets: [GH_DISPATCH_TOKEN] },
+  { region: 'southamerica-east1', schedule: 'every 1 minutes', secrets: [GH_DISPATCH_TOKEN] },
   async () => {
     const token = GH_DISPATCH_TOKEN.value();
     if (!token) {
       console.error('[closingOddsScheduler] segredo GH_DISPATCH_TOKEN ausente — abortando.');
       return;
     }
+
+    const now = Date.now();
+    await dispatchPlacardScanIfDue(token, now);
+    await dispatchPlacardClosingIfDue(token, now);
 
     let entries;
     try {
@@ -698,7 +748,6 @@ exports.closingOddsScheduler = onSchedule(
       return;
     }
 
-    const now = Date.now();
     const target = closingOddsRules.findNextReachableEvent(entries, now);
     if (!target) {
       console.log('[closingOddsScheduler] nenhuma indicação pendente sem odd de fechamento dentro da janela — nada a disparar.');

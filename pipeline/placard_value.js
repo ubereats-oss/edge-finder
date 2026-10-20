@@ -17,13 +17,14 @@ function fairProbabilities(prices) {
   const sum = p.reduce((s, v) => s + v, 0);
   return p.map(v => v / sum);
 }
-function references(event, now = Date.now(), historical = false) {
+function references(event, now = Date.now(), historical = false, maxAgeOverride = null) {
   const bm = event.bookmakers?.find(b => b.key === 'pinnacle');
   const rows = [];
   for (const market of bm?.markets || []) {
     const update = market.last_update || bm.last_update;
     const age = now - Date.parse(update);
-    if (!Number.isFinite(age) || age < 0 || age > (historical ? 300000 : 120000)) continue;
+    const maxAge = maxAgeOverride ?? (historical ? 300000 : 120000);
+    if (!Number.isFinite(age) || age < 0 || age > maxAge) continue;
     if (market.key === 'h2h') {
       const names = [event.home_team, ...(event.sport_key?.startsWith('soccer_') ? ['Draw'] : []), event.away_team];
       const outcomes = names.map(name => market.outcomes?.find(o => o.name === name));
@@ -71,6 +72,15 @@ function matchingEvents(game, events) {
   return events.filter(e => Math.abs(Date.parse(e.commence_time) - Date.parse(game.commenceTime)) <= 60000
     && game.teams.every(t => namesEqual(t, e.home_team) || namesEqual(t, e.away_team)));
 }
+function nearValueSelections(game, event, now = Date.now()) {
+  const refs = references(event, now, false, 24 * 60 * 60 * 1000);
+  return placardSelections(game, event).flatMap(s => {
+    const ref = refs.find(r => r.market === s.market && r.line === s.line && r.selection === s.selection);
+    return ref && s.placardOdds >= (1.01 / ref.probability) * 0.97
+      ? [{ market: s.market, line: s.line, selection: s.selection, placardOdds: s.placardOdds }] : [];
+  });
+}
+function isNearValue(game, event, now = Date.now()) { return nearValueSelections(game, event, now).length > 0; }
 function compare(game, events, now = Date.now()) {
   if (!game.commenceTime || now >= Date.parse(game.commenceTime) || Date.parse(game.commenceTime) > now + 12 * 3600000) return { rows: [], reason: 'fora_janela_12h' };
   const age = now - Date.parse(game.observedAt);
@@ -99,6 +109,9 @@ function compare(game, events, now = Date.now()) {
 }
 function report(entries) {
   const closed = entries.filter(e => Number.isFinite(e.clvPct));
+  const captured = entries.filter(e => e.closingStatus === 'capturada').length;
+  const missing = entries.filter(e => e.closingStatus === 'indisponivel').length;
+  const resolvedClosings = captured + missing;
   const groups = new Map();
   for (const e of closed) {
     const key = `${e.apiSport}|${e.eventId}`;
@@ -123,10 +136,10 @@ function report(entries) {
     means.sort((a, b) => a - b);
     lower = means[100]; upper = means[3899];
   }
-  return { n: closed.length, nEvents: groups.size, total: entries.length,
+  return { n: closed.length, nEvents: groups.size, total: entries.length, captured,
     pending: entries.filter(e => !e.closingStatus || e.closingStatus === 'pendente').length,
-    missing: entries.filter(e => e.closingStatus === 'indisponivel').length,
+    missing, captureRate: resolvedClosings ? captured / resolvedClosings : null,
     mean, lower, upper, verdict: closed.length >= 100 && lower !== null && lower > 0 ? 'confirmado' : 'não confirmado',
     ciMethod: 'bootstrap por evento, 4000 reamostragens; uma amostra por evento/mercado/linha/lado' };
 }
-module.exports = { namesEqual, normalize, fairProbabilities, references, matchingEvents, compare, report };
+module.exports = { namesEqual, normalize, fairProbabilities, references, matchingEvents, compare, isNearValue, nearValueSelections, report };

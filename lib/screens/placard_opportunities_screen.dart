@@ -122,6 +122,9 @@ class _PlacardOpportunitiesScreenState
     final report = _data['report'] as Map<String, dynamic>? ?? {};
     final budget = _data['budget'] as Map<String, dynamic>? ?? {};
     final errors = _data['errors'] as List? ?? [];
+    final captured = report['captured'] as num? ?? 0;
+    final missing = report['missing'] as num? ?? 0;
+    final captureRate = report['captureRate'] as num?;
     return Scaffold(
       backgroundColor: const Color(0xFF12121F),
       appBar: AppBar(
@@ -153,7 +156,7 @@ class _PlacardOpportunitiesScreenState
                     _text(
                         'IC95%: ${_number(report['lower'])}% a ${_number(report['upper'])}%'),
                     _text(
-                        'Pendentes: ${report['pending'] ?? 0} · Sem fechamento: ${report['missing'] ?? 0}',
+                        'Fechamentos capturados: $captured/${captured + missing} · taxa ${captureRate == null ? '—' : '${(captureRate * 100).toStringAsFixed(1)}%'} · pendentes: ${report['pending'] ?? 0}',
                         color: const Color(0xFFBBBBCC)),
                     const SizedBox(height: 8),
                     _text(
@@ -164,7 +167,7 @@ class _PlacardOpportunitiesScreenState
                         color: const Color(0xFFBBBBCC)),
                     const SizedBox(height: 12),
                     _text(
-                        'Coleta a cada 6h · próximas 12h · créditos reservados: ${budget['reserved'] ?? 0}/4.000'),
+                        'Placard a cada 30min · Pinnacle por gatilho · próximas 12h · créditos reservados: ${budget['reserved'] ?? 0}/4.000'),
                     if (errors.isNotEmpty)
                       _text(
                           'Coleta incompleta em ${errors.length} competição(ões).',
