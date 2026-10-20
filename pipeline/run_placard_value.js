@@ -97,6 +97,29 @@ function competitionUrl(found, cfg) {
   return fuzzy.length === 1 ? `${fuzzy[0]}/matches` : null;
 }
 
+async function readCompetitionLinks(page) {
+  const found = new Map();
+  for (let i = 0; i < 40; i++) {
+    const links = await page.locator('a.ta-SportGroupsListButton').evaluateAll(es => es.map(e => ({
+      text: e.textContent.trim().replace(/^soccer icon/, ''), href: e.href,
+    })));
+    for (const link of links) if (link.href) found.set(link.href, link);
+    const moved = await page.evaluate(() => {
+      const first = document.querySelector('a.ta-SportGroupsListButton');
+      let scroller = first?.parentElement;
+      while (scroller && !(scroller.scrollHeight > scroller.clientHeight + 10
+        && /auto|scroll/.test(getComputedStyle(scroller).overflowY))) scroller = scroller.parentElement;
+      scroller ||= document.scrollingElement;
+      const old = scroller.scrollTop;
+      scroller.scrollTop += Math.max(scroller.clientHeight * 0.8, 500);
+      return scroller.scrollTop !== old;
+    });
+    if (!moved) break;
+    await page.waitForTimeout(150);
+  }
+  return [...found.values()];
+}
+
 const placardSportPaths = {
   americanfootball: ['american-football', 'americanfootball', 'football'],
   icehockey: ['ice-hockey', 'icehockey', 'hockey'],
@@ -129,7 +152,7 @@ async function scan(db) {
           try {
             await page.goto(`https://www.placard.pt/apostas/sports/${path}/competitions`, { waitUntil: 'domcontentloaded', timeout: 20000 });
             await page.locator('a.ta-SportGroupsListButton').first().waitFor({ state: 'attached', timeout: 8000 });
-            found = await page.locator('a.ta-SportGroupsListButton').evaluateAll(es => es.map(e => ({ text: e.textContent.trim().replace(/^soccer icon/, ''), href: e.href })));
+            found = await readCompetitionLinks(page);
             if (found.length) break;
           } catch (_) { /* tenta o próximo slug observado/canônico */ }
         }
@@ -245,7 +268,9 @@ async function scan(db) {
           const result = compare(game, refreshedEvents);
           const known = matchingEvents(game, events);
           const comparedSelections = known.length === 1 ? comparedSelectionCount(game, known[0]) : 0;
-          diagnostics.push({ competition: cfg.label, teams: game.teams, reason: result.reason,
+          const reason = result.reason === 'evento_sem_correspondencia' && known.length === 1
+            ? 'preco_conhecido_aguardando_gatilho' : result.reason;
+          diagnostics.push({ competition: cfg.label, teams: game.teams, reason,
             comparedSelections, confirmedSelections: result.comparedSelections ?? 0, alternateError });
           for (const row of result.rows) { await saveOpportunity(db, row); rows.push(row); }
         }
