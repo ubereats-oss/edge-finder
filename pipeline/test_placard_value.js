@@ -86,6 +86,20 @@ test('handicap exige mesma seleção e linha Pinnacle, preservando linhas assina
   game.markets[0].selections[0].line = '-1.25';
   assert.equal(compare(game, [event], now).comparedSelections, 1);
 });
+test('códigos Placard HTOH, HCOT e TGHC cobrem vencedor e handicap', () => {
+  const { game, event } = fixture();
+  game.markets = [
+    { type: 'HTOH', selections: [{ price: '2.8', line: null }, { price: '2.8', line: null }] },
+    { type: 'HCOT', selections: [{ price: '2.2', line: '-1.5' }, { price: '1.8', line: '1.5' }] },
+  ];
+  event.bookmakers[0].markets = [
+    { key: 'h2h', outcomes: [{ name: 'Porto', price: 2 }, { name: 'Draw', price: 4 }, { name: 'Benfica', price: 2 }] },
+    { key: 'spreads', outcomes: [{ name: 'Porto', point: -1.5, price: 1.91 }, { name: 'Benfica', point: 1.5, price: 1.91 }] },
+  ];
+  assert.equal(compare(game, [event], now).rows.length, 3);
+  game.markets[1].type = 'TGHC';
+  assert.equal(compare(game, [event], now).rows.length, 3);
+});
 test('reserva é 2 créditos por competição, não por partida; histórico custa 10x', () => {
   const options = { bookmakers: 'pinnacle', markets: 'h2h,totals' };
   assert.equal(estimateCost('https://api.the-odds-api.com/v4/sports/basketball_nba/odds', options), 2);

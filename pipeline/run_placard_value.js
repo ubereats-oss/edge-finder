@@ -254,7 +254,8 @@ async function scan(db) {
           if (matches.length === 1) {
             const totalLines = game.markets.filter(m => ['TPOT', 'HCTG'].includes(m.type))
               .flatMap(m => m.selections.filter(s => !s.unavailable && s.line !== null).map(s => Number(s.line)));
-            const spreadLines = game.markets.filter(m => /handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`))
+            const spreadLines = game.markets.filter(m => ['HCOT', 'TGHC'].includes(m.type)
+              || /handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`))
               .flatMap(m => m.selections.filter(s => !s.unavailable && s.line !== null).map((s, i) => ({
                 selection: [matches[0].home_team, matches[0].away_team].find(name => namesEqual(game.teams[i], name)),
                 line: Number(s.line),

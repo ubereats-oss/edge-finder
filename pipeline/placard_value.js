@@ -73,9 +73,9 @@ function placardSelections(game, event) {
   for (const m of game.markets) {
     let selections;
     if (m.type === 'MRES') selections = [teamNames[0][0], 'Draw', teamNames[1][0]];
-    else if (m.type === 'H2HT') selections = [teamNames[0][0], teamNames[1][0]];
+    else if (['H2HT', 'HTOH'].includes(m.type)) selections = [teamNames[0][0], teamNames[1][0]];
     else if (m.type === 'TPOT' || m.type === 'HCTG') selections = ['Over', 'Under'];
-    else if (/handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`)) selections = [teamNames[0][0], teamNames[1][0]];
+    else if (['HCOT', 'TGHC'].includes(m.type) || /handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`)) selections = [teamNames[0][0], teamNames[1][0]];
     else continue;
     if (m.selections.length !== selections.length) continue;
     for (let i = 0; i < selections.length; i++) {
@@ -83,7 +83,7 @@ function placardSelections(game, event) {
       const price = Number(s.price), line = s.line === null ? null : Number(s.line);
       if (s.unavailable || !Number.isFinite(price) || price <= 1) continue;
       const market = ['TPOT', 'HCTG'].includes(m.type) ? 'totals'
-        : /handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`) ? 'spreads' : 'h2h';
+        : ['HCOT', 'TGHC'].includes(m.type) || /handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`) ? 'spreads' : 'h2h';
       rows.push({ market,
         selection: selections[i], line, placardOdds: price });
     }
