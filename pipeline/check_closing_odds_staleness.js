@@ -42,6 +42,24 @@ function hasElegiveisPendentes() {
   return { pendentes };
 }
 
+// A API do GitHub aceita workflow_dispatch com sucesso (204) mesmo num
+// workflow desabilitado — nenhuma execução chega a ser criada, sem nenhum
+// erro visível no disparo. Foi exatamente essa a causa de 13 dias sem
+// nenhuma captura em setembro/outubro: vale checar isso explicitamente,
+// não só "quanto tempo desde a última execução".
+async function workflowState(token) {
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}`;
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+  });
+  if (!res.ok) throw new Error(`GitHub API ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  return (await res.json()).state;
+}
+
 async function lastSuccessfulRunAt(token) {
   const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}/runs?status=success&per_page=1`;
   const res = await fetch(url, {
@@ -70,18 +88,21 @@ function salvarMarcador(dataISO) {
   fs.writeFileSync(MARKER_FILE, JSON.stringify({ lastAlertDate: dataISO }, null, 2));
 }
 
-async function enviarEmail({ pendentes, horasSemRodar }) {
+async function enviarEmail({ pendentes, horasSemRodar, estadoWorkflow }) {
   const transporter = nodemailer.createTransport({
     host: process.env.ALERT_SMTP_HOST,
     port: parseInt(process.env.ALERT_SMTP_PORT || '465', 10),
     secure: (process.env.ALERT_SMTP_PORT || '465') === '465',
     auth: { user: process.env.ALERT_SMTP_USER, pass: process.env.ALERT_SMTP_PASS },
   });
+  const avisoEstado = estadoWorkflow !== 'active'
+    ? `\n\nATENÇÃO: o workflow está "${estadoWorkflow}" no GitHub (não ativo) — é por isso que não roda. Vá em Settings > Actions > General > Capturar Odd de Fechamento e reative. O GitHub aceita o disparo normalmente mesmo desabilitado, sem erro nenhum, só não cria execução nenhuma — foi exatamente essa a causa do hiato de 13 dias em setembro/outubro.`
+    : '';
   await transporter.sendMail({
     from: process.env.ALERT_SMTP_USER,
     to: process.env.ALERT_EMAIL_TO,
     subject: `Edge Finder: captura de odd de fechamento parada há ${horasSemRodar}h`,
-    text: `O workflow "Capturar Odd de Fechamento" não roda com sucesso há ${horasSemRodar}h e existem ${pendentes} indicação(ões) elegível(is) esperando a odd de fechamento.\n\nVerifique o workflow em https://github.com/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE} e o segredo GH_DISPATCH_TOKEN (closingOddsScheduler para de disparar se ele expirar/for revogado).`,
+    text: `O workflow "Capturar Odd de Fechamento" não roda com sucesso há ${horasSemRodar}h e existem ${pendentes} indicação(ões) elegível(is) esperando a odd de fechamento.${avisoEstado}\n\nVerifique em https://github.com/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE} e o segredo GH_DISPATCH_TOKEN (closingOddsScheduler para de disparar se ele expirar/for revogado).`,
   });
 }
 
@@ -98,12 +119,15 @@ async function main() {
     console.log('[alerta] GH_TOKEN ausente — não dá pra checar a última execução.');
     return;
   }
+  const estadoWorkflow = await workflowState(token);
+  console.log(`[alerta] estado do workflow no GitHub: ${estadoWorkflow}.`);
   const lastRun = await lastSuccessfulRunAt(token);
   const horasSemRodar = lastRun === null ? Infinity : (Date.now() - lastRun) / (60 * 60 * 1000);
   console.log(`[alerta] última execução com sucesso: ${lastRun === null ? 'nenhuma encontrada' : new Date(lastRun).toISOString()} (${horasSemRodar.toFixed(1)}h atrás).`);
 
-  if (Date.now() - (lastRun ?? 0) <= STALE_AFTER_MS) {
-    console.log('[alerta] dentro das 6h — nada a fazer.');
+  const desabilitado = estadoWorkflow !== 'active';
+  if (!desabilitado && Date.now() - (lastRun ?? 0) <= STALE_AFTER_MS) {
+    console.log('[alerta] workflow ativo e dentro das 6h — nada a fazer.');
     return;
   }
 
@@ -118,7 +142,8 @@ async function main() {
     return;
   }
 
-  await enviarEmail({ pendentes, horasSemRodar: Math.round(horasSemRodar) });
+  const horasLabel = Number.isFinite(horasSemRodar) ? Math.round(horasSemRodar) : 'nunca (nenhuma execução com sucesso encontrada)';
+  await enviarEmail({ pendentes, horasSemRodar: horasLabel, estadoWorkflow });
   salvarMarcador(hoje);
   console.log('[alerta] e-mail enviado.');
 }

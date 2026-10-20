@@ -155,31 +155,19 @@ function applyClosingOddsToGroup(oddsData, group, markets, esporte, counters) {
 
     if (price === null) {
       // Linha mudou até o fechamento mas o mesmo jogador+lado continua
-      // cotado numa linha próxima: estima a probabilidade justa de
-      // fechamento na linha ORIGINAL (line_adjusted_clv.js) e usa isso como
-      // CLV — mede a indicação em vez de deixá-la expirar sem nenhum dado
-      // (único motivo, de longe, por trás da maioria das expiradas de NFL).
+      // cotado numa linha próxima: lineAdjustedClv fica registrado (campo
+      // informativo, dependente do desvio-padrão do jogador — amostra
+      // pequena em muitos casos, auditoria em
+      // report_clv_line_adjustment_audit.js mostrou divergência grande
+      // contra um método alternativo com sigma agrupado). NÃO promove a clv
+      // nem conta como capturada — não confiável o suficiente pra entrar em
+      // relatório nenhum. A indicação segue o caminho normal de expiração.
       if (match.adjustedClosingLine) {
         entry.adjustedClosingLine = match.adjustedClosingLine.line;
         entry.adjustedClosingOverOdds = match.adjustedClosingLine.overOdds;
         entry.adjustedClosingUnderOdds = match.adjustedClosingLine.underOdds;
         entry.closingLineMovement = lineAdjustedClv.movementDirection(entry.side, entry.line, match.adjustedClosingLine.line);
-        const ajustado = lineAdjustedClv.adjustedClv(entry, match.adjustedClosingLine);
-        entry.lineAdjustedClv = ajustado;
-        if (ajustado !== null) {
-          entry.clv = ajustado;
-          entry.clvAjustadoPorLinha = true;
-          entry.closingOddsStatus = ledger.CLOSING_ODDS_STATUS.CAPTURADA;
-          entry.closingOddsMissingReason = null;
-          entry.closingOddsAvailableLines = null;
-          entry.closingOddsLastAttemptAt = new Date().toISOString();
-          counters.capturadas++;
-          changed = true;
-          const commence = new Date(entry.commenceTime).getTime();
-          const minutosAntes = Math.round((commence - Date.now()) / 60000);
-          console.log(`  [${esporte}] captura (ajustada por linha, ${entry.line}→${match.adjustedClosingLine.line}): ${entry.player} ${entry.market} ${entry.side} — CLV ${ajustado}% obtido ${minutosAntes}min antes do início do evento.`);
-          continue;
-        }
+        entry.lineAdjustedClv = lineAdjustedClv.adjustedClv(entry, match.adjustedClosingLine);
       }
       counters.semOddDisponivel++;
       entry.closingOddsLastAttemptAt = new Date().toISOString();
@@ -198,7 +186,6 @@ function applyClosingOddsToGroup(oddsData, group, markets, esporte, counters) {
     entry.adjustedClosingUnderOdds = null;
     entry.closingLineMovement = 'neutro';
     entry.lineAdjustedClv = null;
-    entry.clvAjustadoPorLinha = false;
     counters.capturadas++;
     changed = true;
     const commence = new Date(entry.commenceTime).getTime();
