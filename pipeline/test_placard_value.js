@@ -31,6 +31,10 @@ test('apelidos, empate e Kelly central de 25%', () => {
   assert.ok(Math.abs(home.kellyPct - 2.083333333333333) < 1e-8);
   assert.equal(rows.length, 1);
   assert.ok(namesEqual('Borussia M`gladbach', 'Borussia Monchengladbach'));
+  assert.ok(namesEqual('Slavia Praga', 'Slavia Praha'));
+  assert.ok(namesEqual('Sabah', 'Sabah FK'));
+  assert.ok(namesEqual('Slovan Bratislava', 'ŠK Slovan Bratislava'));
+  assert.ok(namesEqual('PSG', 'Paris Saint Germain'));
 });
 test('não casa evento ambíguo ou horário diferente', () => {
   const { game, event } = fixture();

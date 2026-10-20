@@ -64,7 +64,7 @@ async function scan(db) {
         const events = response.data.map(e => ({ ...e, sport_key: cfg.key }));
         for (const game of games) {
           const result = compare(game, events);
-          diagnostics.push({ competition: cfg.label, teams: game.teams, reason: result.reason });
+          diagnostics.push({ competition: cfg.label, teams: game.teams, reason: result.reason, comparedSelections: result.comparedSelections ?? 0 });
           for (const row of result.rows) { await saveOpportunity(db, row); rows.push(row); }
         }
         // Guarda a leitura integral, inclusive odds sem valor e nomes não casados.

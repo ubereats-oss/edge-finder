@@ -77,9 +77,12 @@ function compare(game, events, now = Date.now()) {
   const event = matches[0];
   const refs = references(event, now);
   const rows = [];
+  let comparedSelections = 0;
   for (const s of placardSelections(game, event)) {
     const ref = refs.find(r => r.market === s.market && r.line === s.line && r.selection === s.selection);
-    if (!ref || s.placardOdds <= 1.01 / ref.probability) continue;
+    if (!ref) continue;
+    comparedSelections++;
+    if (s.placardOdds <= 1.01 / ref.probability) continue;
     const edgePct = (s.placardOdds * ref.probability - 1) * 100;
     const id = crypto.createHash('sha256').update(JSON.stringify([game.apiSport, event.id, s.market, s.line, s.selection])).digest('hex');
     rows.push({ ...s, ...ref, id, apiSport: game.apiSport, eventId: event.id,
@@ -89,7 +92,7 @@ function compare(game, events, now = Date.now()) {
       minValueOdds: 1.01 / ref.probability, edgePct,
       kellyPct: Math.max(0, edgePct / (s.placardOdds - 1) * KELLY_FRACTION) });
   }
-  return { rows, reason: rows.length ? null : 'sem_valor_ou_linha_equivalente' };
+  return { rows, comparedSelections, reason: rows.length ? null : comparedSelections ? 'sem_valor' : 'sem_linha_equivalente_ou_preco_recente' };
 }
 function report(entries) {
   const closed = entries.filter(e => Number.isFinite(e.clvPct));
