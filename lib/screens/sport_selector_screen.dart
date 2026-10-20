@@ -3,6 +3,7 @@ import 'settings_screen.dart';
 import 'bets_screen.dart';
 import 'model_performance_screen.dart';
 import 'conferir_odds_screen.dart';
+import 'placard_opportunities_screen.dart';
 
 class SportSelectorScreen extends StatelessWidget {
   const SportSelectorScreen({super.key});
@@ -94,6 +95,13 @@ class SportSelectorScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 48),
+              FilledButton.icon(
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const PlacardOpportunitiesScreen())),
+                icon: const Icon(Icons.compare_arrows),
+                label: const Text('Placard × Pinnacle'),
+              ),
+              const SizedBox(height: 24),
               const Icon(Icons.fact_check_outlined,
                   color: Color(0xFF444466), size: 40),
               const SizedBox(height: 16),

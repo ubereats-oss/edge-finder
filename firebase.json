@@ -2,6 +2,18 @@
   "firestore": {
     "rules": "firestore.rules"
   },
+  "hosting": {
+    "site": "odds-app-edge",
+    "public": "build/web",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [{ "source": "**", "destination": "/index.html" }],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      }
+    ]
+  },
   "functions": [
     {
       "codebase": "default",

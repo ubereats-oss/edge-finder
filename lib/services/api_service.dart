@@ -273,6 +273,33 @@ class ApiService {
     return {'rows': rows, 'generatedAt': genStr != null ? DateTime.tryParse(genStr) : null};
   }
 
+  static Future<Map<String, dynamic>> fetchPlacardOpportunities() async {
+    final token = await _authToken();
+    Future<Map<String, dynamic>?> read(String path) async {
+      final response = await http.get(Uri.parse('$_firestoreBase/$path'),
+          headers: {'Authorization': 'Bearer $token'}).timeout(const Duration(seconds: 20));
+      if (response.statusCode == 404) return null;
+      if (response.statusCode != 200) {
+        throw Exception('Erro ao carregar Placard: ${response.statusCode}');
+      }
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      return _firestoreToMap(body['fields'] as Map<String, dynamic>? ?? {});
+    }
+
+    final manifest = await read('results/placard_current');
+    if (manifest == null) return {'rows': <Map<String, dynamic>>[]};
+    final pages = (manifest['pageCount'] as num?)?.toInt() ?? 0;
+    if (pages < 0 || pages > 100) throw Exception('Paginação Placard inválida');
+    final runId = manifest['runId'] as String;
+    final rows = <Map<String, dynamic>>[];
+    for (int i = 0; i < pages; i++) {
+      final page = await read('results/placard_current/runs/$runId/pages/$i');
+      if (page == null) throw Exception('Leitura Placard incompleta');
+      rows.addAll((page['rows'] as List? ?? []).cast<Map<String, dynamic>>());
+    }
+    return {...manifest, 'rows': rows};
+  }
+
   /// Grava uma conferência de odds (tela "Conferir odds"). `data` já deve
   /// trazer esporte, eventId, game, commenceTime, market, line, side, player,
   /// bookmaker, oddDigitada, fairProbPct, minValueOdds, edgePct, kellyPct.

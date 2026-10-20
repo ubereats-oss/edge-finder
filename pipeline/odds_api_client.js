@@ -91,6 +91,8 @@ function createOddsApiClient({
       if (!current) break;
 
       try {
+        const budget = require('./odds_api_monthly_budget');
+        const reservation = await budget.reserve(url, options.params, label, keys);
         const res = await axios.get(url, {
           ...options,
           params: { ...(options.params || {}), apiKey: current.key },
@@ -99,6 +101,7 @@ function createOddsApiClient({
         const remaining = res.headers['x-requests-remaining'];
         const used = res.headers['x-requests-used'];
         const last = res.headers['x-requests-last'];
+        await budget.reconcile(reservation, last);
         onKeyUsed?.({ index: current.index, remaining, used, last });
         if (remaining !== undefined || last !== undefined) {
           logger.log(`[${label}] chave ${current.index + 1}/${keys.length}: restantes=${remaining ?? 'n/d'}; custo_ultima_chamada=${last ?? 'n/d'}`);
