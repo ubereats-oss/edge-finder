@@ -102,6 +102,11 @@ function nearValueSelections(game, event, now = Date.now()) {
       ? [{ market: s.market, line: s.line, selection: s.selection, placardOdds: s.placardOdds }] : [];
   });
 }
+function comparedSelectionCount(game, event, now = Date.now()) {
+  const refs = references(event, now, false, 24 * 60 * 60 * 1000);
+  return placardSelections(game, event).filter(s => refs.some(r => r.market === s.market
+    && r.line === s.line && r.selection === s.selection)).length;
+}
 function isNearValue(game, event, now = Date.now()) { return nearValueSelections(game, event, now).length > 0; }
 function compare(game, events, now = Date.now()) {
   if (!game.commenceTime || now >= Date.parse(game.commenceTime) || Date.parse(game.commenceTime) > now + 12 * 3600000) return { rows: [], reason: 'fora_janela_12h' };
@@ -164,4 +169,5 @@ function report(entries) {
     mean, lower, upper, verdict: closed.length >= 100 && lower !== null && lower > 0 ? 'confirmado' : 'não confirmado',
     ciMethod: 'bootstrap por evento, 4000 reamostragens; uma amostra por evento/mercado/linha/lado' };
 }
-module.exports = { namesEqual, normalize, fairProbabilities, references, matchingEvents, compare, isNearValue, nearValueSelections, report };
+module.exports = { namesEqual, normalize, fairProbabilities, references, matchingEvents, compare,
+  comparedSelectionCount, isNearValue, nearValueSelections, report };
