@@ -80,8 +80,10 @@ function tennisCompetitionAlias(key) {
 }
 
 function competitionLabelMatches(link, cfg) {
-  const text = link.toLowerCase();
-  if ([cfg.label, ...(cfg.aliases || [])].some(label => label.toLowerCase() === text)) return true;
+  const normalizeText = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const text = normalizeText(link);
+  const labels = [cfg.label, ...(cfg.aliases || [])].map(normalizeText);
+  if (labels.some(label => label === text || label.length >= 5 && (text.includes(label) || label.includes(text)))) return true;
   if (cfg.sport !== 'tennis') return false;
   const aliases = [tennisCompetitionAlias(cfg.key).replace(/ - Individual$/i, '')];
   if (cfg.key.endsWith('_canadian_open')) aliases.push('Montreal');
@@ -114,6 +116,7 @@ async function scan(db) {
       });
     }
     const links = new Map();
+    const sportCatalogs = new Map();
     for (const sport of new Set(activeCompetitions.map(c => c.sport))) {
       try {
         let found = [];
@@ -126,6 +129,7 @@ async function scan(db) {
           } catch (_) { /* tenta o próximo slug observado/canônico */ }
         }
         if (!found.length) throw new Error(`Nenhum slug Placard respondeu para ${sport}.`);
+        sportCatalogs.set(sport, found.map(l => l.text));
         for (const cfg of activeCompetitions.filter(c => c.sport === sport)) {
           const urls = [...new Set(found.filter(l => competitionLabelMatches(l.text, cfg)).map(l => l.href.replace(/\/matches$/, '')))];
           if (urls.length === 1) links.set(cfg.key, `${urls[0]}/matches`);
@@ -139,7 +143,8 @@ async function scan(db) {
     for (const cfg of activeCompetitions) {
       try {
         const url = links.get(cfg.key);
-        if (!url) { diagnostics.push({ competition: cfg.label, reason: 'competicao_nao_confirmada_no_catalogo_placard' }); continue; }
+        if (!url) { diagnostics.push({ competition: cfg.label, reason: 'competicao_nao_confirmada_no_catalogo_placard',
+          availableCompetitions: (sportCatalogs.get(cfg.sport) || []).slice(0, 80) }); continue; }
         const games = (await scrapeCompetition(page, cfg, url)).filter(g => {
           const delta = Date.parse(g.commenceTime) - Date.now();
           return delta > 0 && delta <= 12 * 3600000;
