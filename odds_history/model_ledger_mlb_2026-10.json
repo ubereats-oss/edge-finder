@@ -2546,7 +2546,7 @@
     "firstEvaluatedAt": "2026-10-11T21:40:52.695Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -3827,16 +3827,20 @@
     "runId": "2026-10-19T22:09:33.112Z",
     "evaluatedAt": "2026-10-19T22:09:33.563Z",
     "firstEvaluatedAt": "2026-10-19T22:09:33.563Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-20T15:07:10.952Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "be50f6c59c20efa430eec6f146a0fcb1|Cleveland Guardians|h2h|0|Win",
@@ -3872,9 +3876,13 @@
     "runId": "2026-10-19T22:09:34.007Z",
     "evaluatedAt": "2026-10-19T22:09:34.012Z",
     "firstEvaluatedAt": "2026-10-19T22:09:34.012Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": "Cleveland Guardians",
+      "apuradoEm": "2026-10-20T15:07:11.170Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -3924,9 +3932,13 @@
     "runId": "2026-10-19T22:09:34.007Z",
     "evaluatedAt": "2026-10-19T22:09:34.012Z",
     "firstEvaluatedAt": "2026-10-19T22:09:34.012Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": "Tampa Bay Rays",
+      "apuradoEm": "2026-10-20T15:07:11.251Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,

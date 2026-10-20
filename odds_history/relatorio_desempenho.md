@@ -1,15 +1,15 @@
 # Relatório de desempenho — histórico central de indicações
 
-Gerado em: 2026-10-19T17:12:37.975Z
+Gerado em: 2026-10-20T15:11:19.942Z
 
 ## Teste NFL receptions
 
 Candidato único sobrando após desabilitar todos os props de NHL e NFL receptionYards por CLV ~0% (ver DISABLED_SEGMENTS em pipeline/risk_config.js). Meta de amostra: 100 indicações com CLV exato (publicadas e válidas, resolvidas ou não — CLV independe do resultado do jogo).
 
-- Indicações com CLV: **48/100**
-- CLV médio: **1.38%**
-- IC95%: **0.05% a 2.71%**
-- CLV médio das 20 mais recentes: **-0.10%**
+- Indicações com CLV: **0/100**
+- CLV médio: **—**
+- IC95%: **— a —**
+- CLV médio das 0 mais recentes: **—**
 - Veredito: **EM TESTE ⏳**
 
 Só inclui indicações publicadas, resolvidas e válidas para calibração (mesmo critério da calibração — NHL pré-correção da agregação de odds fica de fora, por exemplo). Push e cancelado entram no lucro/ROI mas não na taxa de acerto.
@@ -55,9 +55,9 @@ Taxa prevista calibrada sempre separada por versão do método de calibração (
 
 | Coorte de criação | Publicadas resolvidas | CLV exato | CLV ajustado | Cobertura total | Sem CLV por motivo |
 |---|---|---|---|---|---|
-| antes_primeira_captura | 3 | 0 | 0 | 0.0% | registrada_antes_da_captura_existir: 3 |
-| captura_inicial_pre_jit | 86 | 30 | 0 | 34.9% | registrada_antes_do_controle_de_status_da_captura: 56 |
-| jit_pre_controle_status | 27 | 12 | 1 | 48.1% | registrada_antes_do_controle_de_status_da_captura: 10; cota_api_esgotada_na_captura_pre_fix: 3; captura_expirada_sem_odd_gravada: 1 |
+| antes_primeira_captura | 3 | 0 | 0 | 0.0% | captura_expirada_sem_odd_gravada: 3 |
+| captura_inicial_pre_jit | 86 | 30 | 0 | 34.9% | captura_expirada_sem_odd_gravada: 56 |
+| jit_pre_controle_status | 27 | 12 | 1 | 48.1% | captura_expirada_sem_odd_gravada: 11; cota_api_esgotada_na_captura_pre_fix: 3 |
 | apos_fix_dependencia_be2ab14 | 156 | 118 | 18 | 87.2% | jogador_indisponivel_no_mercado: 1; linha_mudou_ate_fechamento: 2; captura_expirada_sem_odd_gravada: 17 |
 
 ## Apostas reais

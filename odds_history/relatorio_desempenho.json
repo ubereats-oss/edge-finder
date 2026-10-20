@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-19T17:12:37.975Z",
+  "generatedAt": "2026-10-20T15:11:19.942Z",
   "rows": [
     {
       "esporte": "americanfootball/nfl",
@@ -26,7 +26,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 63,
+      "sampleSize": 64,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -64,7 +64,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 63,
+      "sampleSize": 64,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -102,7 +102,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 63,
+      "sampleSize": 64,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -140,7 +140,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 63,
+      "sampleSize": 64,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -178,7 +178,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 617,
+      "sampleSize": 631,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -214,12 +214,11 @@
       "clvExactCoveragePct": 13.3,
       "clvAdjustedCoveragePct": 0,
       "semClvMotivos": {
-        "registrada_antes_da_captura_existir": 1,
-        "registrada_antes_do_controle_de_status_da_captura": 12
+        "captura_expirada_sem_odd_gravada": 13
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 617,
+      "sampleSize": 631,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -255,11 +254,11 @@
       "clvExactCoveragePct": 20,
       "clvAdjustedCoveragePct": 0,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 4
+        "captura_expirada_sem_odd_gravada": 4
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 617,
+      "sampleSize": 631,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -295,11 +294,11 @@
       "clvExactCoveragePct": 50,
       "clvAdjustedCoveragePct": 0,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 1
+        "captura_expirada_sem_odd_gravada": 1
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 498,
+      "sampleSize": 504,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -340,7 +339,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 498,
+      "sampleSize": 504,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -376,12 +375,12 @@
       "clvExactCoveragePct": 85.7,
       "clvAdjustedCoveragePct": 7.1,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 1,
+        "captura_expirada_sem_odd_gravada": 1,
         "linha_mudou_ate_fechamento": 1
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 498,
+      "sampleSize": 504,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -421,7 +420,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 498,
+      "sampleSize": 504,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -461,7 +460,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 498,
+      "sampleSize": 504,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -501,7 +500,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 498,
+      "sampleSize": 504,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -537,11 +536,11 @@
       "clvExactCoveragePct": 0,
       "clvAdjustedCoveragePct": 0,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 2
+        "captura_expirada_sem_odd_gravada": 2
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2017,
+      "sampleSize": 2049,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -577,12 +576,11 @@
       "clvExactCoveragePct": 36,
       "clvAdjustedCoveragePct": 0,
       "semClvMotivos": {
-        "registrada_antes_da_captura_existir": 2,
-        "registrada_antes_do_controle_de_status_da_captura": 30
+        "captura_expirada_sem_odd_gravada": 32
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2017,
+      "sampleSize": 2049,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -618,13 +616,12 @@
       "clvExactCoveragePct": 40,
       "clvAdjustedCoveragePct": 30,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 2,
-        "captura_expirada_sem_odd_gravada": 1,
+        "captura_expirada_sem_odd_gravada": 3,
         "linha_mudou_ate_fechamento": 3
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2017,
+      "sampleSize": 2049,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -660,13 +657,13 @@
       "clvExactCoveragePct": 37.5,
       "clvAdjustedCoveragePct": 25,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 2,
+        "captura_expirada_sem_odd_gravada": 2,
         "cota_api_esgotada_na_captura_pre_fix": 1,
         "linha_mudou_ate_fechamento": 2
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2017,
+      "sampleSize": 2049,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -706,7 +703,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2017,
+      "sampleSize": 2049,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -746,7 +743,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2017,
+      "sampleSize": 2049,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -787,7 +784,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2017,
+      "sampleSize": 2049,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -823,11 +820,11 @@
       "clvExactCoveragePct": 22.2,
       "clvAdjustedCoveragePct": 0,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 7
+        "captura_expirada_sem_odd_gravada": 7
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2017,
+      "sampleSize": 2049,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -863,13 +860,13 @@
       "clvExactCoveragePct": 44.4,
       "clvAdjustedCoveragePct": 11.1,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 2,
+        "captura_expirada_sem_odd_gravada": 2,
         "cota_api_esgotada_na_captura_pre_fix": 2,
         "linha_mudou_ate_fechamento": 1
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1050,
+      "sampleSize": 1068,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -905,12 +902,12 @@
       "clvExactCoveragePct": 28.6,
       "clvAdjustedCoveragePct": 28.6,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 3,
+        "captura_expirada_sem_odd_gravada": 3,
         "linha_mudou_ate_fechamento": 2
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1050,
+      "sampleSize": 1068,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -950,7 +947,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1050,
+      "sampleSize": 1068,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -990,7 +987,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 640,
+      "sampleSize": 675,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1030,7 +1027,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 640,
+      "sampleSize": 675,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1070,7 +1067,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 640,
+      "sampleSize": 675,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1110,7 +1107,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 640,
+      "sampleSize": 675,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1148,7 +1145,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 640,
+      "sampleSize": 675,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1188,7 +1185,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 442,
+      "sampleSize": 464,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1226,7 +1223,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 442,
+      "sampleSize": 464,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1264,7 +1261,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 442,
+      "sampleSize": 464,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1288,7 +1285,7 @@
       "semClv": 3,
       "clvCoveragePct": 0,
       "semClvMotivos": {
-        "registrada_antes_da_captura_existir": 3
+        "captura_expirada_sem_odd_gravada": 3
       }
     },
     {
@@ -1300,7 +1297,7 @@
       "semClv": 56,
       "clvCoveragePct": 34.9,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 56
+        "captura_expirada_sem_odd_gravada": 56
       }
     },
     {
@@ -1312,9 +1309,8 @@
       "semClv": 14,
       "clvCoveragePct": 48.1,
       "semClvMotivos": {
-        "registrada_antes_do_controle_de_status_da_captura": 10,
-        "cota_api_esgotada_na_captura_pre_fix": 3,
-        "captura_expirada_sem_odd_gravada": 1
+        "captura_expirada_sem_odd_gravada": 11,
+        "cota_api_esgotada_na_captura_pre_fix": 3
       }
     },
     {
@@ -1341,13 +1337,14 @@
   "testeNflReceptions": {
     "esporte": "americanfootball/nfl",
     "market": "receptions",
-    "n": 48,
+    "metodo": "clv_sem_margem",
+    "n": 0,
     "nAlvo": 100,
-    "clvMedio": 1.38,
-    "ic95Lower": 0.05,
-    "ic95Upper": 2.71,
+    "clvMedio": null,
+    "ic95Lower": null,
+    "ic95Upper": null,
     "veredito": "em_teste",
-    "nRecentes": 20,
-    "clvMedioRecentes": -0.1
+    "nRecentes": 0,
+    "clvMedioRecentes": null
   }
 }
