@@ -492,6 +492,23 @@ class _OddsCheckCard extends StatelessWidget {
     required this.onMarcarFeita,
   });
 
+  // Idade do preço da Pinnacle desta linha (campo lastUpdate, por jogo —
+  // ver pipeline/get_pinnacle_reference.js). Ausente em dados antigos
+  // (gerados antes desse campo existir) — nesse caso não mostra nada.
+  String _ageLabel(DateTime lastUpdate) {
+    final diff = DateTime.now().difference(lastUpdate);
+    if (diff.inMinutes < 1) return 'agora';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}min';
+    return '${diff.inHours}h${diff.inMinutes % 60}min';
+  }
+
+  Color _ageColor(DateTime lastUpdate) {
+    final diff = DateTime.now().difference(lastUpdate);
+    if (diff.inHours >= 24) return const Color(0xFFFF6D00);
+    if (diff.inHours >= 6) return const Color(0xFFFFD600);
+    return const Color(0xFF888888);
+  }
+
   @override
   Widget build(BuildContext context) {
     final fairProbPct = (row['fairProbPct'] as num?)?.toDouble();
@@ -503,6 +520,7 @@ class _OddsCheckCard extends StatelessWidget {
     final player = row['player'] as String?;
     final game = row['game'] as String? ?? '';
 
+    final lastUpdate = DateTime.tryParse(row['lastUpdate'] as String? ?? '');
     final oddDigitada = double.tryParse(controller.text.replaceAll(',', '.'));
     double? edgePct;
     double? kellyPct;
@@ -534,11 +552,25 @@ class _OddsCheckCard extends StatelessWidget {
               style: const TextStyle(
                   color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(
-            market == 'h2h'
-                ? 'h2h · $side'
-                : '$player · $market $line · $side',
-            style: const TextStyle(color: Color(0xFF888888), fontSize: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  market == 'h2h'
+                      ? 'h2h · $side'
+                      : '$player · $market $line · $side',
+                  style: const TextStyle(color: Color(0xFF888888), fontSize: 12),
+                ),
+              ),
+              if (lastUpdate != null) ...[
+                Icon(Icons.schedule,
+                    size: 11,
+                    color: _ageColor(lastUpdate)),
+                const SizedBox(width: 3),
+                Text(_ageLabel(lastUpdate),
+                    style: TextStyle(color: _ageColor(lastUpdate), fontSize: 11)),
+              ],
+            ],
           ),
           const SizedBox(height: 8),
           Row(

@@ -655,7 +655,10 @@ async function dispatchCaptureWorkflow(token) {
 }
 
 exports.closingOddsScheduler = onSchedule(
-  { region: 'southamerica-east1', schedule: 'every 30 minutes', secrets: [GH_DISPATCH_TOKEN] },
+  // Cron explícito em vez de 'every 30 minutes' — evita cair perto da hora
+  // cheia/meia hora, onde o agendador do Google (e o do GitHub, do lado do
+  // workflow disparado) enfileira mais execuções de outros projetos.
+  { region: 'southamerica-east1', schedule: '7,37 * * * *', secrets: [GH_DISPATCH_TOKEN] },
   async () => {
     const token = GH_DISPATCH_TOKEN.value();
     if (!token) {
