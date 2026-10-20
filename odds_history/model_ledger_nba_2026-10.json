@@ -891,8 +891,8 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": "bookmaker_indisponivel",
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
-    "clvNoVig": -22.71,
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.968Z",
+    "clvNoVig": -24.32,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 1
   },
@@ -2594,10 +2594,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": 2,
+    "clvNoVig": 2.13,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 6,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.969Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2644,10 +2644,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -6.19,
+    "clvNoVig": -6.98,
     "closingNoVigSource": "consensus_us",
-    "closingNoVigNCasas": 1,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
+    "closingNoVigNCasas": 2,
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.969Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2784,10 +2784,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -9.37,
+    "clvNoVig": -8.93,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 6,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.969Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2834,10 +2834,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -9.76,
+    "clvNoVig": -10.65,
     "closingNoVigSource": "consensus_us",
-    "closingNoVigNCasas": 5,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
+    "closingNoVigNCasas": 6,
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.969Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2884,10 +2884,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -8.01,
+    "clvNoVig": -8.4,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 4,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.969Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2934,10 +2934,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -6.93,
+    "clvNoVig": -5.95,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 3,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.969Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2984,10 +2984,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -4.16,
+    "clvNoVig": -2.2,
     "closingNoVigSource": "consensus_us",
-    "closingNoVigNCasas": 1,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
+    "closingNoVigNCasas": 3,
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.969Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -3352,7 +3352,7 @@
     "clvNoVig": -15.63,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 1,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.969Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -3444,10 +3444,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -4.45,
+    "clvNoVig": -3.45,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 6,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.969Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -3812,7 +3812,7 @@
     "clvNoVig": -2.23,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 4,
-    "closingOddsLastAttemptAt": "2026-10-20T22:33:34.555Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:37:41.969Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
