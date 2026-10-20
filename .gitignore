@@ -5,6 +5,7 @@ node_modules/
 *.json
 !package.json
 !package-lock.json
+!pipeline/placard_aliases.json
 !ios/Runner/Assets.xcassets/**/Contents.json
 !web/manifest.json
 

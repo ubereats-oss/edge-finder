@@ -656,7 +656,7 @@ class _OddsCheckCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Text('Vantagem: +${edgePct!.toStringAsFixed(2)}%',
+                  Text('Vantagem: +${edgePct.toStringAsFixed(2)}%',
                       style: const TextStyle(
                           color: Color(0xFF00C853), fontWeight: FontWeight.bold)),
                   const Spacer(),

@@ -1,0 +1,55 @@
+name: Placard x Pinnacle
+on:
+  schedule:
+    # Coleta efetiva a cada 6h; os demais disparos capturam apenas fechamento.
+    # Actions pode atrasar: fechamento perdido fica explicitamente indisponível.
+    - cron: '2-57/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      force_scan:
+        description: 'Forçar nova leitura, respeitando o teto mensal'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: placard-value
+  cancel-in-progress: false
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+  PLACARD_FORCE_SCAN: ${{ github.event_name == 'workflow_dispatch' && inputs.force_scan && '1' || '0' }}
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Testes sem rede
+        run: node --test pipeline/test_placard_value.js
+      - name: Verificar trabalho pendente sem consumir Odds API
+        id: plan
+        run: node pipeline/run_placard_value.js --plan
+      - name: Injetar chaves
+        if: steps.plan.outputs.needs_work == 'true'
+        run: node scripts/export_odds_api_keys.js
+        env:
+          THE_ODDS_API_KEYS: ${{ secrets.THE_ODDS_API_KEYS }}
+          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+      - run: npx playwright install --with-deps chromium
+        if: steps.plan.outputs.needs_scan == 'true'
+      - name: Comparar e capturar fechamento
+        if: steps.plan.outputs.needs_work == 'true'
+        run: node pipeline/run_placard_value.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: placard-summary-${{ github.run_id }}
+          path: placard_run_summary.json
+          if-no-files-found: ignore
+          retention-days: 7
