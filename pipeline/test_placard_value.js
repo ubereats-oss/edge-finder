@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const { compare, fairProbabilities, references, report, namesEqual } = require('./placard_value');
 const { estimateCost, readingAllowance } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
-const { captureClosing } = require('./run_placard_value');
+const { captureClosing, exactTotals } = require('./run_placard_value');
 const now = Date.parse('2026-10-20T12:00:00Z');
 function fixture() {
   const game = { teams: ['FC Porto', 'SL Benfica'], apiSport: 'soccer_portugal_primeira_liga',
@@ -92,4 +92,23 @@ test('fechamento nunca aceita preço observado após início', async t => {
     placardOdds: 2.2, closingCandidate: { probability: 0.5, updatedAt: '2026-10-20T11:58:00Z', capturedAt: '2026-10-20T12:00:00Z' } }]);
   assert.equal(updates[0].closingStatus, 'indisponivel');
   assert.equal(updates[0].clvPct, undefined);
+});
+test('busca total alternativo exato uma vez, sem aproximar o total principal', async t => {
+  t.mock.method(Date, 'now', () => now);
+  const { event } = fixture();
+  event.bookmakers[0].markets.push({ key: 'totals', last_update: new Date(now).toISOString(),
+    outcomes: [{ name: 'Over', price: 1.9, point: 3.25 }, { name: 'Under', price: 1.9, point: 3.25 }] });
+  let calls = 0;
+  const api = { get: async (url, options) => {
+    calls++;
+    assert.ok(url.includes('/events/fixture/odds'));
+    assert.equal(options.params.markets, 'alternate_totals');
+    return { data: { ...event, bookmakers: [{ key: 'pinnacle', markets: [{ key: 'alternate_totals',
+      last_update: new Date(now).toISOString(), outcomes: [{ name: 'Over', price: 2, point: 3.5 }, { name: 'Under', price: 2, point: 3.5 }] }] }] } };
+  } };
+  const attempted = new Set();
+  await exactTotals(api, event.sport_key, event, [3.5], attempted);
+  assert.equal(references(event, now).filter(r => r.market === 'totals' && r.line === 3.5).length, 2);
+  await exactTotals(api, event.sport_key, event, [3.5], attempted);
+  assert.equal(calls, 1);
 });
