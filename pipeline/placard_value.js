@@ -31,7 +31,7 @@ function references(event, now = Date.now(), historical = false) {
       const probs = fairProbabilities(outcomes.map(o => o.price));
       if (probs) outcomes.forEach((o, i) => rows.push({ market: 'h2h', line: null, selection: o.name, probability: probs[i], pinnacleOdds: o.price, pinnacleUpdatedAt: update }));
     }
-    if (market.key === 'totals') {
+    if (market.key === 'totals' || market.key === 'alternate_totals') {
       for (const line of new Set(market.outcomes?.map(o => o.point))) {
         // Em linhas inteiras, as probabilidades são condicionais a não haver
         // devolução. O Kelly ótimo é o mesmo: a parcela push soma log(1)=0.
@@ -67,12 +67,15 @@ function placardSelections(game, event) {
   }
   return rows;
 }
+function matchingEvents(game, events) {
+  return events.filter(e => Math.abs(Date.parse(e.commence_time) - Date.parse(game.commenceTime)) <= 60000
+    && game.teams.every(t => namesEqual(t, e.home_team) || namesEqual(t, e.away_team)));
+}
 function compare(game, events, now = Date.now()) {
   if (!game.commenceTime || now >= Date.parse(game.commenceTime) || Date.parse(game.commenceTime) > now + 12 * 3600000) return { rows: [], reason: 'fora_janela_12h' };
   const age = now - Date.parse(game.observedAt);
   if (!Number.isFinite(age) || age < 0 || age > 120000) return { rows: [], reason: 'placard_antigo' };
-  const matches = events.filter(e => Math.abs(Date.parse(e.commence_time) - Date.parse(game.commenceTime)) <= 60000
-    && game.teams.every(t => namesEqual(t, e.home_team) || namesEqual(t, e.away_team)));
+  const matches = matchingEvents(game, events);
   if (matches.length !== 1) return { rows: [], reason: matches.length ? 'evento_ambiguo' : 'evento_sem_correspondencia' };
   const event = matches[0];
   const refs = references(event, now);
@@ -126,4 +129,4 @@ function report(entries) {
     mean, lower, upper, verdict: closed.length >= 100 && lower !== null && lower > 0 ? 'confirmado' : 'não confirmado',
     ciMethod: 'bootstrap por evento, 4000 reamostragens; uma amostra por evento/mercado/linha/lado' };
 }
-module.exports = { namesEqual, normalize, fairProbabilities, references, compare, report };
+module.exports = { namesEqual, normalize, fairProbabilities, references, matchingEvents, compare, report };

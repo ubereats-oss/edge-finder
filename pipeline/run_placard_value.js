@@ -1,7 +1,7 @@
 const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
 const { database } = require('./odds_api_monthly_budget');
 const { createBrowser, scrapeCompetition } = require('./get_placard_odds');
-const { compare, references, report } = require('./placard_value');
+const { compare, references, matchingEvents, report } = require('./placard_value');
 const competitions = require('./placard_config');
 const fs = require('fs');
 
@@ -28,9 +28,30 @@ async function saveOpportunity(db, row) {
   });
 }
 
+async function exactTotals(api, sport, event, lines, attempted, closing = false) {
+  const available = references(event, Date.now(), closing).filter(r => r.market === 'totals').map(r => r.line);
+  const missing = lines.filter(line => Number.isFinite(line) && Number.isInteger(line * 2) && !available.includes(line));
+  if (!missing.length || attempted.has(event.id)) return;
+  attempted.add(event.id);
+  // Nunca converte, por exemplo, Pinnacle 3,25 em Placard 3,5. Busca a linha
+  // exata entre os totais alternativos quando o fornecedor a disponibiliza.
+  const { data } = await api.get(`https://api.the-odds-api.com/v4/sports/${sport}/events/${event.id}/odds`, {
+    timeout: 15000, params: { bookmakers: 'pinnacle', markets: 'alternate_totals', oddsFormat: 'decimal' },
+  });
+  const alternate = data?.bookmakers?.find(b => b.key === 'pinnacle')?.markets?.find(m => m.key === 'alternate_totals');
+  if (!alternate || data.id !== event.id || Math.abs(Date.parse(data.commence_time) - Date.parse(event.commence_time)) > 60000) return;
+  const bm = event.bookmakers?.find(b => b.key === 'pinnacle');
+  if (bm) bm.markets.push(alternate);
+  else {
+    event.bookmakers ||= [];
+    event.bookmakers.push({ key: 'pinnacle', markets: [alternate] });
+  }
+}
+
 async function scan(db) {
   const rows = [], errors = [], diagnostics = [];
   const api = createOddsApiClient({ label: 'placard-scan' });
+  const attemptedAlternates = new Set();
   const browser = await createBrowser();
   try {
     const page = await browser.newPage({ locale: 'pt-PT', timezoneId: 'UTC' });
@@ -63,8 +84,17 @@ async function scan(db) {
         });
         const events = response.data.map(e => ({ ...e, sport_key: cfg.key }));
         for (const game of games) {
+          const matches = matchingEvents(game, events);
+          let alternateError = null;
+          if (matches.length === 1) {
+            const lines = game.markets.filter(m => ['TPOT', 'HCTG'].includes(m.type))
+              .flatMap(m => m.selections.filter(s => !s.unavailable && s.line !== null).map(s => Number(s.line)));
+            try { await exactTotals(api, cfg.key, matches[0], lines, attemptedAlternates); }
+            catch (e) { alternateError = e.message; }
+          }
           const result = compare(game, events);
-          diagnostics.push({ competition: cfg.label, teams: game.teams, reason: result.reason, comparedSelections: result.comparedSelections ?? 0 });
+          diagnostics.push({ competition: cfg.label, teams: game.teams, reason: result.reason,
+            comparedSelections: result.comparedSelections ?? 0, alternateError });
           for (const row of result.rows) { await saveOpportunity(db, row); rows.push(row); }
         }
         // Guarda a leitura integral, inclusive odds sem valor e nomes não casados.
@@ -101,17 +131,23 @@ async function captureClosing(db, entries) {
   }
   if (!due.size) return;
   const api = createOddsApiClient({ label: 'placard-closing' });
+  const attemptedAlternates = new Set();
   for (const [sport, group] of due) {
     try {
       const { data } = await api.get(`https://api.the-odds-api.com/v4/sports/${sport}/odds`, {
         timeout: 15000, params: { bookmakers: 'pinnacle', markets: 'h2h,totals', oddsFormat: 'decimal',
           eventIds: [...new Set(group.map(e => e.eventId))].join(',') },
       });
-      const capturedAt = new Date().toISOString();
       for (const e of group) {
-        if (Date.parse(capturedAt) >= Date.parse(e.commenceTime)) continue;
+        if (Date.now() >= Date.parse(e.commenceTime)) continue;
         const event = data.find(ev => ev.id === e.eventId);
         if (!event || Math.abs(Date.parse(event.commence_time) - Date.parse(e.commenceTime)) > 60000) continue;
+        if (e.market === 'totals') {
+          try { await exactTotals(api, sport, event, [e.line], attemptedAlternates, true); }
+          catch (error) { console.error(`Linha de fechamento ${e.eventId}: ${error.message}`); }
+        }
+        const capturedAt = new Date().toISOString();
+        if (Date.parse(capturedAt) >= Date.parse(e.commenceTime)) continue;
         const candidate = references({ ...event, sport_key: sport }, Date.parse(capturedAt), true)
           .find(r => r.market === e.market && r.line === e.line && r.selection === e.selection);
         if (candidate && Date.parse(candidate.pinnacleUpdatedAt) >= Date.parse(e.commenceTime) - 300000) {
@@ -156,6 +192,7 @@ async function main() {
     return;
   }
   let entries = await allEntries(db);
+  const existingIds = new Set(entries.map(e => e.id));
   // Fechamento tem prioridade sobre nova coleta.
   await captureClosing(db, entries);
   const state = (await control.get()).data() || {};
@@ -168,10 +205,16 @@ async function main() {
     await control.set({ result }, { merge: true });
   } else result = state.result || { rows: [], errors: [], diagnostics: [] };
   entries = await allEntries(db);
+  if (due) {
+    // Oportunidade descoberta já nos minutos finais também precisa de
+    // fechamento nesta execução, sem esperar o próximo cron.
+    await captureClosing(db, entries.filter(e => !existingIds.has(e.id) || Date.parse(e.commenceTime) <= Date.now()));
+    entries = await allEntries(db);
+  }
   await publish(db, result, entries);
   fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), scan: due,
     opportunities: result.rows.length, errors: result.errors }, null, 2));
   if (due && result.errors.length) throw new Error(`Coleta incompleta: ${result.errors.map(e => e.competition || e.error).join(', ')}`);
 }
-module.exports = { scan, captureClosing, allEntries, publish };
+module.exports = { scan, captureClosing, allEntries, publish, exactTotals };
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });
