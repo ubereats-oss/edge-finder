@@ -1,23 +1,31 @@
 // pipeline/check_closing_odds_staleness.js
-// Verifica se existe indicação elegível (mesma checagem do gate de
-// capture_closing_odds.yml) esperando captura de odd de fechamento E se o
-// workflow "Capturar Odd de Fechamento" ficou mais de 6h sem rodar com
-// sucesso — se os dois forem verdade, avisa por e-mail (uma vez por dia,
-// controlado por um marcador salvo na branch data).
+// Avisa por e-mail só em dois casos (não mais "mais de 6h sem rodar", que
+// disparava à toa sempre que não havia jogo próximo — confirmado: entre
+// duas execuções separadas por 9,6h, toda indicação elegível com jogo nessa
+// janela já tinha pelo menos uma tentativa de captura registrada, só não
+// bateu com a odd exata (linha mudou/jogador fora do mercado — motivo de
+// dado, não de o mecanismo ter parado de rodar):
 //
-// Precisa de GH_TOKEN (leitura de runs do workflow) e das variáveis de SMTP
-// (ALERT_SMTP_HOST/PORT/USER/PASS, ALERT_EMAIL_TO) no ambiente — ver
+//   1) Existe indicação elegível cujo jogo já começou e que nunca teve
+//      NENHUMA tentativa de captura registrada (closingOddsLastAttemptAt
+//      ausente e nunca capturada) — sinal direto de que o mecanismo não
+//      rodou quando devia, não de falta de dado.
+//   2) O workflow "Capturar Odd de Fechamento" está desabilitado no GitHub
+//      (ver nota abaixo — a causa real dos 13 dias sem captura em
+//      setembro/outubro).
+//
+// No máximo 1 e-mail por dia (marcador salvo na branch data).
+//
+// Precisa de GH_TOKEN (leitura do estado do workflow) e das variáveis de
+// SMTP (ALERT_SMTP_HOST/PORT/USER/PASS, ALERT_EMAIL_TO) no ambiente — ver
 // .github/workflows/alert_closing_odds_stale.yml.
 //
 // Uso: node pipeline/check_closing_odds_staleness.js
-// Sai com código 0 sempre que a checagem rodou (mesmo sem alertar); só
-// falha (exit 1) em erro de execução real.
 
 const fs = require('fs');
 const path = require('path');
 const nodemailer = require('nodemailer');
 
-const STALE_AFTER_MS = 6 * 60 * 60 * 1000;
 const HISTORY_DIR = path.join(__dirname, '..', 'odds_history');
 const MARKER_FILE = path.join(__dirname, '..', '_closing_odds_alert_marker.json');
 
@@ -25,28 +33,40 @@ const GH_OWNER = 'ubereats-oss';
 const GH_REPO = 'edge-finder';
 const GH_WORKFLOW_FILE = 'capture_closing_odds.yml';
 
-function hasElegiveisPendentes() {
-  if (!fs.existsSync(HISTORY_DIR)) return { pendentes: 0 };
+const SPORT_MARKET_KEYS = {
+  'basketball/nba': ['h2h', 'points', 'rebounds', 'assists', 'steals', 'threes'],
+  'baseball/mlb': ['h2h', 'hits', 'strikeouts', 'hitsAllowed'],
+  'hockey/nhl': ['points', 'goals', 'assists', 'shots'],
+  'americanfootball/nfl': ['passYards', 'passTDs', 'rushYards', 'receptions', 'receptionYards'],
+};
+
+function jogosSemNenhumaTentativa() {
+  if (!fs.existsSync(HISTORY_DIR)) return [];
+  const now = Date.now();
   const files = fs.readdirSync(HISTORY_DIR).filter(f => f.startsWith('model_ledger_') && f.endsWith('.json'));
-  let pendentes = 0;
+  const achados = [];
   for (const f of files) {
     let entries;
     try { entries = JSON.parse(fs.readFileSync(path.join(HISTORY_DIR, f), 'utf-8')); } catch { continue; }
     for (const e of entries) {
       if (e.hasModelProb === false || e.validForCalibration === false) continue;
-      if (e.resolutionStatus !== 'pendente') continue;
+      const markets = SPORT_MARKET_KEYS[e.esporte];
+      if (!markets || !markets.includes(e.market)) continue;
       const status = e.closingOddsStatus || ((e.closingOdds !== null && e.closingOdds !== undefined) ? 'capturada' : 'pendente');
-      if (status === 'pendente') pendentes++;
+      if (status !== 'pendente') continue; // já capturada ou expirada (expirada = teve tentativa em algum momento, por definição)
+      const commence = new Date(e.commenceTime).getTime();
+      if (isNaN(commence) || commence > now) continue; // jogo ainda não começou — não é alerta, é só ainda não chegou a hora
+      if (e.closingOddsLastAttemptAt) continue; // já tentou (não bateu com a odd exata — motivo de dado, não de mecanismo parado)
+      achados.push({ esporte: e.esporte, player: e.player, market: e.market, game: e.game, commenceTime: e.commenceTime });
     }
   }
-  return { pendentes };
+  return achados;
 }
 
 // A API do GitHub aceita workflow_dispatch com sucesso (204) mesmo num
 // workflow desabilitado — nenhuma execução chega a ser criada, sem nenhum
 // erro visível no disparo. Foi exatamente essa a causa de 13 dias sem
-// nenhuma captura em setembro/outubro: vale checar isso explicitamente,
-// não só "quanto tempo desde a última execução".
+// nenhuma captura em setembro/outubro: vale checar isso explicitamente.
 async function workflowState(token) {
   const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}`;
   const res = await fetch(url, {
@@ -58,21 +78,6 @@ async function workflowState(token) {
   });
   if (!res.ok) throw new Error(`GitHub API ${res.status}: ${(await res.text()).slice(0, 300)}`);
   return (await res.json()).state;
-}
-
-async function lastSuccessfulRunAt(token) {
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}/runs?status=success&per_page=1`;
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
-  });
-  if (!res.ok) throw new Error(`GitHub API ${res.status}: ${(await res.text()).slice(0, 300)}`);
-  const body = await res.json();
-  const run = body.workflow_runs?.[0];
-  return run ? new Date(run.updated_at ?? run.created_at).getTime() : null;
 }
 
 function marcadorDeHoje() {
@@ -88,43 +93,53 @@ function salvarMarcador(dataISO) {
   fs.writeFileSync(MARKER_FILE, JSON.stringify({ lastAlertDate: dataISO }, null, 2));
 }
 
-async function enviarEmail({ pendentes, horasSemRodar, estadoWorkflow }) {
-  const transporter = nodemailer.createTransport({
+function smtpConfigurado() {
+  return !!(process.env.ALERT_SMTP_HOST && process.env.ALERT_SMTP_USER && process.env.ALERT_SMTP_PASS && process.env.ALERT_EMAIL_TO);
+}
+
+function transporter() {
+  return nodemailer.createTransport({
     host: process.env.ALERT_SMTP_HOST,
     port: parseInt(process.env.ALERT_SMTP_PORT || '465', 10),
     secure: (process.env.ALERT_SMTP_PORT || '465') === '465',
     auth: { user: process.env.ALERT_SMTP_USER, pass: process.env.ALERT_SMTP_PASS },
   });
-  const avisoEstado = estadoWorkflow !== 'active'
-    ? `\n\nATENÇÃO: o workflow está "${estadoWorkflow}" no GitHub (não ativo) — é por isso que não roda. Vá em Settings > Actions > General > Capturar Odd de Fechamento e reative. O GitHub aceita o disparo normalmente mesmo desabilitado, sem erro nenhum, só não cria execução nenhuma — foi exatamente essa a causa do hiato de 13 dias em setembro/outubro.`
-    : '';
-  await transporter.sendMail({
+}
+
+async function enviarEmail({ semTentativa, estadoWorkflow }) {
+  const desabilitado = estadoWorkflow !== 'active';
+  const partes = [];
+  if (desabilitado) {
+    partes.push(`O workflow "Capturar Odd de Fechamento" está "${estadoWorkflow}" no GitHub (não ativo) — é por isso que não roda. Vá em Settings > Actions > General > Capturar Odd de Fechamento e reative. O GitHub aceita o disparo normalmente mesmo desabilitado, sem erro nenhum, só não cria execução nenhuma — foi exatamente essa a causa do hiato de 13 dias em setembro/outubro.`);
+  }
+  if (semTentativa.length) {
+    const lista = semTentativa.slice(0, 15).map(e => `- ${e.game} — ${e.player ?? ''} ${e.market} (início ${e.commenceTime})`).join('\n');
+    partes.push(`${semTentativa.length} indicação(ões) com jogo já começado nunca tiveram nenhuma tentativa de captura de odd de fechamento:\n${lista}`);
+  }
+  const subject = desabilitado
+    ? 'Edge Finder: captura de odd de fechamento DESABILITADA no GitHub'
+    : 'Edge Finder: captura de odd de fechamento não tentou um jogo já começado';
+  await transporter().sendMail({
     from: process.env.ALERT_SMTP_USER,
     to: process.env.ALERT_EMAIL_TO,
-    subject: `Edge Finder: captura de odd de fechamento parada há ${horasSemRodar}h`,
-    text: `O workflow "Capturar Odd de Fechamento" não roda com sucesso há ${horasSemRodar}h e existem ${pendentes} indicação(ões) elegível(is) esperando a odd de fechamento.${avisoEstado}\n\nVerifique em https://github.com/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE} e o segredo GH_DISPATCH_TOKEN (closingOddsScheduler para de disparar se ele expirar/for revogado).`,
+    subject,
+    text: `${partes.join('\n\n')}\n\nVerifique em https://github.com/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}`,
   });
 }
 
 async function enviarEmailDeTeste() {
-  const transporter = nodemailer.createTransport({
-    host: process.env.ALERT_SMTP_HOST,
-    port: parseInt(process.env.ALERT_SMTP_PORT || '465', 10),
-    secure: (process.env.ALERT_SMTP_PORT || '465') === '465',
-    auth: { user: process.env.ALERT_SMTP_USER, pass: process.env.ALERT_SMTP_PASS },
-  });
-  await transporter.sendMail({
+  await transporter().sendMail({
     from: process.env.ALERT_SMTP_USER,
     to: process.env.ALERT_EMAIL_TO,
     subject: 'Edge Finder: e-mail de teste do alerta de captura de fechamento',
-    text: 'Isto é um teste manual (forcar_teste=true) do alerta de "Capturar Odd de Fechamento" parada. Se você recebeu este e-mail, os segredos ALERT_SMTP_HOST/PORT/USER/PASS e ALERT_EMAIL_TO estão configurados corretamente.',
+    text: 'Isto é um teste manual (forcar_teste=true) do alerta de "Capturar Odd de Fechamento". Se você recebeu este e-mail, os segredos ALERT_SMTP_HOST/PORT/USER/PASS e ALERT_EMAIL_TO estão configurados corretamente.',
   });
 }
 
 async function main() {
   if (process.env.FORCAR_TESTE === 'true') {
     console.log('[alerta] forcar_teste=true — ignorando condições, mandando e-mail de teste.');
-    if (!process.env.ALERT_SMTP_HOST || !process.env.ALERT_SMTP_USER || !process.env.ALERT_SMTP_PASS || !process.env.ALERT_EMAIL_TO) {
+    if (!smtpConfigurado()) {
       console.error('[alerta] faltam segredos de e-mail — não dá pra mandar o teste.');
       process.exitCode = 1;
       return;
@@ -134,27 +149,21 @@ async function main() {
     return;
   }
 
-  const { pendentes } = hasElegiveisPendentes();
-  console.log(`[alerta] ${pendentes} indicação(ões) elegível(is) pendente(s).`);
-  if (pendentes === 0) {
-    console.log('[alerta] nada pendente — não precisa checar o workflow.');
-    return;
-  }
+  const semTentativa = jogosSemNenhumaTentativa();
+  console.log(`[alerta] ${semTentativa.length} indicação(ões) com jogo começado e nenhuma tentativa de captura.`);
 
   const token = process.env.GH_TOKEN;
-  if (!token) {
-    console.log('[alerta] GH_TOKEN ausente — não dá pra checar a última execução.');
-    return;
+  let estadoWorkflow = 'desconhecido';
+  if (token) {
+    estadoWorkflow = await workflowState(token);
+    console.log(`[alerta] estado do workflow no GitHub: ${estadoWorkflow}.`);
+  } else {
+    console.log('[alerta] GH_TOKEN ausente — não dá pra checar o estado do workflow.');
   }
-  const estadoWorkflow = await workflowState(token);
-  console.log(`[alerta] estado do workflow no GitHub: ${estadoWorkflow}.`);
-  const lastRun = await lastSuccessfulRunAt(token);
-  const horasSemRodar = lastRun === null ? Infinity : (Date.now() - lastRun) / (60 * 60 * 1000);
-  console.log(`[alerta] última execução com sucesso: ${lastRun === null ? 'nenhuma encontrada' : new Date(lastRun).toISOString()} (${horasSemRodar.toFixed(1)}h atrás).`);
 
-  const desabilitado = estadoWorkflow !== 'active';
-  if (!desabilitado && Date.now() - (lastRun ?? 0) <= STALE_AFTER_MS) {
-    console.log('[alerta] workflow ativo e dentro das 6h — nada a fazer.');
+  const desabilitado = estadoWorkflow !== 'active' && estadoWorkflow !== 'desconhecido';
+  if (!desabilitado && semTentativa.length === 0) {
+    console.log('[alerta] workflow ativo e nenhum jogo sem tentativa — nada a fazer.');
     return;
   }
 
@@ -164,13 +173,12 @@ async function main() {
     return;
   }
 
-  if (!process.env.ALERT_SMTP_HOST || !process.env.ALERT_SMTP_USER || !process.env.ALERT_SMTP_PASS || !process.env.ALERT_EMAIL_TO) {
+  if (!smtpConfigurado()) {
     console.warn('[alerta] condição de alerta atingida, mas faltam segredos de e-mail (ALERT_SMTP_HOST/PORT/USER/PASS, ALERT_EMAIL_TO) — configure-os pra habilitar o envio.');
     return;
   }
 
-  const horasLabel = Number.isFinite(horasSemRodar) ? Math.round(horasSemRodar) : 'nunca (nenhuma execução com sucesso encontrada)';
-  await enviarEmail({ pendentes, horasSemRodar: horasLabel, estadoWorkflow });
+  await enviarEmail({ semTentativa, estadoWorkflow });
   salvarMarcador(hoje);
   console.log('[alerta] e-mail enviado.');
 }
