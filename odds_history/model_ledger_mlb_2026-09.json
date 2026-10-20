@@ -34,7 +34,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "10492fa54f9765a1ae3c65266b20ca1a|Drew Anderson|strikeouts|4.5|Under",
@@ -71,7 +72,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "e28a92e1cd8fe7ce97b34004a0d2063e|Corbin Burnes|strikeouts|3.5|Over",
@@ -108,7 +110,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "cd4dc96755ca32cc907956934a4f2fcb|Griffin Jax|strikeouts|4.5|Under",
@@ -145,7 +148,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "89750de1ac29c31e5d404f2f05763ca9|Anthony Molina|strikeouts|3.5|Under",
@@ -183,7 +187,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "4ee5706290157d66372729e7e70830e8|Griffin Jax|strikeouts|4.5|Under",
@@ -220,7 +225,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "4ca666086b60718790a98a4f826b262b|Brady Basso|strikeouts|2.5|Under",
@@ -257,7 +263,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "2b04077cb9adae8feab7069d48087511|Daniel Lynch IV|strikeouts|3.5|Under",
@@ -295,7 +302,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "e1693becb4cbacb4b30e46c1c960d9a5|Drew Anderson|strikeouts|4.5|Under",
@@ -332,7 +340,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ebb664c5095200280fa1b15540c2c88b|Daniel Lynch IV|strikeouts|3.5|Under",
@@ -370,7 +379,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "afbac30624ec674873fd96ac159f69ad|Kyle Freeland|strikeouts|2.5|Over",
@@ -408,7 +418,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "81f539754930db6ffbd116ca2d30ee9c|Anthony Molina|strikeouts|3.5|Under",
@@ -446,7 +457,8 @@
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
-    "clv": null
+    "clv": null,
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "a44be11545d471429fd459d4c5740006|Tyler Glasnow|strikeouts|6.5|Over",
