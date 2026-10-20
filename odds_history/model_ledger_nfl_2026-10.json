@@ -188337,7 +188337,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.169Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.269Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Christian McCaffrey|receptionYards|39.5|Over",
@@ -188480,18 +188480,18 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "adjustedClosingLine": 66.5,
-    "adjustedClosingOverOdds": 1.87,
-    "adjustedClosingUnderOdds": 1.87,
+    "adjustedClosingOverOdds": 1.83,
+    "adjustedClosingUnderOdds": 1.91,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": 1.18,
+    "lineAdjustedClv": 3.16,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 66.5,
-        "price": 1.87
+        "price": 1.83
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.269Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|George Kittle|receptionYards|61.5|Over",
@@ -188536,7 +188536,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.269Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -188763,7 +188763,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.269Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Kaelon Black|rushYards|23.5|n/a",
@@ -188861,7 +188861,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.269Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -188930,7 +188930,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.269Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jacory Croskey-Merritt|rushYards|45.5|Over",
@@ -189031,7 +189031,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "855f58fad5f0f14b239f4f63df27998b|Sam Darnold|passYards|216.5|Over",
@@ -199030,7 +199030,7 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": "jogador_indisponivel_no_mercado",
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jacory Croskey-Merritt|rushYards|37.5|Over",
@@ -199082,7 +199082,7 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": "jogador_indisponivel_no_mercado",
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jacory Croskey-Merritt|rushYards|43.5|Over",
@@ -199327,7 +199327,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -199384,19 +199384,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 19.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
+    "adjustedClosingLine": 20.5,
+    "adjustedClosingOverOdds": 1.86,
+    "adjustedClosingUnderOdds": 1.93,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": 4.52,
+    "lineAdjustedClv": 11.19,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 19.5,
-        "price": 1.89
+        "line": 20.5,
+        "price": 1.86
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "855f58fad5f0f14b239f4f63df27998b|Bo Nix|passTDs|0.5|Over",
@@ -218560,19 +218560,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 66.5,
-    "adjustedClosingOverOdds": 1.91,
-    "adjustedClosingUnderOdds": 1.88,
+    "adjustedClosingLine": 65.5,
+    "adjustedClosingOverOdds": 1.88,
+    "adjustedClosingUnderOdds": 1.91,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -0.54,
+    "lineAdjustedClv": -1.64,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 66.5,
-        "price": 1.91
+        "line": 65.5,
+        "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Christian McCaffrey|receptionYards|40.5|Over",
@@ -218722,19 +218722,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 62.5,
+    "adjustedClosingLine": 61.5,
     "adjustedClosingOverOdds": 1.88,
-    "adjustedClosingUnderOdds": 1.9,
+    "adjustedClosingUnderOdds": 1.91,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -1.23,
+    "lineAdjustedClv": -3.12,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 62.5,
+        "line": 61.5,
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.170Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jacory Croskey-Merritt|rushYards|42.5|Over",
@@ -235137,7 +235137,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jayden Daniels|passYards|199.5|Over",
@@ -235342,7 +235342,7 @@
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Rachaad White|receptionYards|11.5|Over",
@@ -235483,19 +235483,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 2.5,
-        "price": 1.88
+        "price": 1.83
       }
     ],
     "adjustedClosingLine": 2.5,
-    "adjustedClosingOverOdds": 1.88,
-    "adjustedClosingUnderOdds": 1.88,
+    "adjustedClosingOverOdds": 1.83,
+    "adjustedClosingUnderOdds": 1.93,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": 25.6
+    "lineAdjustedClv": 27.52
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jayden Daniels|rushYards|38.5|Over",
@@ -235742,7 +235742,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z",
     "closingOddsMissingReason": "jogador_indisponivel_no_mercado"
   },
   {
@@ -235788,7 +235788,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -263093,19 +263093,19 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "calibrationMethodVersion": "novo",
-    "adjustedClosingLine": 211.5,
+    "adjustedClosingLine": 213.5,
     "adjustedClosingOverOdds": 1.9,
     "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -6.19,
+    "lineAdjustedClv": -8.58,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 211.5,
+        "line": 213.5,
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jayden Daniels|passYards|201.5|Over",
@@ -263450,18 +263450,18 @@
     "clv": null,
     "closingOddsStatus": "pendente",
     "adjustedClosingLine": 38.5,
-    "adjustedClosingOverOdds": 1.87,
-    "adjustedClosingUnderOdds": 1.89,
+    "adjustedClosingOverOdds": 1.88,
+    "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -9.91,
+    "lineAdjustedClv": -10.42,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 38.5,
-        "price": 1.87
+        "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Stefon Diggs|receptionYards|43.5|Over",
@@ -263534,7 +263534,7 @@
         "price": 2.45
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z",
     "calibrationMethodVersion": "novo"
   },
   {
@@ -263781,19 +263781,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 21.5,
+    "adjustedClosingLine": 22.5,
     "adjustedClosingOverOdds": 1.88,
     "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -2.25,
+    "lineAdjustedClv": 1.49,
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 21.5,
+        "line": 22.5,
         "price": 1.88
       }
     ],
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z"
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.270Z"
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Antonio Williams|receptionYards|22.5|Over",
@@ -263835,21 +263835,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 24.5,
-    "adjustedClosingOverOdds": 1.85,
-    "adjustedClosingUnderOdds": 1.88,
-    "closingLineMovement": "a_favor",
-    "lineAdjustedClv": 1.7,
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 24.5,
-        "price": 1.85
-      }
-    ],
+    "closingOdds": 1.83,
+    "clv": 2.19,
+    "closingOddsStatus": "capturada",
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null,
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
     "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z"
   },
   {
@@ -263998,21 +263993,16 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
-    "adjustedClosingLine": 3.5,
-    "adjustedClosingOverOdds": 1.65,
-    "adjustedClosingUnderOdds": 2.21,
-    "closingLineMovement": "contra",
-    "lineAdjustedClv": -9.63,
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 3.5,
-        "price": 1.65
-      }
-    ],
+    "closingOdds": 2.22,
+    "clv": 3.6,
+    "closingOddsStatus": "capturada",
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null,
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
     "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
     "calibrationMethodVersion": "novo"
   },
@@ -274947,43 +274937,43 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 224.5,
+        "line": 220.5,
         "price": 2.85
       },
       {
-        "line": 234.5,
+        "line": 230.5,
         "price": 2.45
       },
       {
-        "line": 244.5,
+        "line": 240.5,
         "price": 2.1
       },
       {
-        "line": 254.5,
+        "line": 250.5,
         "price": 1.87
       },
       {
-        "line": 264.5,
+        "line": 260.5,
         "price": 1.69
       },
       {
-        "line": 274.5,
+        "line": 270.5,
         "price": 1.54
       },
       {
-        "line": 284.5,
+        "line": 280.5,
         "price": 1.43
       }
     ],
-    "adjustedClosingLine": 224.5,
+    "adjustedClosingLine": 220.5,
     "adjustedClosingOverOdds": 1.4,
     "adjustedClosingUnderOdds": 2.85,
-    "closingLineMovement": "contra",
-    "lineAdjustedClv": -7.63
+    "closingLineMovement": "a_favor",
+    "lineAdjustedClv": -1.54
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Brock Purdy|passYards|233.5|Over",
@@ -275160,43 +275150,43 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 224.5,
+        "line": 220.5,
         "price": 1.4
       },
       {
-        "line": 234.5,
+        "line": 230.5,
         "price": 1.53
       },
       {
-        "line": 244.5,
+        "line": 240.5,
         "price": 1.69
       },
       {
-        "line": 254.5,
+        "line": 250.5,
         "price": 1.87
       },
       {
-        "line": 264.5,
+        "line": 260.5,
         "price": 2.1
       },
       {
-        "line": 274.5,
+        "line": 270.5,
         "price": 2.4
       },
       {
-        "line": 284.5,
+        "line": 280.5,
         "price": 2.7
       }
     ],
-    "adjustedClosingLine": 284.5,
+    "adjustedClosingLine": 280.5,
     "adjustedClosingOverOdds": 2.7,
     "adjustedClosingUnderOdds": 1.43,
-    "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -5.05
+    "closingLineMovement": "contra",
+    "lineAdjustedClv": -10.86
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jayden Daniels|passYards|173.5|Over",
@@ -275370,46 +275360,17 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOdds": 1.87,
+    "clv": -9.63,
+    "closingOddsStatus": "capturada",
     "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 181.5,
-        "price": 2.85
-      },
-      {
-        "line": 191.5,
-        "price": 2.45
-      },
-      {
-        "line": 201.5,
-        "price": 2.1
-      },
-      {
-        "line": 211.5,
-        "price": 1.87
-      },
-      {
-        "line": 221.5,
-        "price": 1.69
-      },
-      {
-        "line": 231.5,
-        "price": 1.54
-      },
-      {
-        "line": 241.5,
-        "price": 1.42
-      }
-    ],
-    "adjustedClosingLine": 211.5,
-    "adjustedClosingOverOdds": 1.87,
-    "adjustedClosingUnderOdds": 1.87,
-    "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -13.36
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jayden Daniels|passYards|223.5|Under",
@@ -275451,46 +275412,17 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOdds": 1.69,
+    "clv": -8.88,
+    "closingOddsStatus": "capturada",
     "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 181.5,
-        "price": 2.85
-      },
-      {
-        "line": 191.5,
-        "price": 2.45
-      },
-      {
-        "line": 201.5,
-        "price": 2.1
-      },
-      {
-        "line": 211.5,
-        "price": 1.87
-      },
-      {
-        "line": 221.5,
-        "price": 1.69
-      },
-      {
-        "line": 231.5,
-        "price": 1.54
-      },
-      {
-        "line": 241.5,
-        "price": 1.42
-      }
-    ],
-    "adjustedClosingLine": 221.5,
-    "adjustedClosingOverOdds": 2.1,
-    "adjustedClosingUnderOdds": 1.69,
-    "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -12.75
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jayden Daniels|passYards|233.5|Over",
@@ -275532,46 +275464,17 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOdds": 2.4,
+    "clv": 14.58,
+    "closingOddsStatus": "capturada",
     "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 181.5,
-        "price": 1.4
-      },
-      {
-        "line": 191.5,
-        "price": 1.53
-      },
-      {
-        "line": 201.5,
-        "price": 1.69
-      },
-      {
-        "line": 211.5,
-        "price": 1.87
-      },
-      {
-        "line": 221.5,
-        "price": 2.1
-      },
-      {
-        "line": 231.5,
-        "price": 2.4
-      },
-      {
-        "line": 241.5,
-        "price": 2.75
-      }
-    ],
-    "adjustedClosingLine": 231.5,
-    "adjustedClosingOverOdds": 2.4,
-    "adjustedClosingUnderOdds": 1.54,
-    "closingLineMovement": "contra",
-    "lineAdjustedClv": 4.16
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Mike Evans|receptionYards|60.5|Over",
@@ -275819,7 +275722,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -275892,7 +275795,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -276106,35 +276009,35 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 39.5,
-        "price": 2.5
+        "price": 2.35
       },
       {
         "line": 44.5,
-        "price": 2.15
+        "price": 2.05
       },
       {
         "line": 49.5,
-        "price": 1.87
+        "price": 1.8
       },
       {
         "line": 54.5,
-        "price": 1.69
+        "price": 1.62
       },
       {
         "line": 59.5,
-        "price": 1.54
+        "price": 1.5
       }
     ],
     "adjustedClosingLine": 39.5,
-    "adjustedClosingOverOdds": 1.5,
-    "adjustedClosingUnderOdds": 2.5,
+    "adjustedClosingOverOdds": 1.56,
+    "adjustedClosingUnderOdds": 2.35,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -19
+    "lineAdjustedClv": -13.3
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Terry McLaurin|receptionYards|40.5|Under",
@@ -276179,35 +276082,35 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
         "line": 39.5,
-        "price": 2.5
+        "price": 2.35
       },
       {
         "line": 44.5,
-        "price": 2.15
+        "price": 2.05
       },
       {
         "line": 49.5,
-        "price": 1.87
+        "price": 1.8
       },
       {
         "line": 54.5,
-        "price": 1.69
+        "price": 1.62
       },
       {
         "line": 59.5,
-        "price": 1.54
+        "price": 1.5
       }
     ],
     "adjustedClosingLine": 39.5,
-    "adjustedClosingOverOdds": 1.5,
-    "adjustedClosingUnderOdds": 2.5,
+    "adjustedClosingOverOdds": 1.56,
+    "adjustedClosingUnderOdds": 2.35,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -16.55
+    "lineAdjustedClv": -11.35
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Terry McLaurin|receptionYards|50.5|Over",
@@ -276349,19 +276252,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 37.5,
-        "price": 1.89
+        "line": 38.5,
+        "price": 1.88
       }
     ],
-    "adjustedClosingLine": 37.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
+    "adjustedClosingLine": 38.5,
+    "adjustedClosingOverOdds": 1.88,
+    "adjustedClosingUnderOdds": 1.9,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -11.82
+    "lineAdjustedClv": -9.39
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Stefon Diggs|receptionYards|42.5|Over",
@@ -276406,19 +276309,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 39.5,
+        "line": 38.5,
         "price": 1.87
       }
     ],
-    "adjustedClosingLine": 39.5,
+    "adjustedClosingLine": 38.5,
     "adjustedClosingOverOdds": 1.87,
     "adjustedClosingUnderOdds": 1.87,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -12.29
+    "lineAdjustedClv": -14.22
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Stefon Diggs|receptionYards|32.5|Under",
@@ -276463,7 +276366,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -276536,7 +276439,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -276697,7 +276600,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -276770,7 +276673,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -277390,7 +277293,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -277463,7 +277366,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -277536,7 +277439,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -277609,7 +277512,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -277861,43 +277764,43 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.171Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 224.5,
+        "line": 220.5,
         "price": 2.85
       },
       {
-        "line": 234.5,
+        "line": 230.5,
         "price": 2.45
       },
       {
-        "line": 244.5,
+        "line": 240.5,
         "price": 2.1
       },
       {
-        "line": 254.5,
+        "line": 250.5,
         "price": 1.87
       },
       {
-        "line": 264.5,
+        "line": 260.5,
         "price": 1.69
       },
       {
-        "line": 274.5,
+        "line": 270.5,
         "price": 1.54
       },
       {
-        "line": 284.5,
+        "line": 280.5,
         "price": 1.43
       }
     ],
-    "adjustedClosingLine": 224.5,
+    "adjustedClosingLine": 220.5,
     "adjustedClosingOverOdds": 1.4,
     "adjustedClosingUnderOdds": 2.85,
-    "closingLineMovement": "contra",
-    "lineAdjustedClv": -9.12
+    "closingLineMovement": "a_favor",
+    "lineAdjustedClv": -3.07
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Brock Purdy|passYards|232.5|Over",
@@ -278123,43 +278026,43 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 224.5,
+        "line": 220.5,
         "price": 1.4
       },
       {
-        "line": 234.5,
+        "line": 230.5,
         "price": 1.53
       },
       {
-        "line": 244.5,
+        "line": 240.5,
         "price": 1.69
       },
       {
-        "line": 254.5,
+        "line": 250.5,
         "price": 1.87
       },
       {
-        "line": 264.5,
+        "line": 260.5,
         "price": 2.1
       },
       {
-        "line": 274.5,
+        "line": 270.5,
         "price": 2.4
       },
       {
-        "line": 284.5,
+        "line": 280.5,
         "price": 2.7
       }
     ],
-    "adjustedClosingLine": 284.5,
+    "adjustedClosingLine": 280.5,
     "adjustedClosingOverOdds": 2.7,
     "adjustedClosingUnderOdds": 1.43,
-    "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -3.58
+    "closingLineMovement": "contra",
+    "lineAdjustedClv": -9.42
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jayden Daniels|passYards|209.5|Under",
@@ -278205,19 +278108,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 211.5,
+        "line": 213.5,
         "price": 1.88
       }
     ],
-    "adjustedClosingLine": 211.5,
+    "adjustedClosingLine": 213.5,
     "adjustedClosingOverOdds": 1.88,
     "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -7.89
+    "lineAdjustedClv": -10.28
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jayden Daniels|passYards|180.5|Over",
@@ -278353,43 +278256,43 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 181.5,
+        "line": 183.5,
         "price": 2.85
       },
       {
-        "line": 191.5,
+        "line": 193.5,
         "price": 2.45
       },
       {
-        "line": 201.5,
+        "line": 203.5,
         "price": 2.1
       },
       {
-        "line": 211.5,
+        "line": 213.5,
         "price": 1.87
       },
       {
-        "line": 221.5,
+        "line": 223.5,
         "price": 1.69
       },
       {
-        "line": 231.5,
+        "line": 233.5,
         "price": 1.54
       },
       {
-        "line": 241.5,
+        "line": 243.5,
         "price": 1.42
       }
     ],
-    "adjustedClosingLine": 221.5,
+    "adjustedClosingLine": 223.5,
     "adjustedClosingOverOdds": 2.1,
     "adjustedClosingUnderOdds": 1.69,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -7.42
+    "lineAdjustedClv": -9.54
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jayden Daniels|passYards|230.5|Under",
@@ -278435,43 +278338,43 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 181.5,
+        "line": 183.5,
         "price": 2.85
       },
       {
-        "line": 191.5,
+        "line": 193.5,
         "price": 2.45
       },
       {
-        "line": 201.5,
+        "line": 203.5,
         "price": 2.1
       },
       {
-        "line": 211.5,
+        "line": 213.5,
         "price": 1.87
       },
       {
-        "line": 221.5,
+        "line": 223.5,
         "price": 1.69
       },
       {
-        "line": 231.5,
+        "line": 233.5,
         "price": 1.54
       },
       {
-        "line": 241.5,
+        "line": 243.5,
         "price": 1.42
       }
     ],
-    "adjustedClosingLine": 231.5,
+    "adjustedClosingLine": 233.5,
     "adjustedClosingOverOdds": 2.4,
     "adjustedClosingUnderOdds": 1.54,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -7.13
+    "lineAdjustedClv": -9.02
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Jayden Daniels|passYards|240.5|Over",
@@ -278517,43 +278420,43 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 181.5,
+        "line": 183.5,
         "price": 1.4
       },
       {
-        "line": 191.5,
+        "line": 193.5,
         "price": 1.53
       },
       {
-        "line": 201.5,
+        "line": 203.5,
         "price": 1.69
       },
       {
-        "line": 211.5,
+        "line": 213.5,
         "price": 1.87
       },
       {
-        "line": 221.5,
+        "line": 223.5,
         "price": 2.1
       },
       {
-        "line": 231.5,
+        "line": 233.5,
         "price": 2.4
       },
       {
-        "line": 241.5,
+        "line": 243.5,
         "price": 2.75
       }
     ],
-    "adjustedClosingLine": 241.5,
+    "adjustedClosingLine": 243.5,
     "adjustedClosingOverOdds": 2.75,
     "adjustedClosingUnderOdds": 1.42,
     "closingLineMovement": "a_favor",
-    "lineAdjustedClv": -4.75
+    "lineAdjustedClv": -1.52
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|George Kittle|receptionYards|67.5|Over",
@@ -278689,7 +278592,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -278763,7 +278666,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -279485,22 +279388,17 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOdds": 1.88,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
     "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 37.5,
-        "price": 1.89
-      }
-    ],
-    "adjustedClosingLine": 37.5,
-    "adjustedClosingOverOdds": 1.89,
-    "adjustedClosingUnderOdds": 1.89,
-    "closingLineMovement": "contra",
-    "lineAdjustedClv": -7.94
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Stefon Diggs|receptionYards|39.5|Over",
@@ -279598,7 +279496,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -279672,7 +279570,7 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.271Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
@@ -279836,19 +279734,19 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
+    "closingOddsLastAttemptAt": "2026-10-20T00:03:08.272Z",
     "closingOddsMissingReason": "linha_mudou_ate_fechamento",
     "closingOddsAvailableLines": [
       {
-        "line": 21.5,
+        "line": 22.5,
         "price": 1.88
       }
     ],
-    "adjustedClosingLine": 21.5,
+    "adjustedClosingLine": 22.5,
     "adjustedClosingOverOdds": 1.88,
     "adjustedClosingUnderOdds": 1.88,
     "closingLineMovement": "contra",
-    "lineAdjustedClv": -13.49
+    "lineAdjustedClv": -9.75
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Antonio Williams|receptionYards|24.5|Over",
@@ -280040,11 +279938,17 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOdds": 1.84,
+    "clv": 4.89,
+    "closingOddsStatus": "capturada",
     "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
-    "closingOddsMissingReason": "jogador_indisponivel_no_mercado"
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Austin Ekeler|receptionYards|7.5|Over",
@@ -280087,22 +279991,17 @@
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
-    "closingOdds": null,
-    "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOdds": 1.88,
+    "clv": 0,
+    "closingOddsStatus": "capturada",
     "closingOddsLastAttemptAt": "2026-10-19T23:03:09.172Z",
-    "closingOddsMissingReason": "linha_mudou_ate_fechamento",
-    "closingOddsAvailableLines": [
-      {
-        "line": 6.5,
-        "price": 1.88
-      }
-    ],
-    "adjustedClosingLine": 6.5,
-    "adjustedClosingOverOdds": 1.88,
-    "adjustedClosingUnderOdds": 1.88,
-    "closingLineMovement": "contra",
-    "lineAdjustedClv": -8.85
+    "closingOddsMissingReason": null,
+    "closingOddsAvailableLines": null,
+    "adjustedClosingLine": null,
+    "adjustedClosingOverOdds": null,
+    "adjustedClosingUnderOdds": null,
+    "closingLineMovement": "neutro",
+    "lineAdjustedClv": null
   },
   {
     "_key": "f122527f003276d3bca19efa48c902c1|Mike Evans|receptions|4.5|Over",
