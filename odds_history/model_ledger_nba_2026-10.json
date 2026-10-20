@@ -891,7 +891,7 @@
     "lineAdjustedClv": null,
     "closingOddsMissingReason": "bookmaker_indisponivel",
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.092Z",
     "clvNoVig": -19.75,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 1
@@ -2594,10 +2594,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": 2.23,
+    "clvNoVig": 2.13,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 6,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.092Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2647,7 +2647,7 @@
     "clvNoVig": -7.44,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 1,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.092Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2784,10 +2784,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -9.01,
+    "clvNoVig": -8.81,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 6,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.092Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2834,10 +2834,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -9.63,
+    "clvNoVig": -9.47,
     "closingNoVigSource": "consensus_us",
-    "closingNoVigNCasas": 6,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingNoVigNCasas": 5,
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.092Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2884,10 +2884,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -7.48,
+    "clvNoVig": -7.61,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 4,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.093Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2934,10 +2934,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -5.78,
+    "clvNoVig": -5.95,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 3,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.093Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -2987,7 +2987,7 @@
     "clvNoVig": -3.56,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 3,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.093Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -3352,7 +3352,7 @@
     "clvNoVig": -15.63,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 1,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.093Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -3444,10 +3444,10 @@
     "closingOdds": null,
     "clv": null,
     "closingOddsStatus": "pendente",
-    "clvNoVig": -4.78,
+    "clvNoVig": -5.12,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 6,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.093Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
@@ -3812,7 +3812,7 @@
     "clvNoVig": -2.23,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 4,
-    "closingOddsLastAttemptAt": "2026-10-20T22:41:35.126Z",
+    "closingOddsLastAttemptAt": "2026-10-20T22:45:35.093Z",
     "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
