@@ -14,7 +14,11 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
+  # Só alimentava os modelos próprios (NBA/MLB), agora encerrados — job
+  # desativado (if: false), não apagado. Não chama a The Odds API (ESPN),
+  # então não tinha custo de cota, mas ficou sem nenhum consumidor.
   update-stats:
+    if: false
     runs-on: ubuntu-latest
 
     steps:

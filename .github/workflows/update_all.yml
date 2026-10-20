@@ -27,11 +27,9 @@ env:
 
 jobs:
 
-  # ── NBA (out-abr) ──────────────────────────────────────────────────────────
+  # ── NBA (out-abr) — modelo próprio encerrado, job desativado (if: false) ────
   nba:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'schedule'
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Verificar mês (temporada NBA out-jun)
@@ -127,11 +125,9 @@ jobs:
         if: steps.season.outputs.in_season == 'true'
         run: node pipeline/check_stats_freshness.js nba
 
-  # ── MLB (mar-out) ──────────────────────────────────────────────────────────
+  # ── MLB (mar-out) — modelo próprio encerrado, job desativado (if: false) ────
   mlb:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'schedule'
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Verificar mês (temporada MLB mar-out)
@@ -226,11 +222,9 @@ jobs:
         if: steps.season.outputs.in_season == 'true'
         run: node pipeline/check_stats_freshness.js mlb
 
-  # ── NHL (out-mai) ──────────────────────────────────────────────────────────
+  # ── NHL (out-mai) — modelo próprio encerrado, job desativado (if: false) ────
   nhl:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'schedule'
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Verificar mês (temporada NHL out-mai)
@@ -328,11 +322,9 @@ jobs:
         if: steps.season.outputs.in_season == 'true'
         run: node pipeline/check_stats_freshness.js nhl
 
-  # ── NFL (set-fev) ──────────────────────────────────────────────────────────
+  # ── NFL (set-fev) — modelo próprio encerrado, job desativado (if: false) ────
   nfl:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'schedule'
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Verificar mês (temporada NFL set-fev)
