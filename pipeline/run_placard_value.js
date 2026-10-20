@@ -319,7 +319,8 @@ async function captureClosing(db, entries) {
       for (const e of group) {
         if (Date.now() >= Date.parse(e.commenceTime)) continue;
         const event = data.find(ev => ev.id === e.eventId);
-        if (!event || Math.abs(Date.parse(event.commence_time) - Date.parse(e.commenceTime)) > 60000) continue;
+        const tolerance = sport.startsWith('tennis_') ? 3 * 60 * 60 * 1000 : 60000;
+        if (!event || Math.abs(Date.parse(event.commence_time) - Date.parse(e.commenceTime)) > tolerance) continue;
         if (e.market === 'totals') {
           try { await exactTotals(api, sport, event, [e.line], attemptedAlternates, true); }
           catch (error) { console.error(`Linha de fechamento ${e.eventId}: ${error.message}`); }

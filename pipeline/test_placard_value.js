@@ -127,6 +127,19 @@ test('seleciona o nome exato da competição e não mistura categorias parecidas
   ], { key: 'tennis_wta_ningbo_open', label: 'Ningbo - Individual', aliases: ['Ningbo'], sport: 'tennis' }),
   'https://placard/ningbo/singles/matches');
 });
+test('reconcilia partidas de ténis pelo par de jogadores quando o horário estimado varia', () => {
+  const start = '2026-10-20T14:05:00.000Z';
+  const game = { apiSport: 'tennis_wta_ningbo_open', teams: ['Marie Bouzkova', 'Anastasia Zakharova'],
+    competition: 'Ningbo - Individual', commenceTime: start, observedAt: new Date(now).toISOString(),
+    markets: [{ type: 'H2HT', selections: [{ price: '2.2', line: null }, { price: '2.2', line: null }] }] };
+  const event = { id: 'wta', sport_key: game.apiSport, home_team: game.teams[0], away_team: game.teams[1],
+    commence_time: '2026-10-20T14:00:00Z', bookmakers: [{ key: 'pinnacle', last_update: new Date(now).toISOString(),
+      markets: [{ key: 'h2h', outcomes: [{ name: game.teams[0], price: 2 }, { name: game.teams[1], price: 2 }] }] }] };
+  const result = compare(game, [event], now);
+  assert.equal(result.rows.length, 2);
+  assert.equal(result.rows[0].commenceTime, start);
+  assert.equal(result.rows[0].apiCommenceTime, event.commence_time);
+});
 test('veredito respeita n≥100 e IC positivo; correlação não cria novas amostras independentes', () => {
   const entries = Array.from({ length: 100 }, (_, i) => ({ eventId: String(i), apiSport: 'nba', clvPct: 2, closingStatus: 'capturada' }));
   assert.equal(report(entries).verdict, 'confirmado');
