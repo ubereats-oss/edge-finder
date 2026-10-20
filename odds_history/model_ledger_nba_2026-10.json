@@ -889,9 +889,12 @@
     "adjustedClosingUnderOdds": null,
     "closingLineMovement": null,
     "lineAdjustedClv": null,
-    "closingOddsMissingReason": null,
+    "closingOddsMissingReason": "bookmaker_indisponivel",
     "closingOddsAvailableLines": null,
-    "closingOddsLastAttemptAt": null
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "clvNoVig": -12.53,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 1
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|LeBron James|rebounds|6.5|Over",
@@ -2590,7 +2593,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": 1.52,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 6,
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Mikal Bridges|assists|2.5|Over",
@@ -2635,7 +2643,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -6.19,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 1,
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|OG Anunoby|assists|1.5|Over",
@@ -2770,7 +2783,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -8.97,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 6,
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|LeBron James|points|15.5|Over",
@@ -2815,7 +2833,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -6.86,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 6,
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Tyrese Maxey|points|21.5|Over",
@@ -2860,7 +2883,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -4.07,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 4,
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Andre Drummond|points|5.5|Over",
@@ -2905,7 +2933,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -5.95,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 3,
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Anfernee Simons|points|8.5|Over",
@@ -2950,7 +2983,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -8.46,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 2,
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Jaylen Brown|points|20.5|Over",
@@ -3310,7 +3348,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -9,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 2,
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Jalen Brunson|rebounds|3.5|Over",
@@ -3400,7 +3443,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -5.04,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 6,
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Jaylen Brown|rebounds|5.5|Over",
@@ -3760,7 +3808,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -0.54,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 4,
+    "closingOddsLastAttemptAt": "2026-10-20T22:25:29.573Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Shai Gilgeous-Alexander|assists|6.5|Over",
