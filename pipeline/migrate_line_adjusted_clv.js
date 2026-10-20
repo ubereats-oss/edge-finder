@@ -1,5 +1,13 @@
 // pipeline/migrate_line_adjusted_clv.js
-// Migração única: promove pra "capturada" (com clv = lineAdjustedClv) toda
+//
+// REVERTIDA — ver pipeline/revert_line_adjusted_clv_promotion.js. O CLV
+// ajustado por linha se mostrou pouco confiável em amostra pequena de
+// jogador (auditoria em report_clv_line_adjustment_audit.js). NÃO rode este
+// script de novo sem antes rever essa decisão — ele reintroduziria a
+// promoção que foi desfeita.
+//
+// Migração única (histórico, já aplicada e depois parcialmente desfeita):
+// promove pra "capturada" (com clv = lineAdjustedClv) toda
 // indicação já EXPIRADA cujo único motivo foi a linha ter mudado até o
 // fechamento (closingOddsMissingReason: 'linha_mudou_ate_fechamento') e que
 // tem adjustedClosingLine — ou seja, dava pra medir, só não tinha sido

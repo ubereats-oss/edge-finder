@@ -639,7 +639,31 @@ async function loadLedgerEntries(token) {
   return entries;
 }
 
+// A API do GitHub aceita workflow_dispatch com 204 mesmo quando o workflow
+// está desabilitado (Settings → Actions → "Disable workflow") — a chamada
+// "funciona" sem erro nenhum, mas nenhuma execução é criada. Foi exatamente
+// isso que aconteceu entre 29/09 e 12/10: os logs desta function mostram
+// "workflow disparado" o período inteiro, mas o GitHub não tem nenhuma
+// execução registrada nessas datas. Checar o estado antes de disparar troca
+// esse silêncio por um erro explícito nos logs.
+async function assertWorkflowEnabled(token) {
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}`;
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+  });
+  if (!res.ok) throw new Error(`checar estado do workflow ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  const body = await res.json();
+  if (body.state !== 'active') {
+    throw new Error(`workflow ${GH_WORKFLOW_FILE} está "${body.state}" no GitHub (não ativo) — reative em Settings > Actions > Capturar Odd de Fechamento.`);
+  }
+}
+
 async function dispatchCaptureWorkflow(token) {
+  await assertWorkflowEnabled(token);
   const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}/dispatches`;
   const res = await fetch(url, {
     method: 'POST',
