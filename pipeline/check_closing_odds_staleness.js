@@ -106,7 +106,34 @@ async function enviarEmail({ pendentes, horasSemRodar, estadoWorkflow }) {
   });
 }
 
+async function enviarEmailDeTeste() {
+  const transporter = nodemailer.createTransport({
+    host: process.env.ALERT_SMTP_HOST,
+    port: parseInt(process.env.ALERT_SMTP_PORT || '465', 10),
+    secure: (process.env.ALERT_SMTP_PORT || '465') === '465',
+    auth: { user: process.env.ALERT_SMTP_USER, pass: process.env.ALERT_SMTP_PASS },
+  });
+  await transporter.sendMail({
+    from: process.env.ALERT_SMTP_USER,
+    to: process.env.ALERT_EMAIL_TO,
+    subject: 'Edge Finder: e-mail de teste do alerta de captura de fechamento',
+    text: 'Isto é um teste manual (forcar_teste=true) do alerta de "Capturar Odd de Fechamento" parada. Se você recebeu este e-mail, os segredos ALERT_SMTP_HOST/PORT/USER/PASS e ALERT_EMAIL_TO estão configurados corretamente.',
+  });
+}
+
 async function main() {
+  if (process.env.FORCAR_TESTE === 'true') {
+    console.log('[alerta] forcar_teste=true — ignorando condições, mandando e-mail de teste.');
+    if (!process.env.ALERT_SMTP_HOST || !process.env.ALERT_SMTP_USER || !process.env.ALERT_SMTP_PASS || !process.env.ALERT_EMAIL_TO) {
+      console.error('[alerta] faltam segredos de e-mail — não dá pra mandar o teste.');
+      process.exitCode = 1;
+      return;
+    }
+    await enviarEmailDeTeste();
+    console.log('[alerta] e-mail de teste enviado.');
+    return;
+  }
+
   const { pendentes } = hasElegiveisPendentes();
   console.log(`[alerta] ${pendentes} indicação(ões) elegível(is) pendente(s).`);
   if (pendentes === 0) {
