@@ -1,10 +1,10 @@
 // Sem rede, chaves, Firebase ou alterações em parâmetros de risco.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { compare, fairProbabilities, references, report, namesEqual } = require('./placard_value');
+const { compare, comparedSelectionCount, fairProbabilities, references, report, namesEqual } = require('./placard_value');
 const { estimateCost, readingAllowance } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
-const { captureClosing, exactTotals, exactSpreads } = require('./run_placard_value');
+const { captureClosing, exactTotals, exactSpreads, competitionUrl } = require('./run_placard_value');
 const now = Date.parse('2026-10-20T12:00:00Z');
 function fixture() {
   const game = { teams: ['FC Porto', 'SL Benfica'], apiSport: 'soccer_portugal_primeira_liga',
@@ -41,6 +41,12 @@ test('não casa evento ambíguo ou horário diferente', () => {
   const { game, event } = fixture();
   assert.equal(compare(game, [event, { ...event, id: 'other' }], now).reason, 'evento_ambiguo');
   assert.equal(compare(game, [{ ...event, commence_time: '2026-10-21T14:00:00Z' }], now).rows.length, 0);
+});
+test('conta comparação com o último preço conhecido, sem registrar oportunidade antes da confirmação recente', () => {
+  const { game, event } = fixture();
+  event.bookmakers[0].last_update = '2026-10-20T10:00:00Z';
+  assert.equal(comparedSelectionCount(game, event, now), 3);
+  assert.equal(compare(game, [event], now).rows.length, 0);
 });
 test('descarta preços antigos, futuros e jogo iniciado', () => {
   const { game, event } = fixture();
@@ -109,6 +115,17 @@ test('busca handicap alternativo exato uma vez por evento', async t => {
   assert.equal(references(event, now).filter(r => r.market === 'spreads' && r.line === -1.5).length, 1);
   await exactSpreads(api, event.sport_key, event, [{ selection: 'Porto', line: -1.5 }], attempted);
   assert.equal(calls, 1);
+});
+test('seleciona o nome exato da competição e não mistura categorias parecidas', () => {
+  assert.equal(competitionUrl([
+    { text: 'Premier League', href: 'https://placard/england/premier/matches' },
+    { text: 'Inglaterra - Premier League', href: 'https://placard/other/premier/matches' },
+  ], { label: 'Premier League', aliases: [], sport: 'soccer' }), 'https://placard/england/premier/matches');
+  assert.equal(competitionUrl([
+    { text: 'Ningbo - Individual', href: 'https://placard/ningbo/singles/matches' },
+    { text: 'Ningbo - Pares', href: 'https://placard/ningbo/doubles/matches' },
+  ], { key: 'tennis_wta_ningbo_open', label: 'Ningbo - Individual', aliases: ['Ningbo'], sport: 'tennis' }),
+  'https://placard/ningbo/singles/matches');
 });
 test('veredito respeita n≥100 e IC positivo; correlação não cria novas amostras independentes', () => {
   const entries = Array.from({ length: 100 }, (_, i) => ({ eventId: String(i), apiSport: 'nba', clvPct: 2, closingStatus: 'capturada' }));

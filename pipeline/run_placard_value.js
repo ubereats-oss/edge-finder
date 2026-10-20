@@ -1,7 +1,8 @@
 const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
 const { database } = require('./odds_api_monthly_budget');
 const { createBrowser, scrapeCompetition } = require('./get_placard_odds');
-const { compare, references, matchingEvents, isNearValue, nearValueSelections, report, namesEqual, normalize } = require('./placard_value');
+const { compare, references, matchingEvents, isNearValue, nearValueSelections, report, namesEqual, normalize,
+  comparedSelectionCount } = require('./placard_value');
 const competitions = require('./placard_config');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -79,17 +80,21 @@ function tennisCompetitionAlias(key) {
   return `${name.replace(/\b\w/g, c => c.toUpperCase())} - Individual`;
 }
 
-function competitionLabelMatches(link, cfg) {
+function competitionUrl(found, cfg) {
   const normalizeText = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  const text = normalizeText(link);
   const labels = [cfg.label, ...(cfg.aliases || [])].map(normalizeText);
-  if (labels.some(label => label === text || label.length >= 5 && (text.includes(label) || label.includes(text)))) return true;
-  if (cfg.sport !== 'tennis') return false;
+  const urls = rows => [...new Set(rows.map(l => l.href.replace(/\/matches$/, '')))];
+  const exact = urls(found.filter(l => labels.includes(normalizeText(l.text))));
+  if (exact.length === 1) return `${exact[0]}/matches`;
+  if (exact.length > 1) return null;
+  if (cfg.sport !== 'tennis') return null;
   const aliases = [tennisCompetitionAlias(cfg.key).replace(/ - Individual$/i, '')];
   if (cfg.key.endsWith('_canadian_open')) aliases.push('Montreal');
   if (cfg.key.endsWith('_aus_open_singles')) aliases.push('Australian Open');
   if (cfg.key.endsWith('_french_open')) aliases.push('Roland Garros');
-  return aliases.some(alias => alias.length > 2 && text.includes(alias.toLowerCase()));
+  const fuzzy = urls(found.filter(l => aliases.some(alias => normalizeText(alias).length > 2
+    && normalizeText(l.text).includes(normalizeText(alias)))));
+  return fuzzy.length === 1 ? `${fuzzy[0]}/matches` : null;
 }
 
 const placardSportPaths = {
@@ -131,8 +136,8 @@ async function scan(db) {
         if (!found.length) throw new Error(`Nenhum slug Placard respondeu para ${sport}.`);
         sportCatalogs.set(sport, found.map(l => l.text));
         for (const cfg of activeCompetitions.filter(c => c.sport === sport)) {
-          const urls = [...new Set(found.filter(l => competitionLabelMatches(l.text, cfg)).map(l => l.href.replace(/\/matches$/, '')))];
-          if (urls.length === 1) links.set(cfg.key, `${urls[0]}/matches`);
+          const url = competitionUrl(found, cfg);
+          if (url) links.set(cfg.key, url);
         }
       } catch (error) {
         for (const cfg of activeCompetitions.filter(c => c.sport === sport)) {
@@ -238,8 +243,10 @@ async function scan(db) {
             catch (e) { alternateError = e.message; }
           }
           const result = compare(game, refreshedEvents);
+          const known = matchingEvents(game, events);
+          const comparedSelections = known.length === 1 ? comparedSelectionCount(game, known[0]) : 0;
           diagnostics.push({ competition: cfg.label, teams: game.teams, reason: result.reason,
-            comparedSelections: result.comparedSelections ?? 0, alternateError });
+            comparedSelections, confirmedSelections: result.comparedSelections ?? 0, alternateError });
           for (const row of result.rows) { await saveOpportunity(db, row); rows.push(row); }
         }
         if (refreshedEvents.length) await cacheRef.set({ events, notFoundProbes, updatedAt: new Date().toISOString() });
@@ -375,5 +382,5 @@ async function main() {
     opportunities: result.rows.length, errors: result.errors }, null, 2));
   if (due && result.errors.length) throw new Error(`Coleta incompleta: ${result.errors.map(e => e.competition || e.error).join(', ')}`);
 }
-module.exports = { scan, captureClosing, allEntries, publish, exactTotals, exactSpreads };
+module.exports = { scan, captureClosing, allEntries, publish, exactTotals, exactSpreads, competitionUrl };
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });
