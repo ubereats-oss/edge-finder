@@ -2175,7 +2175,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -3.56,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 6,
+    "closingOddsLastAttemptAt": "2026-10-20T18:37:35.819Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "26b036ff107f3c658258eaf4a6f26228|Mitchell Robinson|rebounds|8.5|Over",
@@ -2400,7 +2405,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -5.26,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 2,
+    "closingOddsLastAttemptAt": "2026-10-20T18:37:35.819Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "2b042ddad3d3c6c6fe5b7005dc26c775|Jaylen Brown|assists|3.5|Over",
