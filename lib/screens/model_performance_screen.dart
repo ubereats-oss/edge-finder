@@ -248,6 +248,13 @@ class _NflReceptionsTestCard extends StatelessWidget {
             'Indicações com CLV: $n/$nAlvo · CLV médio: ${fmtPct(clvMedio)}',
             style: const TextStyle(color: Colors.white, fontSize: 13),
           ),
+          if (teste['metodo'] == 'clv_sem_margem') ...[
+            const SizedBox(height: 2),
+            const Text(
+              'CLV sem margem (Pinnacle ou consenso das casas no fechamento) — amostra reiniciada após a troca de métrica',
+              style: TextStyle(color: Color(0xFF666666), fontSize: 10, fontStyle: FontStyle.italic),
+            ),
+          ],
           const SizedBox(height: 4),
           Text(
             'IC95%: ${fmtPct(icLower)} a ${fmtPct(icUpper)}',

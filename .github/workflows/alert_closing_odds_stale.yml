@@ -1,0 +1,77 @@
+name: Alertar Captura de Fechamento Parada
+
+# Roda a cada 2h — suficiente pra avisar no mesmo dia em que o workflow
+# "Capturar Odd de Fechamento" completar 6h sem rodar com sucesso, sem gastar
+# mais que isso. Só manda e-mail se: 1) existir indicação elegível ainda sem
+# odd de fechamento e 2) a última execução com sucesso de
+# capture_closing_odds.yml tiver mais de 6h. No máximo 1 e-mail por dia
+# (marcador salvo na branch data).
+on:
+  schedule:
+    - cron: '11 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Instalar nodemailer
+        run: npm install nodemailer
+
+      - name: Restaurar histórico central e marcador de alerta da branch data
+        run: |
+          git fetch origin data 2>/dev/null || true
+          mkdir -p odds_history
+          git checkout origin/data -- 'odds_history/model_ledger_*.json' 2>/dev/null || true
+          git checkout origin/data -- '_closing_odds_alert_marker.json' 2>/dev/null || true
+
+      - name: Checar atraso e enviar e-mail se precisar
+        id: check
+        run: node pipeline/check_closing_odds_staleness.js
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          ALERT_SMTP_HOST: ${{ secrets.ALERT_SMTP_HOST }}
+          ALERT_SMTP_PORT: ${{ secrets.ALERT_SMTP_PORT }}
+          ALERT_SMTP_USER: ${{ secrets.ALERT_SMTP_USER }}
+          ALERT_SMTP_PASS: ${{ secrets.ALERT_SMTP_PASS }}
+          ALERT_EMAIL_TO: ${{ secrets.ALERT_EMAIL_TO }}
+
+      - name: Salvar marcador de alerta na branch data (só se mudou)
+        run: |
+          if [ ! -f _closing_odds_alert_marker.json ]; then
+            echo "Marcador não existe nesta execução — nada a salvar."
+            exit 0
+          fi
+          cp _closing_odds_alert_marker.json /tmp/_closing_odds_alert_marker.json
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin data 2>/dev/null || true
+          git checkout -B data-work origin/data --force 2>/dev/null || \
+            (git checkout --orphan data-work && git rm -rf . --quiet && printf 'node_modules/\n' > .gitignore && git add .gitignore)
+
+          cp /tmp/_closing_odds_alert_marker.json _closing_odds_alert_marker.json
+          git add _closing_odds_alert_marker.json
+          if git diff --staged --quiet; then
+            echo "Marcador sem mudança — nada a salvar."
+          else
+            git commit -m "alerta captura fechamento: $(date -u '+%Y-%m-%d %H:%M') UTC"
+            git push origin data-work:data
+          fi

@@ -119,9 +119,55 @@ function adjustedClv(entry, closing, modelContext = {}) {
   return parseFloat(((entry.odds / fairOddsAtOriginalLine - 1) * 100).toFixed(2));
 }
 
+// Fechamento "sem margem": devigga H2H/Over-Under de cada casa (região já
+// buscada pra capturar a odd de fechamento normal, nenhuma chamada nova) na
+// MESMA linha/lado da indicação original e tira a média das probabilidades
+// justas entre as casas — ou usa só a Pinnacle quando ela cotar essa linha
+// (referência mais líquida/menos distorcida que qualquer casa isolada).
+// market: objeto de mercado de UM bookmaker (bm.markets.find(m => m.key === marketKey)).
+function fairProbFromMarket(market, player, line, side, isH2h) {
+  if (!market) return null;
+  if (isH2h) {
+    const mine = market.outcomes?.find(o => o.name === player);
+    const outra = market.outcomes?.find(o => o.name !== player);
+    if (!mine || !outra || typeof mine.price !== 'number' || typeof outra.price !== 'number') return null;
+    const fair = devigTwoWay(mine.price, outra.price);
+    return fair?.over ?? null; // devigTwoWay(mine, outra) -> .over é a prob. do 1º argumento (mine)
+  }
+  const over = market.outcomes?.find(o => o.description === player && o.point === line && o.name === 'Over');
+  const under = market.outcomes?.find(o => o.description === player && o.point === line && o.name === 'Under');
+  if (!over || !under || typeof over.price !== 'number' || typeof under.price !== 'number') return null;
+  const fair = devigTwoWay(over.price, under.price);
+  if (!fair) return null;
+  return side === 'Over' ? fair.over : fair.under;
+}
+
+function noVigClosingClv({ oddsData, marketKey, player, line, side, bookmakerOdds, isH2h = false }) {
+  if (!oddsData?.bookmakers?.length || !(bookmakerOdds > 1)) return null;
+
+  const pinnacleBm = oddsData.bookmakers.find(b => b.key === 'pinnacle');
+  if (pinnacleBm) {
+    const p = fairProbFromMarket(pinnacleBm.markets?.find(m => m.key === marketKey), player, line, side, isH2h);
+    if (p > 0) {
+      return { clv: parseFloat(((bookmakerOdds * p - 1) * 100).toFixed(2)), source: 'pinnacle', nCasas: 1 };
+    }
+  }
+
+  const probs = [];
+  for (const bm of oddsData.bookmakers) {
+    if (bm.key === 'pinnacle') continue; // já tentada isolada acima
+    const p = fairProbFromMarket(bm.markets?.find(m => m.key === marketKey), player, line, side, isH2h);
+    if (p > 0) probs.push(p);
+  }
+  if (!probs.length) return null;
+  const media = probs.reduce((a, b) => a + b, 0) / probs.length;
+  return { clv: parseFloat(((bookmakerOdds * media - 1) * 100).toFixed(2)), source: 'consensus_us', nCasas: probs.length };
+}
+
 module.exports = {
   devigTwoWay,
   movementDirection,
   adjustedClosingProbability,
   adjustedClv,
+  noVigClosingClv,
 };
