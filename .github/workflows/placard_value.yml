@@ -53,4 +53,4 @@ jobs:
           name: placard-summary-${{ github.run_id }}
           path: placard_run_summary.json
           if-no-files-found: ignore
-          retention-days: 7
+          retention-days: 1
