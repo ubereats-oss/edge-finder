@@ -78,7 +78,9 @@ class _PlacardOpportunitiesScreenState
                 : row['selection'];
     final market = row['market'] == 'h2h'
         ? 'Vencedor: $side'
-        : 'Total: $side ${row['line']}';
+        : row['market'] == 'spreads'
+            ? 'Handicap: $side ${row['line']}'
+            : 'Total: $side ${row['line']}';
     final stake = (row['kellyPct'] as num? ?? 0).toDouble();
     final amount = PrefsService.getBanca() * stake / 100;
     return Card(
@@ -167,7 +169,7 @@ class _PlacardOpportunitiesScreenState
                         color: const Color(0xFFBBBBCC)),
                     const SizedBox(height: 12),
                     _text(
-                        'Placard a cada 30min · Pinnacle por gatilho · próximas 12h · créditos reservados: ${budget['reserved'] ?? 0}/4.000'),
+                        'Placard a cada 30min · Pinnacle por gatilho · próximas 12h · créditos reservados: ${budget['reserved'] ?? 0}/${budget['limit'] ?? 4000}'),
                     if (errors.isNotEmpty)
                       _text(
                           'Coleta incompleta em ${errors.length} competição(ões).',
