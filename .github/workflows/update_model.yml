@@ -24,7 +24,12 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
+  # Modelos próprios encerrados — job desativado (if: false), não apagado.
+  # Mantém só: referência da Pinnacle, captura de fechamento e "Conferir
+  # odds" (workflows odds_history.yml / capture_closing_odds.yml /
+  # sync_pt_odds_checks.yml, nenhum deles tocado aqui).
   update:
+    if: false
     runs-on: ubuntu-latest
 
     steps:

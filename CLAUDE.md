@@ -1,17 +1,15 @@
 # Edge Finder
 
 ## Sobre o projeto
-App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges) comparando odds entre casas. Integra pipeline Node.js que coleta odds/props de NBA, MLB, NHL e NFL via APIs e calcula modelos de probabilidade. GitHub Actions automatiza coleta diária, backtesting e atualização de dados para Firestore. Login e-mail/senha restrito a uma única conta (lib/auth_config.dart) — e-mail diferente ou não verificado veem tela de acesso negado / verificação pendente.
+App Flutter + Firebase que identifica oportunidades de apostas esportivas (edges) comparando odds entre casas. Login e-mail/senha restrito a uma única conta (lib/auth_config.dart) — e-mail diferente ou não verificado veem tela de acesso negado / verificação pendente.
+
+**Modelos próprios (NBA/MLB/NHL/NFL) encerrados** — jobs/workflows desativados (`if: false`, não apagados, ver `update_all.yml`/`update_model.yml`/`update_mlb_early.yml`/`update_player_stats.yml`), telas Mix de Apostas e por esporte sem acesso a partir da tela inicial (código mantido, só desconectado). Continuam funcionando: referência da Pinnacle, captura de odd de fechamento e "Conferir odds" (comparação manual contra casas PT licenciadas).
 
 ## Mapa do projeto
 
 ### Telas (lib/screens/)
-- `sport_selector_screen.dart` — seletor inicial de esportes
-- `basketball_screen.dart`, `basketball_br_screen.dart` — partidas NBA e basquete BR
-- `baseball_screen.dart` — partidas MLB
-- `hockey_screen.dart` — partidas NHL
-- `football_screen.dart` — partidas futebol
-- `mix_screen.dart` — resultados consolidados múltiplos esportes
+- `sport_selector_screen.dart` — tela inicial (só ícones de Minhas Apostas/Desempenho/Conferir odds/Settings — modelos encerrados)
+- `basketball_screen.dart`, `basketball_br_screen.dart`, `baseball_screen.dart`, `hockey_screen.dart`, `football_screen.dart`, `mix_screen.dart` — telas de indicação por esporte e Mix de Apostas; código mantido, sem acesso a partir da tela inicial (modelos próprios encerrados)
 - `auth_gate.dart` — roteia entre login, verificação de e-mail, acesso negado e app
 - `login_screen.dart` — login e-mail/senha
 - `verify_email_screen.dart` — pede confirmação do e-mail antes de liberar o app

@@ -8,7 +8,9 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
+  # Modelos próprios encerrados — job desativado (if: false), não apagado.
   mlb:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

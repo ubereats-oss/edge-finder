@@ -4,10 +4,11 @@ const { createOddsApiClient, defaultKeysFromEnv } = require('./odds_api_client')
 const ledger = require('./model_ledger');
 const closingOddsRules = require('./closing_odds_rules');
 
-// Esportes com coleta de props (além de H2H)
+// Esportes com coleta de props (além de H2H). MLB foi tirado daqui —
+// modelos próprios encerrados e MLB nunca teve consumidor além deles
+// (get_pinnacle_reference.js só reaproveita o snapshot de basketball_nba).
 const SPORTS_TO_COLLECT = new Set([
   'basketball_nba',
-  'baseball_mlb',
 ]);
 
 const SPORTS_WITH_PROPS = new Set([
