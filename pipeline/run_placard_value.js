@@ -79,13 +79,6 @@ async function scan(db) {
         const cacheRef = db.collection('_placard_pinnacle_latest').doc(cfg.key);
         const cacheSnap = await cacheRef.get();
         let events = cacheSnap.data()?.events || [];
-        if (!events.length) {
-          const prior = await db.collection('_placard_reads').where('apiSport', '==', cfg.key)
-            .orderBy('observedAt', 'desc').limit(1).get();
-          if (!prior.empty) {
-            try { events = JSON.parse(prior.docs[0].data().pinnacle || '[]'); } catch (_) { events = []; }
-          }
-        }
         events = events.map(e => ({ ...e, sport_key: cfg.key }));
         const dueEvents = new Map();
         const triggerSignatures = new Map();
