@@ -44,11 +44,15 @@ class ApiService {
     return user.uid;
   }
 
-  // ── Leitura do Firestore (pública — sem auth) ──────────────────────────────
+  // ── Leitura do Firestore (autenticada — results/ exige isOwner()) ──────────
   static Future<FetchResult> _fetchFirestore(
       String collection, String document) async {
+    final token = await _authToken();
     final url = '$_firestoreBase/$collection/$document';
-    final res = await http.get(Uri.parse(url));
+    final res = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token'},
+    );
     if (res.statusCode != 200) {
       throw Exception(
           'Erro ao buscar $collection/$document: ${res.statusCode}');
@@ -709,6 +713,7 @@ class ApiService {
   // ── Histórico de odds ──────────────────────────────────────────────────────
   static Future<List<Map<String, dynamic>>> fetchNbaHistory(
       String date, String type) async {
+    final token = await _authToken();
     final month = date.substring(0, 7);
     final baseId = type == 'props'
         ? 'basketball_nba_props_$month'
@@ -719,7 +724,10 @@ class ApiService {
     for (int i = -1; i < 50; i++) {
       final docId = i == -1 ? baseId : '${baseId}_p$i';
       final url = '$_firestoreBase/odds_history/$docId';
-      final res = await http.get(Uri.parse(url));
+      final res = await http.get(
+        Uri.parse(url),
+        headers: {'Authorization': 'Bearer $token'},
+      );
       if (res.statusCode != 200) {
         if (i == -1) continue;
         break;

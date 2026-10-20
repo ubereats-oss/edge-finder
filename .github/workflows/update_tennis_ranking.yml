@@ -1,7 +1,11 @@
 name: Atualizar Ranking Tênis
 on:
-  schedule:
-    - cron: '0 17 * * 1'
+  # Agendamento semanal desativado — esporte Tênis excluído do app
+  # (dados já gravados em ranking.json/branch data continuam intactos).
+  # Workflow mantido, só manual, pra reativar bastaria devolver o
+  # `schedule:` abaixo.
+  # schedule:
+  #   - cron: '0 17 * * 1'
   workflow_dispatch:
 permissions:
   contents: write

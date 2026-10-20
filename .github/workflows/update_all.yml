@@ -16,7 +16,6 @@ on:
           - mlb
           - nhl
           - nfl
-          - tennis
 
 permissions:
   contents: write
@@ -427,12 +426,13 @@ jobs:
         if: steps.season.outputs.in_season == 'true'
         run: node pipeline/check_stats_freshness.js nfl
 
-  # ── TÊNIS (ano inteiro) ────────────────────────────────────────────────────
+  # ── TÊNIS — esporte excluído do app, job desativado ─────────────────────────
+  # Não roda mais (nem no cron diário, nem no dispatch manual) pra não gastar
+  # cota da The Odds API nem minutos do Actions. Dados já gravados
+  # (ranking.json, odds_history/, model_report) continuam intactos. Job
+  # mantido (não apagado) pra reativar bastaria devolver a condição abaixo.
   tennis:
-    if: >-
-      github.event_name == 'schedule' ||
-      github.event.inputs.sports == 'all' ||
-      github.event.inputs.sports == 'tennis'
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
