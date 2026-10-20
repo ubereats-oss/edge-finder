@@ -1,5 +1,6 @@
 # Dependências
 node_modules/
+.firebase/
 
 # Dados locais (não versionar)
 *.json
