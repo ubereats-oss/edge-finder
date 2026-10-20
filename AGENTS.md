@@ -12,6 +12,10 @@
 - Git push: one-liner Node.js lendo `GITHUB_TOKEN` do `.env`
 - Nunca usar `cd` sem necessidade; comandos nunca com quebra de linha
 
+## Autorizações operacionais permanentes
+- Testes, analyze, build, commit, push para `main` e deploy do Firebase Hosting e Functions estão autorizados sem confirmação adicional.
+- Peça confirmação somente antes de ações irreversíveis sobre dados: apagar dados, reescrever histórico ou fazer push forçado.
+
 ## Arquitetura
 - `pipeline/` — scripts Node.js de coleta e modelo
 - `lib/screens/` — telas Flutter
