@@ -9,6 +9,7 @@ function readRows() {
     href: e.querySelector('a.ta-EventListItemDetails')?.getAttribute('href'),
     markets: [...e.querySelectorAll('.ta-Market')].map(m => ({
       type: [...m.classList].find(s => s.startsWith('ta-MarketType-'))?.slice(14),
+      title: m.getAttribute('aria-label') || m.querySelector('h3,h4,[class*="title"],[class*="Title"]')?.textContent.trim() || '',
       selections: [...m.querySelectorAll('.ta-SelectionButtonView')].map(s => ({
         price: s.querySelector('.ta-price_text')?.textContent.trim() ?? null,
         line: s.querySelector('.ta-infoTextHandicap')?.textContent.trim() ?? null,

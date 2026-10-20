@@ -1,9 +1,10 @@
 const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
 const { database } = require('./odds_api_monthly_budget');
 const { createBrowser, scrapeCompetition } = require('./get_placard_odds');
-const { compare, references, matchingEvents, isNearValue, nearValueSelections, report } = require('./placard_value');
+const { compare, references, matchingEvents, isNearValue, nearValueSelections, report, namesEqual, normalize } = require('./placard_value');
 const competitions = require('./placard_config');
 const fs = require('fs');
+const crypto = require('crypto');
 
 async function allEntries(db) {
   const rows = [];
@@ -48,6 +49,44 @@ async function exactTotals(api, sport, event, lines, attempted, closing = false)
   }
 }
 
+async function exactSpreads(api, sport, event, lines, attempted, closing = false) {
+  const available = references(event, Date.now(), closing).filter(r => r.market === 'spreads').map(r => `${r.selection}|${r.line}`);
+  const missing = lines.filter(row => Number.isFinite(row.line) && Number.isInteger(row.line * 2)
+    && !available.includes(`${row.selection}|${row.line}`));
+  if (!missing.length || attempted.has(`spreads:${event.id}`)) return;
+  attempted.add(`spreads:${event.id}`);
+  const { data } = await api.get(`https://api.the-odds-api.com/v4/sports/${sport}/events/${event.id}/odds`, {
+    timeout: 15000, params: { bookmakers: 'pinnacle', markets: 'alternate_spreads', oddsFormat: 'decimal' },
+  });
+  const alternate = data?.bookmakers?.find(b => b.key === 'pinnacle')?.markets?.find(m => m.key === 'alternate_spreads');
+  if (!alternate || data.id !== event.id || Math.abs(Date.parse(data.commence_time) - Date.parse(event.commence_time)) > 60000) return;
+  const bm = event.bookmakers?.find(b => b.key === 'pinnacle');
+  if (bm) bm.markets.push(alternate);
+  else { event.bookmakers ||= []; event.bookmakers.push({ key: 'pinnacle', markets: [alternate] }); }
+}
+
+function tennisCompetitionAlias(key) {
+  const slug = key.replace(/^tennis_(?:atp|wta)_/, '').replace(/_singles$/, '');
+  const special = { aus_open: 'Australian Open', french_open: 'French Open', us_open: 'US Open',
+    queens_club_champ: "Queen's Club", monte_carlo_masters: 'Monte-Carlo', indian_wells: 'Indian Wells' };
+  const name = special[slug] || slug.split('_').filter(part => !['open', 'championship', 'champ', 'masters', 'singles', 'wta', 'atp'].includes(part)).join(' ');
+  return `${name.replace(/\b\w/g, c => c.toUpperCase())} - Individual`;
+}
+
+function competitionLabelMatches(link, cfg) {
+  const text = link.toLowerCase();
+  if ([cfg.label, ...(cfg.aliases || [])].some(label => label.toLowerCase() === text)) return true;
+  if (cfg.sport !== 'tennis') return false;
+  const alias = tennisCompetitionAlias(cfg.key).replace(/ - Individual$/i, '').toLowerCase();
+  return alias.length > 2 && text.includes(alias);
+}
+
+const placardSportPaths = {
+  americanfootball: ['american-football', 'americanfootball', 'football'],
+  icehockey: ['ice-hockey', 'icehockey', 'hockey'],
+  mma: ['mma', 'mixed-martial-arts', 'ufc'],
+};
+
 async function scan(db) {
   const rows = [], errors = [], diagnostics = [];
   const api = createOddsApiClient({ label: 'placard-scan' });
@@ -57,20 +96,41 @@ async function scan(db) {
     const page = await browser.newPage({ locale: 'pt-PT', timezoneId: 'UTC' });
     // Redescobre IDs, que podem mudar a cada temporada. Nunca usa URL de
     // outra liga como fallback quando o nome deixa de existir.
+    const catalogResponse = await api.get('https://api.the-odds-api.com/v4/sports', { timeout: 15000, params: { all: 'true' } });
+    const activeKeys = new Set(catalogResponse.data.filter(s => s.active).map(s => s.key));
+    const activeCompetitions = competitions.filter(c => activeKeys.has(c.key));
+    for (const sport of catalogResponse.data.filter(s => s.active && /^tennis_(?:atp|wta)_/.test(s.key))) {
+      if (!activeCompetitions.some(c => c.key === sport.key)) activeCompetitions.push({
+        key: sport.key, label: sport.title || tennisCompetitionAlias(sport.key), sport: 'tennis', markets: ['h2h', 'spreads', 'totals'],
+      });
+    }
     const links = new Map();
-    for (const sport of ['soccer', 'basketball']) {
-      await page.goto(`https://www.placard.pt/apostas/sports/${sport}/competitions`, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      await page.locator('a.ta-SportGroupsListButton').first().waitFor({ state: 'attached', timeout: 20000 });
-      const found = await page.locator('a.ta-SportGroupsListButton').evaluateAll(es => es.map(e => ({ text: e.textContent.trim().replace(/^soccer icon/, ''), href: e.href })));
-      for (const cfg of competitions.filter(c => c.sport === sport)) {
-        const urls = [...new Set(found.filter(l => l.text === cfg.label).map(l => l.href.replace(/\/matches$/, '')))];
-        if (urls.length === 1) links.set(cfg.key, `${urls[0]}/matches`);
+    for (const sport of new Set(activeCompetitions.map(c => c.sport))) {
+      try {
+        let found = [];
+        for (const path of placardSportPaths[sport] || [sport]) {
+          try {
+            await page.goto(`https://www.placard.pt/apostas/sports/${path}/competitions`, { waitUntil: 'domcontentloaded', timeout: 20000 });
+            await page.locator('a.ta-SportGroupsListButton').first().waitFor({ state: 'attached', timeout: 8000 });
+            found = await page.locator('a.ta-SportGroupsListButton').evaluateAll(es => es.map(e => ({ text: e.textContent.trim().replace(/^soccer icon/, ''), href: e.href })));
+            if (found.length) break;
+          } catch (_) { /* tenta o próximo slug observado/canônico */ }
+        }
+        if (!found.length) throw new Error(`Nenhum slug Placard respondeu para ${sport}.`);
+        for (const cfg of activeCompetitions.filter(c => c.sport === sport)) {
+          const urls = [...new Set(found.filter(l => competitionLabelMatches(l.text, cfg)).map(l => l.href.replace(/\/matches$/, '')))];
+          if (urls.length === 1) links.set(cfg.key, `${urls[0]}/matches`);
+        }
+      } catch (error) {
+        for (const cfg of activeCompetitions.filter(c => c.sport === sport)) {
+          diagnostics.push({ competition: cfg.label, reason: 'catalogo_placard_indisponivel', detail: error.message });
+        }
       }
     }
-    for (const cfg of competitions) {
+    for (const cfg of activeCompetitions) {
       try {
         const url = links.get(cfg.key);
-        if (!url) throw new Error('Competição não identificada de forma única no catálogo do Placard.');
+        if (!url) { diagnostics.push({ competition: cfg.label, reason: 'competicao_nao_confirmada_no_catalogo_placard' }); continue; }
         const games = (await scrapeCompetition(page, cfg, url)).filter(g => {
           const delta = Date.parse(g.commenceTime) - Date.now();
           return delta > 0 && delta <= 12 * 3600000;
@@ -79,6 +139,10 @@ async function scan(db) {
         const cacheRef = db.collection('_placard_pinnacle_latest').doc(cfg.key);
         const cacheSnap = await cacheRef.get();
         let events = cacheSnap.data()?.events || [];
+        const notFoundProbes = cacheSnap.data()?.notFoundProbes || {};
+        for (const [key, value] of Object.entries(notFoundProbes)) {
+          if (!Number.isFinite(Date.parse(value)) || Date.now() - Date.parse(value) > 24 * 3600000) delete notFoundProbes[key];
+        }
         events = events.map(e => ({ ...e, sport_key: cfg.key }));
         const dueEvents = new Map();
         const triggerSignatures = new Map();
@@ -97,15 +161,19 @@ async function scan(db) {
           const marketUpdates = (bookmaker?.markets || [])
             .map(m => Date.parse(m.last_update || bookmaker.last_update)).filter(Number.isFinite);
           const stale = !event || !marketUpdates.length || marketUpdates.some(t => Date.now() - t > 2 * 3600000);
-          if (!event || triggerSignatures.has(event.id) || (delta <= 3 * 3600000 && stale)) {
+          const gameKey = crypto.createHash('sha256').update(JSON.stringify([cfg.key, game.teams.map(normalize).sort(), game.commenceTime])).digest('hex');
+          const lastProbe = Date.parse(notFoundProbes[gameKey] || '');
+          const probeDue = !event && (!Number.isFinite(lastProbe) || Date.now() - lastProbe >= 2 * 3600000);
+          if (probeDue || (event && triggerSignatures.has(event.id)) || (event && delta <= 3 * 3600000 && stale)) {
             if (event) dueEvents.set(event.id, event);
-            else dueEvents.set(`new:${game.teams.join('|')}|${game.commenceTime}`, null);
+            else dueEvents.set(`new:${gameKey}`, null);
           }
         }
         let refreshedEvents = [];
         if (dueEvents.size) {
           const knownIds = [...dueEvents.keys()].filter(id => !id.startsWith('new:'));
-          const params = { bookmakers: 'pinnacle', markets: 'h2h,totals', oddsFormat: 'decimal' };
+          const markets = cfg.markets || ['h2h', 'totals', 'spreads'];
+          const params = { bookmakers: 'pinnacle', markets: markets.join(','), oddsFormat: 'decimal' };
           if (knownIds.length === dueEvents.size) params.eventIds = knownIds.join(',');
           else {
             params.commenceTimeFrom = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
@@ -113,6 +181,9 @@ async function scan(db) {
           }
           const response = await api.get(`https://api.the-odds-api.com/v4/sports/${cfg.key}/odds`, { timeout: 20000, params });
           refreshedEvents = response.data.map(e => ({ ...e, sport_key: cfg.key }));
+          for (const key of dueEvents.keys()) {
+            if (key.startsWith('new:')) notFoundProbes[key.slice(4)] = new Date().toISOString();
+          }
           const merged = new Map(events.map(e => [e.id, e]));
           for (const e of refreshedEvents) merged.set(e.id, e);
           const expiresAt = Date.now() + 12 * 3600000;
@@ -120,7 +191,7 @@ async function scan(db) {
             const start = Date.parse(e.commence_time);
             return Number.isFinite(start) && start > Date.now() && start <= expiresAt;
           });
-          await cacheRef.set({ events, updatedAt: new Date().toISOString() });
+          await cacheRef.set({ events, notFoundProbes, updatedAt: new Date().toISOString() });
           for (const [eventId, state] of triggerSignatures) {
             if (refreshedEvents.some(e => e.id === eventId)) {
               await state.ref.set({ nearSignature: state.signature, updatedAt: new Date().toISOString() }, { merge: true });
@@ -139,9 +210,17 @@ async function scan(db) {
           const matches = matchingEvents(game, refreshedEvents);
           let alternateError = null;
           if (matches.length === 1) {
-            const lines = game.markets.filter(m => ['TPOT', 'HCTG'].includes(m.type))
+            const totalLines = game.markets.filter(m => ['TPOT', 'HCTG'].includes(m.type))
               .flatMap(m => m.selections.filter(s => !s.unavailable && s.line !== null).map(s => Number(s.line)));
-            try { await exactTotals(api, cfg.key, matches[0], lines, attemptedAlternates); }
+            const spreadLines = game.markets.filter(m => /handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`))
+              .flatMap(m => m.selections.filter(s => !s.unavailable && s.line !== null).map((s, i) => ({
+                selection: [matches[0].home_team, matches[0].away_team].find(name => namesEqual(game.teams[i], name)),
+                line: Number(s.line),
+              })));
+            try {
+              if (totalLines.length) await exactTotals(api, cfg.key, matches[0], totalLines, attemptedAlternates);
+              if (spreadLines.length) await exactSpreads(api, cfg.key, matches[0], spreadLines, attemptedAlternates);
+            }
             catch (e) { alternateError = e.message; }
           }
           const result = compare(game, refreshedEvents);
@@ -149,7 +228,7 @@ async function scan(db) {
             comparedSelections: result.comparedSelections ?? 0, alternateError });
           for (const row of result.rows) { await saveOpportunity(db, row); rows.push(row); }
         }
-        if (refreshedEvents.length) await cacheRef.set({ events, updatedAt: new Date().toISOString() });
+        if (refreshedEvents.length) await cacheRef.set({ events, notFoundProbes, updatedAt: new Date().toISOString() });
         await db.collection('_placard_reads').add({ observedAt: new Date().toISOString(), apiSport: cfg.key,
           games, pinnacle: JSON.stringify(events), refreshedEventIds: refreshedEvents.map(e => e.id) });
       } catch (e) { errors.push({ competition: cfg.label, error: e.message }); }
@@ -188,7 +267,7 @@ async function captureClosing(db, entries) {
   for (const [sport, group] of due) {
     try {
       const { data } = await api.get(`https://api.the-odds-api.com/v4/sports/${sport}/odds`, {
-        timeout: 15000, params: { bookmakers: 'pinnacle', markets: 'h2h,totals', oddsFormat: 'decimal',
+        timeout: 15000, params: { bookmakers: 'pinnacle', markets: [...new Set(group.map(e => e.market))].join(','), oddsFormat: 'decimal',
           eventIds: [...new Set(group.map(e => e.eventId))].join(',') },
       });
       for (const e of group) {
@@ -198,6 +277,10 @@ async function captureClosing(db, entries) {
         if (e.market === 'totals') {
           try { await exactTotals(api, sport, event, [e.line], attemptedAlternates, true); }
           catch (error) { console.error(`Linha de fechamento ${e.eventId}: ${error.message}`); }
+        }
+        if (e.market === 'spreads') {
+          try { await exactSpreads(api, sport, event, [{ selection: e.selection, line: e.line }], attemptedAlternates, true); }
+          catch (error) { console.error(`Handicap de fechamento ${e.eventId}: ${error.message}`); }
         }
         const capturedAt = new Date().toISOString();
         if (Date.parse(capturedAt) >= Date.parse(e.commenceTime)) continue;
@@ -278,5 +361,5 @@ async function main() {
     opportunities: result.rows.length, errors: result.errors }, null, 2));
   if (due && result.errors.length) throw new Error(`Coleta incompleta: ${result.errors.map(e => e.competition || e.error).join(', ')}`);
 }
-module.exports = { scan, captureClosing, allEntries, publish, exactTotals };
+module.exports = { scan, captureClosing, allEntries, publish, exactTotals, exactSpreads };
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });

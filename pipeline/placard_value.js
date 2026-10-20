@@ -4,7 +4,10 @@ const { KELLY_FRACTION } = require('./risk_config');
 const normalize = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const normalizedAliases = new Map(Object.entries(aliases).map(([name, values]) => [normalize(name), values]));
 function namesEqual(placard, canonical) {
-  return [placard, ...(normalizedAliases.get(normalize(placard)) || [])].some(n => normalize(n) === normalize(canonical));
+  const left = normalize(placard), right = normalize(canonical);
+  if (left === right || (normalizedAliases.get(left) || []).some(n => normalize(n) === right)) return true;
+  return [...normalizedAliases.entries()].some(([name, values]) => normalize(name) === right
+    && values.some(value => normalize(value) === left));
 }
 function fairProbabilities(prices) {
   if (prices.length < 2 || prices.some(p => !Number.isFinite(p) || p <= 1)) return null;
@@ -44,6 +47,22 @@ function references(event, now = Date.now(), historical = false, maxAgeOverride 
         if (probs) outcomes.forEach((o, i) => rows.push({ market: 'totals', line, selection: o.name, probability: probs[i], probabilityBasis: Number.isInteger(line) ? 'condicional_sem_devolucao' : 'binaria', pinnacleOdds: o.price, pinnacleUpdatedAt: update }));
       }
     }
+    if (market.key === 'spreads' || market.key === 'alternate_spreads') {
+      const names = [event.home_team, event.away_team];
+      const homeLines = new Set(market.outcomes?.filter(o => o.name === names[0]).map(o => o.point));
+      for (const line of homeLines) {
+        // Linhas inteiras têm devolução e meias linhas são binárias. Linhas
+        // asiáticas .25/.75 são excluídas por exigirem liquidação fracionada.
+        if (!Number.isFinite(line) || !Number.isInteger(line * 2)) continue;
+        const outcomes = [market.outcomes.find(o => o.name === names[0] && o.point === line),
+          market.outcomes.find(o => o.name === names[1] && o.point === -line)];
+        if (outcomes.some(o => !o)) continue;
+        const probs = fairProbabilities(outcomes.map(o => o.price));
+        if (probs) outcomes.forEach((o, i) => rows.push({ market: 'spreads', line: i === 0 ? line : -line, selection: o.name,
+          probability: probs[i], probabilityBasis: Number.isInteger(line) ? 'condicional_sem_devolucao' : 'binaria',
+          pinnacleOdds: o.price, pinnacleUpdatedAt: update }));
+      }
+    }
   }
   return rows;
 }
@@ -56,13 +75,16 @@ function placardSelections(game, event) {
     if (m.type === 'MRES') selections = [teamNames[0][0], 'Draw', teamNames[1][0]];
     else if (m.type === 'H2HT') selections = [teamNames[0][0], teamNames[1][0]];
     else if (m.type === 'TPOT' || m.type === 'HCTG') selections = ['Over', 'Under'];
+    else if (/handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`)) selections = [teamNames[0][0], teamNames[1][0]];
     else continue;
     if (m.selections.length !== selections.length) continue;
     for (let i = 0; i < selections.length; i++) {
       const s = m.selections[i];
       const price = Number(s.price), line = s.line === null ? null : Number(s.line);
       if (s.unavailable || !Number.isFinite(price) || price <= 1) continue;
-      rows.push({ market: ['TPOT', 'HCTG'].includes(m.type) ? 'totals' : 'h2h',
+      const market = ['TPOT', 'HCTG'].includes(m.type) ? 'totals'
+        : /handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`) ? 'spreads' : 'h2h';
+      rows.push({ market,
         selection: selections[i], line, placardOdds: price });
     }
   }

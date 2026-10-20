@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const { compare, fairProbabilities, references, report, namesEqual } = require('./placard_value');
 const { estimateCost, readingAllowance } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
-const { captureClosing, exactTotals } = require('./run_placard_value');
+const { captureClosing, exactTotals, exactSpreads } = require('./run_placard_value');
 const now = Date.parse('2026-10-20T12:00:00Z');
 function fixture() {
   const game = { teams: ['FC Porto', 'SL Benfica'], apiSport: 'soccer_portugal_primeira_liga',
@@ -35,6 +35,7 @@ test('apelidos, empate e Kelly central de 25%', () => {
   assert.ok(namesEqual('Sabah', 'Sabah FK'));
   assert.ok(namesEqual('Slovan Bratislava', 'ŠK Slovan Bratislava'));
   assert.ok(namesEqual('PSG', 'Paris Saint Germain'));
+  assert.ok(namesEqual('NY Knicks', 'New York Knicks'));
 });
 test('não casa evento ambíguo ou horário diferente', () => {
   const { game, event } = fixture();
@@ -63,6 +64,22 @@ test('totais: exige mesma linha; inteira é condicional a não haver devolução
   event.bookmakers[0].markets[0].outcomes.forEach(o => { o.point = 3.25; });
   assert.equal(references(event, now).length, 0);
 });
+test('handicap exige mesma seleção e linha Pinnacle, preservando linhas assinadas', () => {
+  const { game, event } = fixture();
+  game.markets = [{ type: 'HAND', title: 'Handicap', selections: [
+    { price: '2.2', line: '-1.5' }, { price: '1.8', line: '1.5' },
+  ] }];
+  event.bookmakers[0].markets = [{ key: 'spreads', outcomes: [
+    { name: 'Porto', point: -1.5, price: 1.91 }, { name: 'Benfica', point: 1.5, price: 1.91 },
+  ] }];
+  const result = compare(game, [event], now);
+  assert.equal(result.comparedSelections, 2);
+  assert.equal(result.rows.length, 1);
+  assert.equal(result.rows[0].market, 'spreads');
+  assert.equal(result.rows[0].selection, 'Porto');
+  game.markets[0].selections[0].line = '-1.25';
+  assert.equal(compare(game, [event], now).comparedSelections, 1);
+});
 test('reserva é 2 créditos por competição, não por partida; histórico custa 10x', () => {
   const options = { bookmakers: 'pinnacle', markets: 'h2h,totals' };
   assert.equal(estimateCost('https://api.the-odds-api.com/v4/sports/basketball_nba/odds', options), 2);
@@ -71,6 +88,27 @@ test('reserva é 2 créditos por competição, não por partida; histórico cust
   assert.equal(readingAllowance(0), 1736);
   assert.equal(readingAllowance(3051), 411);
   assert.equal(readingAllowance(5000), 0);
+  assert.equal(estimateCost('https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds',
+    { bookmakers: 'pinnacle', markets: 'h2h,totals,spreads' }), 3);
+});
+test('busca handicap alternativo exato uma vez por evento', async t => {
+  t.mock.method(Date, 'now', () => now);
+  const { event } = fixture();
+  event.bookmakers[0].markets = [{ key: 'spreads', outcomes: [
+    { name: 'Porto', point: -1, price: 1.9 }, { name: 'Benfica', point: 1, price: 1.9 },
+  ] }];
+  let calls = 0;
+  const api = { get: async (url, options) => {
+    calls++;
+    assert.equal(options.params.markets, 'alternate_spreads');
+    return { data: { ...event, bookmakers: [{ key: 'pinnacle', markets: [{ key: 'alternate_spreads',
+      outcomes: [{ name: 'Porto', point: -1.5, price: 2 }, { name: 'Benfica', point: 1.5, price: 2 }] }] }] } };
+  } };
+  const attempted = new Set();
+  await exactSpreads(api, event.sport_key, event, [{ selection: 'Porto', line: -1.5 }], attempted);
+  assert.equal(references(event, now).filter(r => r.market === 'spreads' && r.line === -1.5).length, 1);
+  await exactSpreads(api, event.sport_key, event, [{ selection: 'Porto', line: -1.5 }], attempted);
+  assert.equal(calls, 1);
 });
 test('veredito respeita n≥100 e IC positivo; correlação não cria novas amostras independentes', () => {
   const entries = Array.from({ length: 100 }, (_, i) => ({ eventId: String(i), apiSport: 'nba', clvPct: 2, closingStatus: 'capturada' }));
