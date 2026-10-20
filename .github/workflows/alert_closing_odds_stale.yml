@@ -1,10 +1,10 @@
 name: Alertar Captura de Fechamento Parada
 
-# Roda a cada 2h — suficiente pra avisar no mesmo dia em que o workflow
-# "Capturar Odd de Fechamento" completar 6h sem rodar com sucesso, sem gastar
-# mais que isso. Só manda e-mail se: 1) existir indicação elegível ainda sem
-# odd de fechamento e 2) a última execução com sucesso de
-# capture_closing_odds.yml tiver mais de 6h. No máximo 1 e-mail por dia
+# Roda a cada 2h. Só manda e-mail se: 1) existir indicação elegível cujo
+# jogo já começou e nunca teve NENHUMA tentativa de captura de odd de
+# fechamento (sinal de que o mecanismo não rodou, não de falta de dado —
+# "sem jogo próximo" não dispara mais isso) ou 2) o workflow "Capturar Odd
+# de Fechamento" estiver desabilitado no GitHub. No máximo 1 e-mail por dia
 # (marcador salvo na branch data).
 on:
   schedule:
