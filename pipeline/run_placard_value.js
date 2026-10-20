@@ -67,8 +67,14 @@ async function exactSpreads(api, sport, event, lines, attempted, closing = false
 
 function tennisCompetitionAlias(key) {
   const slug = key.replace(/^tennis_(?:atp|wta)_/, '').replace(/_singles$/, '');
-  const special = { aus_open: 'Australian Open', french_open: 'French Open', us_open: 'US Open',
-    queens_club_champ: "Queen's Club", monte_carlo_masters: 'Monte-Carlo', indian_wells: 'Indian Wells' };
+  const special = { aus_open: 'Melbourne', french_open: 'Paris', us_open: 'New York',
+    queens_club_champ: 'London', monte_carlo_masters: 'Monte-Carlo', indian_wells: 'Indian Wells',
+    canadian_open: 'Toronto', china_open: 'Beijing', italian_open: 'Roma', japan_open: 'Tokyo',
+    wimbledon: 'London', paris_masters: 'Paris', shanghai_masters: 'Shanghai',
+    barcelona_open: 'Barcelona', hamburg_open: 'Hamburg', halle_open: 'Halle', munich: 'Munich',
+    cincinnati_open: 'Cincinnati', washington_open: 'Washington', dubai: 'Dubai',
+    singapore_open: 'Singapore', ningbo_open: 'Ningbo', osaka: 'Osaka', guadalajara_open: 'Guadalajara',
+    wuhan_open: 'Wuhan', monterrey_open: 'Monterrey', strasbourg: 'Strasbourg', stuttgart_open: 'Stuttgart' };
   const name = special[slug] || slug.split('_').filter(part => !['open', 'championship', 'champ', 'masters', 'singles', 'wta', 'atp'].includes(part)).join(' ');
   return `${name.replace(/\b\w/g, c => c.toUpperCase())} - Individual`;
 }
@@ -77,8 +83,11 @@ function competitionLabelMatches(link, cfg) {
   const text = link.toLowerCase();
   if ([cfg.label, ...(cfg.aliases || [])].some(label => label.toLowerCase() === text)) return true;
   if (cfg.sport !== 'tennis') return false;
-  const alias = tennisCompetitionAlias(cfg.key).replace(/ - Individual$/i, '').toLowerCase();
-  return alias.length > 2 && text.includes(alias);
+  const aliases = [tennisCompetitionAlias(cfg.key).replace(/ - Individual$/i, '')];
+  if (cfg.key.endsWith('_canadian_open')) aliases.push('Montreal');
+  if (cfg.key.endsWith('_aus_open_singles')) aliases.push('Australian Open');
+  if (cfg.key.endsWith('_french_open')) aliases.push('Roland Garros');
+  return aliases.some(alias => alias.length > 2 && text.includes(alias.toLowerCase()));
 }
 
 const placardSportPaths = {
