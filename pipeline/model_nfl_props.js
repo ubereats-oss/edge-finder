@@ -352,6 +352,7 @@ for (const c of candidates) {
 
   if (!c.published) continue;
   results.push({
+    eventId: c.prop.eventId ?? `${c.prop.game}|${c.prop.commence_time}`,
     game: c.prop.game,
     commence_time: c.prop.commence_time,
     player: c.prop.player,
