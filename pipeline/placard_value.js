@@ -91,7 +91,8 @@ function placardSelections(game, event) {
   return rows;
 }
 function matchingEvents(game, events) {
-  return events.filter(e => Math.abs(Date.parse(e.commence_time) - Date.parse(game.commenceTime)) <= 60000
+  const tolerance = game.apiSport?.startsWith('tennis_') ? 3 * 60 * 60 * 1000 : 60000;
+  return events.filter(e => Math.abs(Date.parse(e.commence_time) - Date.parse(game.commenceTime)) <= tolerance
     && game.teams.every(t => namesEqual(t, e.home_team) || namesEqual(t, e.away_team)));
 }
 function nearValueSelections(game, event, now = Date.now()) {
@@ -127,7 +128,7 @@ function compare(game, events, now = Date.now()) {
     const id = crypto.createHash('sha256').update(JSON.stringify([game.apiSport, event.id, s.market, s.line, s.selection])).digest('hex');
     rows.push({ ...s, ...ref, id, apiSport: game.apiSport, eventId: event.id,
       game: `${event.home_team} x ${event.away_team}`, competition: game.competition,
-      commenceTime: event.commence_time, placardObservedAt: game.observedAt,
+      commenceTime: game.commenceTime, apiCommenceTime: event.commence_time, placardObservedAt: game.observedAt,
       comparedAt: new Date(now).toISOString(), sourceUrl: game.sourceUrl,
       minValueOdds: 1.01 / ref.probability, edgePct,
       kellyPct: Math.max(0, edgePct / (s.placardOdds - 1) * KELLY_FRACTION) });
