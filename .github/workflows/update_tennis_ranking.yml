@@ -5,7 +5,7 @@ on:
   # Workflow mantido, só manual, pra reativar bastaria devolver o
   # `schedule:` abaixo.
   # schedule:
-  #   - cron: '0 17 * * 1'
+  #   - cron: '13 17 * * 1'
   workflow_dispatch:
 permissions:
   contents: write

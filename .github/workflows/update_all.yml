@@ -2,7 +2,9 @@ name: Atualizar Todos os Esportes
 
 on:
   schedule:
-    - cron: '0 18 * * *'
+    # Fora da hora cheia pra não entrar na fila do agendador do GitHub
+    # junto com todo mundo que dispara em :00.
+    - cron: '9 18 * * *'
   workflow_dispatch:
     inputs:
       sports:

@@ -10,7 +10,9 @@ name: Sincronizar Conferências de Odds PT
 
 on:
   schedule:
-    - cron: '*/20 * * * *'
+    # Deslocado de */20 (cai em :00) pra evitar a hora cheia, onde o
+    # agendador do GitHub enfileira mais execuções de outros projetos.
+    - cron: '3,23,43 * * * *'
   workflow_dispatch:
 
 concurrency:

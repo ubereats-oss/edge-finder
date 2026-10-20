@@ -20,8 +20,18 @@
 // Grava pinnacle_reference.json na raiz do projeto.
 
 const fs = require('fs');
+const path = require('path');
 const { createOddsApiClient, loadEnvFileIfPresent, defaultKeysFromEnv } = require('./odds_api_client');
 const closingOddsRules = require('./closing_odds_rules');
+
+// odds_snapshots/ é escrito por save_odds_history.js, que roda antes deste
+// script no mesmo job (odds_history.yml) e já busca region 'eu' (onde a
+// Pinnacle aparece) pra NBA h2h + os 5 mercados de prop — exatamente o que
+// este script precisa pra NBA. Reaproveitar essa chamada já paga evita
+// qualquer chamada nova pra NBA. Só cobre NBA: save_odds_history.js não
+// coleta MLB props, NHL nem NFL (ver SPORTS_TO_COLLECT/SPORTS_WITH_PROPS lá),
+// então os outros esportes continuam buscando por conta própria, sem mudança.
+const ODDS_SNAPSHOTS_DIR = path.join(__dirname, '..', 'odds_snapshots');
 
 loadEnvFileIfPresent();
 
@@ -140,6 +150,7 @@ function rowsFromH2h(sportCfg, event, pinnacleBm) {
       fairProbPct: parseFloat((fairProb * 100).toFixed(2)),
       fairOdds: parseFloat(fairOdds.toFixed(3)),
       minValueOdds: parseFloat((fairOdds * VALUE_SLACK).toFixed(3)),
+      lastUpdate: pinnacleBm.last_update ?? null,
     });
   }
   return rows;
@@ -178,11 +189,95 @@ function rowsFromProps(sportCfg, event, pinnacleBm) {
           fairProbPct: parseFloat((fairProb * 100).toFixed(2)),
           fairOdds: parseFloat(fairOdds.toFixed(3)),
           minValueOdds: parseFloat((fairOdds * VALUE_SLACK).toFixed(3)),
+          lastUpdate: market.last_update ?? pinnacleBm.last_update ?? null,
         });
       }
     }
   }
   return rows;
+}
+
+// Reaproveita o snapshot já gravado por save_odds_history.js pra NBA (único
+// esporte que ele cobre com os mesmos mercados de pinnacle_reference) — sem
+// chamada nova à API. Devolve { rows, eventIdsCobertos }; o chamador busca na
+// API só os eventos de NBA que não aparecerem em eventIdsCobertos (ex.: save_
+// odds_history.js pulado por reserva de cota naquele dia).
+function nbaRowsFromSnapshot(sportCfg, now, windowEnd) {
+  const today = new Date().toISOString().slice(0, 10);
+  const month = new Date().toISOString().slice(0, 7);
+  const h2hFile = path.join(ODDS_SNAPSHOTS_DIR, `${sportCfg.apiSport}_h2h_${month}.json`);
+  const propsFile = path.join(ODDS_SNAPSHOTS_DIR, `${sportCfg.apiSport}_props_${month}.json`);
+
+  const rows = [];
+  const eventIdsCobertos = new Set();
+
+  const dentroDaJanela = (commenceTime) => {
+    const t = new Date(commenceTime).getTime();
+    return Number.isFinite(t) && t >= now && t <= windowEnd;
+  };
+
+  if (fs.existsSync(h2hFile) && sportCfg.h2h) {
+    const h2h = JSON.parse(fs.readFileSync(h2hFile, 'utf8'))
+      .filter(r => r.savedDate === today && r.bookmaker === 'pinnacle' && dentroDaJanela(r.commence_time));
+    for (const r of h2h) {
+      if (typeof r.odds_home !== 'number' || typeof r.odds_away !== 'number') continue;
+      const { fairA, fairB } = powerMethodFair(r.odds_home, r.odds_away);
+      for (const [side, team, odds, fairProb] of [
+        ['home', r.home_team, r.odds_home, fairA],
+        ['away', r.away_team, r.odds_away, fairB],
+      ]) {
+        const fairOdds = 1 / fairProb;
+        rows.push({
+          esporte: sportCfg.esporte,
+          eventId: r.eventId,
+          game: `${r.home_team} x ${r.away_team}`,
+          commenceTime: r.commence_time,
+          market: 'h2h',
+          line: 0,
+          side,
+          player: team,
+          pinnacleOdds: odds,
+          fairProbPct: parseFloat((fairProb * 100).toFixed(2)),
+          fairOdds: parseFloat(fairOdds.toFixed(3)),
+          minValueOdds: parseFloat((fairOdds * VALUE_SLACK).toFixed(3)),
+          lastUpdate: r.last_update ?? r.savedAt ?? null,
+        });
+      }
+      eventIdsCobertos.add(r.eventId);
+    }
+  }
+
+  if (fs.existsSync(propsFile)) {
+    const props = JSON.parse(fs.readFileSync(propsFile, 'utf8'))
+      .filter(r => r.savedDate === today && r.bookmaker === 'pinnacle' && dentroDaJanela(r.commence_time));
+    for (const r of props) {
+      const marketName = sportCfg.props[r.prop];
+      if (!marketName) continue;
+      if (typeof r.oddsOver !== 'number' || typeof r.oddsUnder !== 'number') continue;
+      const { fairA: fairOver, fairB: fairUnder } = powerMethodFair(r.oddsOver, r.oddsUnder);
+      for (const [side, odds, fairProb] of [['Over', r.oddsOver, fairOver], ['Under', r.oddsUnder, fairUnder]]) {
+        const fairOdds = 1 / fairProb;
+        rows.push({
+          esporte: sportCfg.esporte,
+          eventId: r.eventId,
+          game: `${r.home_team} x ${r.away_team}`,
+          commenceTime: r.commence_time,
+          market: marketName,
+          line: r.line,
+          side,
+          player: r.player,
+          pinnacleOdds: odds,
+          fairProbPct: parseFloat((fairProb * 100).toFixed(2)),
+          fairOdds: parseFloat(fairOdds.toFixed(3)),
+          minValueOdds: parseFloat((fairOdds * VALUE_SLACK).toFixed(3)),
+          lastUpdate: r.last_update ?? r.savedAt ?? null,
+        });
+      }
+      eventIdsCobertos.add(r.eventId);
+    }
+  }
+
+  return { rows, eventIdsCobertos };
 }
 
 async function main() {
@@ -212,11 +307,21 @@ async function main() {
       continue;
     }
 
-    const upcoming = (events || []).filter(ev => {
+    let upcoming = (events || []).filter(ev => {
       const t = new Date(ev.commence_time).getTime();
       return Number.isFinite(t) && t >= now && t <= windowEnd;
     });
     console.log(`  ${upcoming.length}/${(events || []).length} evento(s) nas próximas 24h.`);
+
+    if (sportCfg.apiSport === 'basketball_nba') {
+      const { rows: snapshotRows, eventIdsCobertos } = nbaRowsFromSnapshot(sportCfg, now, windowEnd);
+      if (snapshotRows.length) {
+        allRows.push(...snapshotRows);
+        console.log(`  Reaproveitado de odds_snapshots/ (sem chamada nova): ${eventIdsCobertos.size} evento(s), ${snapshotRows.length} linha(s).`);
+        upcoming = upcoming.filter(ev => !eventIdsCobertos.has(ev.id));
+        if (upcoming.length) console.log(`  ${upcoming.length} evento(s) de NBA fora do snapshot — buscando normalmente.`);
+      }
+    }
 
     const marketsParam = [
       ...(sportCfg.h2h ? ['h2h'] : []),

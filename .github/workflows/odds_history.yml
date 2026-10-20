@@ -1,7 +1,9 @@
 name: Histórico de Odds
 on:
   schedule:
-    - cron: '0 19 * * *'
+    # Fora da hora cheia pra não entrar na fila do agendador do GitHub
+    # junto com todo mundo que dispara em :00.
+    - cron: '17 19 * * *'
   workflow_dispatch:
     inputs:
       ignore_global_reserve:
