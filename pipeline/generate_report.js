@@ -305,9 +305,16 @@ function methodVersionBreakdown(entries) {
 // risk_config.js): acompanha se NFL receptions de fato bate o fechamento,
 // com meta de amostra (N_ALVO) e veredito automático — nunca editado à mão,
 // só recalculado a cada geração do relatório a partir do histórico real.
-// CLV não depende do resultado do jogo (é só aposta vs. fechamento), então
-// conta toda indicação publicada, válida e com CLV exato já capturado —
-// resolvida ou não.
+//
+// Métrica trocada de "CLV na mesma casa" (clv) pra "CLV sem margem" (clvNoVig
+// — Pinnacle quando ela cotar o mercado, senão média devigada das casas US,
+// ver line_adjusted_clv.js/noVigClosingClv) depois de medir lado a lado:
+// publicadas (clv) deram ~0% (IC95 cruzando zero), mas as REJEITADAS deram
+// positivo e estatisticamente significativo (IC95 inteiro acima de zero) —
+// sinal de que "clv" isolada por casa está contaminada por ruído específico
+// da casa/vig, não distinguindo publicada de rejeitada como deveria. clvNoVig
+// não existe em indicações antigas (precisa da resposta multi-casa no
+// momento da captura, não retida antes dessa mudança) — n reinicia do zero.
 const TESTE_NFL_RECEPTIONS = { esporte: 'americanfootball/nfl', market: 'receptions' };
 const TESTE_N_ALVO = 100;
 const TESTE_IC95_Z = 1.96;
@@ -321,18 +328,19 @@ function mean(values) {
 function testeNflReceptions(allEntries) {
   const segment = allEntries.filter(e =>
     e.esporte === TESTE_NFL_RECEPTIONS.esporte && e.market === TESTE_NFL_RECEPTIONS.market &&
-    e.published && e.hasModelProb && e.validForCalibration !== false && typeof e.clv === 'number'
+    e.published && e.hasModelProb && e.validForCalibration !== false && typeof e.clvNoVig === 'number'
   );
   const n = segment.length;
 
   const base = {
     esporte: TESTE_NFL_RECEPTIONS.esporte, market: TESTE_NFL_RECEPTIONS.market,
+    metodo: 'clv_sem_margem',
     n, nAlvo: TESTE_N_ALVO, clvMedio: null, ic95Lower: null, ic95Upper: null,
     veredito: 'em_teste', nRecentes: 0, clvMedioRecentes: null,
   };
   if (n === 0) return base;
 
-  const clvValues = segment.map(e => e.clv);
+  const clvValues = segment.map(e => e.clvNoVig);
   const clvMedio = mean(clvValues);
   let ic95Lower = null, ic95Upper = null;
   if (n >= 2) {
@@ -352,7 +360,7 @@ function testeNflReceptions(allEntries) {
   // deterioração que a média de todo o histórico ainda não mostra.
   const porData = [...segment].sort((a, b) => new Date(b.commenceTime) - new Date(a.commenceTime));
   const recentes = porData.slice(0, TESTE_N_RECENTES);
-  const clvMedioRecentes = recentes.length ? mean(recentes.map(e => e.clv)) : null;
+  const clvMedioRecentes = recentes.length ? mean(recentes.map(e => e.clvNoVig)) : null;
 
   return {
     ...base,
