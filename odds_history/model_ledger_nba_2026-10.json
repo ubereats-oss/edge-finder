@@ -3903,7 +3903,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -2.26,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 1,
+    "closingOddsLastAttemptAt": "2026-10-21T00:35:36.968Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Cason Wallace|assists|2.5|Over",
@@ -4353,7 +4358,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -11.71,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 1,
+    "closingOddsLastAttemptAt": "2026-10-21T00:35:36.969Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|De'Aaron Fox|points|14.5|Over",
@@ -4398,7 +4408,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -9.33,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 5,
+    "closingOddsLastAttemptAt": "2026-10-21T00:35:36.969Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Devin Vassell|points|11.5|Over",
@@ -4443,7 +4458,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -13.16,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 3,
+    "closingOddsLastAttemptAt": "2026-10-21T00:35:36.969Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Dylan Harper|points|15.5|Under",
@@ -4488,7 +4508,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -9.48,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 6,
+    "closingOddsLastAttemptAt": "2026-10-21T00:35:36.969Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Isaiah Hartenstein|points|7.5|Over",
@@ -4713,7 +4738,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -6.55,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 2,
+    "closingOddsLastAttemptAt": "2026-10-21T00:35:36.969Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Stephon Castle|points|15.5|Over",
@@ -5208,7 +5238,12 @@
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "pendente",
+    "clvNoVig": -10.68,
+    "closingNoVigSource": "consensus_us",
+    "closingNoVigNCasas": 5,
+    "closingOddsLastAttemptAt": "2026-10-21T00:35:36.969Z",
+    "closingOddsMissingReason": "bookmaker_indisponivel"
   },
   {
     "_key": "bccd283de56915e29af1788beb0abfc9|Stephon Castle|rebounds|5.5|Over",
