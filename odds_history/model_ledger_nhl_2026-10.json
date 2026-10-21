@@ -120203,7 +120203,7 @@
     "firstEvaluatedAt": "2026-10-13T00:22:42.167Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -131891,7 +131891,7 @@
     "firstEvaluatedAt": "2026-10-13T22:27:21.837Z",
     "result": null,
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -133603,7 +133603,7 @@
     "firstEvaluatedAt": "2026-10-13T22:27:21.837Z",
     "result": null,
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -141327,7 +141327,7 @@
     "firstEvaluatedAt": "2026-10-13T22:27:21.838Z",
     "result": null,
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -142944,7 +142944,7 @@
     "firstEvaluatedAt": "2026-10-13T22:27:21.838Z",
     "result": null,
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -143935,7 +143935,7 @@
     "firstEvaluatedAt": "2026-10-13T22:27:21.838Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -144913,7 +144913,7 @@
     "firstEvaluatedAt": "2026-10-13T22:27:21.839Z",
     "result": null,
     "resolutionAttempts": 1,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -157068,7 +157068,7 @@
     "firstEvaluatedAt": "2026-10-13T22:27:21.840Z",
     "result": null,
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -158643,7 +158643,7 @@
     "firstEvaluatedAt": "2026-10-13T22:27:21.840Z",
     "result": null,
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
@@ -241731,16 +241731,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-21T15:18:03.511Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "1ee9e671dfe8ad2d9c73f910baa56e1b|Martin Necas|goals|0.5|Over",
@@ -241776,16 +241780,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:03.961Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "1ee9e671dfe8ad2d9c73f910baa56e1b|Nathan MacKinnon|goals|0.5|Over",
@@ -241821,16 +241829,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:04.398Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "1ee9e671dfe8ad2d9c73f910baa56e1b|Cale Makar|goals|0.5|Over",
@@ -241866,9 +241878,13 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:04.846Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -241921,16 +241937,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:05.303Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "99c9d6d714b90f72a5fd2a1c5011170d|Adrian Kempe|goals|0.5|Over",
@@ -241966,16 +241986,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-21T15:18:05.740Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "60f76779653fc9a6106c6af48f51490f|Nick Suzuki|goals|0.5|Over",
@@ -242011,16 +242035,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:06.182Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "60f76779653fc9a6106c6af48f51490f|Cole Caufield|goals|0.5|Over",
@@ -242056,16 +242084,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:06.629Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "60f76779653fc9a6106c6af48f51490f|Juraj Slafkovsky|goals|0.5|Over",
@@ -242101,9 +242133,13 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:07.068Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -242156,16 +242192,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:07.554Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db38d272a56e929eac7005ab619af117|Mikko Rantanen|goals|0.5|Over",
@@ -242201,16 +242241,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-21T15:18:08.041Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db38d272a56e929eac7005ab619af117|Roope Hintz|goals|0.5|Over",
@@ -242246,16 +242290,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:08.535Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db38d272a56e929eac7005ab619af117|David Pastrnak|goals|0.5|Over",
@@ -242291,16 +242339,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:09.001Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db38d272a56e929eac7005ab619af117|Morgan Geekie|goals|0.5|Over",
@@ -242336,16 +242388,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:09.492Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db38d272a56e929eac7005ab619af117|Wyatt Johnston|goals|0.5|Over",
@@ -242381,16 +242437,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:09.970Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "db38d272a56e929eac7005ab619af117|JJ Peterka|goals|0.5|Over",
@@ -242426,9 +242486,13 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:10.438Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -242481,16 +242545,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:10.922Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "50c81d9967c2341f2117c57685000dee|Mason McTavish|goals|0.5|Over",
@@ -242526,9 +242594,13 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:11.413Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -242581,9 +242653,13 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:11.893Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -242636,16 +242712,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:12.386Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "50c81d9967c2341f2117c57685000dee|Gabriel Vilardi|goals|0.5|Over",
@@ -242681,16 +242761,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:12.858Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "50c81d9967c2341f2117c57685000dee|Robert Thomas|goals|0.5|Over",
@@ -242726,16 +242810,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:13.339Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "50c81d9967c2341f2117c57685000dee|Kyle Connor|goals|0.5|Over",
@@ -242771,16 +242859,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:13.817Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "50c81d9967c2341f2117c57685000dee|Dylan Holloway|goals|0.5|Over",
@@ -242816,9 +242908,13 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:14.285Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -242871,9 +242967,13 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:14.770Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -242926,16 +243026,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:15.262Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c3e7d800670fc3945c5b89ec09709eae|Kirill Kaprizov|goals|0.5|Over",
@@ -242971,16 +243075,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:15.729Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c3e7d800670fc3945c5b89ec09709eae|Matt Boldy|goals|0.5|Over",
@@ -243016,16 +243124,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:16.204Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c3e7d800670fc3945c5b89ec09709eae|Joel Eriksson Ek|goals|0.5|Over",
@@ -243061,16 +243173,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:16.692Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c3e7d800670fc3945c5b89ec09709eae|Vasily Podkolzin|goals|0.5|Over",
@@ -243106,9 +243222,13 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:17.176Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -243161,16 +243281,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:17.643Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c3e7d800670fc3945c5b89ec09709eae|Leon Draisaitl|goals|0.5|Over",
@@ -243206,16 +243330,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-21T15:18:18.108Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "c3e7d800670fc3945c5b89ec09709eae|Zach Hyman|goals|0.5|Over",
@@ -243251,16 +243379,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:18.623Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "adae998098aa843c9bb607b62ff47d5f|Brock Boeser|goals|0.5|Over",
@@ -243296,16 +243428,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:19.135Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "adae998098aa843c9bb607b62ff47d5f|Elias Pettersson|goals|0.5|Over",
@@ -243341,9 +243477,13 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:19.598Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -243396,16 +243536,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:20.089Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "adae998098aa843c9bb607b62ff47d5f|Andrei Svechnikov|goals|0.5|Over",
@@ -243441,16 +243585,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:20.572Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "adae998098aa843c9bb607b62ff47d5f|Jake DeBrusk|goals|0.5|Over",
@@ -243486,16 +243634,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:21.073Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "adae998098aa843c9bb607b62ff47d5f|Logan Stankoven|goals|0.5|Over",
@@ -243531,9 +243683,13 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-21T15:18:21.558Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -243586,16 +243742,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:22.030Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9839724bdc94a54158c53865e379c682|Mark Stone|goals|0.5|Over",
@@ -243631,16 +243791,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:22.594Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9839724bdc94a54158c53865e379c682|Jake Guentzel|goals|0.5|Over",
@@ -243676,16 +243840,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:23.056Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9839724bdc94a54158c53865e379c682|Jack Eichel|goals|0.5|Over",
@@ -243721,16 +243889,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:23.519Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9839724bdc94a54158c53865e379c682|Nikita Kucherov|goals|0.5|Over",
@@ -243766,16 +243938,20 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-21T15:18:23.988Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "9839724bdc94a54158c53865e379c682|Mitch Marner|goals|0.5|Over",
@@ -243811,15 +243987,19 @@
     "runId": "2026-10-19T22:09:46.477Z",
     "evaluatedAt": "2026-10-19T22:09:47.660Z",
     "firstEvaluatedAt": "2026-10-19T22:09:47.660Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-21T15:18:24.457Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   }
 ]
