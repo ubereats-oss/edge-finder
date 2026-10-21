@@ -21,6 +21,13 @@ async function allEntries(db) {
   return rows;
 }
 
+async function forEachCompetitionIsolated(items, worker, onError) {
+  for (const item of items) {
+    try { await worker(item); }
+    catch (error) { await onError(item, error); }
+  }
+}
+
 async function saveOpportunity(db, row) {
   const ref = db.collection('_placard_opportunities').doc(row.id);
   await db.runTransaction(async tx => {
@@ -135,10 +142,17 @@ async function scan(db) {
     const page = await browser.newPage({ locale: 'pt-PT', timezoneId: 'UTC' });
     // Redescobre IDs, que podem mudar a cada temporada. Nunca usa URL de
     // outra liga como fallback quando o nome deixa de existir.
-    const catalogResponse = await api.get('https://api.the-odds-api.com/v4/sports', { timeout: 15000, params: { all: 'true' } });
-    const activeKeys = new Set(catalogResponse.data.filter(s => s.active).map(s => s.key));
+    let catalogSports;
+    try {
+      const catalogResponse = await api.get('https://api.the-odds-api.com/v4/sports', { timeout: 15000, params: { all: 'true' } });
+      catalogSports = catalogResponse.data;
+    } catch (error) {
+      errors.push({ competition: 'catálogo The Odds API', error: error.message });
+      catalogSports = competitions.map(c => ({ key: c.key, title: c.label, active: true }));
+    }
+    const activeKeys = new Set(catalogSports.filter(s => s.active).map(s => s.key));
     const activeCompetitions = competitions.filter(c => activeKeys.has(c.key));
-    for (const sport of catalogResponse.data.filter(s => s.active && /^tennis_(?:atp|wta)_/.test(s.key))) {
+    for (const sport of catalogSports.filter(s => s.active && /^tennis_(?:atp|wta)_/.test(s.key))) {
       if (!activeCompetitions.some(c => c.key === sport.key)) activeCompetitions.push({
         key: sport.key, label: sport.title || tennisCompetitionAlias(sport.key), sport: 'tennis', markets: ['h2h', 'spreads', 'totals'],
       });
@@ -163,21 +177,21 @@ async function scan(db) {
           if (url) links.set(cfg.key, url);
         }
       } catch (error) {
+        errors.push({ competition: `catálogo Placard (${sport})`, error: error.message });
         for (const cfg of activeCompetitions.filter(c => c.sport === sport)) {
           diagnostics.push({ competition: cfg.label, reason: 'catalogo_placard_indisponivel', detail: error.message });
         }
       }
     }
-    for (const cfg of activeCompetitions) {
-      try {
+    await forEachCompetitionIsolated(activeCompetitions, async cfg => {
         const url = links.get(cfg.key);
         if (!url) { diagnostics.push({ competition: cfg.label, reason: 'competicao_nao_confirmada_no_catalogo_placard',
-          availableCompetitions: (sportCatalogs.get(cfg.sport) || []).slice(0, 80) }); continue; }
+          availableCompetitions: (sportCatalogs.get(cfg.sport) || []).slice(0, 80) }); return; }
         const games = (await scrapeCompetition(page, cfg, url)).filter(g => {
           const delta = Date.parse(g.commenceTime) - Date.now();
           return delta > 0 && delta <= 12 * 3600000;
         });
-        if (!games.length) { diagnostics.push({ competition: cfg.label, reason: 'sem_jogos_12h' }); continue; }
+        if (!games.length) { diagnostics.push({ competition: cfg.label, reason: 'sem_jogos_12h' }); return; }
         const cacheRef = db.collection('_placard_pinnacle_latest').doc(cfg.key);
         const cacheSnap = await cacheRef.get();
         let events = cacheSnap.data()?.events || [];
@@ -221,31 +235,38 @@ async function scan(db) {
             params.commenceTimeFrom = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
             params.commenceTimeTo = new Date(Date.now() + 12 * 3600000).toISOString().replace(/\.\d{3}Z$/, 'Z');
           }
-          const response = await api.get(`https://api.the-odds-api.com/v4/sports/${cfg.key}/odds`, { timeout: 20000, params });
-          refreshedEvents = response.data.map(e => ({ ...e, sport_key: cfg.key }));
-          for (const key of dueEvents.keys()) {
-            if (key.startsWith('new:')) notFoundProbes[key.slice(4)] = new Date().toISOString();
+          try {
+            const response = await api.get(`https://api.the-odds-api.com/v4/sports/${cfg.key}/odds`, { timeout: 20000, params });
+            refreshedEvents = response.data.map(e => ({ ...e, sport_key: cfg.key }));
+          } catch (error) {
+            errors.push({ competition: cfg.label, error: error.message });
+            diagnostics.push({ competition: cfg.label, reason: 'atualizacao_pinnacle_indisponivel', detail: error.message });
           }
-          const merged = new Map(events.map(e => [e.id, e]));
-          for (const e of refreshedEvents) merged.set(e.id, e);
-          const expiresAt = Date.now() + 12 * 3600000;
-          events = [...merged.values()].filter(e => {
-            const start = Date.parse(e.commence_time);
-            return Number.isFinite(start) && start > Date.now() && start <= expiresAt;
-          });
-          await cacheRef.set({ events, notFoundProbes, updatedAt: new Date().toISOString() });
-          for (const [eventId, state] of triggerSignatures) {
-            if (refreshedEvents.some(e => e.id === eventId)) {
-              await state.ref.set({ nearSignature: state.signature, updatedAt: new Date().toISOString() }, { merge: true });
+          if (refreshedEvents.length) {
+            for (const key of dueEvents.keys()) {
+              if (key.startsWith('new:')) notFoundProbes[key.slice(4)] = new Date().toISOString();
             }
-          }
-          for (const game of games) {
-            const match = matchingEvents(game, refreshedEvents);
-            if (match.length !== 1 || !isNearValue(game, match[0])) continue;
-            const eventId = match[0].id;
-            const stateRef = db.collection('_placard_refresh_state').doc(`${cfg.key}_${eventId}`);
-            const signature = JSON.stringify(nearValueSelections(game, match[0]));
-            await stateRef.set({ nearSignature: signature, updatedAt: new Date().toISOString() }, { merge: true });
+            const merged = new Map(events.map(e => [e.id, e]));
+            for (const e of refreshedEvents) merged.set(e.id, e);
+            const expiresAt = Date.now() + 12 * 3600000;
+            events = [...merged.values()].filter(e => {
+              const start = Date.parse(e.commence_time);
+              return Number.isFinite(start) && start > Date.now() && start <= expiresAt;
+            });
+            await cacheRef.set({ events, notFoundProbes, updatedAt: new Date().toISOString() });
+            for (const [eventId, state] of triggerSignatures) {
+              if (refreshedEvents.some(e => e.id === eventId)) {
+                await state.ref.set({ nearSignature: state.signature, updatedAt: new Date().toISOString() }, { merge: true });
+              }
+            }
+            for (const game of games) {
+              const match = matchingEvents(game, refreshedEvents);
+              if (match.length !== 1 || !isNearValue(game, match[0])) continue;
+              const eventId = match[0].id;
+              const stateRef = db.collection('_placard_refresh_state').doc(`${cfg.key}_${eventId}`);
+              const signature = JSON.stringify(nearValueSelections(game, match[0]));
+              await stateRef.set({ nearSignature: signature, updatedAt: new Date().toISOString() }, { merge: true });
+            }
           }
         }
         for (const game of games) {
@@ -276,10 +297,13 @@ async function scan(db) {
           for (const row of result.rows) { await saveOpportunity(db, row); rows.push(row); }
         }
         if (refreshedEvents.length) await cacheRef.set({ events, notFoundProbes, updatedAt: new Date().toISOString() });
+        const comparedSelections = games.reduce((sum, game) => {
+          const matches = matchingEvents(game, events);
+          return sum + (matches.length === 1 ? comparedSelectionCount(game, matches[0]) : 0);
+        }, 0);
         await db.collection('_placard_reads').add({ observedAt: new Date().toISOString(), apiSport: cfg.key,
-          games, pinnacle: JSON.stringify(events), refreshedEventIds: refreshedEvents.map(e => e.id) });
-      } catch (e) { errors.push({ competition: cfg.label, error: e.message }); }
-    }
+          games, pinnacle: JSON.stringify(events), refreshedEventIds: refreshedEvents.map(e => e.id), comparedSelections });
+    }, (cfg, error) => { errors.push({ competition: cfg.label, error: error.message }); });
   } finally { await browser.close(); }
   return { rows, errors, diagnostics };
 }
@@ -407,7 +431,7 @@ async function main() {
   await publish(db, result, entries);
   fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), scan: due,
     opportunities: result.rows.length, errors: result.errors }, null, 2));
-  if (due && result.errors.length) throw new Error(`Coleta incompleta: ${result.errors.map(e => e.competition || e.error).join(', ')}`);
+  if (due && result.errors.length) console.warn(`Coleta parcial; as demais competições foram processadas: ${result.errors.map(e => `${e.competition || 'coleta'}: ${e.error}`).join(' | ')}`);
 }
-module.exports = { scan, captureClosing, allEntries, publish, exactTotals, exactSpreads, competitionUrl };
+module.exports = { scan, captureClosing, allEntries, publish, exactTotals, exactSpreads, competitionUrl, forEachCompetitionIsolated };
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });
