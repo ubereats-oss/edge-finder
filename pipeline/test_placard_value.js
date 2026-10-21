@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const { compare, comparedSelectionCount, fairProbabilities, references, report, namesEqual } = require('./placard_value');
 const { estimateCost, readingAllowance } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
-const { captureClosing, exactTotals, exactSpreads, competitionUrl } = require('./run_placard_value');
+const { captureClosing, exactTotals, exactSpreads, competitionUrl, forEachCompetitionIsolated } = require('./run_placard_value');
 const now = Date.parse('2026-10-20T12:00:00Z');
 function fixture() {
   const game = { teams: ['FC Porto', 'SL Benfica'], apiSport: 'soccer_portugal_primeira_liga',
@@ -140,6 +140,16 @@ test('seleciona o nome exato da competição e não mistura categorias parecidas
     { text: 'Ningbo - Pares', href: 'https://placard/ningbo/doubles/matches' },
   ], { key: 'tennis_wta_ningbo_open', label: 'Ningbo - Individual', aliases: ['Ningbo'], sport: 'tennis' }),
   'https://placard/ningbo/singles/matches');
+});
+test('erro numa competição é registado e as competições seguintes continuam', async () => {
+  const processed = [];
+  const failures = [];
+  await forEachCompetitionIsolated(['NBA', 'La Liga', 'NHL'], async competition => {
+    processed.push(competition);
+    if (competition === 'La Liga') throw new Error('cota temporariamente indisponível');
+  }, (competition, error) => failures.push({ competition, error: error.message }));
+  assert.deepEqual(processed, ['NBA', 'La Liga', 'NHL']);
+  assert.deepEqual(failures, [{ competition: 'La Liga', error: 'cota temporariamente indisponível' }]);
 });
 test('reconcilia partidas de ténis pelo par de jogadores quando o horário estimado varia', () => {
   const start = '2026-10-20T14:05:00.000Z';
