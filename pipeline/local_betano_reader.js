@@ -18,6 +18,8 @@ const START_URL = 'https://www.betano.pt/sport/basquetebol/eua/nba';
 const SPORT = 'basketball_nba';
 const DATA_PATH = '/api/sports/BASK/hot/trending/leagues/441g/events?req=s,stnf,c,mb';
 const START_TOLERANCE_MS = 10 * 60000;
+const MONTHLY_TUNNEL_CAP_MB = 4000;
+const MAX_MEASURED_CYCLE_MB = 56;
 const OUTPUT_DIR = path.join(PROJECT, '.local_logs', 'betano');
 const IMAGE_AND_MEDIA = new Set(['image', 'media']);
 
@@ -141,6 +143,44 @@ async function updateFailure(db, error) {
   }
 }
 
+function monthKey(now = Date.now()) {
+  return new Date(now).toISOString().slice(0, 7);
+}
+
+function usageFile(now = Date.now()) {
+  return path.join(OUTPUT_DIR, `tunnelbear_usage_${monthKey(now)}.json`);
+}
+
+function readMonthlyUsage(now = Date.now()) {
+  const file = usageFile(now);
+  if (!fs.existsSync(file)) return { month: monthKey(now), totalMB: 0, cycles: [] };
+  try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
+  catch { throw new Error('Ledger mensal TunnelBear ilegível; ciclo bloqueado para proteger o limite de 4 GB.'); }
+}
+
+function tunnelCycleAffordable(usedMB) {
+  return Number.isFinite(usedMB) && usedMB + MAX_MEASURED_CYCLE_MB <= MONTHLY_TUNNEL_CAP_MB;
+}
+
+function assertTunnelBudget(now = Date.now()) {
+  const ledger = readMonthlyUsage(now);
+  if (!tunnelCycleAffordable(ledger.totalMB)) {
+    throw new Error(`Ciclo bloqueado: uso conservador TunnelBear ${ledger.totalMB} MB + reserva ${MAX_MEASURED_CYCLE_MB} MB excederia ${MONTHLY_TUNNEL_CAP_MB} MB neste mês.`);
+  }
+  return ledger;
+}
+
+function recordTunnelUsage({ startedAt, beforeMB, afterMB, now = Date.now(), reason = 'complete' }) {
+  const ledger = readMonthlyUsage(now);
+  const measuredMB = Number.isFinite(beforeMB) && Number.isFinite(afterMB) ? Math.max(0, beforeMB - afterMB) : 0;
+  const chargedMB = Math.max(MAX_MEASURED_CYCLE_MB, measuredMB);
+  ledger.cycles.push({ startedAt, recordedAt: new Date(now).toISOString(), beforeMB, afterMB,
+    measuredMB, chargedMB, reason });
+  ledger.totalMB = ledger.cycles.reduce((sum, cycle) => sum + Number(cycle.chargedMB || 0), 0);
+  fs.writeFileSync(usageFile(now), JSON.stringify(ledger, null, 2));
+  return ledger;
+}
+
 async function main() {
   loadEnvFileIfPresent(path.resolve(__dirname, '..', '.env'));
   process.env.ODDS_API_ENFORCE_MONTHLY_BUDGET = '1';
@@ -152,9 +192,13 @@ async function main() {
   let browser;
   let context;
   let vpnConnected = false;
+  let beforeMB = null;
+  let afterMB = null;
+  let usageRecorded = false;
   let error;
   try {
-    const before = tunnel('meter').remainingMB;
+    assertTunnelBudget();
+    beforeMB = tunnel('meter').remainingMB;
     const vpn = tunnel('connect');
     vpnConnected = true;
     const chrome = await ensureChrome();
@@ -215,9 +259,12 @@ async function main() {
 
     const disconnected = tunnel('disconnect');
     vpnConnected = false;
-    const after = tunnel('meter').remainingMB;
+    afterMB = tunnel('meter').remainingMB;
+    const usage = recordTunnelUsage({ startedAt, beforeMB, afterMB });
+    usageRecorded = true;
     const cycle = { startedAt, finishedAt: new Date().toISOString(), vpn, disconnected,
-      beforeMB: before, afterMB: after, consumedMB: before - after, endpoint: DATA_PATH,
+      beforeMB, afterMB, consumedMB: beforeMB - afterMB, monthlyChargedMB: usage.cycles.at(-1).chargedMB,
+      monthlyUsageMB: usage.totalMB, endpoint: DATA_PATH,
       source: 'fetch same-origin JSON na sessão persistente, sem reload', navigationCount,
       games: games.length, comparedSelections, opportunities: opportunityRows.length,
       apiUsage: api.usage(), closingUsage, validations };
@@ -243,8 +290,14 @@ async function main() {
         await updateFailure(db, new Error(`${error?.message || 'ciclo falhou'}; VPN não desligou: ${disconnectError.message}`));
       }
     }
+    if (Number.isFinite(beforeMB) && !usageRecorded) {
+      try { afterMB = tunnel('meter').remainingMB; } catch (_) { afterMB = null; }
+      try { recordTunnelUsage({ startedAt, beforeMB, afterMB, reason: error ? 'failed' : 'incomplete' }); }
+      catch (ledgerError) { console.error(`Não foi possível registrar uso TunnelBear: ${ledgerError.message}`); }
+    }
   }
 }
 
 if (require.main === module) main().catch(error => { console.error(error.message); process.exitCode = 1; });
-module.exports = { readSelections, adaptTotalsAndHandicaps };
+module.exports = { readSelections, adaptTotalsAndHandicaps, assertTunnelBudget, recordTunnelUsage,
+  tunnelCycleAffordable, MONTHLY_TUNNEL_CAP_MB, MAX_MEASURED_CYCLE_MB };
