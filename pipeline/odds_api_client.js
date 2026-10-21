@@ -1,5 +1,7 @@
 const axios = require('axios');
 const fs = require('fs');
+const crypto = require('crypto');
+const balanceSyncPromises = new Map();
 
 function loadEnvFileIfPresent(envPath = '.env') {
   if (!fs.existsSync(envPath)) return;
@@ -71,6 +73,17 @@ function createOddsApiClient({
 
   const exhaustedKeys = new Set();
   let keyIndex = ((startIndex % keys.length) + keys.length) % keys.length;
+  const usage = { creditsSpent: 0, calls: 0 };
+
+  async function ensureBalanceSync(budget) {
+    const fingerprintSet = keys.map(key => crypto.createHash('sha256').update(key).digest('hex')).sort().join(':');
+    const syncKey = `${new Date().toISOString().slice(0, 7)}:${fingerprintSet}`;
+    if (!balanceSyncPromises.has(syncKey)) {
+      const syncPromise = budget.refreshBalances(keys);
+      balanceSyncPromises.set(syncKey, syncPromise);
+    }
+    await balanceSyncPromises.get(syncKey);
+  }
 
   function nextKey() {
     for (let i = 0; i < keys.length; i++) {
@@ -85,14 +98,17 @@ function createOddsApiClient({
 
   async function get(url, options = {}) {
     let lastError = null;
+    const budget = require('./odds_api_monthly_budget');
+    if (budget.estimateCost(url, options.params) > 0) await ensureBalanceSync(budget);
 
     while (exhaustedKeys.size < keys.length) {
-      const current = nextKey();
+      const reservation = await budget.reserve(url, options.params, label, keys, exhaustedKeys);
+      const current = reservation
+        ? { key: keys[reservation.keyIndex], index: reservation.keyIndex }
+        : nextKey();
       if (!current) break;
 
       try {
-        const budget = require('./odds_api_monthly_budget');
-        const reservation = await budget.reserve(url, options.params, label, keys);
         const res = await axios.get(url, {
           ...options,
           params: { ...(options.params || {}), apiKey: current.key },
@@ -101,13 +117,23 @@ function createOddsApiClient({
         const remaining = res.headers['x-requests-remaining'];
         const used = res.headers['x-requests-used'];
         const last = res.headers['x-requests-last'];
-        await budget.reconcile(reservation, last);
+        if (reservation) await budget.reconcile(reservation, res.headers);
+        else await budget.recordUnreservedResponse(current.key, current.index, res.headers);
+        usage.creditsSpent += Number(last) || 0;
+        usage.calls++;
         onKeyUsed?.({ index: current.index, remaining, used, last });
         if (remaining !== undefined || last !== undefined) {
           logger.log(`[${label}] chave ${current.index + 1}/${keys.length}: restantes=${remaining ?? 'n/d'}; custo_ultima_chamada=${last ?? 'n/d'}`);
         }
         return res;
       } catch (error) {
+        if (reservation) {
+          if (error.response?.headers?.['x-requests-remaining'] !== undefined) {
+            await budget.reconcile(reservation, error.response.headers);
+          } else if (isQuotaError(error)) {
+            await budget.releaseQuotaRejected(reservation);
+          }
+        }
         if (!isQuotaError(error)) throw error;
         lastError = error;
         exhaustedKeys.add(current.index);
@@ -121,6 +147,7 @@ function createOddsApiClient({
   return {
     get,
     keyCount: keys.length,
+    usage: () => ({ ...usage }),
     exhaustedCount: () => exhaustedKeys.size,
     allExhausted: () => exhaustedKeys.size >= keys.length,
     currentIndex: () => keyIndex,

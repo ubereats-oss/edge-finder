@@ -1,5 +1,5 @@
 const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
-const { database } = require('./odds_api_monthly_budget');
+const { database, summarize: summarizeBudget, CLOSING_RESERVE } = require('./odds_api_monthly_budget');
 const { createBrowser, scrapeCompetition } = require('./get_placard_odds');
 const { compare, references, matchingEvents, isNearValue, nearValueSelections, report, namesEqual, normalize,
   comparedSelectionCount } = require('./placard_value');
@@ -133,7 +133,7 @@ const placardSportPaths = {
   mma: ['mma', 'mixed-martial-arts', 'ufc'],
 };
 
-async function scan(db) {
+async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${process.env.GITHUB_RUN_ATTEMPT || '1'}`) {
   const rows = [], errors = [], diagnostics = [];
   const api = createOddsApiClient({ label: 'placard-scan' });
   const attemptedAlternates = new Set();
@@ -301,11 +301,11 @@ async function scan(db) {
           const matches = matchingEvents(game, events);
           return sum + (matches.length === 1 ? comparedSelectionCount(game, matches[0]) : 0);
         }, 0);
-        await db.collection('_placard_reads').add({ observedAt: new Date().toISOString(), apiSport: cfg.key,
+        await db.collection('_placard_reads').add({ observedAt: new Date().toISOString(), workflowRunId: scanRunId, apiSport: cfg.key,
           games, pinnacle: JSON.stringify(events), refreshedEventIds: refreshedEvents.map(e => e.id), comparedSelections });
     }, (cfg, error) => { errors.push({ competition: cfg.label, error: error.message }); });
   } finally { await browser.close(); }
-  return { rows, errors, diagnostics };
+  return { rows, errors, diagnostics, scanRunId, apiUsage: api.usage() };
 }
 
 async function captureClosing(db, entries) {
@@ -332,7 +332,7 @@ async function captureClosing(db, entries) {
       due.get(e.apiSport).push(e);
     }
   }
-  if (!due.size) return;
+  if (!due.size) return { creditsSpent: 0, calls: 0 };
   const api = createOddsApiClient({ label: 'placard-closing' });
   const attemptedAlternates = new Set();
   for (const [sport, group] of due) {
@@ -366,6 +366,7 @@ async function captureClosing(db, entries) {
       }
     } catch (e) { console.error(`Fechamento ${sport}: ${e.message}`); }
   }
+  return api.usage();
 }
 
 async function publish(db, result, entries) {
@@ -376,9 +377,15 @@ async function publish(db, result, entries) {
   const pageCount = Math.ceil(result.rows.length / 100);
   for (let i = 0; i < pageCount; i++) await run.collection('pages').doc(String(i)).set({ rows: result.rows.slice(i * 100, (i + 1) * 100) });
   const budget = (await db.collection('_odds_api_budget').doc(generatedAt.slice(0, 7)).get()).data() || {};
+  const budgetSummary = summarizeBudget(budget);
+  const today = generatedAt.slice(0, 10);
   const payload = { generatedAt, runId, pageCount, report: report(entries), errors: result.errors,
-    budget: { reserved: budget.reserved ?? 0, limit: 4000, baselineCredits: budget.baselineCredits ?? 0,
-      readingAllowance: budget.nonClosingLimit ?? 0, startedAt: budget.startedAt ?? null },
+    budget: { totalRemaining: budgetSummary.totalRemaining, available: budgetSummary.available,
+      readingAvailable: budgetSummary.readingAvailable, closingReserve: CLOSING_RESERVE,
+      keyCount: budgetSummary.keyCount, lastSyncedAt: budgetSummary.lastSyncedAt,
+      syncComplete: budgetSummary.syncComplete,
+      todayUsage: budget.dailyUsage?.[today] || { total: 0, closing: 0, placardScan: 0, otherRead: 0, requests: 0 },
+      lastScanCredits: result.apiUsage?.creditsSpent || 0, lastClosingCredits: result.closingUsage?.creditsSpent || 0 },
     cadenceMinutes: 30, priceMaxAgeSeconds: 120, closingWindowMinutes: 5 };
   await run.set({ ...payload, diagnostics: result.diagnostics });
   await ref.set(payload);
@@ -402,11 +409,12 @@ async function main() {
   let entries = await allEntries(db);
   const existingIds = new Set(entries.map(e => e.id));
   // Fechamento tem prioridade sobre nova coleta.
-  await captureClosing(db, entries);
+  let closingUsage = await captureClosing(db, entries);
   if (process.env.PLACARD_CLOSING_ONLY === '1') {
     entries = await allEntries(db);
     const state = (await control.get()).data() || {};
     const result = state.result || { rows: [], errors: [], diagnostics: [] };
+    result.closingUsage = closingUsage;
     await publish(db, result, entries);
     fs.writeFileSync('placard_run_summary.json', JSON.stringify(report(entries), null, 2));
     return;
@@ -416,18 +424,21 @@ async function main() {
   let result;
   if (due) {
     await control.set({ lastAttemptAt: new Date().toISOString() }, { merge: true });
-    try { result = await scan(db); }
-    catch (e) { result = { rows: [], errors: [{ error: e.message }], diagnostics: [] }; }
+    try { result = await scan(db, `${process.env.GITHUB_RUN_ID || 'local'}-${process.env.GITHUB_RUN_ATTEMPT || '1'}`); }
+    catch (e) { result = { rows: [], errors: [{ error: e.message }], diagnostics: [], apiUsage: { creditsSpent: 0, calls: 0 } }; }
     await control.set({ result }, { merge: true });
   } else result = state.result || { rows: [], errors: [], diagnostics: [] };
   entries = await allEntries(db);
   if (due) {
     // Oportunidade descoberta já nos minutos finais também precisa de
     // fechamento nesta execução, sem esperar o próximo cron.
-    await captureClosing(db, entries.filter(e => !existingIds.has(e.id) || Date.parse(e.commenceTime) <= Date.now()));
+    const afterScanClosing = await captureClosing(db, entries.filter(e => !existingIds.has(e.id) || Date.parse(e.commenceTime) <= Date.now()));
+    closingUsage = { creditsSpent: (closingUsage?.creditsSpent || 0) + (afterScanClosing?.creditsSpent || 0),
+      calls: (closingUsage?.calls || 0) + (afterScanClosing?.calls || 0) };
     entries = await allEntries(db);
   }
   result.rows = entries.filter(e => e.closingStatus === 'pendente' && Date.parse(e.commenceTime) > Date.now());
+  result.closingUsage = closingUsage;
   await publish(db, result, entries);
   fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), scan: due,
     opportunities: result.rows.length, errors: result.errors }, null, 2));

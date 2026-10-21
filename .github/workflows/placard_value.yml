@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       force_scan:
-        description: 'Forçar nova leitura, respeitando o teto mensal'
+        description: 'Forçar leitura usando o saldo real e preservando 800 créditos para fechamentos'
         type: boolean
         default: false
       closing_only:
