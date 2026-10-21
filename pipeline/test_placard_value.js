@@ -37,6 +37,7 @@ test('apelidos, empate e Kelly central de 25%', () => {
   assert.ok(namesEqual('Slovan Bratislava', 'ŠK Slovan Bratislava'));
   assert.ok(namesEqual('PSG', 'Paris Saint Germain'));
   assert.ok(namesEqual('NY Knicks', 'New York Knicks'));
+  assert.ok(namesEqual('Virtus Bologna', 'Virtus Segafredo Bologna'));
 });
 test('não casa evento ambíguo ou horário diferente', () => {
   const { game, event } = fixture();
