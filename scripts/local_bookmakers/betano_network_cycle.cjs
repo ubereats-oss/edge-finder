@@ -26,6 +26,19 @@ function safeUrl(raw) {
   return url.toString();
 }
 
+function isBetanoHost(raw) {
+  const host = new URL(raw).hostname.toLowerCase();
+  return host === 'betano.pt' || host.endsWith('.betano.pt');
+}
+
+function sanitizeOddsData(value) {
+  if (Array.isArray(value)) return value.map(sanitizeOddsData);
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(Object.entries(value)
+    .filter(([key]) => !/(?:^|_)(?:token|authorization|auth|secret|password|session|cookie)(?:$|_)/i.test(key))
+    .map(([key, item]) => [key, sanitizeOddsData(item)]));
+}
+
 function likelyOddsJson(value) {
   const text = JSON.stringify(value).toLowerCase();
   return /"(odds|price|prices|market|markets|selection|selections|event|events|participant|competitor|line|handicap|total)"/.test(text);
@@ -48,15 +61,23 @@ async function main() {
       viewport: { width: 1440, height: 960 },
     });
     const page = await browserContext.newPage();
-    page.on('requestfailed', request => failures.push({ url: safeUrl(request.url()), error: request.failure()?.errorText }));
+    page.on('requestfailed', request => {
+      if (isBetanoHost(request.url())) failures.push({ url: safeUrl(request.url()), error: request.failure()?.errorText });
+    });
     page.on('websocket', socket => {
+      if (!isBetanoHost(socket.url())) return;
       const row = { url: safeUrl(socket.url()), frames: [] };
       socket.on('framereceived', frame => {
-        if (row.frames.length < 200) row.frames.push(String(frame.payload).slice(0, 100000));
+        if (row.frames.length >= 200) return;
+        try {
+          const payload = JSON.parse(String(frame.payload));
+          if (likelyOddsJson(payload)) row.frames.push(sanitizeOddsData(payload));
+        } catch (_) { /* ignora frames não JSON */ }
       });
       websockets.push(row);
     });
     page.on('response', response => {
+      if (!isBetanoHost(response.url())) return;
       const request = response.request();
       if (!['xhr', 'fetch'].includes(request.resourceType())) return;
       const contentType = response.headers()['content-type'] || '';
@@ -64,7 +85,7 @@ async function main() {
       responses.push(item);
       if (!/json/i.test(contentType)) return;
       item.json = response.json().then(data => {
-        if (likelyOddsJson(data)) item.payload = data;
+        if (likelyOddsJson(data)) item.payload = sanitizeOddsData(data);
         else item.ignored = 'json_sem_campos_de_evento_ou_mercado';
       }).catch(error => { item.parseError = error.message; });
     });
