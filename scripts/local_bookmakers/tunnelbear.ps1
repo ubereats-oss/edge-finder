@@ -51,10 +51,10 @@ function Wait-TunnelBearStatus([string]$Expected, [int]$TimeoutSeconds = 90) {
   throw "TunnelBear não atingiu o estado '$Expected'; estado observado: '$($state.Status)'."
 }
 
-function Get-MeterReading([int]$StableSamples = 3) {
+function Get-MeterReading([int]$StableSeconds = 90) {
   $last = $null
-  $stable = 0
-  $deadline = [DateTime]::UtcNow.AddSeconds(60)
+  $lastChangedAt = [DateTime]::UtcNow
+  $deadline = [DateTime]::UtcNow.AddSeconds(180)
   do {
     try {
       $state = Get-TunnelBearState
@@ -62,13 +62,17 @@ function Get-MeterReading([int]$StableSamples = 3) {
         [System.Windows.Automation.Condition]::TrueCondition)
       $reading = @($texts | ForEach-Object { $_.Current.Name } | Where-Object { $_ -match '^\d+ MB$' } | Select-Object -First 1)
       if ($reading.Count -gt 0) {
-        if ($reading[0] -eq $last) { $stable++ } else { $last = $reading[0]; $stable = 1 }
-        if ($stable -ge $StableSamples) { return [int]($last -replace '\D', '') }
-      } else { $stable = 0 }
-    } catch { $stable = 0 }
+        if ($reading[0] -ne $last) {
+          $last = $reading[0]
+          $lastChangedAt = [DateTime]::UtcNow
+        } elseif (([DateTime]::UtcNow - $lastChangedAt).TotalSeconds -ge $StableSeconds) {
+          return [int]($last -replace '\D', '')
+        }
+      } else { $last = $null; $lastChangedAt = [DateTime]::UtcNow }
+    } catch { $last = $null; $lastChangedAt = [DateTime]::UtcNow }
     Start-Sleep -Seconds 5
   } while ([DateTime]::UtcNow -lt $deadline)
-  throw "Contador TunnelBear não estabilizou em 60s; última leitura: $last."
+  throw "Contador TunnelBear não ficou estável por $StableSeconds s em 180 s; última leitura: $last."
 }
 
 try {
