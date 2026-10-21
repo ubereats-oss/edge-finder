@@ -5,6 +5,8 @@ const crypto = require('crypto');
 const axios = require('axios');
 
 const CLOSING_RESERVE = 800;
+const MONTHLY_SPEND_CAP = 5000;
+const MONTHLY_READ_CAP = MONTHLY_SPEND_CAP - CLOSING_RESERVE;
 const SCHEMA_VERSION = 2;
 const PENDING_TTL_MS = 2 * 60 * 1000;
 const API_ROOT = 'https://api.the-odds-api.com/v4';
@@ -65,6 +67,13 @@ function pendingCostForKey(pendingRequests, fingerprint) {
     sum + (row.keyFingerprint === fingerprint ? Number(row.cost || 0) : 0), 0);
 }
 
+function monthlyUsed(state = {}) {
+  const balances = state.keyFingerprints?.length
+    ? state.keyFingerprints.map(fingerprint => state.keyBalances?.[fingerprint]).filter(Boolean)
+    : Object.values(state.keyBalances || {});
+  return balances.reduce((sum, row) => sum + Number(row.used || 0), 0);
+}
+
 function summarize(state = {}) {
   const active = state.keyFingerprints?.length
     ? state.keyFingerprints.map(fingerprint => state.keyBalances?.[fingerprint]).filter(Boolean)
@@ -121,6 +130,11 @@ function planReservation(state, keys, cost, label, excludedIndexes = new Set()) 
     - Object.values(pendingRequests).reduce((sum, row) => sum + Number(row.cost || 0), 0));
   const closing = /closing/i.test(label);
   const requiredFloor = closing ? 0 : CLOSING_RESERVE;
+  const spent = monthlyUsed(state) + Object.values(pendingRequests).reduce((sum, row) => sum + Number(row.cost || 0), 0);
+  const monthlyLimit = closing ? MONTHLY_SPEND_CAP : MONTHLY_READ_CAP;
+  if (spent + cost > monthlyLimit) {
+    throw new Error(`Teto mensal de ${closing ? 'créditos totais' : 'leituras'} atingido: usado=${spent}, limite=${monthlyLimit}, custo=${cost} (${label}).`);
+  }
   if (available - cost < requiredFloor || !candidates.length) {
     throw new Error(`Saldo real insuficiente: total=${available}, reserva_fechamentos=${CLOSING_RESERVE}, disponível_leituras=${Math.max(0, available - CLOSING_RESERVE)}, custo=${cost} (${label}).`);
   }
@@ -302,4 +316,5 @@ module.exports = {
   reserve, reconcile, refreshBalances, releaseQuotaRejected, estimateCost,
   recordUnreservedResponse, summarize, planReservation, keyFingerprint, parseHeaders,
   database, CLOSING_RESERVE, SCHEMA_VERSION,
+  MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, monthlyUsed,
 };

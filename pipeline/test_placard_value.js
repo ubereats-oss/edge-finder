@@ -3,9 +3,9 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { compare, comparedSelectionCount, fairProbabilities, references, report, namesEqual } = require('./placard_value');
 const { estimateCost, summarize, planReservation, keyFingerprint, parseHeaders,
-  refreshBalances, CLOSING_RESERVE } = require('./odds_api_monthly_budget');
+  refreshBalances, CLOSING_RESERVE, MONTHLY_SPEND_CAP, MONTHLY_READ_CAP } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
-const { captureClosing, exactTotals, exactSpreads, competitionUrl, forEachCompetitionIsolated } = require('./run_placard_value');
+const { captureClosing, exactTotals, exactSpreads, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue } = require('./run_placard_value');
 const now = Date.parse('2026-10-20T12:00:00Z');
 function fixture() {
   const game = { teams: ['FC Porto', 'SL Benfica'], apiSport: 'soccer_portugal_primeira_liga',
@@ -128,6 +128,26 @@ test('ledger usa saldo mais recente e falha fechado sem o header de saldo real',
   assert.deepEqual(parseHeaders({ 'x-requests-remaining': '5925', 'x-requests-used': '100', 'x-requests-last': '3' }),
     { remaining: 5925, used: 100, last: 3 });
   assert.throws(() => parseHeaders({ 'x-requests-used': '100' }), /x-requests-remaining/);
+});
+test('teto mensal limita leituras a 4.200 e preserva até 5.000 para leituras e fechamentos', () => {
+  const key = keyFingerprint('key-a');
+  const state = { schemaVersion: 2, syncComplete: true, closingReserve: CLOSING_RESERVE,
+    keyFingerprints: [key], keyBalances: { [key]: { remaining: 6000, used: MONTHLY_READ_CAP - 1 } }, pendingRequests: {} };
+  assert.equal(MONTHLY_SPEND_CAP, 5000);
+  assert.equal(MONTHLY_READ_CAP, 4200);
+  assert.equal(planReservation(state, ['key-a'], 1, 'placard-scan').availableAfter, 5999);
+  assert.throws(() => planReservation(state, ['key-a'], 2, 'placard-scan'), /Teto mensal de leituras/);
+  const closingState = { ...state, keyBalances: { [key]: { remaining: 6000, used: 4999 } } };
+  assert.equal(planReservation(closingState, ['key-a'], 1, 'placard-closing').availableAfter, 5999);
+  assert.throws(() => planReservation(closingState, ['key-a'], 2, 'placard-closing'), /Teto mensal de créditos totais/);
+});
+test('Pinnacle atualiza em toda leitura até 2h e de hora em hora entre 2h e 6h', () => {
+  const instant = Date.parse('2026-10-21T12:00:00Z');
+  assert.equal(pinnacleRefreshDue(2 * 3600000, new Date(instant).toISOString(), null, instant), true);
+  assert.equal(pinnacleRefreshDue(90 * 60000, new Date(instant - 10 * 60000).toISOString(), null, instant), true);
+  assert.equal(pinnacleRefreshDue(3 * 3600000, new Date(instant - 59 * 60000).toISOString(), null, instant), false);
+  assert.equal(pinnacleRefreshDue(3 * 3600000, new Date(instant - 60 * 60000).toISOString(), null, instant), true);
+  assert.equal(pinnacleRefreshDue(7 * 3600000, null, null, instant), false);
 });
 test('reconcilia o ledger com os headers de saldo de cada chave sem persistir as chaves', async () => {
   let saved = null;

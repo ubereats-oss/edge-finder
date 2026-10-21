@@ -2,7 +2,9 @@ const { chromium } = require('playwright');
 
 const targets = [
   { name: 'ESC Online', url: 'https://www.estorilsolcasinos.pt/pt/betting/home' },
-  { name: 'Casino Portugal', url: 'https://www.casinoportugal.pt/' },
+  // A rota de desporto carrega a lista de eventos e odds; a home só prova
+  // acesso ao site institucional e não valida coleta de apostas.
+  { name: 'Casino Portugal', url: 'https://www.casinoportugal.pt/desporto/d_all/s_69' },
   { name: 'LeBull', url: 'https://www.lebull.pt/apostas-desportivas/' },
   { name: 'GoldenPark', url: 'https://www.goldenpark.pt/' },
   { name: 'Retabet', url: 'https://www.retabet.pt/' },
