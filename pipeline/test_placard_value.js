@@ -2,7 +2,8 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { compare, comparedSelectionCount, fairProbabilities, references, report, namesEqual } = require('./placard_value');
-const { estimateCost, readingAllowance } = require('./odds_api_monthly_budget');
+const { estimateCost, summarize, planReservation, keyFingerprint, parseHeaders,
+  refreshBalances, CLOSING_RESERVE } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
 const { captureClosing, exactTotals, exactSpreads, competitionUrl, forEachCompetitionIsolated } = require('./run_placard_value');
 const now = Date.parse('2026-10-20T12:00:00Z');
@@ -100,16 +101,59 @@ test('códigos Placard HTOH, HCOT e TGHC cobrem vencedor e handicap', () => {
   game.markets[1].type = 'TGHC';
   assert.equal(compare(game, [event], now).rows.length, 3);
 });
-test('reserva é 2 créditos por competição, não por partida; histórico custa 10x', () => {
+test('estima custo por mercado, incluindo histórico e linhas alternativas', () => {
   const options = { bookmakers: 'pinnacle', markets: 'h2h,totals' };
   assert.equal(estimateCost('https://api.the-odds-api.com/v4/sports/basketball_nba/odds', options), 2);
   assert.equal(estimateCost('https://api.the-odds-api.com/v4/historical/sports/basketball_nba/odds', options), 20);
   assert.equal(estimateCost('https://api.the-odds-api.com/v4/sports/basketball_nba/events'), 0);
-  assert.equal(readingAllowance(0), 1736);
-  assert.equal(readingAllowance(3051), 411);
-  assert.equal(readingAllowance(5000), 0);
   assert.equal(estimateCost('https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds',
     { bookmakers: 'pinnacle', markets: 'h2h,totals,spreads' }), 3);
+});
+test('ledger deriva saldo total e leituras da soma real das chaves menos a reserva de fechamento', () => {
+  const a = keyFingerprint('key-a');
+  const b = keyFingerprint('key-b');
+  const state = { schemaVersion: 2, syncComplete: true, closingReserve: CLOSING_RESERVE,
+    keyFingerprints: [a, b], keyBalances: { [a]: { remaining: 4000 }, [b]: { remaining: 1925 } },
+    pendingRequests: {} };
+  assert.equal(summarize(state).totalRemaining, 5925);
+  assert.equal(summarize(state).readingAvailable, 5125);
+  assert.equal(planReservation(state, ['key-a', 'key-b'], 3, 'placard-scan').availableAfter, 5922);
+  assert.throws(() => planReservation({ ...state, keyBalances: { [a]: { remaining: 500 }, [b]: { remaining: 300 } } },
+    ['key-a', 'key-b'], 3, 'placard-scan'), /disponível_leituras=0/);
+  assert.equal(planReservation({ ...state, keyBalances: { [a]: { remaining: 500 }, [b]: { remaining: 300 } } },
+    ['key-a', 'key-b'], 3, 'placard-closing').remaining, 500);
+});
+test('ledger usa saldo mais recente e falha fechado sem o header de saldo real', () => {
+  assert.deepEqual(parseHeaders({ 'x-requests-remaining': '5925', 'x-requests-used': '100', 'x-requests-last': '3' }),
+    { remaining: 5925, used: 100, last: 3 });
+  assert.throws(() => parseHeaders({ 'x-requests-used': '100' }), /x-requests-remaining/);
+});
+test('reconcilia o ledger com os headers de saldo de cada chave sem persistir as chaves', async () => {
+  let saved = null;
+  const ref = {
+    get: async () => ({ data: () => saved }),
+  };
+  const db = {
+    collection: () => ({ doc: () => ref }),
+    runTransaction: async fn => fn({
+      get: async () => ({ data: () => saved }),
+      set: (_ref, value) => { saved = value; },
+    }),
+  };
+  const keys = ['key-a', 'key-b'];
+  const first = await refreshBalances(keys, { db, now: Date.parse('2026-10-21T12:00:00Z'),
+    httpGet: async (_url, { params }) => ({ headers: params.apiKey === 'key-a'
+      ? { 'x-requests-remaining': '4000', 'x-requests-used': '10', 'x-requests-last': '0' }
+      : { 'x-requests-remaining': '1925', 'x-requests-used': '20', 'x-requests-last': '0' } }) });
+  assert.equal(first.totalRemaining, 5925);
+  assert.equal(first.readingAvailable, 5125);
+  assert.equal(saved.syncComplete, true);
+  assert.equal(JSON.stringify(saved).includes('key-a'), false);
+  const second = await refreshBalances(keys, { db, now: Date.parse('2026-10-21T12:01:00Z'),
+    httpGet: async (_url, { params }) => ({ headers: params.apiKey === 'key-a'
+      ? { 'x-requests-remaining': '3997', 'x-requests-used': '13', 'x-requests-last': '3' }
+      : { 'x-requests-remaining': '1925', 'x-requests-used': '20', 'x-requests-last': '0' } }) });
+  assert.equal(second.totalRemaining, 5922);
 });
 test('busca handicap alternativo exato uma vez por evento', async t => {
   t.mock.method(Date, 'now', () => now);
