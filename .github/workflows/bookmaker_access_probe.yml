@@ -1,0 +1,26 @@
+name: Diagnóstico de acesso às casas
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Testar páginas públicas sem sessão
+        run: node pipeline/probe_bookmaker_access.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bookmaker-access-probe-${{ github.run_id }}
+          path: bookmaker_access_probe.json
+          if-no-files-found: ignore
+          retention-days: 1
