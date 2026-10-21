@@ -99,7 +99,7 @@ function createOddsApiClient({
   async function get(url, options = {}) {
     let lastError = null;
     const budget = require('./odds_api_monthly_budget');
-    if (budget.estimateCost(url, options.params) > 0) await ensureBalanceSync(budget);
+    await ensureBalanceSync(budget);
 
     while (exhaustedKeys.size < keys.length) {
       const reservation = await budget.reserve(url, options.params, label, keys, exhaustedKeys);
