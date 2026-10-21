@@ -1,16 +1,13 @@
 // pipeline/check_closing_odds_staleness.js
-// Avisa por e-mail só em dois casos (não mais "mais de 6h sem rodar", que
-// disparava à toa sempre que não havia jogo próximo — confirmado: entre
-// duas execuções separadas por 9,6h, toda indicação elegível com jogo nessa
-// janela já tinha pelo menos uma tentativa de captura registrada, só não
-// bateu com a odd exata (linha mudou/jogador fora do mercado — motivo de
-// dado, não de o mecanismo ter parado de rodar):
+// Avisa quando a captura existente falha ou quando a coleta local Betano
+// fica mais de 6h sem ciclo bem-sucedido:
 //
-//   1) Existe indicação elegível cujo jogo já começou e que nunca teve
+//   1) A coleta local da Betano não registra ciclo bem-sucedido há mais de 6h.
+//   2) Existe indicação elegível cujo jogo já começou e que nunca teve
 //      NENHUMA tentativa de captura registrada (closingOddsLastAttemptAt
 //      ausente e nunca capturada) — sinal direto de que o mecanismo não
 //      rodou quando devia, não de falta de dado.
-//   2) O workflow "Capturar Odd de Fechamento" está desabilitado no GitHub
+//   3) O workflow "Capturar Odd de Fechamento" está desabilitado no GitHub
 //      (ver nota abaixo — a causa real dos 13 dias sem captura em
 //      setembro/outubro).
 //
@@ -24,7 +21,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const nodemailer = require('nodemailer');
 
 const HISTORY_DIR = path.join(__dirname, '..', 'odds_history');
 const MARKER_FILE = path.join(__dirname, '..', '_closing_odds_alert_marker.json');
@@ -80,6 +76,20 @@ async function workflowState(token) {
   return (await res.json()).state;
 }
 
+function isBetanoHeartbeatStale(lastSuccessAt, now = Date.now(), maxAgeMs = 6 * 60 * 60 * 1000) {
+  const last = Date.parse(lastSuccessAt || '');
+  return !Number.isFinite(last) || last > now || now - last > maxAgeMs;
+}
+
+async function betanoHeartbeat() {
+  if (!process.env.FIREBASE_SERVICE_ACCOUNT) throw new Error('FIREBASE_SERVICE_ACCOUNT ausente.');
+  const admin = require('firebase-admin');
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  if (!admin.apps.length) admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+  const snapshot = await admin.firestore().collection('local_bookmaker_status').doc('betano').get();
+  return snapshot.exists ? snapshot.data() : {};
+}
+
 function marcadorDeHoje() {
   if (!fs.existsSync(MARKER_FILE)) return null;
   try {
@@ -98,6 +108,7 @@ function smtpConfigurado() {
 }
 
 function transporter() {
+  const nodemailer = require('nodemailer');
   return nodemailer.createTransport({
     host: process.env.ALERT_SMTP_HOST,
     port: parseInt(process.env.ALERT_SMTP_PORT || '465', 10),
@@ -106,9 +117,12 @@ function transporter() {
   });
 }
 
-async function enviarEmail({ semTentativa, estadoWorkflow }) {
+async function enviarEmail({ semTentativa, estadoWorkflow, betanoLastSuccessAt, betanoReadError }) {
   const desabilitado = estadoWorkflow !== 'active';
   const partes = [];
+  if (betanoReadError || isBetanoHeartbeatStale(betanoLastSuccessAt)) {
+    partes.push(`A coleta local da Betano não registra ciclo bem-sucedido há mais de 6h. Último sucesso: ${betanoLastSuccessAt || 'nunca registrado'}.${betanoReadError ? ` Erro ao ler Firestore: ${betanoReadError}` : ''}`);
+  }
   if (desabilitado) {
     partes.push(`O workflow "Capturar Odd de Fechamento" está "${estadoWorkflow}" no GitHub (não ativo) — é por isso que não roda. Vá em Settings > Actions > General > Capturar Odd de Fechamento e reative. O GitHub aceita o disparo normalmente mesmo desabilitado, sem erro nenhum, só não cria execução nenhuma — foi exatamente essa a causa do hiato de 13 dias em setembro/outubro.`);
   }
@@ -118,7 +132,7 @@ async function enviarEmail({ semTentativa, estadoWorkflow }) {
   }
   const subject = desabilitado
     ? 'Edge Finder: captura de odd de fechamento DESABILITADA no GitHub'
-    : 'Edge Finder: captura de odd de fechamento não tentou um jogo já começado';
+    : 'Edge Finder: coleta ou captura de odds está parada';
   await transporter().sendMail({
     from: process.env.ALERT_SMTP_USER,
     to: process.env.ALERT_EMAIL_TO,
@@ -161,8 +175,18 @@ async function main() {
     console.log('[alerta] GH_TOKEN ausente — não dá pra checar o estado do workflow.');
   }
 
+  let betanoStatus = {};
+  let betanoReadError = null;
+  try {
+    betanoStatus = await betanoHeartbeat();
+  } catch (error) {
+    betanoReadError = error.message;
+  }
+  const betanoStale = betanoReadError || isBetanoHeartbeatStale(betanoStatus.lastSuccessAt);
+  console.log(`[alerta] heartbeat Betano ${betanoStale ? 'ausente/atrasado' : 'atual'}: ${betanoStatus.lastSuccessAt || 'sem registro'}.`);
+
   const desabilitado = estadoWorkflow !== 'active' && estadoWorkflow !== 'desconhecido';
-  if (!desabilitado && semTentativa.length === 0) {
+  if (!desabilitado && semTentativa.length === 0 && !betanoStale) {
     console.log('[alerta] workflow ativo e nenhum jogo sem tentativa — nada a fazer.');
     return;
   }
@@ -178,9 +202,10 @@ async function main() {
     return;
   }
 
-  await enviarEmail({ semTentativa, estadoWorkflow });
+  await enviarEmail({ semTentativa, estadoWorkflow, betanoLastSuccessAt: betanoStatus.lastSuccessAt, betanoReadError });
   salvarMarcador(hoje);
   console.log('[alerta] e-mail enviado.');
 }
 
-main().catch(e => { console.error('ERRO FATAL:', e.message); process.exit(1); });
+if (require.main === module) main().catch(e => { console.error('ERRO FATAL:', e.message); process.exit(1); });
+module.exports = { isBetanoHeartbeatStale };

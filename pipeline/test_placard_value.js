@@ -1,11 +1,13 @@
 // Sem rede, chaves, Firebase ou alterações em parâmetros de risco.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { compare, comparedSelectionCount, fairProbabilities, references, report, namesEqual } = require('./placard_value');
+const { compare, compareBookmaker, comparedSelectionCount, fairProbabilities, references, report, namesEqual } = require('./placard_value');
 const { estimateCost, summarize, planReservation, keyFingerprint, parseHeaders,
   refreshBalances, CLOSING_RESERVE, MONTHLY_SPEND_CAP, MONTHLY_READ_CAP } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
-const { captureClosing, exactTotals, exactSpreads, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue } = require('./run_placard_value');
+const { captureClosing, exactTotals, exactSpreads, closingStartTolerance, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue } = require('./run_placard_value');
+const { readSelections, adaptTotalsAndHandicaps } = require('./local_betano_reader');
+const { isBetanoHeartbeatStale } = require('./check_closing_odds_staleness');
 const now = Date.parse('2026-10-20T12:00:00Z');
 function fixture() {
   const game = { teams: ['FC Porto', 'SL Benfica'], apiSport: 'soccer_portugal_primeira_liga',
@@ -38,6 +40,61 @@ test('apelidos, empate e Kelly central de 25%', () => {
   assert.ok(namesEqual('PSG', 'Paris Saint Germain'));
   assert.ok(namesEqual('NY Knicks', 'New York Knicks'));
   assert.ok(namesEqual('Virtus Bologna', 'Virtus Segafredo Bologna'));
+});
+test('compara outra casa com identidade e IDs separados sem mudar preço mínimo ou Kelly', () => {
+  const { game, event } = fixture();
+  const placard = compare(game, [event], now).rows[0];
+  const local = compareBookmaker('Betano', game, [event], now).rows[0];
+  assert.equal(local.bookmaker, 'Betano');
+  assert.equal(local.sourceOdds, local.placardOdds);
+  assert.notEqual(local.id, placard.id);
+  assert.equal(local.minValueOdds, placard.minValueOdds);
+  assert.equal(local.kellyPct, placard.kellyPct);
+  assert.throws(() => compareBookmaker('', game, [event], now), /bookmaker obrigatório/);
+});
+test('Betano aceita diferença de início de até 10 minutos só com partida única e preserva Kelly', () => {
+  const { game, event } = fixture();
+  event.commence_time = '2026-10-20T14:10:00Z';
+  const result = compareBookmaker('Betano', game, [event], now, { startToleranceMs: 10 * 60000 });
+  assert.equal(result.rows.length, 1);
+  assert.equal(result.rows[0].commenceTime, game.commenceTime);
+  assert.equal(result.rows[0].apiCommenceTime, event.commence_time);
+  assert.equal(result.rows[0].sourceScheduleVerified, true);
+  assert.equal(result.rows[0].scheduleDeltaMs, 10 * 60000);
+  assert.equal(result.rows[0].kellyPct, compare(game, [{ ...event, commence_time: game.commenceTime }], now).rows[0].kellyPct);
+  assert.equal(compareBookmaker('Betano', game, [event], now).rows.length, 0);
+  assert.equal(compareBookmaker('Betano', game, [event, { ...event, id: 'duplicate' }], now,
+    { startToleranceMs: 10 * 60000 }).reason, 'evento_ambiguo');
+  assert.throws(() => compareBookmaker('Betano', game, [event], now, { startToleranceMs: 11 * 60000 }), /tolerância/);
+});
+test('leitor Betano transforma JSON de rede em vencedor, handicap e total sem ler texto da página', () => {
+  const games = readSelections({ data: { events: [{ id: 7, startTime: Date.parse('2026-10-20T14:00:00Z'),
+    shortName: 'Porto x Benfica', leagueName: 'NBA', url: '/odds/test', participants: [{ name: 'Porto' }, { name: 'Benfica' }],
+    sixPackBlocks: [{ columns: [
+      { type: 'H2HT', name: 'Vencedor', selections: [{ name: 'Porto', price: 2.2 }, { name: 'Benfica', price: 1.7 }] },
+      { type: 'FHOT', name: 'Handicap', selections: [{ name: 'Porto -2.5', fullName: 'Porto', price: 1.9, handicap: -2.5 },
+        { name: 'Benfica +2.5', fullName: 'Benfica', price: 1.9, handicap: 2.5 }] },
+      { type: 'FTPO', name: 'Total de pontos', selections: [{ name: 'Mais de 2.5', price: 1.9, handicap: 2.5 },
+        { name: 'Menos 2.5', price: 1.9, handicap: 2.5 }] },
+    ] }] }] } });
+  assert.equal(games.length, 1);
+  const game = adaptTotalsAndHandicaps(games[0]);
+  assert.deepEqual(game.markets.map(m => m.type), ['H2HT', 'HCOT', 'HCTG']);
+  assert.deepEqual(game.markets[2].selections.map(s => s.name), ['Over', 'Under']);
+  assert.deepEqual(game.markets[1].selections.map(s => s.line), [-2.5, 2.5]);
+});
+test('alerta Betano fica stale sem sucesso ou depois de 6h', () => {
+  const instant = Date.parse('2026-10-21T12:00:00Z');
+  assert.equal(isBetanoHeartbeatStale(null, instant), true);
+  assert.equal(isBetanoHeartbeatStale(new Date(instant - 6 * 3600000 - 1).toISOString(), instant), true);
+  assert.equal(isBetanoHeartbeatStale(new Date(instant - 5 * 3600000).toISOString(), instant), false);
+  assert.equal(isBetanoHeartbeatStale(new Date(instant + 1).toISOString(), instant), true);
+});
+test('tolerância de fechamento ampliada só para Betano verificada; demais casas continuam estritas', () => {
+  assert.equal(closingStartTolerance({ bookmaker: 'Betano', sourceScheduleVerified: true }, 'basketball_nba'), 600000);
+  assert.equal(closingStartTolerance({ bookmaker: 'Betano', sourceScheduleVerified: false }, 'basketball_nba'), 60000);
+  assert.equal(closingStartTolerance({ bookmaker: 'Placard', sourceScheduleVerified: true }, 'basketball_nba'), 60000);
+  assert.equal(closingStartTolerance({ bookmaker: 'Betano' }, 'tennis_wta_ningbo_open'), 3 * 60 * 60 * 1000);
 });
 test('não casa evento ambíguo ou horário diferente', () => {
   const { game, event } = fixture();

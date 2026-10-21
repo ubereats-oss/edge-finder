@@ -135,6 +135,40 @@ function compare(game, events, now = Date.now()) {
   }
   return { rows, comparedSelections, reason: rows.length ? null : comparedSelections ? 'sem_valor' : 'sem_linha_equivalente_ou_preco_recente' };
 }
+function compareBookmaker(bookmaker, game, events, now = Date.now(), { startToleranceMs = 0 } = {}) {
+  if (!bookmaker || typeof bookmaker !== 'string') throw new TypeError('bookmaker obrigatório');
+  if (!Number.isFinite(startToleranceMs) || startToleranceMs < 0 || startToleranceMs > 10 * 60000) {
+    throw new RangeError('tolerância de início inválida (máximo de 10 minutos)');
+  }
+  let comparisonGame = game;
+  let comparisonEvents = events;
+  let scheduleDeltaMs = 0;
+  if (startToleranceMs > 0) {
+    const sourceStart = Date.parse(game.commenceTime || '');
+    const sourceDate = Number.isFinite(sourceStart) ? new Date(sourceStart).toISOString().slice(0, 10) : null;
+    const candidates = events.filter(event => {
+      const eventStart = Date.parse(event.commence_time || '');
+      if (!Number.isFinite(eventStart) || new Date(eventStart).toISOString().slice(0, 10) !== sourceDate
+        || Math.abs(eventStart - sourceStart) > startToleranceMs) return false;
+      const homeMatches = game.teams.filter(team => namesEqual(team, event.home_team)).length;
+      const awayMatches = game.teams.filter(team => namesEqual(team, event.away_team)).length;
+      return game.teams.length === 2 && homeMatches === 1 && awayMatches === 1;
+    });
+    if (candidates.length !== 1) return { rows: [], reason: candidates.length ? 'evento_ambiguo' : 'evento_sem_correspondencia' };
+    const [event] = candidates;
+    scheduleDeltaMs = Date.parse(event.commence_time) - sourceStart;
+    comparisonGame = { ...game, commenceTime: event.commence_time };
+    comparisonEvents = [event];
+  }
+  const result = compare(comparisonGame, comparisonEvents, now);
+  if (!result.rows.length) return result;
+  return { ...result, rows: result.rows.map(row => ({ ...row,
+    id: crypto.createHash('sha256').update(JSON.stringify([bookmaker, row.id])).digest('hex'),
+    bookmaker, sourceOdds: row.placardOdds,
+    ...(startToleranceMs > 0 ? { commenceTime: game.commenceTime,
+      apiCommenceTime: row.apiCommenceTime, sourceScheduleVerified: true, scheduleDeltaMs } : {}),
+  })) };
+}
 function report(entries) {
   const closed = entries.filter(e => Number.isFinite(e.clvPct));
   const captured = entries.filter(e => e.closingStatus === 'capturada').length;
@@ -170,5 +204,5 @@ function report(entries) {
     mean, lower, upper, verdict: closed.length >= 100 && lower !== null && lower > 0 ? 'confirmado' : 'não confirmado',
     ciMethod: 'bootstrap por evento, 4000 reamostragens; uma amostra por evento/mercado/linha/lado' };
 }
-module.exports = { namesEqual, normalize, fairProbabilities, references, matchingEvents, compare,
+module.exports = { namesEqual, normalize, fairProbabilities, references, matchingEvents, placardSelections, compare, compareBookmaker,
   comparedSelectionCount, isNearValue, nearValueSelections, report };
