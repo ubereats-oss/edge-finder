@@ -28,6 +28,14 @@ async function forEachCompetitionIsolated(items, worker, onError) {
   }
 }
 
+function pinnacleRefreshDue(deltaMs, lastFetchedAt, lastProbeAt, now = Date.now()) {
+  if (!Number.isFinite(deltaMs) || deltaMs <= 0) return false;
+  if (deltaMs <= 2 * 3600000) return true;
+  if (deltaMs > 6 * 3600000) return false;
+  const last = Date.parse(lastFetchedAt || lastProbeAt || '');
+  return !Number.isFinite(last) || now - last >= 60 * 60000;
+}
+
 async function saveOpportunity(db, row) {
   const ref = db.collection('_placard_opportunities').doc(row.id);
   await db.runTransaction(async tx => {
@@ -208,19 +216,14 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
           const delta = Date.parse(game.commenceTime) - Date.now();
           const near = event && isNearValue(game, event);
           const signature = near ? JSON.stringify(nearValueSelections(game, event)) : null;
-          if (near && event) {
-            const stateRef = db.collection('_placard_refresh_state').doc(`${cfg.key}_${event.id}`);
-            const state = (await stateRef.get()).data() || {};
-            if (state.nearSignature !== signature) triggerSignatures.set(event.id, { ref: stateRef, signature });
-          }
-          const bookmaker = event?.bookmakers?.find(b => b.key === 'pinnacle');
-          const marketUpdates = (bookmaker?.markets || [])
-            .map(m => Date.parse(m.last_update || bookmaker.last_update)).filter(Number.isFinite);
-          const stale = !event || !marketUpdates.length || marketUpdates.some(t => Date.now() - t > 2 * 3600000);
           const gameKey = crypto.createHash('sha256').update(JSON.stringify([cfg.key, game.teams.map(normalize).sort(), game.commenceTime])).digest('hex');
-          const lastProbe = Date.parse(notFoundProbes[gameKey] || '');
-          const probeDue = !event && (!Number.isFinite(lastProbe) || Date.now() - lastProbe >= 2 * 3600000);
-          if (probeDue || (event && triggerSignatures.has(event.id)) || (event && delta <= 3 * 3600000 && stale)) {
+          const stateRef = event ? db.collection('_placard_refresh_state').doc(`${cfg.key}_${event.id}`) : null;
+          const eventState = stateRef ? ((await stateRef.get()).data() || {}) : {};
+          if (near && event) {
+            if (eventState.nearSignature !== signature) triggerSignatures.set(event.id, { ref: stateRef, signature });
+          }
+          const refreshDue = pinnacleRefreshDue(delta, eventState.lastPinnacleFetchAt, notFoundProbes[gameKey]);
+          if (refreshDue || (event && triggerSignatures.has(event.id))) {
             if (event) dueEvents.set(event.id, event);
             else dueEvents.set(`new:${gameKey}`, null);
           }
@@ -238,14 +241,17 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
           try {
             const response = await api.get(`https://api.the-odds-api.com/v4/sports/${cfg.key}/odds`, { timeout: 20000, params });
             refreshedEvents = response.data.map(e => ({ ...e, sport_key: cfg.key }));
+            const fetchedAt = new Date().toISOString();
+            for (const key of dueEvents.keys()) {
+              if (key.startsWith('new:')) notFoundProbes[key.slice(4)] = fetchedAt;
+              else await db.collection('_placard_refresh_state').doc(`${cfg.key}_${key}`)
+                .set({ lastPinnacleFetchAt: fetchedAt }, { merge: true });
+            }
           } catch (error) {
             errors.push({ competition: cfg.label, error: error.message });
             diagnostics.push({ competition: cfg.label, reason: 'atualizacao_pinnacle_indisponivel', detail: error.message });
           }
           if (refreshedEvents.length) {
-            for (const key of dueEvents.keys()) {
-              if (key.startsWith('new:')) notFoundProbes[key.slice(4)] = new Date().toISOString();
-            }
             const merged = new Map(events.map(e => [e.id, e]));
             for (const e of refreshedEvents) merged.set(e.id, e);
             const expiresAt = Date.now() + 12 * 3600000;
@@ -444,5 +450,5 @@ async function main() {
     opportunities: result.rows.length, errors: result.errors }, null, 2));
   if (due && result.errors.length) console.warn(`Coleta parcial; as demais competições foram processadas: ${result.errors.map(e => `${e.competition || 'coleta'}: ${e.error}`).join(' | ')}`);
 }
-module.exports = { scan, captureClosing, allEntries, publish, exactTotals, exactSpreads, competitionUrl, forEachCompetitionIsolated };
+module.exports = { scan, captureClosing, allEntries, publish, exactTotals, exactSpreads, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue };
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });
