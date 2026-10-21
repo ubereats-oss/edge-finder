@@ -41,8 +41,8 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Instalar nodemailer
-        run: npm install nodemailer
+      - name: Instalar dependências do alerta e Firebase
+        run: npm install nodemailer firebase-admin
 
       - name: Restaurar histórico central e marcador de alerta da branch data
         run: |
@@ -56,6 +56,7 @@ jobs:
         run: node pipeline/check_closing_odds_staleness.js
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           FORCAR_TESTE: ${{ github.event.inputs.forcar_teste }}
           ALERT_SMTP_HOST: ${{ secrets.ALERT_SMTP_HOST }}
           ALERT_SMTP_PORT: ${{ secrets.ALERT_SMTP_PORT }}

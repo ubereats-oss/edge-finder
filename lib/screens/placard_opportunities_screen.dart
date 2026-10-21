@@ -94,7 +94,7 @@ class _PlacardOpportunitiesScreenState
               color: const Color(0xFFBBBBCC)),
           const SizedBox(height: 8),
           _text(
-              'Placard ${_number(row['placardOdds'])} · Mínima ${_number(row['minValueOdds'], 3)}'),
+              '${row['bookmaker'] as String? ?? 'Placard'} ${_number(row['sourceOdds'] ?? row['placardOdds'])} · Mínima ${_number(row['minValueOdds'], 3)}'),
           _text(
               'Vantagem ${_number(row['edgePct'])}% · Kelly 25%: ${_number(stake)}% da banca (€ ${amount.toStringAsFixed(2)})'),
           if (row['probabilityBasis'] == 'condicional_sem_devolucao')

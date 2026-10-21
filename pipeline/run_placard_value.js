@@ -81,6 +81,12 @@ async function exactSpreads(api, sport, event, lines, attempted, closing = false
   else { event.bookmakers ||= []; event.bookmakers.push({ key: 'pinnacle', markets: [alternate] }); }
 }
 
+function closingStartTolerance(entry, sport) {
+  if (sport.startsWith('tennis_')) return 3 * 60 * 60 * 1000;
+  if (entry.bookmaker === 'Betano' && entry.sourceScheduleVerified === true) return 10 * 60000;
+  return 60000;
+}
+
 function tennisCompetitionAlias(key) {
   const slug = key.replace(/^tennis_(?:atp|wta)_/, '').replace(/_singles$/, '');
   const special = { aus_open: 'Melbourne', french_open: 'Paris', us_open: 'New York',
@@ -350,7 +356,7 @@ async function captureClosing(db, entries) {
       for (const e of group) {
         if (Date.now() >= Date.parse(e.commenceTime)) continue;
         const event = data.find(ev => ev.id === e.eventId);
-        const tolerance = sport.startsWith('tennis_') ? 3 * 60 * 60 * 1000 : 60000;
+        const tolerance = closingStartTolerance(e, sport);
         if (!event || Math.abs(Date.parse(event.commence_time) - Date.parse(e.commenceTime)) > tolerance) continue;
         if (e.market === 'totals') {
           try { await exactTotals(api, sport, event, [e.line], attemptedAlternates, true); }
@@ -450,5 +456,5 @@ async function main() {
     opportunities: result.rows.length, errors: result.errors }, null, 2));
   if (due && result.errors.length) console.warn(`Coleta parcial; as demais competições foram processadas: ${result.errors.map(e => `${e.competition || 'coleta'}: ${e.error}`).join(' | ')}`);
 }
-module.exports = { scan, captureClosing, allEntries, publish, exactTotals, exactSpreads, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue };
+module.exports = { scan, captureClosing, allEntries, publish, saveOpportunity, exactTotals, exactSpreads, closingStartTolerance, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue };
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });
