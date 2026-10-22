@@ -140,4 +140,4 @@ async function readRetabet(context, footballGames, limit = 4, preferredTeams = [
   return { games, diagnostics };
 }
 
-module.exports = { readRetabet, parseMarkets, matchLink, eventTimeMatches };
+module.exports = { readRetabet, parseMarkets, matchLink, eventTimeMatches, teamScore };
