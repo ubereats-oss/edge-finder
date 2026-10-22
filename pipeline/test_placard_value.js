@@ -6,7 +6,7 @@ const { estimateCost, summarize, planReservation, keyFingerprint, parseHeaders,
   refreshBalances, CLOSING_RESERVE, MONTHLY_SPEND_CAP, MONTHLY_READ_CAP } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
 const { captureClosing, exactTotals, exactSpreads, closingStartTolerance, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue } = require('./run_placard_value');
-const { readSelections, adaptTotalsAndHandicaps, tunnelCycleAffordable } = require('./local_betano_reader');
+const { readSelections, adaptTotalsAndHandicaps, tunnelCycleAffordable, MAX_MEASURED_CYCLE_MB } = require('./local_betano_reader');
 const { isBetanoHeartbeatStale } = require('./check_closing_odds_staleness');
 const now = Date.parse('2026-10-20T12:00:00Z');
 function fixture() {
@@ -68,7 +68,7 @@ test('Betano aceita diferença de início de até 10 minutos só com partida ún
   assert.throws(() => compareBookmaker('Betano', game, [event], now, { startToleranceMs: 11 * 60000 }), /tolerância/);
 });
 test('leitor Betano transforma JSON de rede em vencedor, handicap e total sem ler texto da página', () => {
-  const games = readSelections({ data: { events: [{ id: 7, startTime: Date.parse('2026-10-20T14:00:00Z'),
+  const games = readSelections({ data: { events: [{ id: 7, sportId: 'BASK', startTime: Date.parse('2026-10-20T14:00:00Z'),
     shortName: 'Porto x Benfica', leagueName: 'NBA', url: '/odds/test', participants: [{ name: 'Porto' }, { name: 'Benfica' }],
     sixPackBlocks: [{ columns: [
       { type: 'H2HT', name: 'Vencedor', selections: [{ name: 'Porto', price: 2.2 }, { name: 'Benfica', price: 1.7 }] },
@@ -83,6 +83,22 @@ test('leitor Betano transforma JSON de rede em vencedor, handicap e total sem le
   assert.deepEqual(game.markets[2].selections.map(s => s.name), ['Over', 'Under']);
   assert.deepEqual(game.markets[1].selections.map(s => s.line), [-2.5, 2.5]);
 });
+test('leitor Betano normaliza feed Futebol MRES e identifica Liga Europa', () => {
+  const games = readSelections({ data: { events: [{ id: '91651566', sportId: 'FOOT', startTime: Date.parse('2026-10-22T00:30:00Z'),
+    shortName: 'Ferencvaros TC - SC União Torreense', leagueName: 'Liga Europa', regionName: 'UEFA Liga Europa',
+    url: '/odds/ferencvaros-tc-sc-uniao-torreense/91651566/',
+    participants: [{ name: 'Ferencvaros TC' }, { name: 'SC União Torreense' }], markets: [
+      { type: 'MRES', name: 'Resultado Final', selections: [
+        { name: '1', fullName: 'Ferencvaros TC', price: 1.32 }, { name: 'X', fullName: 'Empate', price: 5 },
+        { name: '2', fullName: 'SC União Torreense', price: 8 }] },
+      { type: 'HCTG', name: 'Total de Golos Mais/Menos', selections: [
+        { name: 'Mais de 2.5', price: 1.52, handicap: 2.5 }, { name: 'Menos 2.5', price: 2.1, handicap: 2.5 }] },
+    ] }] } });
+  assert.equal(games.length, 1);
+  assert.equal(games[0].apiSport, 'soccer_uefa_europa_league');
+  assert.deepEqual(games[0].markets.map(m => m.type), ['MRES', 'HCTG']);
+  assert.deepEqual(adaptTotalsAndHandicaps(games[0]).markets[1].selections.map(s => s.name), ['Over', 'Under']);
+});
 test('alerta Betano fica stale sem sucesso ou depois de 6h', () => {
   const instant = Date.parse('2026-10-21T12:00:00Z');
   assert.equal(isBetanoHeartbeatStale(null, instant), true);
@@ -91,8 +107,9 @@ test('alerta Betano fica stale sem sucesso ou depois de 6h', () => {
   assert.equal(isBetanoHeartbeatStale(new Date(instant + 1).toISOString(), instant), true);
 });
 test('bloqueio conservador da franquia TunnelBear antes do ciclo seguinte', () => {
-  assert.equal(tunnelCycleAffordable(3944), true);
-  assert.equal(tunnelCycleAffordable(3945), false);
+  assert.equal(MAX_MEASURED_CYCLE_MB, 15);
+  assert.equal(tunnelCycleAffordable(3985), true);
+  assert.equal(tunnelCycleAffordable(3986), false);
   assert.equal(tunnelCycleAffordable(Number.NaN), false);
 });
 test('tolerância de fechamento ampliada só para Betano verificada; demais casas continuam estritas', () => {

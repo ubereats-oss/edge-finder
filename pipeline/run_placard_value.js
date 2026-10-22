@@ -1,8 +1,8 @@
 const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
 const { database, summarize: summarizeBudget, CLOSING_RESERVE } = require('./odds_api_monthly_budget');
 const { createBrowser, scrapeCompetition } = require('./get_placard_odds');
-const { compare, references, matchingEvents, isNearValue, nearValueSelections, report, namesEqual, normalize,
-  comparedSelectionCount } = require('./placard_value');
+const { compare, compareBookmaker, references, matchingEvents, isNearValue, nearValueSelections, report, namesEqual, normalize,
+  comparedSelectionCount, placardSelections } = require('./placard_value');
 const competitions = require('./placard_config');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -320,6 +320,98 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
   return { rows, errors, diagnostics, scanRunId, apiUsage: api.usage() };
 }
 
+async function processBookmakerRead(db, readId) {
+  if (!readId || !/^[A-Za-z0-9_-]{1,120}$/.test(readId)) throw new Error('ID de leitura local inválido.');
+  const readRef = db.collection('_bookmaker_reads').doc(readId);
+  const readSnap = await readRef.get();
+  if (!readSnap.exists) throw new Error(`Leitura local ${readId} não encontrada.`);
+  const read = readSnap.data();
+  const validationOnly = read.mode === 'validation';
+  const soccerGate = (await db.collection('_bookmaker_validation').doc(`${String(read.bookmaker).toLowerCase()}_soccer`).get()).data();
+  if (['processed', 'processed_with_errors'].includes(read.status)) return { rows: [], errors: read.errors || [], diagnostics: read.diagnostics || [], apiUsage: { creditsSpent: 0, calls: 0 } };
+  if (!['dispatching', 'dispatched', 'ready'].includes(read.status)) throw new Error(`Leitura local ${readId} não está pronta (${read.status || 'sem_status'}).`);
+  const gamesSnap = await readRef.collection('games').get();
+  const games = gamesSnap.docs.map(doc => doc.data()).filter(game => game && game.apiSport && Array.isArray(game.teams));
+  if (!games.length) throw new Error(`Leitura local ${readId} não contém jogos válidos.`);
+
+  const api = createOddsApiClient({ label: `bookmaker-${read.bookmaker || 'unknown'}` });
+  const rows = [], errors = [], diagnostics = [], validations = [];
+  const groups = new Map();
+  for (const game of games) {
+    if (!groups.has(game.apiSport)) groups.set(game.apiSport, []);
+    groups.get(game.apiSport).push(game);
+  }
+  const attemptedAlternates = new Set();
+  await forEachCompetitionIsolated([...groups.entries()], async ([sport, sportGames]) => {
+    if (!validationOnly && sport.startsWith('soccer_') && soccerGate?.passed !== true) {
+      throw new Error('Futebol bloqueado até validar 20 seleções contra Pinnacle.');
+    }
+    const markets = [...new Set(sportGames.flatMap(game => game.markets || []).flatMap(market => {
+      if (['H2HT', 'HTOH', 'MRES'].includes(market.type)) return ['h2h'];
+      if (['HCOT', 'TGHC'].includes(market.type)) return ['spreads'];
+      if (['HCTG', 'TPOT'].includes(market.type)) return ['totals'];
+      return [];
+    }))];
+    if (!markets.length) throw new Error('Leitura não contém mercados vencedor, handicap ou total reconhecidos.');
+    const starts = sportGames.map(game => Date.parse(game.commenceTime)).filter(Number.isFinite);
+    if (!starts.length) throw new Error('Leitura sem horário válido de início.');
+    const params = { bookmakers: 'pinnacle', markets: markets.join(','), oddsFormat: 'decimal',
+      commenceTimeFrom: new Date(Math.max(Date.now() - 5 * 60000, Math.min(...starts) - 10 * 60000)).toISOString().replace(/\.\d{3}Z$/, 'Z'),
+      commenceTimeTo: new Date(Math.max(...starts) + 10 * 60000).toISOString().replace(/\.\d{3}Z$/, 'Z') };
+    const { data } = await api.get(`https://api.the-odds-api.com/v4/sports/${sport}/odds`, { timeout: 20000, params });
+    const events = (data || []).map(event => ({ ...event, sport_key: sport }));
+    await forEachCompetitionIsolated(sportGames, async game => {
+      let alternateError = null;
+      const matches = matchingEvents(game, events);
+      if (matches.length === 1) {
+        const totalLines = (game.markets || []).filter(market => ['HCTG', 'TPOT'].includes(market.type))
+          .flatMap(market => market.selections.filter(selection => !selection.unavailable && selection.line !== null)
+            .map(selection => Number(selection.line)));
+        const spreadLines = (game.markets || []).filter(market => ['HCOT', 'TGHC'].includes(market.type))
+          .flatMap(market => market.selections.filter(selection => !selection.unavailable && selection.line !== null)
+            .map((selection, index) => ({
+              selection: game.teams.find(team => namesEqual(team, selection.name || selection.fullName)) || game.teams[index],
+              line: Number(selection.line),
+            })));
+        try {
+          if (totalLines.length) await exactTotals(api, sport, matches[0], totalLines, attemptedAlternates);
+          if (spreadLines.length) await exactSpreads(api, sport, matches[0], spreadLines, attemptedAlternates);
+        } catch (error) { alternateError = error.message; }
+      }
+      const comparison = compareBookmaker(read.bookmaker, game, events, Date.now(), { startToleranceMs: 10 * 60000 });
+      if (matches.length === 1 && comparison.comparedSelections > 0) {
+        const event = matches[0];
+        const refs = references(event);
+        for (const selection of placardSelections(game, event)) {
+          const reference = refs.find(row => row.market === selection.market && row.line === selection.line && row.selection === selection.selection);
+          if (reference) validations.push({ apiSport: sport, teams: game.teams, sourceEventId: game.sourceEventId,
+            pinnacleEventId: event.id, sourceStart: game.commenceTime, pinnacleStart: event.commence_time,
+            observedAt: game.observedAt, ...selection, ...reference });
+        }
+      }
+      for (const row of comparison.rows) {
+        row.sourceEventId = game.sourceEventId || null;
+        row.sourceReadId = readId;
+        if (!validationOnly) await saveOpportunity(db, row);
+        rows.push(row);
+      }
+      diagnostics.push({ apiSport: sport, teams: game.teams, comparedSelections: comparison.comparedSelections || 0,
+        opportunities: comparison.rows.length, reason: comparison.reason || null, alternateError });
+    }, (game, error) => errors.push({ apiSport: sport, teams: game.teams, error: error.message }));
+  }, (group, error) => { errors.push({ apiSport: group[0], error: error.message }); });
+  if (validationOnly) {
+    const soccer = validations.filter(row => row.apiSport.startsWith('soccer_'));
+    const passed = soccer.length >= 20 && soccer.some(row => row.market === 'h2h') && soccer.some(row => row.market === 'totals') && errors.length === 0;
+    await db.collection('_bookmaker_validation').doc(`${String(read.bookmaker).toLowerCase()}_soccer`).set({
+      passed, readId, validatedAt: new Date().toISOString(), selections: soccer.length, sample: soccer.slice(0, 20), errors,
+    });
+  }
+  await readRef.set({ status: errors.length ? 'processed_with_errors' : 'processed', processedAt: new Date().toISOString(),
+    comparedSelections: diagnostics.reduce((sum, row) => sum + row.comparedSelections, 0),
+    opportunities: validationOnly ? 0 : rows.length, validationOnly, validations: validations.slice(0, 100), errors, diagnostics, apiUsage: api.usage() }, { merge: true });
+  return { rows, errors, diagnostics, apiUsage: api.usage() };
+}
+
 async function captureClosing(db, entries) {
   const now = Date.now();
   const pending = entries.filter(e => e.closingStatus === 'pendente');
@@ -410,10 +502,11 @@ async function main() {
   const control = db.collection('_placard_control').doc('scan');
   if (process.argv.includes('--plan')) {
     const state = (await control.get()).data() || {};
-    const needsScan = process.env.PLACARD_FORCE_SCAN === '1' || !state.lastAttemptAt || Date.now() - Date.parse(state.lastAttemptAt) >= 30 * 60000;
+    const hasBookmakerRead = Boolean(process.env.PLACARD_BOOKMAKER_READ_ID);
+    const needsScan = !hasBookmakerRead && (process.env.PLACARD_FORCE_SCAN === '1' || !state.lastAttemptAt || Date.now() - Date.parse(state.lastAttemptAt) >= 30 * 60000);
     const pending = await db.collection('_placard_opportunities').where('closingStatus', '==', 'pendente').get();
     const needsClosing = process.env.PLACARD_CLOSING_ONLY === '1' || pending.docs.some(d => Date.parse(d.data().commenceTime) - Date.now() <= 5 * 60000);
-    const output = `needs_scan=${needsScan}\nneeds_work=${needsScan || needsClosing}\n`;
+    const output = `needs_scan=${needsScan}\nneeds_work=${hasBookmakerRead || needsScan || needsClosing}\n`;
     if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, output);
     else console.log(output);
     return;
@@ -429,6 +522,22 @@ async function main() {
     result.closingUsage = closingUsage;
     await publish(db, result, entries);
     fs.writeFileSync('placard_run_summary.json', JSON.stringify(report(entries), null, 2));
+    return;
+  }
+  if (process.env.PLACARD_BOOKMAKER_READ_ID) {
+    let result;
+    try { result = await processBookmakerRead(db, process.env.PLACARD_BOOKMAKER_READ_ID); }
+    catch (error) { result = { rows: [], errors: [{ error: error.message }], diagnostics: [], apiUsage: { creditsSpent: 0, calls: 0 } }; }
+    entries = await allEntries(db);
+    const afterReadClosing = await captureClosing(db, entries.filter(e => !existingIds.has(e.id)));
+    closingUsage = { creditsSpent: (closingUsage?.creditsSpent || 0) + (afterReadClosing?.creditsSpent || 0),
+      calls: (closingUsage?.calls || 0) + (afterReadClosing?.calls || 0) };
+    entries = await allEntries(db);
+    result.rows = entries.filter(e => e.closingStatus === 'pendente' && Date.parse(e.commenceTime) > Date.now());
+    result.closingUsage = closingUsage;
+    await publish(db, result, entries);
+    fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), bookmakerReadId: process.env.PLACARD_BOOKMAKER_READ_ID,
+      opportunities: result.rows.length, errors: result.errors }, null, 2));
     return;
   }
   const state = (await control.get()).data() || {};
@@ -456,5 +565,5 @@ async function main() {
     opportunities: result.rows.length, errors: result.errors }, null, 2));
   if (due && result.errors.length) console.warn(`Coleta parcial; as demais competições foram processadas: ${result.errors.map(e => `${e.competition || 'coleta'}: ${e.error}`).join(' | ')}`);
 }
-module.exports = { scan, captureClosing, allEntries, publish, saveOpportunity, exactTotals, exactSpreads, closingStartTolerance, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue };
+module.exports = { scan, processBookmakerRead, captureClosing, allEntries, publish, saveOpportunity, exactTotals, exactSpreads, closingStartTolerance, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue };
 if (require.main === module) main().catch(e => { console.error(e.message); process.exitCode = 1; });

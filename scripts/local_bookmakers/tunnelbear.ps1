@@ -15,6 +15,15 @@ function Get-TunnelBearState {
   $window = $root.FindFirst([System.Windows.Automation.TreeScope]::Children, $windowCondition)
   if (-not $window) { throw 'Janela principal do TunnelBear não encontrada.' }
 
+  $popupCondition = New-Object System.Windows.Automation.PropertyCondition(
+    [System.Windows.Automation.AutomationElement]::NameProperty, 'Close update popup')
+  $updatePopupClose = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $popupCondition)
+  if ($updatePopupClose) {
+    $invokePattern = $updatePopupClose.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+    $invokePattern.Invoke()
+    Start-Sleep -Milliseconds 500
+  }
+
   $idCondition = New-Object System.Windows.Automation.PropertyCondition(
     [System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'statusAccessibility')
   $statusElement = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $idCondition)
@@ -87,9 +96,9 @@ try {
         if ($state.Status -eq 'Disconnected') { $state.Switch.Toggle() }
         $state = Wait-TunnelBearStatus 'Connection secured' 90
         $ipWho = Invoke-RestMethod -Uri 'https://ipwho.is/' -TimeoutSec 20
-        $ipApi = Invoke-RestMethod -Uri 'http://ip-api.com/json/?fields=status,countryCode' -TimeoutSec 20
-        if ($ipWho.success -ne $true -or $ipWho.country_code -ne 'PT' -or $ipApi.status -ne 'success' -or $ipApi.countryCode -ne 'PT') {
-          throw "IP não confirmado como português nos dois serviços (ipwho=$($ipWho.country_code), ip-api=$($ipApi.countryCode))."
+        $ipApi = Invoke-RestMethod -Uri 'https://ipapi.co/json/' -TimeoutSec 20
+        if ($ipWho.success -ne $true -or $ipWho.country_code -ne 'PT' -or $ipApi.country_code -ne 'PT') {
+          throw "IP não confirmado como português nos dois serviços (ipwho=$($ipWho.country_code), ipapi=$($ipApi.country_code))."
         }
         [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT'; attempt = $attempt } | ConvertTo-Json -Compress
         exit 0

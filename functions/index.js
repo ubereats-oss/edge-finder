@@ -1,5 +1,6 @@
 const { onRequest } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
+const { onDocumentWritten } = require('firebase-functions/v2/firestore');
 const { defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
@@ -727,6 +728,35 @@ async function dispatchPlacardClosingIfDue(token, now) {
   } catch (e) { console.error(`[closingOddsScheduler] falha ao disparar fechamento Placard: ${e.message}`); }
 }
 
+async function dispatchReadyBookmakerRead(token, targetRef = null) {
+  const snap = targetRef ? null : await db.collection('_bookmaker_reads').where('status', '==', 'ready').limit(1).get();
+  if (!targetRef && snap.empty) return;
+  const ref = targetRef || snap.docs[0].ref;
+  const claimed = await db.runTransaction(async tx => {
+    const current = await tx.get(ref);
+    if (!current.exists || current.data().status !== 'ready') return false;
+    tx.update(ref, { status: 'dispatching', dispatchStartedAt: new Date().toISOString(), dispatchError: null });
+    return true;
+  });
+  if (!claimed) return;
+  try {
+    await dispatchWorkflow(token, 'placard_value.yml', { bookmaker_read_id: ref.id });
+    await ref.set({ dispatchedAt: new Date().toISOString() }, { merge: true });
+    console.log(`[closingOddsScheduler] leitura local ${ref.id} enviada para comparação na nuvem.`);
+  } catch (error) {
+    await ref.set({ status: 'ready', dispatchError: error.message, dispatchFailedAt: new Date().toISOString() }, { merge: true });
+    console.error(`[closingOddsScheduler] falha ao despachar leitura local ${ref.id}: ${error.message}`);
+  }
+}
+
+exports.compareLocalBookmakerRead = onDocumentWritten({
+  document: '_bookmaker_reads/{readId}', region: 'southamerica-east1', secrets: [GH_DISPATCH_TOKEN],
+}, async event => {
+  const after = event.data?.after;
+  if (!after?.exists || after.data().status !== 'ready') return;
+  await dispatchReadyBookmakerRead(GH_DISPATCH_TOKEN.value(), after.ref);
+});
+
 exports.closingOddsScheduler = onSchedule(
   { region: 'southamerica-east1', schedule: 'every 1 minutes', secrets: [GH_DISPATCH_TOKEN] },
   async () => {
@@ -737,8 +767,9 @@ exports.closingOddsScheduler = onSchedule(
     }
 
     const now = Date.now();
-    await dispatchPlacardScanIfDue(token, now);
     await dispatchPlacardClosingIfDue(token, now);
+    await dispatchReadyBookmakerRead(token);
+    await dispatchPlacardScanIfDue(token, now);
 
     let entries;
     try {
