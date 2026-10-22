@@ -411,9 +411,12 @@ async function processBookmakerRead(db, readId) {
   }, (group, error) => { errors.push({ apiSport: group[0], error: error.message }); });
   if (validationOnly) {
     const soccer = validations.filter(row => row.apiSport.startsWith('soccer_'));
-    const passed = soccer.length >= 20 && soccer.some(row => row.market === 'h2h') && soccer.some(row => row.market === 'totals') && errors.length === 0;
+    const requiredMarkets = ['Bwin', 'ESC Online'].includes(read.bookmaker) ? ['totals'] : ['h2h', 'totals'];
+    const passed = soccer.length >= 20 && requiredMarkets.every(market => soccer.some(row => row.market === market))
+      && errors.length === 0;
     await db.collection('_bookmaker_validation').doc(`${String(read.bookmaker).toLowerCase()}_soccer`).set({
       passed, readId, validatedAt: new Date().toISOString(), selections: soccer.length, sample: soccer.slice(0, 20), errors,
+      requiredMarkets,
     });
   }
   await readRef.set({ status: errors.length ? 'processed_with_errors' : 'processed', processedAt: new Date().toISOString(),

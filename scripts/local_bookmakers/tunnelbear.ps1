@@ -1,7 +1,9 @@
 param(
   [Parameter(Mandatory = $true)]
   [ValidateSet('connect', 'disconnect', 'meter')]
-  [string]$Action
+  [string]$Action,
+  [ValidateRange(5, 90)]
+  [int]$StableSeconds = 90
 )
 
 $ErrorActionPreference = 'Stop'
@@ -84,11 +86,25 @@ function Get-MeterReading([int]$StableSeconds = 90) {
   throw "Contador TunnelBear não ficou estável por $StableSeconds s em 180 s; última leitura: $last."
 }
 
+function Write-ConnectionAttempt([int]$Attempt, [string]$Status, [string]$Detail = '') {
+  if (-not $env:EDGE_TUNNEL_ATTEMPT_LOG) { return }
+  $record = [pscustomobject]@{
+    at = [DateTime]::UtcNow.ToString('o')
+    cycleId = $env:EDGE_TUNNEL_CYCLE_ID
+    purpose = $env:EDGE_TUNNEL_PURPOSE
+    attempt = $Attempt
+    status = $Status
+    detail = $Detail
+  }
+  Add-Content -LiteralPath $env:EDGE_TUNNEL_ATTEMPT_LOG -Value ($record | ConvertTo-Json -Compress) -Encoding UTF8
+}
+
 try {
   if ($Action -eq 'connect') {
     $lastError = $null
     for ($attempt = 1; $attempt -le 1; $attempt++) {
       try {
+        Write-ConnectionAttempt $attempt 'started'
         $state = Get-TunnelBearState
         if (-not ($state.Countries -contains 'Portugal')) {
           throw "Portugal não está selecionado no TunnelBear (seleção atual: $($state.Countries -join ', '))."
@@ -109,10 +125,12 @@ try {
           if ($probe -lt 3) { Start-Sleep -Seconds 5 }
         }
         if (-not $ipConfirmed) { throw $lastError }
+        Write-ConnectionAttempt $attempt 'connected' 'Portugal confirmado em dois serviços de IP.'
         [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT'; attempt = $attempt } | ConvertTo-Json -Compress
         exit 0
       } catch {
         $lastError = $_.Exception.Message
+        Write-ConnectionAttempt $attempt 'failed' $lastError
         try {
           $state = Get-TunnelBearState
           if ($state.Status -ne 'Disconnected') { $state.Switch.Toggle(); $null = Wait-TunnelBearStatus 'Disconnected' 30 }
@@ -128,7 +146,7 @@ try {
     $null = Wait-TunnelBearStatus 'Disconnected'
     [pscustomobject]@{ action = 'disconnect'; status = 'disconnected' } | ConvertTo-Json -Compress
   } else {
-    $meter = Get-MeterReading
+    $meter = Get-MeterReading $StableSeconds
     [pscustomobject]@{ action = 'meter'; status = (Get-TunnelBearState).Status; remainingMB = $meter } | ConvertTo-Json -Compress
   }
 } catch {
