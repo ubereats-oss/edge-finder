@@ -749,5 +749,7 @@ module.exports = { readSelections, adaptTotalsAndHandicaps, assertTunnelBudget, 
   ensureEdge, initialJson, freshJson, tunnel, database, physicalNetworkBytes, vpnNetworkBytes,
   networkProcessSnapshot, summarizeNetworkProcesses, updateFailure };
 if (require.main === module) {
-  main().then(() => process.exit(0)).catch(error => { console.error(error.message); process.exit(1); });
+  const run = process.argv.includes('--legacy') || process.argv.includes('--validate-football')
+    ? main : require('./local_bookmaker_cycle_fast.cjs').main;
+  run().then(() => process.exit(0)).catch(error => { console.error(error.message); process.exit(1); });
 }

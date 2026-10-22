@@ -1,6 +1,6 @@
 param(
   [Parameter(Mandatory = $true)]
-  [ValidateSet('connect', 'disconnect', 'meter')]
+  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once')]
   [string]$Action,
   [ValidateRange(5, 90)]
   [int]$StableSeconds = 90
@@ -100,7 +100,16 @@ function Write-ConnectionAttempt([int]$Attempt, [string]$Status, [string]$Detail
 }
 
 try {
-  if ($Action -eq 'connect') {
+  if ($Action -eq 'meter-once') {
+    $root = [System.Windows.Automation.AutomationElement]::RootElement
+    $condition = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::NameProperty, 'TunnelBear')
+    $window = $root.FindFirst([System.Windows.Automation.TreeScope]::Children, $condition)
+    if (-not $window) { throw 'Janela TunnelBear indisponível.' }
+    $texts = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition)
+    $reading = $texts | ForEach-Object { $_.Current.Name } | Where-Object { $_ -match '^\d+ MB$' } | Select-Object -First 1
+    if (-not $reading) { throw 'Saldo TunnelBear indisponível.' }
+    [pscustomobject]@{ action = $Action; remainingMB = [int]($reading -replace '\D', '') } | ConvertTo-Json -Compress
+  } elseif ($Action -eq 'connect') {
     $lastError = $null
     for ($attempt = 1; $attempt -le 1; $attempt++) {
       try {
@@ -109,6 +118,7 @@ try {
         if (-not ($state.Countries -contains 'Portugal')) {
           throw "Portugal não está selecionado no TunnelBear (seleção atual: $($state.Countries -join ', '))."
         }
+        $vpnStartedAt = Get-Date -Format o
         if ($state.Status -eq 'Disconnected') { $state.Switch.Toggle() }
         $state = Wait-TunnelBearStatus 'Connection secured' 120
         $ipConfirmed = $false
@@ -126,7 +136,7 @@ try {
         }
         if (-not $ipConfirmed) { throw $lastError }
         Write-ConnectionAttempt $attempt 'connected' 'Portugal confirmado em dois serviços de IP.'
-        [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT'; attempt = $attempt } | ConvertTo-Json -Compress
+        [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT'; attempt = $attempt; vpnStartedAt = $vpnStartedAt } | ConvertTo-Json -Compress
         exit 0
       } catch {
         $lastError = $_.Exception.Message
@@ -144,13 +154,14 @@ try {
       $state.Switch.Toggle()
     }
     $null = Wait-TunnelBearStatus 'Disconnected'
-    [pscustomobject]@{ action = 'disconnect'; status = 'disconnected' } | ConvertTo-Json -Compress
+    [pscustomobject]@{ action = 'disconnect'; status = 'disconnected'; vpnDisconnectedAt = (Get-Date -Format o) } | ConvertTo-Json -Compress
   } else {
     $meter = Get-MeterReading $StableSeconds
     [pscustomobject]@{ action = 'meter'; status = (Get-TunnelBearState).Status; remainingMB = $meter } | ConvertTo-Json -Compress
   }
 } catch {
   $message = $_.Exception.Message
+  if ($Action -eq 'meter-once') { [Console]::Error.WriteLine($message); exit 1 }
   try {
     $state = Get-TunnelBearState
     if ($state.Status -ne 'Disconnected') {
