@@ -137,8 +137,8 @@ test('alerta local respeita a grade de Brasília e a tolerância de 45 minutos',
 });
 test('bloqueio conservador da franquia TunnelBear antes do ciclo seguinte', () => {
   assert.equal(MAX_MEASURED_CYCLE_MB, 18);
-  assert.equal(tunnelCycleAffordable(3982), true);
-  assert.equal(tunnelCycleAffordable(3983), false);
+  assert.equal(tunnelCycleAffordable(3800), true);
+  assert.equal(tunnelCycleAffordable(3801), false);
   assert.equal(tunnelCycleAffordable(Number.NaN), false);
   assert.equal(monthKey(Date.parse('2026-11-01T01:30:00Z')), '2026-10');
   assert.equal(monthKey(Date.parse('2026-11-01T03:00:00Z')), '2026-11');

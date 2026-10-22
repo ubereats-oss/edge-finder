@@ -8,6 +8,12 @@ const competitions = require('./placard_config');
 const path = require('node:path');
 const fs = require('node:fs');
 const { readRetabet } = require('../scripts/local_bookmakers/retabet_reader.cjs');
+const { readBwin } = require('../scripts/local_bookmakers/bwin_reader.cjs');
+const { readBetclic } = require('../scripts/local_bookmakers/betclic_reader.cjs');
+const { readLebull } = require('../scripts/local_bookmakers/lebull_reader.cjs');
+const { readEscOnline } = require('../scripts/local_bookmakers/esc_online_reader.cjs');
+const { readGoldenpark } = require('../scripts/local_bookmakers/goldenpark_reader.cjs');
+const { scheduledFeedProbe } = require('../scripts/local_bookmakers/scheduled_feed_probe.cjs');
 
 const PROJECT = path.resolve(__dirname, '..');
 const TUNNEL = path.join(PROJECT, 'scripts', 'local_bookmakers', 'tunnelbear.ps1');
@@ -21,14 +27,19 @@ const FOOTBALL_PATH = '/api/sports/FOOT/hot/trending/leagues/433g/events?req=s,s
 const TASK_NAME = 'EdgeFinder-Betano-Local';
 const MONTHLY_TUNNEL_CAP_MB = 4000;
 const MAX_MEASURED_CYCLE_MB = 18;
+const NEXT_CYCLE_RESERVE_MB = 200;
 const OUTPUT_DIR = path.join(PROJECT, '.local_logs', 'betano');
+const BWIN_VALIDATION_REQUEST = path.join(OUTPUT_DIR, 'bwin-validation-request.json');
 const BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font']);
 const BLOCKED_TRACKING_URL = /google-analytics|googletagmanager|doubleclick|facebook\.net|hotjar|optimove|go-mpulse|bsqd\.me/i;
 
-function tunnel(action) {
-  const result = require('node:child_process').spawnSync('powershell.exe', [
-    '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', TUNNEL, action,
-  ], { encoding: 'utf8', timeout: 240000 });
+function tunnel(action, cycleId = '', purpose = '') {
+  const args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', TUNNEL, action];
+  if (action === 'meter') args.push('-StableSeconds', '15');
+  const result = require('node:child_process').spawnSync('powershell.exe', args,
+    { encoding: 'utf8', timeout: 240000, env: { ...process.env,
+      EDGE_TUNNEL_ATTEMPT_LOG: path.join(OUTPUT_DIR, `tunnelbear_attempts_${monthKey()}.jsonl`),
+      EDGE_TUNNEL_CYCLE_ID: cycleId, EDGE_TUNNEL_PURPOSE: purpose } });
   if (result.status !== 0) throw new Error((result.stderr || result.stdout || `TunnelBear ${action} falhou`).trim());
   return JSON.parse(result.stdout.trim());
 }
@@ -43,6 +54,38 @@ function physicalNetworkBytes() {
     throw new Error('Contadores de bytes da rede física inválidos.');
   }
   return bytes;
+}
+
+function vpnNetworkBytes() {
+  const script = "$adapter = Get-NetAdapter -Name 'Ethernet 2' -ErrorAction Stop; if ($adapter.InterfaceDescription -ne 'TunnelBear Adapter V9' -or $adapter.Status -ne 'Up') { throw 'Adaptador TunnelBear não está ativo.' }; $stats = Get-NetAdapterStatistics -Name $adapter.Name -ErrorAction Stop; [pscustomobject]@{ receivedBytes = [double]$stats.ReceivedBytes; sentBytes = [double]$stats.SentBytes } | ConvertTo-Json -Compress";
+  const result = require('node:child_process').spawnSync('powershell.exe', ['-NoProfile', '-Command', script],
+    { encoding: 'utf8', timeout: 20000 });
+  if (result.status !== 0) return null;
+  const bytes = JSON.parse(result.stdout.trim());
+  if (![bytes.receivedBytes, bytes.sentBytes].every(value => Number.isFinite(value) && value >= 0)) {
+    return null;
+  }
+  return bytes;
+}
+
+function networkProcessSnapshot() {
+  const script = "$rows=Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue | Where-Object { $_.RemoteAddress -notin @('127.0.0.1','::1') } | Group-Object OwningProcess | ForEach-Object { $pidValue=[int]$_.Name; $process=Get-Process -Id $pidValue -ErrorAction SilentlyContinue; if ($process) { [pscustomobject]@{ pid=$pidValue; name=$process.ProcessName; connections=$_.Count } } }; @($rows) | ConvertTo-Json -Compress";
+  const result = require('node:child_process').spawnSync('powershell.exe', ['-NoProfile', '-Command', script],
+    { encoding: 'utf8', timeout: 12000 });
+  if (result.status !== 0) return [];
+  try { return [].concat(JSON.parse(result.stdout.trim() || '[]')).filter(Boolean); }
+  catch { return []; }
+}
+
+function summarizeNetworkProcesses(samples) {
+  const byPid = new Map();
+  for (const sample of samples) for (const row of sample.rows) {
+    const previous = byPid.get(row.pid) || { pid: row.pid, name: row.name, samples: 0, peakConnections: 0 };
+    previous.samples++;
+    previous.peakConnections = Math.max(previous.peakConnections, row.connections);
+    byPid.set(row.pid, previous);
+  }
+  return [...byPid.values()].sort((a, b) => b.samples - a.samples || b.peakConnections - a.peakConnections);
 }
 
 function database() {
@@ -206,18 +249,19 @@ function readMonthlyUsage(now = Date.now()) {
 }
 
 function tunnelCycleAffordable(usedMB) {
-  return Number.isFinite(usedMB) && usedMB + MAX_MEASURED_CYCLE_MB <= MONTHLY_TUNNEL_CAP_MB;
+  return Number.isFinite(usedMB) && usedMB + NEXT_CYCLE_RESERVE_MB <= MONTHLY_TUNNEL_CAP_MB;
 }
 
 function assertTunnelBudget(now = Date.now()) {
   const ledger = readMonthlyUsage(now);
   if (!tunnelCycleAffordable(ledger.totalMB)) {
-    throw new Error(`Ciclo bloqueado: uso conservador TunnelBear ${ledger.totalMB} MB + reserva ${MAX_MEASURED_CYCLE_MB} MB excederia ${MONTHLY_TUNNEL_CAP_MB} MB neste mês.`);
+    throw new Error(`Ciclo bloqueado: uso conservador TunnelBear ${ledger.totalMB} MB + reserva ${NEXT_CYCLE_RESERVE_MB} MB excederia ${MONTHLY_TUNNEL_CAP_MB} MB neste mês.`);
   }
   return ledger;
 }
 
 function recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
+  vpnBytesBefore, vpnBytesAfter,
   now = Date.now(), reason = 'complete' }) {
   const ledger = readMonthlyUsage(now);
   const providerDeltaMB = Number.isFinite(beforeMB) && Number.isFinite(afterMB) && afterMB <= beforeMB
@@ -226,11 +270,17 @@ function recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, n
   const networkAfter = networkBytesAfter && networkBytesAfter.receivedBytes + networkBytesAfter.sentBytes;
   const networkMB = Number.isFinite(networkBefore) && Number.isFinite(networkAfter) && networkAfter >= networkBefore
     ? (networkAfter - networkBefore) / 1000000 : null;
-  const measuredMB = networkMB ?? providerDeltaMB;
+  const vpnBefore = vpnBytesBefore && vpnBytesBefore.receivedBytes + vpnBytesBefore.sentBytes;
+  const vpnAfter = vpnBytesAfter && vpnBytesAfter.receivedBytes + vpnBytesAfter.sentBytes;
+  const vpnMB = Number.isFinite(vpnBefore) && Number.isFinite(vpnAfter) && vpnAfter >= vpnBefore
+    ? (vpnAfter - vpnBefore) / 1000000 : null;
+  const measuredMB = vpnMB ?? providerDeltaMB ?? networkMB;
   const chargedMB = Math.max(MAX_MEASURED_CYCLE_MB, Number.isFinite(measuredMB) ? Math.ceil(measuredMB) : 0);
   ledger.cycles.push({ startedAt, recordedAt: new Date(now).toISOString(), beforeMB, afterMB,
-    providerDeltaMB, networkBytesBefore, networkBytesAfter, measuredMB,
-    measurementSource: networkMB !== null ? 'wifi_upper_bound_during_vpn' : providerDeltaMB !== null ? 'provider_ui' : 'unavailable',
+    providerDeltaMB, networkBytesBefore, networkBytesAfter, wifiUpperBoundMB: networkMB,
+    vpnBytesBefore, vpnBytesAfter, measuredMB,
+    measurementSource: vpnMB !== null ? 'tunnelbear_adapter' : providerDeltaMB !== null ? 'provider_ui'
+      : networkMB !== null ? 'wifi_upper_bound_during_vpn' : 'unavailable',
     chargedMB, reason });
   ledger.totalMB = ledger.cycles.reduce((sum, cycle) => sum + Number(cycle.chargedMB || 0), 0);
   fs.writeFileSync(usageFile(now), JSON.stringify(ledger, null, 2));
@@ -246,6 +296,11 @@ async function main() {
   const validationOnly = process.argv.includes('--validate-football');
   const gate = (await db.collection('_bookmaker_validation').doc('betano_soccer').get()).data();
   const retabetGate = (await db.collection('_bookmaker_validation').doc('retabet_soccer').get()).data();
+  const bwinGate = (await db.collection('_bookmaker_validation').doc('bwin_soccer').get()).data();
+  const betclicGate = (await db.collection('_bookmaker_validation').doc('betclic_soccer').get()).data();
+  const lebullGate = (await db.collection('_bookmaker_validation').doc('lebull_soccer').get()).data();
+  const escGate = (await db.collection('_bookmaker_validation').doc('esc online_soccer').get()).data();
+  const goldenparkGate = (await db.collection('_bookmaker_validation').doc('goldenpark_soccer').get()).data();
   if (!validationOnly && gate?.passed !== true) throw new Error('Betano futebol ainda não validado: 20 seleções exigidas.');
   let browser;
   let context;
@@ -254,19 +309,50 @@ async function main() {
   let afterMB = null;
   let networkBytesBefore = null;
   let networkBytesAfter = null;
+  let vpnBytesBefore = null;
+  let vpnBytesAfter = null;
   let usageRecorded = false;
+  const networkProcessSamples = [];
+  let networkProcessTimer = null;
   let error;
   let cycle = { startedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME, validationOnly };
   try {
     assertTunnelBudget();
     networkBytesBefore = physicalNetworkBytes();
-    cycle.vpn = tunnel('connect');
+    try { beforeMB = tunnel('meter').remainingMB; } catch (meterError) { cycle.meterBeforeError = meterError.message; }
+    cycle.vpn = tunnel('connect', startedAt, validationOnly ? 'betano_football_validation'
+      : fs.existsSync(path.join(OUTPUT_DIR, 'feed-probe-request.json')) ? 'feed_probe'
+        : fs.existsSync(BWIN_VALIDATION_REQUEST) ? 'bwin_validation' : 'production_cycle');
     vpnConnected = true;
+    const sampleNetworkProcesses = () => networkProcessSamples.push({ at: new Date().toISOString(), rows: networkProcessSnapshot() });
+    sampleNetworkProcesses();
+    networkProcessTimer = setInterval(sampleNetworkProcesses, 5000);
+    networkProcessTimer.unref();
+    vpnBytesBefore = vpnNetworkBytes();
     const edge = await ensureEdge();
     browser = edge.browser;
     context = edge.context;
     const page = edge.page;
     await dismissCookieNotice(page);
+    cycle.feedProbe = await scheduledFeedProbe(context, OUTPUT_DIR);
+    if (cycle.feedProbe) {
+      vpnBytesAfter = vpnNetworkBytes();
+      cycle.disconnected = tunnel('disconnect');
+      vpnConnected = false;
+      clearInterval(networkProcessTimer);
+      networkBytesAfter = physicalNetworkBytes();
+      try { afterMB = tunnel('meter').remainingMB; } catch (meterError) { cycle.meterAfterError = meterError.message; }
+      const usage = recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
+        vpnBytesBefore, vpnBytesAfter, reason: 'feed_probe' });
+      usageRecorded = true;
+      cycle = { ...cycle, probeOnly: true, finishedAt: new Date().toISOString(), beforeMB, afterMB,
+        consumedMB: usage.cycles.at(-1).measuredMB, measurementSource: usage.cycles.at(-1).measurementSource,
+        monthlyChargedMB: usage.cycles.at(-1).chargedMB, monthlyUsageMB: usage.totalMB };
+      fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
+      console.log(JSON.stringify({ outputFile, probeOnly: true, target: cycle.feedProbe.target,
+        consumedMB: cycle.consumedMB, VPN: 'off' }));
+      return;
+    }
 
     let nba = await initialJson(page);
     let football = await freshJson(page, FOOTBALL_PATH);
@@ -274,6 +360,122 @@ async function main() {
       const delta = Date.parse(game.commenceTime) - Date.now();
       return delta > 600000 && delta <= 12 * 3600000;
     });
+    if (bwinGate?.passed === true || fs.existsSync(BWIN_VALIDATION_REQUEST)) {
+      try {
+        const bwin = await readBwin(context, availableFootball);
+        cycle.bwinDiagnostics = bwin.diagnostics;
+        cycle.bwinGames = bwin.games.length;
+        cycle.bwinSelections = bwin.games.reduce((sum, game) => sum + game.markets
+          .reduce((total, market) => total + market.selections.length, 0), 0);
+        if (!bwin.games.length) throw new Error('Bwin sem totais 2,5 elegíveis que confiram com Betano.');
+        const bwinId = `local-bwin-${Date.now()}`;
+        const bwinRef = db.collection('_bookmaker_reads').doc(bwinId);
+        cycle.bwinReadId = bwinId;
+        await bwinRef.set({ bookmaker: 'Bwin', observedAt: new Date().toISOString(),
+          mode: bwinGate?.passed === true ? 'production' : 'validation', status: 'writing',
+          gameCount: bwin.games.length, source: 'Bwin fixtures JSON: Total golos; 2GV excluído' });
+        await Promise.all(bwin.games.map((game, index) => bwinRef.collection('games').doc(`game-${index}`).set(game)));
+        await bwinRef.set({ status: 'ready', gamesWrittenAt: new Date().toISOString() }, { merge: true });
+      } catch (bwinError) {
+        cycle.bwinError = bwinError.message;
+        await db.collection('local_bookmaker_status').doc('bwin').set({ enabled: false,
+          lastFailureAt: new Date().toISOString(), lastFailure: bwinError.message.slice(0, 500),
+          taskName: TASK_NAME, computerName: process.env.COMPUTERNAME }, { merge: true });
+      }
+      if (fs.existsSync(BWIN_VALIDATION_REQUEST)) fs.unlinkSync(BWIN_VALIDATION_REQUEST);
+    }
+    if (betclicGate?.passed === true) {
+      try {
+        const betclic = await readBetclic(context, availableFootball, 8);
+        cycle.betclicDiagnostics = betclic.diagnostics;
+        cycle.betclicGames = betclic.games.length;
+        cycle.betclicSelections = betclic.games.reduce((sum, game) => sum + game.markets
+          .reduce((total, market) => total + market.selections.length, 0), 0);
+        if (!betclic.games.length) throw new Error('Betclic sem jogos pré-jogo elegíveis.');
+        const betclicId = `local-betclic-${Date.now()}`;
+        const betclicRef = db.collection('_bookmaker_reads').doc(betclicId);
+        cycle.betclicReadId = betclicId;
+        await betclicRef.set({ bookmaker: 'Betclic', observedAt: new Date().toISOString(),
+          mode: 'production', status: 'writing', gameCount: betclic.games.length,
+          source: 'Betclic HTML pré-jogo: resultado regulamentar e total de golos' });
+        await Promise.all(betclic.games.map((game, index) => betclicRef.collection('games').doc(`game-${index}`).set(game)));
+        await betclicRef.set({ status: 'ready', gamesWrittenAt: new Date().toISOString() }, { merge: true });
+      } catch (betclicError) {
+        cycle.betclicError = betclicError.message;
+        await db.collection('local_bookmaker_status').doc('betclic').set({ enabled: false,
+          lastFailureAt: new Date().toISOString(), lastFailure: betclicError.message.slice(0, 500),
+          taskName: TASK_NAME, computerName: process.env.COMPUTERNAME }, { merge: true });
+      }
+    }
+    if (lebullGate?.passed === true) {
+      try {
+        const lebull = await readLebull(context, availableFootball, 8);
+        cycle.lebullDiagnostics = lebull.diagnostics;
+        cycle.lebullGames = lebull.games.length;
+        cycle.lebullSelections = lebull.games.reduce((sum, game) => sum + game.markets
+          .reduce((total, market) => total + market.selections.length, 0), 0);
+        if (!lebull.games.length) throw new Error('LeBull sem jogos pré-jogo elegíveis.');
+        const lebullId = `local-lebull-${Date.now()}`;
+        const lebullRef = db.collection('_bookmaker_reads').doc(lebullId);
+        cycle.lebullReadId = lebullId;
+        await lebullRef.set({ bookmaker: 'LeBull', observedAt: new Date().toISOString(),
+          mode: 'production', status: 'writing', gameCount: lebull.games.length,
+          source: 'LeBull iframe HTML pré-jogo: 1X2 e Total de Golos Mais/Menos' });
+        await Promise.all(lebull.games.map((game, index) => lebullRef.collection('games').doc(`game-${index}`).set(game)));
+        await lebullRef.set({ status: 'ready', gamesWrittenAt: new Date().toISOString() }, { merge: true });
+      } catch (lebullError) {
+        cycle.lebullError = lebullError.message;
+        await db.collection('local_bookmaker_status').doc('lebull').set({ enabled: false,
+          lastFailureAt: new Date().toISOString(), lastFailure: lebullError.message.slice(0, 500),
+          taskName: TASK_NAME, computerName: process.env.COMPUTERNAME }, { merge: true });
+      }
+    }
+    if (escGate?.passed === true) {
+      try {
+        const esc = await readEscOnline(context, availableFootball, 8);
+        cycle.escDiagnostics = esc.diagnostics;
+        cycle.escGames = esc.games.length;
+        cycle.escSelections = esc.games.reduce((sum, game) => sum + game.markets
+          .reduce((total, market) => total + market.selections.length, 0), 0);
+        if (!esc.games.length) throw new Error('ESC Online sem totais regulamentares elegíveis.');
+        const escId = `local-esc_online-${Date.now()}`;
+        const escRef = db.collection('_bookmaker_reads').doc(escId);
+        cycle.escReadId = escId;
+        await escRef.set({ bookmaker: 'ESC Online', observedAt: new Date().toISOString(),
+          mode: 'production', status: 'writing', gameCount: esc.games.length,
+          source: 'ESC Online Total de Golos; Resultado Final 2Up excluído' });
+        await Promise.all(esc.games.map((game, index) => escRef.collection('games').doc(`game-${index}`).set(game)));
+        await escRef.set({ status: 'ready', gamesWrittenAt: new Date().toISOString() }, { merge: true });
+      } catch (escError) {
+        cycle.escError = escError.message;
+        await db.collection('local_bookmaker_status').doc('esc_online').set({ enabled: false,
+          lastFailureAt: new Date().toISOString(), lastFailure: escError.message.slice(0, 500),
+          taskName: TASK_NAME, computerName: process.env.COMPUTERNAME }, { merge: true });
+      }
+    }
+    if (goldenparkGate?.passed === true) {
+      try {
+        const goldenpark = await readGoldenpark(context, availableFootball, 9);
+        cycle.goldenparkDiagnostics = goldenpark.diagnostics;
+        cycle.goldenparkGames = goldenpark.games.length;
+        cycle.goldenparkSelections = goldenpark.games.reduce((sum, game) => sum + game.markets
+          .reduce((total, market) => total + market.selections.length, 0), 0);
+        if (!goldenpark.games.length) throw new Error('GoldenPark sem jogos pré-jogo elegíveis.');
+        const goldenparkId = `local-goldenpark-${Date.now()}`;
+        const goldenparkRef = db.collection('_bookmaker_reads').doc(goldenparkId);
+        cycle.goldenparkReadId = goldenparkId;
+        await goldenparkRef.set({ bookmaker: 'GoldenPark', observedAt: new Date().toISOString(),
+          mode: 'production', status: 'writing', gameCount: goldenpark.games.length,
+          source: 'GoldenPark HTML pré-jogo: Resultado do jogo e Total de Golos' });
+        await Promise.all(goldenpark.games.map((game, index) => goldenparkRef.collection('games').doc(`game-${index}`).set(game)));
+        await goldenparkRef.set({ status: 'ready', gamesWrittenAt: new Date().toISOString() }, { merge: true });
+      } catch (goldenparkError) {
+        cycle.goldenparkError = goldenparkError.message;
+        await db.collection('local_bookmaker_status').doc('goldenpark').set({ enabled: false,
+          lastFailureAt: new Date().toISOString(), lastFailure: goldenparkError.message.slice(0, 500),
+          taskName: TASK_NAME, computerName: process.env.COMPUTERNAME }, { merge: true });
+      }
+    }
     const retabet = await readRetabet(context, availableFootball, 4, gate?.sample?.map(row => row.teams) || []);
     cycle.retabetDiagnostics = retabet.diagnostics;
     cycle.retabetGames = retabet.games.length;
@@ -301,9 +503,12 @@ async function main() {
     });
     if (!games.length) throw new Error('Endpoint Betano sem jogos elegíveis nas próximas 12h.');
     await page.goto('about:blank');
+    vpnBytesAfter = vpnNetworkBytes();
     cycle.disconnected = tunnel('disconnect');
     vpnConnected = false;
+    clearInterval(networkProcessTimer);
     networkBytesAfter = physicalNetworkBytes();
+    try { afterMB = tunnel('meter').remainingMB; } catch (meterError) { cycle.meterAfterError = meterError.message; }
 
     const cycleId = `local-betano-${Date.now()}`;
     cycle.firestoreReadId = cycleId;
@@ -347,19 +552,89 @@ async function main() {
         comparedSelections: retabetComparison.comparedSelections,
         processedAt: retabetComparison.processedAt };
     }
+    if (cycle.bwinReadId) {
+      const bwinRef = db.collection('_bookmaker_reads').doc(cycle.bwinReadId);
+      let bwinComparison;
+      while (Date.now() < deadline) {
+        bwinComparison = (await bwinRef.get()).data();
+        if (['processed', 'processed_with_errors'].includes(bwinComparison.status)) break;
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+      cycle.bwinComparison = { status: bwinComparison?.status || 'pending',
+        comparedSelections: bwinComparison?.comparedSelections || 0,
+        processedAt: bwinComparison?.processedAt || null,
+        errors: bwinComparison?.errors || [] };
+    }
+    if (cycle.betclicReadId) {
+      const betclicRef = db.collection('_bookmaker_reads').doc(cycle.betclicReadId);
+      let betclicComparison;
+      while (Date.now() < deadline) {
+        betclicComparison = (await betclicRef.get()).data();
+        if (['processed', 'processed_with_errors'].includes(betclicComparison.status)) break;
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+      cycle.betclicComparison = { status: betclicComparison?.status || 'pending',
+        comparedSelections: betclicComparison?.comparedSelections || 0,
+        processedAt: betclicComparison?.processedAt || null,
+        errors: betclicComparison?.errors || [] };
+    }
+    if (cycle.lebullReadId) {
+      const lebullRef = db.collection('_bookmaker_reads').doc(cycle.lebullReadId);
+      let lebullComparison;
+      while (Date.now() < deadline) {
+        lebullComparison = (await lebullRef.get()).data();
+        if (['processed', 'processed_with_errors'].includes(lebullComparison.status)) break;
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+      cycle.lebullComparison = { status: lebullComparison?.status || 'pending',
+        comparedSelections: lebullComparison?.comparedSelections || 0,
+        processedAt: lebullComparison?.processedAt || null,
+        errors: lebullComparison?.errors || [] };
+    }
+    if (cycle.escReadId) {
+      const escRef = db.collection('_bookmaker_reads').doc(cycle.escReadId);
+      let escComparison;
+      while (Date.now() < deadline) {
+        escComparison = (await escRef.get()).data();
+        if (['processed', 'processed_with_errors'].includes(escComparison.status)) break;
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+      cycle.escComparison = { status: escComparison?.status || 'pending',
+        comparedSelections: escComparison?.comparedSelections || 0,
+        processedAt: escComparison?.processedAt || null,
+        errors: escComparison?.errors || [] };
+    }
+    if (cycle.goldenparkReadId) {
+      const goldenparkRef = db.collection('_bookmaker_reads').doc(cycle.goldenparkReadId);
+      let goldenparkComparison;
+      while (Date.now() < deadline) {
+        goldenparkComparison = (await goldenparkRef.get()).data();
+        if (['processed', 'processed_with_errors'].includes(goldenparkComparison.status)) break;
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+      cycle.goldenparkComparison = { status: goldenparkComparison?.status || 'pending',
+        comparedSelections: goldenparkComparison?.comparedSelections || 0,
+        processedAt: goldenparkComparison?.processedAt || null,
+        errors: goldenparkComparison?.errors || [] };
+    }
     if (validationOnly && (await db.collection('_bookmaker_validation').doc('betano_soccer').get()).data()?.passed !== true) {
       throw new Error('Validação futebol insuficiente: consulte _bookmaker_validation/betano_soccer.');
     }
-    const usage = recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter });
+    const usage = recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
+      vpnBytesBefore, vpnBytesAfter });
     usageRecorded = true;
     if (!Number.isFinite(usage.cycles.at(-1).measuredMB) || usage.cycles.at(-1).measuredMB <= 0) {
       throw new Error('Consumo de rede do ciclo não pôde ser medido de forma confiável.');
     }
     cycle = { ...cycle, finishedAt: new Date().toISOString(),
-      beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
+      beforeMB, afterMB, networkBytesBefore, networkBytesAfter, vpnBytesBefore, vpnBytesAfter,
       consumedMB: usage.cycles.at(-1).measuredMB, measurementSource: usage.cycles.at(-1).measurementSource,
       providerDeltaMB: usage.cycles.at(-1).providerDeltaMB, monthlyChargedMB: usage.cycles.at(-1).chargedMB,
       monthlyUsageMB: usage.totalMB, endpoints: [DATA_PATH, FOOTBALL_PATH] };
+    if (cycle.consumedMB > 30) {
+      cycle.networkProcesses = summarizeNetworkProcesses(networkProcessSamples);
+      cycle.networkProcessEvidence = 'Amostras de conexões TCP estabelecidas durante VPN; bytes por processo indisponíveis no Windows.';
+    }
     if (!validationOnly) await db.collection('local_bookmaker_status').doc('betano').set({
       lastSuccessAt: cycle.finishedAt, vpnDisconnected: true, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
       lastReadAt: cycle.finishedAt, lastTunnelBearMB: cycle.consumedMB, lastReadId: cycleId,
@@ -372,6 +647,65 @@ async function main() {
       comparedSelections: cycle.retabetComparison.comparedSelections, selections: cycle.retabetSelections,
       lastTunnelBearMB: cycle.consumedMB, schedule: '11,13,15,17,19,21,23 America/Sao_Paulo',
     }, { merge: true });
+    if (cycle.bwinComparison) await db.collection('local_bookmaker_status').doc('bwin').set({
+      lastReadAt: cycle.finishedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
+      lastReadId: cycle.bwinReadId, selections: cycle.bwinSelections,
+      comparedSelections: cycle.bwinComparison.comparedSelections, lastTunnelBearMB: cycle.consumedMB,
+      lastValidationStatus: cycle.bwinComparison.status,
+      enabled: bwinGate?.passed === true && cycle.bwinComparison.status === 'processed',
+      ...(bwinGate?.passed === true && cycle.bwinComparison.status === 'processed'
+        ? { lastSuccessAt: cycle.finishedAt, vpnDisconnected: true }
+        : { lastFailureAt: cycle.finishedAt,
+          lastFailure: 'Validação de 20 totais 2,5 aguarda gate na nuvem; mercado 2GV excluído.' }),
+    }, { merge: true });
+    if (cycle.betclicComparison) await db.collection('local_bookmaker_status').doc('betclic').set({
+      lastReadAt: cycle.finishedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
+      lastReadId: cycle.betclicReadId, selections: cycle.betclicSelections,
+      comparedSelections: cycle.betclicComparison.comparedSelections, lastTunnelBearMB: cycle.consumedMB,
+      lastValidationStatus: cycle.betclicComparison.status,
+      enabled: betclicGate?.passed === true && cycle.betclicComparison.status === 'processed'
+        && cycle.betclicComparison.comparedSelections > 0,
+      ...(betclicGate?.passed === true && cycle.betclicComparison.status === 'processed'
+        && cycle.betclicComparison.comparedSelections > 0
+        ? { lastSuccessAt: cycle.finishedAt, vpnDisconnected: true }
+        : { lastFailureAt: cycle.finishedAt, lastFailure: 'Comparação Betclic não concluiu com seleções Pinnacle válidas.' }),
+    }, { merge: true });
+    if (cycle.lebullComparison) await db.collection('local_bookmaker_status').doc('lebull').set({
+      lastReadAt: cycle.finishedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
+      lastReadId: cycle.lebullReadId, selections: cycle.lebullSelections,
+      comparedSelections: cycle.lebullComparison.comparedSelections, lastTunnelBearMB: cycle.consumedMB,
+      lastValidationStatus: cycle.lebullComparison.status,
+      enabled: lebullGate?.passed === true && cycle.lebullComparison.status === 'processed'
+        && cycle.lebullComparison.comparedSelections > 0,
+      ...(lebullGate?.passed === true && cycle.lebullComparison.status === 'processed'
+        && cycle.lebullComparison.comparedSelections > 0
+        ? { lastSuccessAt: cycle.finishedAt, vpnDisconnected: true }
+        : { lastFailureAt: cycle.finishedAt, lastFailure: 'Comparação LeBull não concluiu com seleções Pinnacle válidas.' }),
+    }, { merge: true });
+    if (cycle.escComparison) await db.collection('local_bookmaker_status').doc('esc_online').set({
+      lastReadAt: cycle.finishedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
+      lastReadId: cycle.escReadId, selections: cycle.escSelections,
+      comparedSelections: cycle.escComparison.comparedSelections, lastTunnelBearMB: cycle.consumedMB,
+      lastValidationStatus: cycle.escComparison.status,
+      enabled: escGate?.passed === true && cycle.escComparison.status === 'processed'
+        && cycle.escComparison.comparedSelections > 0,
+      ...(escGate?.passed === true && cycle.escComparison.status === 'processed'
+        && cycle.escComparison.comparedSelections > 0
+        ? { lastSuccessAt: cycle.finishedAt, vpnDisconnected: true }
+        : { lastFailureAt: cycle.finishedAt, lastFailure: 'Comparação ESC Online não concluiu com seleções Pinnacle válidas.' }),
+    }, { merge: true });
+    if (cycle.goldenparkComparison) await db.collection('local_bookmaker_status').doc('goldenpark').set({
+      lastReadAt: cycle.finishedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
+      lastReadId: cycle.goldenparkReadId, selections: cycle.goldenparkSelections,
+      comparedSelections: cycle.goldenparkComparison.comparedSelections, lastTunnelBearMB: cycle.consumedMB,
+      lastValidationStatus: cycle.goldenparkComparison.status,
+      enabled: goldenparkGate?.passed === true && cycle.goldenparkComparison.status === 'processed'
+        && cycle.goldenparkComparison.comparedSelections > 0,
+      ...(goldenparkGate?.passed === true && cycle.goldenparkComparison.status === 'processed'
+        && cycle.goldenparkComparison.comparedSelections > 0
+        ? { lastSuccessAt: cycle.finishedAt, vpnDisconnected: true }
+        : { lastFailureAt: cycle.finishedAt, lastFailure: 'Comparação GoldenPark não concluiu com seleções Pinnacle válidas.' }),
+    }, { merge: true });
     fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
     console.log(JSON.stringify({ outputFile, finishedAt: cycle.finishedAt, games: cycle.games,
       consumedMB: cycle.consumedMB, firestoreReadId: cycle.firestoreReadId, VPN: 'off' }));
@@ -380,15 +714,22 @@ async function main() {
   } finally {
     if (context) await context.unroute('**/*').catch(() => {});
     if (browser) await browser.close().catch(() => {});
+    if (networkProcessTimer) clearInterval(networkProcessTimer);
     if (vpnConnected) {
-      try { cycle.disconnected = tunnel('disconnect'); vpnConnected = false; } catch (disconnectError) {
+      try { if (vpnBytesBefore && !vpnBytesAfter) vpnBytesAfter = vpnNetworkBytes();
+        cycle.disconnected = tunnel('disconnect'); vpnConnected = false; } catch (disconnectError) {
         error = new Error(`${error?.message || 'ciclo falhou'}; VPN não desligou: ${disconnectError.message}`);
       }
     }
     if (networkBytesBefore && !usageRecorded) {
       try { if (!networkBytesAfter && !vpnConnected) networkBytesAfter = physicalNetworkBytes();
-        recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
-        reason: error ? 'failed' : 'incomplete' }); }
+        const usage = recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
+          vpnBytesBefore, vpnBytesAfter,
+        reason: error ? 'failed' : 'incomplete' });
+        if (usage.cycles.at(-1).measuredMB > 30) {
+          cycle.networkProcesses = summarizeNetworkProcesses(networkProcessSamples);
+          cycle.networkProcessEvidence = 'Amostras de conexões TCP estabelecidas durante VPN; bytes por processo indisponíveis no Windows.';
+        } }
       catch (ledgerError) { console.error(`Não foi possível registrar uso TunnelBear: ${ledgerError.message}`); }
     }
     if (error) {
@@ -403,6 +744,10 @@ async function main() {
   if (error) throw error;
 }
 
-if (require.main === module) main().catch(error => { console.error(error.message); process.exitCode = 1; });
 module.exports = { readSelections, adaptTotalsAndHandicaps, assertTunnelBudget, recordTunnelUsage,
-  tunnelCycleAffordable, monthKey, MONTHLY_TUNNEL_CAP_MB, MAX_MEASURED_CYCLE_MB };
+  tunnelCycleAffordable, monthKey, MONTHLY_TUNNEL_CAP_MB, MAX_MEASURED_CYCLE_MB,
+  ensureEdge, initialJson, freshJson, tunnel, database, physicalNetworkBytes, vpnNetworkBytes,
+  networkProcessSnapshot, summarizeNetworkProcesses, updateFailure };
+if (require.main === module) {
+  main().then(() => process.exit(0)).catch(error => { console.error(error.message); process.exit(1); });
+}
