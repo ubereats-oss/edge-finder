@@ -7,7 +7,8 @@ const { estimateCost, summarize, planReservation, keyFingerprint, parseHeaders,
 const { kickoff } = require('./get_placard_odds');
 const { captureClosing, exactTotals, exactSpreads, closingStartTolerance, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue } = require('./run_placard_value');
 const { readSelections, adaptTotalsAndHandicaps, tunnelCycleAffordable, MAX_MEASURED_CYCLE_MB } = require('./local_betano_reader');
-const { isBetanoHeartbeatStale } = require('./check_closing_odds_staleness');
+const { parseMarkets, matchLink, eventTimeMatches } = require('../scripts/local_bookmakers/retabet_reader.cjs');
+const { isBetanoHeartbeatStale, isBetanoScheduledHeartbeatStale } = require('./check_closing_odds_staleness');
 const now = Date.parse('2026-10-20T12:00:00Z');
 function fixture() {
   const game = { teams: ['FC Porto', 'SL Benfica'], apiSport: 'soccer_portugal_primeira_liga',
@@ -99,12 +100,40 @@ test('leitor Betano normaliza feed Futebol MRES e identifica Liga Europa', () =>
   assert.deepEqual(games[0].markets.map(m => m.type), ['MRES', 'HCTG']);
   assert.deepEqual(adaptTotalsAndHandicaps(games[0]).markets[1].selections.map(s => s.name), ['Over', 'Under']);
 });
+test('Retabet confirma partida e converte HTML pré-jogo em 3 vencedores e 2 totais da mesma linha', () => {
+  const game = { teams: ['FC Ararat-Armenia', 'AZ Alkmaar'] };
+  const url = 'https://www.retabet.pt/desportos/futebol/europa/liga-europa/fc-ararat-armenia-az-alkmaar/38596110';
+  assert.equal(matchLink(game, [url]), url);
+  assert.equal(eventTimeMatches('FC Ararat-Armenia\nHoje\n17:45\nAZ Alkmaar',
+    '2026-10-22T16:45:00.000Z', new Date('2026-10-22T12:00:00Z')), true);
+  assert.equal(eventTimeMatches('FC Ararat-Armenia\nHoje\n18:45\nAZ Alkmaar',
+    '2026-10-22T16:45:00.000Z', new Date('2026-10-22T12:00:00Z')), false);
+  const markets = parseMarkets([
+    { title: '1-X-2', options: [
+      { label: '1', price: '6,95' }, { label: 'X', price: '4,98' }, { label: '2', price: '1,38' },
+    ] },
+    { title: 'Mais/menos golos', options: [
+      { label: '+ de 2,5', price: '1,44' }, { label: '- de 2,5', price: '2,40' },
+      { label: '+ de 3,5', price: '1,90', locked: true }, { label: '- de 3,5', price: '1,90' },
+    ] },
+  ]);
+  assert.deepEqual(markets.map(market => market.type), ['MRES', 'HCTG']);
+  assert.deepEqual(markets[0].selections.map(selection => selection.price), [6.95, 4.98, 1.38]);
+  assert.deepEqual(markets[1].selections.map(selection => [selection.name, selection.line, selection.price]),
+    [['Over', 2.5, 1.44], ['Under', 2.5, 2.4]]);
+});
 test('alerta Betano fica stale sem sucesso ou depois de 6h', () => {
   const instant = Date.parse('2026-10-21T12:00:00Z');
   assert.equal(isBetanoHeartbeatStale(null, instant), true);
   assert.equal(isBetanoHeartbeatStale(new Date(instant - 6 * 3600000 - 1).toISOString(), instant), true);
   assert.equal(isBetanoHeartbeatStale(new Date(instant - 5 * 3600000).toISOString(), instant), false);
   assert.equal(isBetanoHeartbeatStale(new Date(instant + 1).toISOString(), instant), true);
+});
+test('alerta local respeita a grade de Brasília e a tolerância de 45 minutos', () => {
+  const previous = '2026-10-21T02:30:00Z'; // 20/10 23h30 em Brasília
+  assert.equal(isBetanoScheduledHeartbeatStale(previous, Date.parse('2026-10-21T13:00:00Z')), false);
+  assert.equal(isBetanoScheduledHeartbeatStale(previous, Date.parse('2026-10-21T14:46:00Z')), true);
+  assert.equal(isBetanoScheduledHeartbeatStale('2026-10-21T14:15:00Z', Date.parse('2026-10-21T14:46:00Z')), false);
 });
 test('bloqueio conservador da franquia TunnelBear antes do ciclo seguinte', () => {
   assert.equal(MAX_MEASURED_CYCLE_MB, 15);

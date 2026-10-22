@@ -27,6 +27,7 @@ build/
 # Logs
 *.log
 *.txt
+.local_logs/
 
 # Ambiente
 .env
