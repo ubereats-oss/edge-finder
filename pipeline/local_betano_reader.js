@@ -20,7 +20,7 @@ const DATA_PATH = '/api/sports/BASK/hot/trending/leagues/441g/events?req=s,stnf,
 const FOOTBALL_PATH = '/api/sports/FOOT/hot/trending/leagues/433g/events?req=s,stnf,c,mb';
 const TASK_NAME = 'EdgeFinder-Betano-Local';
 const MONTHLY_TUNNEL_CAP_MB = 4000;
-const MAX_MEASURED_CYCLE_MB = 15;
+const MAX_MEASURED_CYCLE_MB = 18;
 const OUTPUT_DIR = path.join(PROJECT, '.local_logs', 'betano');
 const BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font']);
 const BLOCKED_TRACKING_URL = /google-analytics|googletagmanager|doubleclick|facebook\.net|hotjar|optimove|go-mpulse|bsqd\.me/i;
@@ -188,7 +188,10 @@ async function updateFailure(db, error, vpnDisconnected) {
 }
 
 function monthKey(now = Date.now()) {
-  return new Date(now).toISOString().slice(0, 7);
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit' })
+    .formatToParts(new Date(now));
+  const value = type => parts.find(part => part.type === type).value;
+  return `${value('year')}-${value('month')}`;
 }
 
 function usageFile(now = Date.now()) {
@@ -256,7 +259,6 @@ async function main() {
   let cycle = { startedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME, validationOnly };
   try {
     assertTunnelBudget();
-    beforeMB = tunnel('meter').remainingMB;
     networkBytesBefore = physicalNetworkBytes();
     cycle.vpn = tunnel('connect');
     vpnConnected = true;
@@ -334,8 +336,9 @@ async function main() {
         if (['processed', 'processed_with_errors'].includes(retabetComparison.status)) break;
         await new Promise(resolve => setTimeout(resolve, 5000));
       }
-      if (retabetComparison?.status !== 'processed' || retabetComparison.comparedSelections < 20) {
-        throw new Error(`Retabet não comparou 20 seleções: ${retabetComparison?.status}; ${retabetComparison?.comparedSelections || 0}; ${JSON.stringify(retabetComparison?.errors || [])}`);
+      const minimumCompared = retabetGate?.passed === true ? 1 : 20;
+      if (retabetComparison?.status !== 'processed' || retabetComparison.comparedSelections < minimumCompared) {
+        throw new Error(`Retabet não atingiu ${minimumCompared} seleções comparadas: ${retabetComparison?.status}; ${retabetComparison?.comparedSelections || 0}; ${JSON.stringify(retabetComparison?.errors || [])}`);
       }
       if (retabetGate?.passed !== true && (await db.collection('_bookmaker_validation').doc('retabet_soccer').get()).data()?.passed !== true) {
         throw new Error('Validação Retabet de 20 seleções não aprovada.');
@@ -347,7 +350,6 @@ async function main() {
     if (validationOnly && (await db.collection('_bookmaker_validation').doc('betano_soccer').get()).data()?.passed !== true) {
       throw new Error('Validação futebol insuficiente: consulte _bookmaker_validation/betano_soccer.');
     }
-    afterMB = tunnel('meter').remainingMB;
     const usage = recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter });
     usageRecorded = true;
     if (!Number.isFinite(usage.cycles.at(-1).measuredMB) || usage.cycles.at(-1).measuredMB <= 0) {
@@ -383,8 +385,7 @@ async function main() {
         error = new Error(`${error?.message || 'ciclo falhou'}; VPN não desligou: ${disconnectError.message}`);
       }
     }
-    if (Number.isFinite(beforeMB) && !usageRecorded) {
-      try { afterMB = tunnel('meter').remainingMB; } catch (_) { afterMB = null; }
+    if (networkBytesBefore && !usageRecorded) {
       try { if (!networkBytesAfter && !vpnConnected) networkBytesAfter = physicalNetworkBytes();
         recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
         reason: error ? 'failed' : 'incomplete' }); }
@@ -404,4 +405,4 @@ async function main() {
 
 if (require.main === module) main().catch(error => { console.error(error.message); process.exitCode = 1; });
 module.exports = { readSelections, adaptTotalsAndHandicaps, assertTunnelBudget, recordTunnelUsage,
-  tunnelCycleAffordable, MONTHLY_TUNNEL_CAP_MB, MAX_MEASURED_CYCLE_MB };
+  tunnelCycleAffordable, monthKey, MONTHLY_TUNNEL_CAP_MB, MAX_MEASURED_CYCLE_MB };

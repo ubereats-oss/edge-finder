@@ -95,37 +95,46 @@ async function readRetabet(context, footballGames, limit = 4, preferredTeams = [
     for (const candidate of candidates) {
       if (games.length >= limit || seen.has(candidate.url)) continue;
       seen.add(candidate.url);
-      try {
-        await page.goto(candidate.url, { waitUntil: 'domcontentloaded', timeout: 45000 });
-        await page.locator('.bets__wrapper.jbet li.jopc').first().waitFor({ state: 'attached', timeout: 12000 });
-        const observed = await page.evaluate(() => ({
-          title: document.title,
-          body: document.body.innerText.slice(0, 1200),
-          markets: [...document.querySelectorAll('.bets__wrapper.jbet')].map(wrapper => ({
-            title: wrapper.querySelector('.mt')?.textContent?.trim() || '',
-            options: [...wrapper.querySelectorAll('li.jopc')].map(option => ({
-              label: option.querySelector('.jqt')?.textContent?.trim() || '',
-              price: option.querySelector('.jpr')?.textContent?.trim() || '',
-              locked: !!option.querySelector('.icon-lock:not(.none)'),
+      let lastError;
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          await page.goto(candidate.url, { waitUntil: 'commit', timeout: 20000 });
+          await page.locator('.bets__wrapper.jbet li.jopc').first().waitFor({ state: 'attached', timeout: 20000 });
+          const observed = await page.evaluate(() => ({
+            title: document.title,
+            body: document.body.innerText.slice(0, 1200),
+            markets: [...document.querySelectorAll('.bets__wrapper.jbet')].map(wrapper => ({
+              title: wrapper.querySelector('.mt')?.textContent?.trim() || '',
+              options: [...wrapper.querySelectorAll('li.jopc')].map(option => ({
+                label: option.querySelector('.jqt')?.textContent?.trim() || '',
+                price: option.querySelector('.jpr')?.textContent?.trim() || '',
+                locked: !!option.querySelector('.icon-lock:not(.none)'),
+              })),
             })),
-          })),
-        }));
-        const title = observed.title.match(/^Aposte no (.+) com Retabet$/i)?.[1];
-        const titleTeams = title?.split(/\s+-\s+/);
-        if (titleTeams?.length !== 2 || titleTeams.some((team, index) => teamScore(candidate.game.teams[index], team) < 0.5)) {
-          throw new Error('Times da página não conferem com o jogo Betano.');
+          }));
+          const title = observed.title.match(/^Aposte no (.+) com Retabet$/i)?.[1];
+          const titleTeams = title?.split(/\s+-\s+/);
+          if (titleTeams?.length !== 2 || titleTeams.some((team, index) => teamScore(candidate.game.teams[index], team) < 0.5)) {
+            throw new Error('Times da página não conferem com o jogo Betano.');
+          }
+          if (!eventTimeMatches(observed.body, candidate.game.commenceTime)) {
+            throw new Error('Horário Retabet não confere com o início do jogo.');
+          }
+          const markets = parseMarkets(observed.markets);
+          if (!markets) throw new Error('Mercados 1-X-2 e total de golos completos não encontrados.');
+          games.push({ apiSport: candidate.game.apiSport, teams: candidate.game.teams,
+            competition: candidate.game.competition, commenceTime: candidate.game.commenceTime,
+            observedAt: new Date().toISOString(), sourceUrl: candidate.url,
+            sourceEventId: new URL(candidate.url).pathname.split('/').at(-1), sourceEventName: title,
+            sourceMarket: 'HTML pré-jogo Retabet', markets });
+          lastError = null;
+          break;
+        } catch (error) {
+          lastError = error;
+          if (attempt < 2) await page.waitForTimeout(500);
         }
-        if (!eventTimeMatches(observed.body, candidate.game.commenceTime)) {
-          throw new Error('Horário Retabet não confere com o início do jogo.');
-        }
-        const markets = parseMarkets(observed.markets);
-        if (!markets) throw new Error('Mercados 1-X-2 e total de golos completos não encontrados.');
-        games.push({ apiSport: candidate.game.apiSport, teams: candidate.game.teams,
-          competition: candidate.game.competition, commenceTime: candidate.game.commenceTime,
-          observedAt: new Date().toISOString(), sourceUrl: candidate.url,
-          sourceEventId: new URL(candidate.url).pathname.split('/').at(-1), sourceEventName: title,
-          sourceMarket: 'HTML pré-jogo Retabet', markets });
-      } catch (error) { diagnostics.push({ url: candidate.url, error: error.message }); }
+      }
+      if (lastError) diagnostics.push({ url: candidate.url, error: lastError.message });
     }
   } finally { await page.close().catch(() => {}); }
   return { games, diagnostics };
