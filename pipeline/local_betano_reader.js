@@ -7,6 +7,7 @@ const { loadEnvFileIfPresent } = require('./odds_api_client');
 const competitions = require('./placard_config');
 const path = require('node:path');
 const fs = require('node:fs');
+const { readRetabet } = require('../scripts/local_bookmakers/retabet_reader.cjs');
 
 const PROJECT = path.resolve(__dirname, '..');
 const TUNNEL = path.join(PROJECT, 'scripts', 'local_bookmakers', 'tunnelbear.ps1');
@@ -30,6 +31,18 @@ function tunnel(action) {
   ], { encoding: 'utf8', timeout: 240000 });
   if (result.status !== 0) throw new Error((result.stderr || result.stdout || `TunnelBear ${action} falhou`).trim());
   return JSON.parse(result.stdout.trim());
+}
+
+function physicalNetworkBytes() {
+  const script = "$adapter = Get-NetAdapter -Name 'Wi-Fi' -ErrorAction Stop; if ($adapter.Status -ne 'Up') { throw 'Wi-Fi não está ativo.' }; $stats = Get-NetAdapterStatistics -Name $adapter.Name -ErrorAction Stop; if (-not $stats) { throw 'Contadores Wi-Fi indisponíveis.' }; [pscustomobject]@{ receivedBytes = [double]$stats.ReceivedBytes; sentBytes = [double]$stats.SentBytes } | ConvertTo-Json -Compress";
+  const result = require('node:child_process').spawnSync('powershell.exe', ['-NoProfile', '-Command', script],
+    { encoding: 'utf8', timeout: 20000 });
+  if (result.status !== 0) throw new Error((result.stderr || result.stdout || 'Falha ao ler bytes da rede física.').trim());
+  const bytes = JSON.parse(result.stdout.trim());
+  if (![bytes.receivedBytes, bytes.sentBytes].every(value => Number.isFinite(value) && value >= 0)) {
+    throw new Error('Contadores de bytes da rede física inválidos.');
+  }
+  return bytes;
 }
 
 function database() {
@@ -148,12 +161,17 @@ async function freshJson(page, endpoint) {
 
 async function initialJson(page) {
   if (!page.url().startsWith(START_URL)) {
-    const responsePromise = page.waitForResponse(response => response.url().includes(DATA_PATH.split('?')[0])
-      && /json/i.test(response.headers()['content-type'] || ''), { timeout: 45000 });
+    try {
+      const response = await page.goto(`https://www.betano.pt${DATA_PATH}`, {
+        waitUntil: 'domcontentloaded', timeout: 20000,
+      });
+      if (response?.ok() && /json/i.test(response.headers()['content-type'] || '')) {
+        const payload = await response.json();
+        if (Array.isArray(payload?.data?.events)) return payload;
+      }
+    } catch (_) { /* endpoint direto pode exigir a página inicial */ }
     await page.goto(START_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await dismissCookieNotice(page);
-    const response = await responsePromise;
-    return response.json();
   }
   return freshJson(page, DATA_PATH);
 }
@@ -196,12 +214,21 @@ function assertTunnelBudget(now = Date.now()) {
   return ledger;
 }
 
-function recordTunnelUsage({ startedAt, beforeMB, afterMB, now = Date.now(), reason = 'complete' }) {
+function recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
+  now = Date.now(), reason = 'complete' }) {
   const ledger = readMonthlyUsage(now);
-  const measuredMB = Number.isFinite(beforeMB) && Number.isFinite(afterMB) ? Math.max(0, beforeMB - afterMB) : 0;
-  const chargedMB = Math.max(MAX_MEASURED_CYCLE_MB, measuredMB);
+  const providerDeltaMB = Number.isFinite(beforeMB) && Number.isFinite(afterMB) && afterMB <= beforeMB
+    ? beforeMB - afterMB : null;
+  const networkBefore = networkBytesBefore && networkBytesBefore.receivedBytes + networkBytesBefore.sentBytes;
+  const networkAfter = networkBytesAfter && networkBytesAfter.receivedBytes + networkBytesAfter.sentBytes;
+  const networkMB = Number.isFinite(networkBefore) && Number.isFinite(networkAfter) && networkAfter >= networkBefore
+    ? (networkAfter - networkBefore) / 1000000 : null;
+  const measuredMB = networkMB ?? providerDeltaMB;
+  const chargedMB = Math.max(MAX_MEASURED_CYCLE_MB, Number.isFinite(measuredMB) ? Math.ceil(measuredMB) : 0);
   ledger.cycles.push({ startedAt, recordedAt: new Date(now).toISOString(), beforeMB, afterMB,
-    measuredMB, chargedMB, reason });
+    providerDeltaMB, networkBytesBefore, networkBytesAfter, measuredMB,
+    measurementSource: networkMB !== null ? 'wifi_upper_bound_during_vpn' : providerDeltaMB !== null ? 'provider_ui' : 'unavailable',
+    chargedMB, reason });
   ledger.totalMB = ledger.cycles.reduce((sum, cycle) => sum + Number(cycle.chargedMB || 0), 0);
   fs.writeFileSync(usageFile(now), JSON.stringify(ledger, null, 2));
   return ledger;
@@ -215,18 +242,22 @@ async function main() {
   const outputFile = path.join(OUTPUT_DIR, `cycle-${startedAt.replace(/[:.]/g, '-')}.json`);
   const validationOnly = process.argv.includes('--validate-football');
   const gate = (await db.collection('_bookmaker_validation').doc('betano_soccer').get()).data();
+  const retabetGate = (await db.collection('_bookmaker_validation').doc('retabet_soccer').get()).data();
   if (!validationOnly && gate?.passed !== true) throw new Error('Betano futebol ainda não validado: 20 seleções exigidas.');
   let browser;
   let context;
   let vpnConnected = false;
   let beforeMB = null;
   let afterMB = null;
+  let networkBytesBefore = null;
+  let networkBytesAfter = null;
   let usageRecorded = false;
   let error;
   let cycle = { startedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME, validationOnly };
   try {
     assertTunnelBudget();
     beforeMB = tunnel('meter').remainingMB;
+    networkBytesBefore = physicalNetworkBytes();
     cycle.vpn = tunnel('connect');
     vpnConnected = true;
     const edge = await ensureEdge();
@@ -235,8 +266,32 @@ async function main() {
     const page = edge.page;
     await dismissCookieNotice(page);
 
-    const nba = await initialJson(page);
-    const football = await freshJson(page, FOOTBALL_PATH);
+    let nba = await initialJson(page);
+    let football = await freshJson(page, FOOTBALL_PATH);
+    const availableFootball = readSelections(football).filter(game => {
+      const delta = Date.parse(game.commenceTime) - Date.now();
+      return delta > 600000 && delta <= 12 * 3600000;
+    });
+    const retabet = await readRetabet(context, availableFootball, 4, gate?.sample?.map(row => row.teams) || []);
+    cycle.retabetDiagnostics = retabet.diagnostics;
+    cycle.retabetGames = retabet.games.length;
+    if (retabet.games.length < 4 && retabetGate?.passed !== true) {
+      throw new Error(`Retabet: ${retabet.games.length} jogos completos; são necessários 4 para validar 20 seleções.`);
+    }
+    if (retabet.games.length) {
+      const retabetId = `local-retabet-${Date.now()}`;
+      const retabetRef = db.collection('_bookmaker_reads').doc(retabetId);
+      cycle.retabetReadId = retabetId;
+      cycle.retabetSelections = retabet.games.reduce((sum, game) => sum + game.markets
+        .reduce((total, market) => total + market.selections.length, 0), 0);
+      await retabetRef.set({ bookmaker: 'Retabet', observedAt: new Date().toISOString(),
+        mode: retabetGate?.passed === true ? 'production' : 'validation', status: 'writing',
+        gameCount: retabet.games.length, source: 'HTML pré-jogo Retabet' });
+      await Promise.all(retabet.games.map((game, index) => retabetRef.collection('games').doc(`game-${index}`).set(game)));
+      await retabetRef.set({ status: 'ready', gamesWrittenAt: new Date().toISOString() }, { merge: true });
+    }
+    nba = await freshJson(page, DATA_PATH);
+    football = await freshJson(page, FOOTBALL_PATH);
     fs.writeFileSync(path.join(OUTPUT_DIR, 'football-latest.json'), JSON.stringify(football));
     const games = [...(validationOnly ? [] : readSelections(nba)), ...readSelections(football)].map(adaptTotalsAndHandicaps).filter(game => {
       const delta = Date.parse(game.commenceTime) - Date.now();
@@ -246,6 +301,7 @@ async function main() {
     await page.goto('about:blank');
     cycle.disconnected = tunnel('disconnect');
     vpnConnected = false;
+    networkBytesAfter = physicalNetworkBytes();
 
     const cycleId = `local-betano-${Date.now()}`;
     cycle.firestoreReadId = cycleId;
@@ -265,21 +321,54 @@ async function main() {
       await new Promise(resolve => setTimeout(resolve, 5000));
     }
     if (comparison?.status !== 'processed') throw new Error(`Comparação na nuvem não concluída: ${comparison?.status}; ${JSON.stringify(comparison?.errors || [])}`);
+    if (!Number.isInteger(comparison.comparedSelections) || comparison.comparedSelections < 1) {
+      throw new Error('Comparação na nuvem concluiu sem nenhuma seleção Pinnacle válida; ciclo não conta como sucesso.');
+    }
     cycle.comparison = { status: comparison.status, processedAt: comparison.processedAt,
       comparedSelections: comparison.comparedSelections, opportunities: comparison.opportunities };
+    if (cycle.retabetReadId) {
+      const retabetRef = db.collection('_bookmaker_reads').doc(cycle.retabetReadId);
+      let retabetComparison;
+      while (Date.now() < deadline) {
+        retabetComparison = (await retabetRef.get()).data();
+        if (['processed', 'processed_with_errors'].includes(retabetComparison.status)) break;
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
+      if (retabetComparison?.status !== 'processed' || retabetComparison.comparedSelections < 20) {
+        throw new Error(`Retabet não comparou 20 seleções: ${retabetComparison?.status}; ${retabetComparison?.comparedSelections || 0}; ${JSON.stringify(retabetComparison?.errors || [])}`);
+      }
+      if (retabetGate?.passed !== true && (await db.collection('_bookmaker_validation').doc('retabet_soccer').get()).data()?.passed !== true) {
+        throw new Error('Validação Retabet de 20 seleções não aprovada.');
+      }
+      cycle.retabetComparison = { status: retabetComparison.status,
+        comparedSelections: retabetComparison.comparedSelections,
+        processedAt: retabetComparison.processedAt };
+    }
     if (validationOnly && (await db.collection('_bookmaker_validation').doc('betano_soccer').get()).data()?.passed !== true) {
       throw new Error('Validação futebol insuficiente: consulte _bookmaker_validation/betano_soccer.');
     }
     afterMB = tunnel('meter').remainingMB;
-    const usage = recordTunnelUsage({ startedAt, beforeMB, afterMB });
+    const usage = recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter });
     usageRecorded = true;
+    if (!Number.isFinite(usage.cycles.at(-1).measuredMB) || usage.cycles.at(-1).measuredMB <= 0) {
+      throw new Error('Consumo de rede do ciclo não pôde ser medido de forma confiável.');
+    }
     cycle = { ...cycle, finishedAt: new Date().toISOString(),
-      beforeMB, afterMB, consumedMB: beforeMB - afterMB, monthlyChargedMB: usage.cycles.at(-1).chargedMB,
+      beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
+      consumedMB: usage.cycles.at(-1).measuredMB, measurementSource: usage.cycles.at(-1).measurementSource,
+      providerDeltaMB: usage.cycles.at(-1).providerDeltaMB, monthlyChargedMB: usage.cycles.at(-1).chargedMB,
       monthlyUsageMB: usage.totalMB, endpoints: [DATA_PATH, FOOTBALL_PATH] };
     if (!validationOnly) await db.collection('local_bookmaker_status').doc('betano').set({
       lastSuccessAt: cycle.finishedAt, vpnDisconnected: true, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
       lastReadAt: cycle.finishedAt, lastTunnelBearMB: cycle.consumedMB, lastReadId: cycleId,
+      lastMeasurementSource: cycle.measurementSource, lastProviderDeltaMB: cycle.providerDeltaMB,
       comparedSelections: comparison.comparedSelections, selections: cycle.selections, schedule: '11,13,15,17,19,21,23 America/Sao_Paulo',
+    }, { merge: true });
+    if (cycle.retabetComparison && retabetGate?.passed === true) await db.collection('local_bookmaker_status').doc('retabet').set({
+      lastSuccessAt: cycle.finishedAt, vpnDisconnected: true, taskName: TASK_NAME,
+      computerName: process.env.COMPUTERNAME, lastReadId: cycle.retabetReadId,
+      comparedSelections: cycle.retabetComparison.comparedSelections, selections: cycle.retabetSelections,
+      lastTunnelBearMB: cycle.consumedMB, schedule: '11,13,15,17,19,21,23 America/Sao_Paulo',
     }, { merge: true });
     fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
     console.log(JSON.stringify({ outputFile, finishedAt: cycle.finishedAt, games: cycle.games,
@@ -296,7 +385,9 @@ async function main() {
     }
     if (Number.isFinite(beforeMB) && !usageRecorded) {
       try { afterMB = tunnel('meter').remainingMB; } catch (_) { afterMB = null; }
-      try { recordTunnelUsage({ startedAt, beforeMB, afterMB, reason: error ? 'failed' : 'incomplete' }); }
+      try { if (!networkBytesAfter && !vpnConnected) networkBytesAfter = physicalNetworkBytes();
+        recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
+        reason: error ? 'failed' : 'incomplete' }); }
       catch (ledgerError) { console.error(`Não foi possível registrar uso TunnelBear: ${ledgerError.message}`); }
     }
     if (error) {

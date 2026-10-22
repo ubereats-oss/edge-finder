@@ -81,6 +81,25 @@ function isBetanoHeartbeatStale(lastSuccessAt, now = Date.now(), maxAgeMs = 6 * 
   return !Number.isFinite(last) || last > now || now - last > maxAgeMs;
 }
 
+function brasiliaClock(timestamp) {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Sao_Paulo', year: 'numeric',
+    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+    .formatToParts(new Date(timestamp));
+  const fields = Object.fromEntries(parts.map(part => [part.type, Number(part.value)]));
+  return Date.UTC(fields.year, fields.month - 1, fields.day, fields.hour, fields.minute);
+}
+
+function isBetanoScheduledHeartbeatStale(lastSuccessAt, now = Date.now()) {
+  const last = Date.parse(lastSuccessAt || '');
+  if (!Number.isFinite(last) || last > now) return true;
+  const effectiveNow = new Date(brasiliaClock(now - 45 * 60000));
+  const due = new Date(effectiveNow);
+  const hour = [11, 13, 15, 17, 19, 21, 23].filter(slot => slot <= effectiveNow.getUTCHours()).at(-1);
+  if (hour === undefined) due.setUTCDate(due.getUTCDate() - 1);
+  due.setUTCHours(hour ?? 23, 0, 0, 0);
+  return brasiliaClock(last) < due.getTime();
+}
+
 async function betanoHeartbeat() {
   if (!process.env.FIREBASE_SERVICE_ACCOUNT) throw new Error('FIREBASE_SERVICE_ACCOUNT ausente.');
   const admin = require('firebase-admin');
@@ -117,11 +136,15 @@ function transporter() {
   });
 }
 
-async function enviarEmail({ semTentativa, estadoWorkflow, betanoLastSuccessAt, betanoReadError }) {
-  const desabilitado = estadoWorkflow !== 'active';
+async function enviarEmail({ semTentativa, estadoWorkflow, betanoStatus, betanoReadError }) {
+  const desabilitado = estadoWorkflow !== 'active' && estadoWorkflow !== 'desconhecido';
   const partes = [];
-  if (betanoReadError || isBetanoHeartbeatStale(betanoLastSuccessAt)) {
-    partes.push(`A coleta local da Betano não registra ciclo bem-sucedido há mais de 6h. Último sucesso: ${betanoLastSuccessAt || 'nunca registrado'}.${betanoReadError ? ` Erro ao ler Firestore: ${betanoReadError}` : ''}`);
+  const localAtrasada = betanoReadError || isBetanoScheduledHeartbeatStale(betanoStatus.lastSuccessAt);
+  if (localAtrasada) {
+    const ultimaFalha = betanoStatus.lastFailure
+      ? `${betanoStatus.lastFailureAt || 'horário não registrado'}: ${betanoStatus.lastFailure}`
+      : 'nenhuma falha de execução registrada; confira o último resultado da tarefa no Agendador';
+    partes.push(`A coleta local Betano/Retabet não concluiu o último horário previsto. Último sucesso: ${betanoStatus.lastSuccessAt || 'nunca registrado'}. Verifique o Agendador de Tarefas do Windows no computador ${betanoStatus.computerName || 'da coleta'}, tarefa "${betanoStatus.taskName || 'EdgeFinder-Betano-Local'}". Última falha registrada: ${ultimaFalha}.${betanoReadError ? ` Erro ao ler Firestore: ${betanoReadError}` : ''}`);
   }
   if (desabilitado) {
     partes.push(`O workflow "Capturar Odd de Fechamento" está "${estadoWorkflow}" no GitHub (não ativo) — é por isso que não roda. Vá em Settings > Actions > General > Capturar Odd de Fechamento e reative. O GitHub aceita o disparo normalmente mesmo desabilitado, sem erro nenhum, só não cria execução nenhuma — foi exatamente essa a causa do hiato de 13 dias em setembro/outubro.`);
@@ -132,12 +155,14 @@ async function enviarEmail({ semTentativa, estadoWorkflow, betanoLastSuccessAt, 
   }
   const subject = desabilitado
     ? 'Edge Finder: captura de odd de fechamento DESABILITADA no GitHub'
-    : 'Edge Finder: coleta ou captura de odds está parada';
+    : localAtrasada && !semTentativa.length ? 'Edge Finder: coleta local Betano/Retabet atrasada'
+      : 'Edge Finder: coleta ou captura de odds está parada';
+  if (desabilitado || semTentativa.length) partes.push(`Captura de fechamento: https://github.com/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}`);
   await transporter().sendMail({
     from: process.env.ALERT_SMTP_USER,
     to: process.env.ALERT_EMAIL_TO,
     subject,
-    text: `${partes.join('\n\n')}\n\nVerifique em https://github.com/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WORKFLOW_FILE}`,
+    text: partes.join('\n\n'),
   });
 }
 
@@ -182,7 +207,7 @@ async function main() {
   } catch (error) {
     betanoReadError = error.message;
   }
-  const betanoStale = betanoReadError || isBetanoHeartbeatStale(betanoStatus.lastSuccessAt);
+  const betanoStale = betanoReadError || isBetanoScheduledHeartbeatStale(betanoStatus.lastSuccessAt);
   console.log(`[alerta] heartbeat Betano ${betanoStale ? 'ausente/atrasado' : 'atual'}: ${betanoStatus.lastSuccessAt || 'sem registro'}.`);
 
   const desabilitado = estadoWorkflow !== 'active' && estadoWorkflow !== 'desconhecido';
@@ -202,10 +227,10 @@ async function main() {
     return;
   }
 
-  await enviarEmail({ semTentativa, estadoWorkflow, betanoLastSuccessAt: betanoStatus.lastSuccessAt, betanoReadError });
+  await enviarEmail({ semTentativa, estadoWorkflow, betanoStatus, betanoReadError });
   salvarMarcador(hoje);
   console.log('[alerta] e-mail enviado.');
 }
 
 if (require.main === module) main().catch(e => { console.error('ERRO FATAL:', e.message); process.exit(1); });
-module.exports = { isBetanoHeartbeatStale };
+module.exports = { isBetanoHeartbeatStale, isBetanoScheduledHeartbeatStale };

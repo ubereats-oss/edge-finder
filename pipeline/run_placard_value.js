@@ -333,6 +333,16 @@ async function processBookmakerRead(db, readId) {
   const gamesSnap = await readRef.collection('games').get();
   const games = gamesSnap.docs.map(doc => doc.data()).filter(game => game && game.apiSport && Array.isArray(game.teams));
   if (!games.length) throw new Error(`Leitura local ${readId} não contém jogos válidos.`);
+  if (games.every(game => {
+    const age = Date.now() - Date.parse(game.observedAt || '');
+    return !Number.isFinite(age) || age < 0 || age > 120000;
+  })) {
+    const errors = [{ error: 'Leitura local antiga: todos os preços passaram de 120 segundos antes da comparação.' }];
+    await readRef.set({ status: 'processed_with_errors', processedAt: new Date().toISOString(),
+      comparedSelections: 0, opportunities: 0, errors, diagnostics: [], apiUsage: { creditsSpent: 0, calls: 0 } },
+    { merge: true });
+    return { rows: [], errors, diagnostics: [], apiUsage: { creditsSpent: 0, calls: 0 } };
+  }
 
   const api = createOddsApiClient({ label: `bookmaker-${read.bookmaker || 'unknown'}` });
   const rows = [], errors = [], diagnostics = [], validations = [];

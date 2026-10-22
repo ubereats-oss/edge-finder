@@ -87,19 +87,28 @@ function Get-MeterReading([int]$StableSeconds = 90) {
 try {
   if ($Action -eq 'connect') {
     $lastError = $null
-    for ($attempt = 1; $attempt -le 3; $attempt++) {
+    for ($attempt = 1; $attempt -le 1; $attempt++) {
       try {
         $state = Get-TunnelBearState
         if (-not ($state.Countries -contains 'Portugal')) {
           throw "Portugal não está selecionado no TunnelBear (seleção atual: $($state.Countries -join ', '))."
         }
         if ($state.Status -eq 'Disconnected') { $state.Switch.Toggle() }
-        $state = Wait-TunnelBearStatus 'Connection secured' 90
-        $ipWho = Invoke-RestMethod -Uri 'https://ipwho.is/' -TimeoutSec 20
-        $ipApi = Invoke-RestMethod -Uri 'https://ipapi.co/json/' -TimeoutSec 20
-        if ($ipWho.success -ne $true -or $ipWho.country_code -ne 'PT' -or $ipApi.country_code -ne 'PT') {
-          throw "IP não confirmado como português nos dois serviços (ipwho=$($ipWho.country_code), ipapi=$($ipApi.country_code))."
+        $state = Wait-TunnelBearStatus 'Connection secured' 120
+        $ipConfirmed = $false
+        for ($probe = 1; $probe -le 3; $probe++) {
+          try {
+            $ipWho = Invoke-RestMethod -Uri 'https://ipwho.is/' -TimeoutSec 20
+            $ipApi = Invoke-RestMethod -Uri 'https://ipapi.co/json/' -TimeoutSec 20
+            if ($ipWho.success -eq $true -and $ipWho.country_code -eq 'PT' -and $ipApi.country_code -eq 'PT') {
+              $ipConfirmed = $true
+              break
+            }
+            $lastError = "IP não confirmado como português nos dois serviços (ipwho=$($ipWho.country_code), ipapi=$($ipApi.country_code))."
+          } catch { $lastError = $_.Exception.Message }
+          if ($probe -lt 3) { Start-Sleep -Seconds 5 }
         }
+        if (-not $ipConfirmed) { throw $lastError }
         [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT'; attempt = $attempt } | ConvertTo-Json -Compress
         exit 0
       } catch {
@@ -108,10 +117,9 @@ try {
           $state = Get-TunnelBearState
           if ($state.Status -ne 'Disconnected') { $state.Switch.Toggle(); $null = Wait-TunnelBearStatus 'Disconnected' 30 }
         } catch { $lastError += "; falha ao desligar antes de nova tentativa: $($_.Exception.Message)" }
-        if ($attempt -lt 3) { Start-Sleep -Seconds 2 }
       }
     }
-    throw "Falha de conexão após 3 tentativas: $lastError"
+    throw "Falha de conexão na única tentativa deste ciclo: $lastError"
   } elseif ($Action -eq 'disconnect') {
     $state = Get-TunnelBearState
     if ($state.Status -ne 'Disconnected') {

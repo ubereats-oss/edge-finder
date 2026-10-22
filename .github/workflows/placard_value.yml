@@ -17,7 +17,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: placard-value-${{ inputs.closing_only && 'closing' || 'scan' }}
+  group: placard-value-${{ inputs.bookmaker_read_id || inputs.closing_only && 'closing' || 'scan' }}
   cancel-in-progress: false
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
