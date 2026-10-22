@@ -1,27 +1,28 @@
-// Coleta Betano por JSON de rede numa sessão Chrome visível e persistente.
-// Escopo atualmente comprovado: NBA, mercado principal de vencedor/handicap/total.
+// Coleta Betano por JSON de rede numa sessão Edge visível e persistente.
+// A máquina coleta odds; Pinnacle, validação e comparação executam na nuvem.
 const { spawn } = require('node:child_process');
 const { chromium } = require('playwright');
 const admin = require('firebase-admin');
-const { loadEnvFileIfPresent, createOddsApiClient } = require('./odds_api_client');
-const { compareBookmaker } = require('./placard_value');
-const { allEntries, captureClosing, publish, saveOpportunity } = require('./run_placard_value');
+const { loadEnvFileIfPresent } = require('./odds_api_client');
+const competitions = require('./placard_config');
 const path = require('node:path');
 const fs = require('node:fs');
 
 const PROJECT = path.resolve(__dirname, '..');
 const TUNNEL = path.join(PROJECT, 'scripts', 'local_bookmakers', 'tunnelbear.ps1');
-const PROFILE = path.join(process.env.LOCALAPPDATA, 'odds_app', 'chrome_betano_persistent');
-const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const CDP = 'http://127.0.0.1:9222';
+const PROFILE = path.join(process.env.LOCALAPPDATA, 'odds_app', 'edge_betano_persistent');
+const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+const CDP = 'http://127.0.0.1:9331';
 const START_URL = 'https://www.betano.pt/sport/basquetebol/eua/nba';
 const SPORT = 'basketball_nba';
 const DATA_PATH = '/api/sports/BASK/hot/trending/leagues/441g/events?req=s,stnf,c,mb';
-const START_TOLERANCE_MS = 10 * 60000;
+const FOOTBALL_PATH = '/api/sports/FOOT/hot/trending/leagues/433g/events?req=s,stnf,c,mb';
+const TASK_NAME = 'EdgeFinder-Betano-Local';
 const MONTHLY_TUNNEL_CAP_MB = 4000;
-const MAX_MEASURED_CYCLE_MB = 56;
+const MAX_MEASURED_CYCLE_MB = 15;
 const OUTPUT_DIR = path.join(PROJECT, '.local_logs', 'betano');
-const IMAGE_AND_MEDIA = new Set(['image', 'media']);
+const BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font']);
+const BLOCKED_TRACKING_URL = /google-analytics|googletagmanager|doubleclick|facebook\.net|hotjar|optimove|go-mpulse|bsqd\.me/i;
 
 function tunnel(action) {
   const result = require('node:child_process').spawnSync('powershell.exe', [
@@ -43,23 +44,26 @@ async function cdpReady() {
   try { return (await fetch(`${CDP}/json/version`)).ok; } catch { return false; }
 }
 
-async function ensureChrome() {
+async function ensureEdge() {
   if (!(await cdpReady())) {
-    if (!fs.existsSync(CHROME)) throw new Error(`Chrome instalado não encontrado: ${CHROME}`);
+    if (!fs.existsSync(EDGE)) throw new Error(`Microsoft Edge instalado não encontrado: ${EDGE}`);
     fs.mkdirSync(PROFILE, { recursive: true });
-    const child = spawn(CHROME, [
-      '--remote-debugging-port=9222', `--user-data-dir=${PROFILE}`, '--no-first-run', '--new-window', START_URL,
+    const child = spawn(EDGE, [
+      '--remote-debugging-port=9331', `--user-data-dir=${PROFILE}`, '--no-first-run', '--new-window', 'about:blank',
     ], { detached: true, stdio: 'ignore', windowsHide: false });
     child.unref();
     const deadline = Date.now() + 30000;
     while (Date.now() < deadline && !(await cdpReady())) await new Promise(resolve => setTimeout(resolve, 500));
   }
-  if (!(await cdpReady())) throw new Error('Chrome visível não abriu a porta de depuração remota em 30s.');
+  if (!(await cdpReady())) throw new Error('Edge visível não abriu a porta de depuração remota em 30s.');
   const browser = await chromium.connectOverCDP(CDP);
   const context = browser.contexts()[0];
-  if (!context) throw new Error('Chrome conectado sem contexto persistente.');
-  await context.route('**/*', route => IMAGE_AND_MEDIA.has(route.request().resourceType())
-    ? route.abort() : route.continue());
+  if (!context) throw new Error('Edge conectado sem contexto persistente.');
+  await context.route('**/*', route => {
+    const request = route.request();
+    return BLOCKED_RESOURCE_TYPES.has(request.resourceType()) || BLOCKED_TRACKING_URL.test(request.url())
+      ? route.abort() : route.continue();
+  });
   let page = context.pages().find(candidate => candidate.url().startsWith('https://www.betano.pt/'))
     || context.pages()[0] || await context.newPage();
   return { browser, context, page };
@@ -75,20 +79,42 @@ async function dismissCookieNotice(page) {
   }
 }
 
+function normalizeCompetition(value) {
+  return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function apiSportForEvent(event) {
+  const prefix = ({ FOOT: 'soccer_', BASK: 'basketball_', BASE: 'baseball_', TENN: 'tennis_' })[event.sportId];
+  if (!prefix) return null;
+  const observed = [event.leagueName, event.leagueDescription, event.regionName].map(normalizeCompetition).filter(Boolean);
+  const matches = competitions.filter(competition => competition.key.startsWith(prefix)
+    && [competition.label, ...(competition.aliases || [])].some(label => {
+      const expected = normalizeCompetition(label);
+      return observed.some(name => name === expected || (name.length >= 6 && expected.endsWith(name)));
+    }));
+  return matches.length === 1 ? matches[0].key : null;
+}
+
 function readSelections(payload) {
   return (payload?.data?.events || []).flatMap(event => {
-    const markets = (event.sixPackBlocks || []).flatMap(block => block.columns || []).flatMap(column => {
-      const type = ({ H2HT: 'H2HT', FHOT: 'HCOT', FTPO: 'HCTG' })[column.type];
-      if (!type || !Array.isArray(column.selections)) return [];
-      const selections = column.selections.filter(s => Number.isFinite(Number(s.price)) && Number(s.price) > 1)
-        .map(s => ({ price: Number(s.price), line: type === 'H2HT' ? null : Number(s.handicap),
-          fullName: s.fullName || '', name: s.name || '', unavailable: false }));
+    const rawMarkets = Array.isArray(event.markets) ? event.markets
+      : (event.sixPackBlocks || []).flatMap(block => block.columns || []);
+    const markets = rawMarkets.flatMap(market => {
+      const type = ({ H2HT: 'H2HT', HTOH: 'HTOH', MRES: 'MRES', HCOT: 'HCOT', TGHC: 'TGHC',
+        FHOT: 'HCOT', FTPO: 'HCTG', HCTG: 'HCTG', TPOT: 'TPOT' })[market.type];
+      if (!type || !Array.isArray(market.selections)) return [];
+      if (market.selections.some(selection => !Number.isFinite(Number(selection.price)) || Number(selection.price) <= 1
+        || selection.isSuspended === true || selection.isAvailable === false)) return [];
+      const selections = market.selections
+        .map(selection => ({ price: Number(selection.price), line: ['H2HT', 'HTOH', 'MRES'].includes(type)
+          ? null : Number(selection.handicap), fullName: selection.fullName || '', name: selection.name || '', unavailable: false }));
       if (selections.length < 2) return [];
-      return [{ type, title: column.name, selections }];
+      return [{ type, title: market.name, selections }];
     });
     const teams = (event.participants || []).map(participant => participant.name).filter(Boolean);
-    if (teams.length !== 2 || !markets.length || !Number.isFinite(Number(event.startTime))) return [];
-    return [{ apiSport: SPORT, teams, competition: event.leagueName || event.leagueDescription || 'NBA',
+    const apiSport = apiSportForEvent(event);
+    if (teams.length !== 2 || !markets.length || !apiSport || !Number.isFinite(Number(event.startTime))) return [];
+    return [{ apiSport, teams, competition: event.leagueName || event.leagueDescription || 'NBA',
       commenceTime: new Date(Number(event.startTime)).toISOString(), observedAt: new Date().toISOString(),
       sourceUrl: new URL(event.url || START_URL, 'https://www.betano.pt').toString(), markets,
       sourceEventId: String(event.id), sourceEventName: event.shortName || event.name }];
@@ -132,11 +158,11 @@ async function initialJson(page) {
   return freshJson(page, DATA_PATH);
 }
 
-async function updateFailure(db, error) {
+async function updateFailure(db, error, vpnDisconnected) {
   try {
     await db.collection('local_bookmaker_status').doc('betano').set({
       lastFailureAt: new Date().toISOString(), lastFailure: String(error.message || error).slice(0, 500),
-      vpnDisconnected: true,
+      vpnDisconnected, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
     }, { merge: true });
   } catch (firestoreError) {
     console.error(`Não foi possível gravar falha Betano no Firestore: ${firestoreError.message}`);
@@ -183,12 +209,13 @@ function recordTunnelUsage({ startedAt, beforeMB, afterMB, now = Date.now(), rea
 
 async function main() {
   loadEnvFileIfPresent(path.resolve(__dirname, '..', '.env'));
-  process.env.ODDS_API_ENFORCE_MONTHLY_BUDGET = '1';
-  process.env.ALLOW_LIVE_ODDS_API = '1';
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   const startedAt = new Date().toISOString();
   const db = database();
   const outputFile = path.join(OUTPUT_DIR, `cycle-${startedAt.replace(/[:.]/g, '-')}.json`);
+  const validationOnly = process.argv.includes('--validate-football');
+  const gate = (await db.collection('_bookmaker_validation').doc('betano_soccer').get()).data();
+  if (!validationOnly && gate?.passed !== true) throw new Error('Betano futebol ainda não validado: 20 seleções exigidas.');
   let browser;
   let context;
   let vpnConnected = false;
@@ -196,98 +223,75 @@ async function main() {
   let afterMB = null;
   let usageRecorded = false;
   let error;
+  let cycle = { startedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME, validationOnly };
   try {
     assertTunnelBudget();
     beforeMB = tunnel('meter').remainingMB;
-    const vpn = tunnel('connect');
+    cycle.vpn = tunnel('connect');
     vpnConnected = true;
-    const chrome = await ensureChrome();
-    browser = chrome.browser;
-    context = chrome.context;
-    const page = chrome.page;
+    const edge = await ensureEdge();
+    browser = edge.browser;
+    context = edge.context;
+    const page = edge.page;
     await dismissCookieNotice(page);
 
-    // Fechamentos pendentes consomem a cota antes da nova leitura da Betano.
-    let entries = await allEntries(db);
-    const closingUsage = await captureClosing(db, entries);
-    entries = await allEntries(db);
-
-    const payload = await initialJson(page);
-    const navigationCount = await page.evaluate(() => performance.getEntriesByType('navigation').length);
-    const games = readSelections(payload).map(adaptTotalsAndHandicaps).filter(game => {
+    const nba = await initialJson(page);
+    const football = await freshJson(page, FOOTBALL_PATH);
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'football-latest.json'), JSON.stringify(football));
+    const games = [...(validationOnly ? [] : readSelections(nba)), ...readSelections(football)].map(adaptTotalsAndHandicaps).filter(game => {
       const delta = Date.parse(game.commenceTime) - Date.now();
       return delta > 0 && delta <= 12 * 3600000;
     });
-    if (!games.length) throw new Error('Endpoint JSON Betano respondeu, mas não trouxe jogos NBA nas próximas 12h.');
-
-    const api = createOddsApiClient({ label: 'betano-reading' });
-    const from = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
-    const to = new Date(Date.now() + 12 * 3600000).toISOString().replace(/\.\d{3}Z$/, 'Z');
-    const response = await api.get(`https://api.the-odds-api.com/v4/sports/${SPORT}/odds`, {
-      timeout: 20000, params: { bookmakers: 'pinnacle', markets: 'h2h,totals,spreads',
-        oddsFormat: 'decimal', commenceTimeFrom: from, commenceTimeTo: to },
-    });
-    const pinnacleEvents = response.data.map(event => ({ ...event, sport_key: SPORT }));
-    const comparedAt = Date.now();
-    const opportunityRows = [];
-    let comparedSelections = 0;
-    const validations = [];
-    for (const game of games) {
-      const comparison = compareBookmaker('Betano', game, pinnacleEvents, comparedAt,
-        { startToleranceMs: START_TOLERANCE_MS });
-      comparedSelections += comparison.comparedSelections || 0;
-      for (const row of comparison.rows) {
-        row.sourceEventId = game.sourceEventId;
-        await saveOpportunity(db, row);
-        opportunityRows.push(row);
-      }
-      validations.push({ sourceEventId: game.sourceEventId, teams: game.teams,
-        start: game.commenceTime, matchedSelections: comparison.comparedSelections || 0,
-        opportunities: comparison.rows.length, reason: comparison.reason || null });
-    }
-
-    const cacheRef = db.collection('_placard_pinnacle_latest').doc(SPORT);
-    await cacheRef.set({ events: pinnacleEvents, updatedAt: new Date().toISOString(), source: 'betano-local-reader' });
-    const readDoc = { observedAt: new Date().toISOString(), workflowRunId: `local-betano-${Date.now()}`,
-      bookmaker: 'Betano', apiSport: SPORT, games, pinnacle: JSON.stringify(pinnacleEvents), comparedSelections,
-      opportunities: opportunityRows.length, source: 'Chrome CDP JSON fetch' };
-    await db.collection('_placard_reads').add(readDoc);
-
-    entries = await allEntries(db);
-    const currentRows = entries.filter(entry => entry.closingStatus === 'pendente' && Date.parse(entry.commenceTime) > Date.now());
-    await publish(db, { rows: currentRows, errors: [], diagnostics: [], apiUsage: api.usage(), closingUsage }, entries);
-
-    const disconnected = tunnel('disconnect');
+    if (!games.length) throw new Error('Endpoint Betano sem jogos elegíveis nas próximas 12h.');
+    await page.goto('about:blank');
+    cycle.disconnected = tunnel('disconnect');
     vpnConnected = false;
+
+    const cycleId = `local-betano-${Date.now()}`;
+    cycle.firestoreReadId = cycleId;
+    cycle.games = games.length;
+    cycle.selections = games.reduce((sum, game) => sum + game.markets.reduce((total, market) => total + market.selections.length, 0), 0);
+    const readRef = db.collection('_bookmaker_reads').doc(cycleId);
+    await readRef.set({ bookmaker: 'Betano', observedAt: new Date().toISOString(), mode: validationOnly ? 'validation' : 'production',
+      status: 'writing', gameCount: games.length, source: 'Edge CDP JSON fetch' });
+    await Promise.all(games.map((game, index) => readRef.collection('games').doc(`game-${index}`).set(game)));
+    await readRef.set({ status: 'ready', gamesWrittenAt: new Date().toISOString() }, { merge: true });
+
+    const deadline = Date.now() + 8 * 60000;
+    let comparison;
+    while (Date.now() < deadline) {
+      comparison = (await readRef.get()).data();
+      if (['processed', 'processed_with_errors'].includes(comparison.status)) break;
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+    if (comparison?.status !== 'processed') throw new Error(`Comparação na nuvem não concluída: ${comparison?.status}; ${JSON.stringify(comparison?.errors || [])}`);
+    cycle.comparison = { status: comparison.status, processedAt: comparison.processedAt,
+      comparedSelections: comparison.comparedSelections, opportunities: comparison.opportunities };
+    if (validationOnly && (await db.collection('_bookmaker_validation').doc('betano_soccer').get()).data()?.passed !== true) {
+      throw new Error('Validação futebol insuficiente: consulte _bookmaker_validation/betano_soccer.');
+    }
     afterMB = tunnel('meter').remainingMB;
     const usage = recordTunnelUsage({ startedAt, beforeMB, afterMB });
     usageRecorded = true;
-    const cycle = { startedAt, finishedAt: new Date().toISOString(), vpn, disconnected,
+    cycle = { ...cycle, finishedAt: new Date().toISOString(),
       beforeMB, afterMB, consumedMB: beforeMB - afterMB, monthlyChargedMB: usage.cycles.at(-1).chargedMB,
-      monthlyUsageMB: usage.totalMB, endpoint: DATA_PATH,
-      source: 'fetch same-origin JSON na sessão persistente, sem reload', navigationCount,
-      games: games.length, comparedSelections, opportunities: opportunityRows.length,
-      apiUsage: api.usage(), closingUsage, validations };
-    await db.collection('local_bookmaker_status').doc('betano').set({
-      lastSuccessAt: cycle.finishedAt, lastFailure: null, lastFailureAt: null, vpnDisconnected: true,
-      lastReadAt: cycle.finishedAt, lastComparedSelections: comparedSelections,
-      lastOpportunities: opportunityRows.length, lastTunnelBearMB: cycle.consumedMB,
-      lastApiCredits: api.usage().creditsSpent,
+      monthlyUsageMB: usage.totalMB, endpoints: [DATA_PATH, FOOTBALL_PATH] };
+    if (!validationOnly) await db.collection('local_bookmaker_status').doc('betano').set({
+      lastSuccessAt: cycle.finishedAt, vpnDisconnected: true, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
+      lastReadAt: cycle.finishedAt, lastTunnelBearMB: cycle.consumedMB, lastReadId: cycleId,
+      comparedSelections: comparison.comparedSelections, selections: cycle.selections, schedule: '11,13,15,17,19,21,23 America/Sao_Paulo',
     }, { merge: true });
     fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
     console.log(JSON.stringify({ outputFile, finishedAt: cycle.finishedAt, games: cycle.games,
-      comparedSelections, opportunities: opportunityRows.length, consumedMB: cycle.consumedMB,
-      credits: api.usage().creditsSpent, VPN: 'off' }));
+      consumedMB: cycle.consumedMB, firestoreReadId: cycle.firestoreReadId, VPN: 'off' }));
   } catch (caught) {
     error = caught;
-    await updateFailure(db, caught);
-    throw caught;
   } finally {
     if (context) await context.unroute('**/*').catch(() => {});
     if (browser) await browser.close().catch(() => {});
     if (vpnConnected) {
-      try { tunnel('disconnect'); } catch (disconnectError) {
-        await updateFailure(db, new Error(`${error?.message || 'ciclo falhou'}; VPN não desligou: ${disconnectError.message}`));
+      try { cycle.disconnected = tunnel('disconnect'); vpnConnected = false; } catch (disconnectError) {
+        error = new Error(`${error?.message || 'ciclo falhou'}; VPN não desligou: ${disconnectError.message}`);
       }
     }
     if (Number.isFinite(beforeMB) && !usageRecorded) {
@@ -295,7 +299,16 @@ async function main() {
       try { recordTunnelUsage({ startedAt, beforeMB, afterMB, reason: error ? 'failed' : 'incomplete' }); }
       catch (ledgerError) { console.error(`Não foi possível registrar uso TunnelBear: ${ledgerError.message}`); }
     }
+    if (error) {
+      cycle.error = error.message;
+      cycle.finishedAt = new Date().toISOString();
+      cycle.vpnDisconnected = !vpnConnected;
+      cycle.beforeMB = beforeMB; cycle.afterMB = afterMB;
+      fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
+      await updateFailure(db, error, !vpnConnected);
+    }
   }
+  if (error) throw error;
 }
 
 if (require.main === module) main().catch(error => { console.error(error.message); process.exitCode = 1; });

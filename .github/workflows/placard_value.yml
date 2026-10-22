@@ -10,6 +10,10 @@ on:
         description: 'Executar somente a captura prioritária de fechamento'
         type: boolean
         default: false
+      bookmaker_read_id:
+        description: 'ID da leitura local de uma casa para comparação na nuvem'
+        type: string
+        required: false
 permissions:
   contents: read
 concurrency:
@@ -20,6 +24,7 @@ env:
   FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
   PLACARD_FORCE_SCAN: ${{ github.event_name == 'workflow_dispatch' && inputs.force_scan && '1' || '0' }}
   PLACARD_CLOSING_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.closing_only && '1' || '0' }}
+  PLACARD_BOOKMAKER_READ_ID: ${{ github.event_name == 'workflow_dispatch' && inputs.bookmaker_read_id || '' }}
 jobs:
   collect:
     runs-on: ubuntu-latest
