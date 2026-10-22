@@ -753,7 +753,7 @@ exports.compareLocalBookmakerRead = onDocumentWritten({
   document: '_bookmaker_reads/{readId}', region: 'southamerica-east1', secrets: [GH_DISPATCH_TOKEN],
 }, async event => {
   const after = event.data?.after;
-  if (!after?.exists || after.data().status !== 'ready') return;
+  if (!after?.exists || after.data().status !== 'ready' || event.data.before?.data()?.status === 'ready') return;
   await dispatchReadyBookmakerRead(GH_DISPATCH_TOKEN.value(), after.ref);
 });
 

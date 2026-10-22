@@ -10,7 +10,7 @@ const fs = require('node:fs');
 
 const PROJECT = path.resolve(__dirname, '..');
 const TUNNEL = path.join(PROJECT, 'scripts', 'local_bookmakers', 'tunnelbear.ps1');
-const PROFILE = path.join(process.env.LOCALAPPDATA, 'odds_app', 'edge_betano_persistent');
+const PROFILE = path.join(process.env.LOCALAPPDATA || require('node:os').tmpdir(), 'odds_app', 'edge_betano_persistent');
 const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const CDP = 'http://127.0.0.1:9331';
 const START_URL = 'https://www.betano.pt/sport/basquetebol/eua/nba';
