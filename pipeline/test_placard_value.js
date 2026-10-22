@@ -6,7 +6,7 @@ const { estimateCost, summarize, planReservation, keyFingerprint, parseHeaders,
   refreshBalances, CLOSING_RESERVE, MONTHLY_SPEND_CAP, MONTHLY_READ_CAP } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
 const { captureClosing, exactTotals, exactSpreads, closingStartTolerance, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue } = require('./run_placard_value');
-const { readSelections, adaptTotalsAndHandicaps, tunnelCycleAffordable, MAX_MEASURED_CYCLE_MB } = require('./local_betano_reader');
+const { readSelections, adaptTotalsAndHandicaps, tunnelCycleAffordable, monthKey, MAX_MEASURED_CYCLE_MB } = require('./local_betano_reader');
 const { parseMarkets, matchLink, eventTimeMatches } = require('../scripts/local_bookmakers/retabet_reader.cjs');
 const { isBetanoHeartbeatStale, isBetanoScheduledHeartbeatStale } = require('./check_closing_odds_staleness');
 const now = Date.parse('2026-10-20T12:00:00Z');
@@ -136,10 +136,12 @@ test('alerta local respeita a grade de Brasília e a tolerância de 45 minutos',
   assert.equal(isBetanoScheduledHeartbeatStale('2026-10-21T14:15:00Z', Date.parse('2026-10-21T14:46:00Z')), false);
 });
 test('bloqueio conservador da franquia TunnelBear antes do ciclo seguinte', () => {
-  assert.equal(MAX_MEASURED_CYCLE_MB, 15);
-  assert.equal(tunnelCycleAffordable(3985), true);
-  assert.equal(tunnelCycleAffordable(3986), false);
+  assert.equal(MAX_MEASURED_CYCLE_MB, 18);
+  assert.equal(tunnelCycleAffordable(3982), true);
+  assert.equal(tunnelCycleAffordable(3983), false);
   assert.equal(tunnelCycleAffordable(Number.NaN), false);
+  assert.equal(monthKey(Date.parse('2026-11-01T01:30:00Z')), '2026-10');
+  assert.equal(monthKey(Date.parse('2026-11-01T03:00:00Z')), '2026-11');
 });
 test('tolerância de fechamento ampliada só para Betano verificada; demais casas continuam estritas', () => {
   assert.equal(closingStartTolerance({ bookmaker: 'Betano', sourceScheduleVerified: true }, 'basketball_nba'), 600000);
