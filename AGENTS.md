@@ -16,6 +16,9 @@
 - Testes, analyze, build, commit, push para `main` e deploy do Firebase Hosting e Functions estão autorizados sem confirmação adicional.
 - Peça confirmação somente antes de ações irreversíveis sobre dados: apagar dados, reescrever histórico ou fazer push forçado.
 
+## Automações e retomadas
+- Nenhuma sessão cria automações, agendamentos ou retomadas automáticas sem pedido explícito na mensagem atual do usuário.
+
 ## Arquitetura
 - `pipeline/` — scripts Node.js de coleta e modelo
 - `lib/screens/` — telas Flutter
