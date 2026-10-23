@@ -214993,7 +214993,7 @@
     "firstEvaluatedAt": "2026-10-15T21:07:37.600Z",
     "result": null,
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -215051,7 +215051,7 @@
     "firstEvaluatedAt": "2026-10-15T21:07:37.600Z",
     "result": null,
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -215323,7 +215323,7 @@
     "firstEvaluatedAt": "2026-10-15T21:07:37.600Z",
     "result": null,
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -215429,7 +215429,7 @@
     "firstEvaluatedAt": "2026-10-15T21:07:37.600Z",
     "result": null,
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "nao_apuravel",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -275146,16 +275146,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-23T15:06:44.496Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Drake Maye|passTDs|1.5|Over",
@@ -275191,16 +275195,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-23T15:06:44.949Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Drake Maye|passYards|247.5|Over",
@@ -275236,16 +275244,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 321,
+      "apuradoEm": "2026-10-23T15:06:45.471Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Drake Maye|passYards|244.5|Over",
@@ -275281,16 +275293,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 321,
+      "apuradoEm": "2026-10-23T15:06:45.935Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Drake Maye|passYards|243.5|Over",
@@ -275326,16 +275342,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 321,
+      "apuradoEm": "2026-10-23T15:06:46.389Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Caleb Williams|passYards|246.5|Under",
@@ -275371,16 +275391,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 308,
+      "apuradoEm": "2026-10-23T15:06:46.848Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 240.5,
     "adjustedClosingOverOdds": 1.87,
     "adjustedClosingUnderOdds": 1.87,
@@ -275429,9 +275453,13 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 308,
+      "apuradoEm": "2026-10-23T15:06:47.307Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -275485,16 +275513,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 308,
+      "apuradoEm": "2026-10-23T15:06:47.762Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "clvNoVig": -6.5,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 1,
@@ -275546,16 +275578,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 48,
+      "apuradoEm": "2026-10-23T15:06:48.223Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|A.J. Brown|receptionYards|67.5|Over",
@@ -275591,16 +275627,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 48,
+      "apuradoEm": "2026-10-23T15:06:48.688Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|A.J. Brown|receptionYards|69.5|Over",
@@ -275636,16 +275676,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 48,
+      "apuradoEm": "2026-10-23T15:06:49.143Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Luther Burden III|receptionYards|56.5|Over",
@@ -275681,16 +275725,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 130,
+      "apuradoEm": "2026-10-23T15:06:49.612Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Luther Burden III|receptionYards|55.5|Over",
@@ -275726,16 +275774,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 130,
+      "apuradoEm": "2026-10-23T15:06:50.065Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Luther Burden III|receptionYards|59.5|Under",
@@ -275771,16 +275823,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 130,
+      "apuradoEm": "2026-10-23T15:06:50.530Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 55.5,
     "adjustedClosingOverOdds": 1.82,
     "adjustedClosingUnderOdds": 1.85,
@@ -275832,16 +275888,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 69,
+      "apuradoEm": "2026-10-23T15:06:50.988Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Rome Odunze|receptionYards|45.5|Over",
@@ -275877,16 +275937,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 69,
+      "apuradoEm": "2026-10-23T15:06:51.445Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Rome Odunze|receptionYards|47.5|Over",
@@ -275922,16 +275986,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 69,
+      "apuradoEm": "2026-10-23T15:06:51.915Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Colston Loveland|receptionYards|42.5|Over",
@@ -275967,16 +276035,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 69,
+      "apuradoEm": "2026-10-23T15:06:52.373Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Colston Loveland|receptionYards|44.5|Over",
@@ -276012,16 +276084,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 69,
+      "apuradoEm": "2026-10-23T15:06:52.834Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Colston Loveland|receptionYards|43.5|Over",
@@ -276057,16 +276133,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 69,
+      "apuradoEm": "2026-10-23T15:06:53.296Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Hunter Henry|receptionYards|33.5|Over",
@@ -276102,16 +276182,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 71,
+      "apuradoEm": "2026-10-23T15:06:53.750Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|DeMario Douglas|receptionYards|29.5|Over",
@@ -276147,16 +276231,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 23,
+      "apuradoEm": "2026-10-23T15:06:54.209Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|DeMario Douglas|receptionYards|31.5|Over",
@@ -276192,16 +276280,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 23,
+      "apuradoEm": "2026-10-23T15:06:54.682Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|DeMario Douglas|receptionYards|28.5|Over",
@@ -276237,16 +276329,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 23,
+      "apuradoEm": "2026-10-23T15:06:55.138Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Kalif Raymond|receptionYards|28.5|Over",
@@ -276282,16 +276378,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-23T15:06:55.631Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Kalif Raymond|receptionYards|25.5|Over",
@@ -276327,16 +276427,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-23T15:06:56.088Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "clvNoVig": -5.23,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 2,
@@ -276388,16 +276492,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-23T15:06:56.539Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Kalif Raymond|receptionYards|26.5|Over",
@@ -276433,16 +276541,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-23T15:06:56.995Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "clvNoVig": -7.76,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 1,
@@ -276494,16 +276606,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 12,
+      "apuradoEm": "2026-10-23T15:06:57.447Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|D'Andre Swift|receptionYards|20.5|Over",
@@ -276539,16 +276655,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 12,
+      "apuradoEm": "2026-10-23T15:06:57.902Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Rhamondre Stevenson|receptionYards|18.5|Over",
@@ -276584,16 +276704,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 93,
+      "apuradoEm": "2026-10-23T15:06:58.359Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Rhamondre Stevenson|receptionYards|17.5|Over",
@@ -276629,16 +276753,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 93,
+      "apuradoEm": "2026-10-23T15:06:58.816Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Cole Kmet|receptionYards|8.5|Over",
@@ -276674,9 +276802,13 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 28,
+      "apuradoEm": "2026-10-23T15:06:59.279Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -276729,9 +276861,13 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 28,
+      "apuradoEm": "2026-10-23T15:06:59.738Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -276784,16 +276920,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 16,
+      "apuradoEm": "2026-10-23T15:07:00.199Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Efton Chism III|receptionYards|20.5|n/a",
@@ -276829,16 +276969,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 16,
+      "apuradoEm": "2026-10-23T15:07:00.665Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|TreVeyon Henderson|receptionYards|3.5|Over",
@@ -276874,9 +277018,13 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 14,
+      "apuradoEm": "2026-10-23T15:07:01.120Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -276929,16 +277077,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-23T15:07:01.577Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|A.J. Brown|receptions|4.5|Over",
@@ -276974,16 +277126,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-23T15:07:02.038Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Luther Burden III|receptions|4.5|Under",
@@ -277019,9 +277175,13 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 4,
+      "apuradoEm": "2026-10-23T15:07:02.493Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -277074,16 +277234,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 7,
+      "apuradoEm": "2026-10-23T15:07:02.949Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Colston Loveland|receptions|3.5|Over",
@@ -277119,16 +277283,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 7,
+      "apuradoEm": "2026-10-23T15:07:03.413Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Rome Odunze|receptions|3.5|Over",
@@ -277164,16 +277332,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 4,
+      "apuradoEm": "2026-10-23T15:07:03.867Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Hunter Henry|receptions|3.5|Over",
@@ -277209,16 +277381,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 7,
+      "apuradoEm": "2026-10-23T15:07:04.324Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|DeMario Douglas|receptions|3.5|Over",
@@ -277254,16 +277430,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-23T15:07:04.781Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|D'Andre Swift|receptions|2.5|Over",
@@ -277299,16 +277479,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 4,
+      "apuradoEm": "2026-10-23T15:07:05.234Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Rhamondre Stevenson|receptions|2.5|Over",
@@ -277344,16 +277528,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 5,
+      "apuradoEm": "2026-10-23T15:07:05.697Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Kalif Raymond|receptions|2.5|Under",
@@ -277389,9 +277577,13 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 0,
+      "apuradoEm": "2026-10-23T15:07:06.151Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -277444,9 +277636,13 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 3,
+      "apuradoEm": "2026-10-23T15:07:06.607Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -277499,16 +277695,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 1,
+      "apuradoEm": "2026-10-23T15:07:07.061Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "sem_stats_jogador",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|TreVeyon Henderson|receptions|0.5|Under",
@@ -277544,9 +277744,13 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 2,
+      "apuradoEm": "2026-10-23T15:07:07.515Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
@@ -277599,16 +277803,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 78,
+      "apuradoEm": "2026-10-23T15:07:07.972Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|D'Andre Swift|rushYards|62.5|Over",
@@ -277644,16 +277852,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 78,
+      "apuradoEm": "2026-10-23T15:07:08.429Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|D'Andre Swift|rushYards|63.5|Over",
@@ -277689,16 +277901,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 78,
+      "apuradoEm": "2026-10-23T15:07:08.882Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Rhamondre Stevenson|rushYards|45.5|Over",
@@ -277734,16 +277950,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 22,
+      "apuradoEm": "2026-10-23T15:07:09.341Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Rhamondre Stevenson|rushYards|44.5|Over",
@@ -277779,16 +277999,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 22,
+      "apuradoEm": "2026-10-23T15:07:09.800Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Rhamondre Stevenson|rushYards|42.5|Over",
@@ -277824,16 +278048,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 22,
+      "apuradoEm": "2026-10-23T15:07:10.256Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|TreVeyon Henderson|rushYards|29.5|Over",
@@ -277869,16 +278097,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 9,
+      "apuradoEm": "2026-10-23T15:07:10.720Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|TreVeyon Henderson|rushYards|30.5|Over",
@@ -277914,16 +278146,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 9,
+      "apuradoEm": "2026-10-23T15:07:11.178Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|TreVeyon Henderson|rushYards|28.5|Over",
@@ -277959,16 +278195,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 9,
+      "apuradoEm": "2026-10-23T15:07:11.666Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Drake Maye|rushYards|29.5|Over",
@@ -278004,16 +278244,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 26,
+      "apuradoEm": "2026-10-23T15:07:12.125Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Drake Maye|rushYards|28.5|Over",
@@ -278049,16 +278293,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 26,
+      "apuradoEm": "2026-10-23T15:07:12.580Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "nao_apuravel",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": false,
     "validForCalibration": false,
     "invalidReason": "margem_insuficiente",
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente"
+    "closingOddsStatus": "expirada"
   },
   {
     "_key": "ffebea881c1d7b2dfb85b3e590c35985|Caleb Williams|rushYards|19.5|Over",
@@ -278094,16 +278342,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 18,
+      "apuradoEm": "2026-10-23T15:07:13.037Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "clvNoVig": -17.06,
     "closingNoVigSource": "consensus_us",
     "closingNoVigNCasas": 1,
@@ -278155,16 +278407,20 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "perdeu",
+      "valorReal": 18,
+      "apuradoEm": "2026-10-23T15:07:13.488Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,
     "invalidReason": null,
     "closingOdds": null,
     "clv": null,
-    "closingOddsStatus": "pendente",
+    "closingOddsStatus": "expirada",
     "adjustedClosingLine": 17.5,
     "adjustedClosingOverOdds": 1.93,
     "adjustedClosingUnderOdds": 1.82,
@@ -278213,9 +278469,13 @@
     "runId": "2026-10-19T22:09:39.141Z",
     "evaluatedAt": "2026-10-19T22:09:39.572Z",
     "firstEvaluatedAt": "2026-10-19T22:09:39.572Z",
-    "result": null,
+    "result": {
+      "status": "ganhou",
+      "valorReal": 18,
+      "apuradoEm": "2026-10-23T15:07:13.944Z"
+    },
     "resolutionAttempts": 0,
-    "resolutionStatus": "pendente",
+    "resolutionStatus": "resolvido",
     "source": "model",
     "hasModelProb": true,
     "validForCalibration": true,

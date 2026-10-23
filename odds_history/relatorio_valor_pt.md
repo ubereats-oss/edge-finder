@@ -1,6 +1,6 @@
 # Valor real nas casas que posso usar
 
-Gerado em: 2026-10-22T15:19:11.073Z
+Gerado em: 2026-10-23T15:07:23.173Z
 
 Por casa portuguesa + esporte + mercado, a partir de toda conferência feita na tela "Conferir odds". CLV só existe pra conferências marcadas como aposta feita, sincronizadas e com odd de fechamento da Pinnacle já capturada.
 
