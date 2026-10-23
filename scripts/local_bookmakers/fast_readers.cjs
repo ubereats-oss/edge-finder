@@ -52,16 +52,16 @@ async function responseJson(context, url, timeout = 8000) {
   return typeof text === 'string' ? JSON.parse(text) : text;
 }
 
-async function browserHtml(page, urls) {
-  return page.evaluate(async targets => Promise.all(targets.map(async url => {
+async function browserHtml(page, urls, timeout = 8000) {
+  return page.evaluate(async ({ targets, timeoutMs }) => Promise.all(targets.map(async url => {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8000);
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const response = await fetch(url, { credentials: 'include', cache: 'no-store', signal: controller.signal });
       return { url, status: response.status, html: response.ok ? await response.text() : null };
     } catch (error) { return { url, error: String(error) }; }
     finally { clearTimeout(timer); }
-  })), urls);
+  })), { targets: urls, timeoutMs: timeout });
 }
 
 function future(games) {
@@ -74,12 +74,16 @@ function future(games) {
 async function betano(context) {
   const payloads = [];
   const diagnostics = [];
+  const missingPaths = [];
   const direct = await Promise.allSettled([FOOTBALL_PATH, NBA_PATH].map(path =>
     responseJson(context, BETANO + path, 20000)));
-  for (const result of direct) {
+  for (const [index, result] of direct.entries()) {
     if (result.status === 'fulfilled' && Array.isArray(result.value?.data?.events))
       payloads.push(result.value);
-    else diagnostics.push({ phase: 'direct_feed', error: result.reason?.message || 'Feed sem eventos.' });
+    else {
+      missingPaths.push([FOOTBALL_PATH, NBA_PATH][index]);
+      diagnostics.push({ phase: 'direct_feed', error: result.reason?.message || 'Feed sem eventos.' });
+    }
   }
   const page = await context.newPage();
   try {
@@ -92,6 +96,16 @@ async function betano(context) {
       { waitUntil: 'domcontentloaded', timeout: 45000 });
     await page.waitForTimeout(3000);
     payloads.push(...(await Promise.all(pending)).filter(data => Array.isArray(data?.data?.events)));
+    for (const path of missingPaths) {
+      try {
+        const response = await page.goto(BETANO + path,
+          { waitUntil: 'domcontentloaded', timeout: 20000 });
+        if (response?.status() !== 200) throw new Error(`HTTP ${response?.status()}: ${response?.url()}`);
+        const data = await response.json();
+        if (!Array.isArray(data?.data?.events)) throw new Error(`Betano: JSON sem eventos: ${path}`);
+        payloads.push(data);
+      } catch (error) { diagnostics.push({ phase: 'edge_feed', error: error.message }); }
+    }
   } catch (error) { diagnostics.push({ phase: 'own_listing', error: error.message }); }
   finally { await page.close().catch(() => {}); }
   const byEvent = new Map();
@@ -273,7 +287,7 @@ async function retabet(context) {
       const links = [...new Set($('a[href]').toArray().map(x => new URL($(x).attr('href'), RETABET_INDEX).href)
         .filter(url => url.startsWith('https://www.retabet.pt/') && retabetLeague(url)))];
       const candidates = links.slice(0, 12);
-      const responses = await browserHtml(page, candidates);
+      const responses = await browserHtml(page, candidates, 20000);
       const games = ordered(candidates.map((url, index) => responses[index].html
         && parseRetabetEvent(responses[index].html, url)).filter(Boolean)).slice(0, 4);
       if (!games.length) throw new Error(`Retabet: ${responses.length} páginas consultadas, nenhuma com liga, horário e mercados completos; ${JSON.stringify(responses.map(x => ({ status: x.status, error: x.error })))}`);
@@ -380,10 +394,15 @@ async function goldenpark(context) {
   let indexes = [GOLDEN_INDEX];
   try {
     try {
-      const $ = cheerio.load(await responseText(context, GOLDEN_SPORT, 20000));
-      indexes = [...new Set([...indexes, ...$('a[href*="/competicao/"]').toArray()
-        .map(element => new URL($(element).attr('href'), GOLDEN_SPORT).href)
-        .filter(url => competition(url)?.apiSport.startsWith('soccer_'))])]
+      const catalogs = await Promise.allSettled([GOLDEN_SPORT, GOLDEN_INDEX]
+        .map(url => responseText(context, url, 20000)));
+      indexes = [...new Set([...indexes, ...catalogs.flatMap(result => {
+        if (result.status !== 'fulfilled') return [];
+        const $ = cheerio.load(result.value);
+        return $('a[href*="/competicao/"]').toArray()
+          .map(element => new URL($(element).attr('href'), GOLDEN_INDEX).href)
+          .filter(url => competition(url)?.apiSport.startsWith('soccer_'));
+      })])]
         .sort((a, b) => rank(competition(a)) - rank(competition(b)));
     } catch (error) { context.report?.({ phase: 'goldenpark_catalog_failed', error: error.message }); }
     const pages = await Promise.allSettled(indexes.slice(0, 10).map(url => responseText(context, url, 20000)

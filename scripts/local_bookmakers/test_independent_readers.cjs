@@ -9,7 +9,7 @@ test('liga e horário vêm da própria casa, com prioridade fixa', () => {
   assert.equal(competition('Liga Conferência Europa da UEFA'), null);
   assert.equal(localClock('Hoje 13:45', 'America/Sao_Paulo',
     new Date('2026-10-23T12:00:00Z')), '2026-10-23T16:45:00.000Z');
-  assert.equal(localClock('MarítimoHoje - 13:45', 'America/Sao_Paulo',
+  assert.equal(localClock('MarítimoHoje - 13:45Vitória', 'America/Sao_Paulo',
     new Date('2026-10-23T12:00:00Z')), '2026-10-23T16:45:00.000Z');
   assert.deepEqual(ordered([{ apiSport: 'basketball_nba', commenceTime: '2026-10-24T00:00:00Z' },
     { apiSport: 'soccer_uefa_europa_league', commenceTime: '2026-10-24T01:00:00Z' }])
