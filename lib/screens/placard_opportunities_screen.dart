@@ -65,6 +65,66 @@ class _PlacardOpportunitiesScreenState
   Widget _text(String text, {Color color = Colors.white}) =>
       Text(text, style: TextStyle(color: color));
 
+  Future<void> _registerBet(Map<String, dynamic> row) async {
+    final oddsController = TextEditingController(
+        text: _number(row['sourceOdds'] ?? row['placardOdds']));
+    final stakeController = TextEditingController();
+    final values = await showDialog<List<double>>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Registrar aposta'),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(row['game'] as String? ?? ''),
+          TextField(
+            controller: oddsController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(labelText: 'Odd realmente apostada'),
+          ),
+          TextField(
+            controller: stakeController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(labelText: 'Valor apostado'),
+          ),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar')),
+          TextButton(onPressed: () {
+            final odds = double.tryParse(oddsController.text.replaceAll(',', '.'));
+            final stake = double.tryParse(stakeController.text.replaceAll(',', '.'));
+            if (odds == null || odds <= 1 || stake == null || stake <= 0) return;
+            Navigator.pop(dialogContext, [odds, stake]);
+          }, child: const Text('Salvar')),
+        ],
+      ),
+    );
+    oddsController.dispose();
+    stakeController.dispose();
+    if (values == null || !mounted) return;
+    try {
+      final market = row['market'] as String? ?? 'h2h';
+      await ApiService.createBet({
+        'indicationId': row['id'],
+        'indicationOdds': row['sourceOdds'] ?? row['placardOdds'],
+        'odds': values[0], 'stake': values[1],
+        'bookmaker': row['bookmaker'] ?? 'Placard',
+        'game': row['game'], 'sport': row['apiSport'],
+        'commence_time': row['commenceTime'],
+        'type': market == 'h2h' ? 'h2h' : 'prop',
+        'market': market, 'prop': market,
+        'line': row['line'] ?? 0,
+        'side': row['selection'], 'selection': row['selection'],
+        'edge': row['edgePct'] ?? 0,
+        'modelProb': (row['probability'] as num? ?? 0) * 100,
+      });
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Aposta registrada.')));
+    } catch (error) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Erro ao registrar aposta: $error')));
+    }
+  }
+
   Widget _opportunity(Map<String, dynamic> row) {
     final now = DateTime.now();
     final check = _checks[row['id'] as String?] ?? {};
@@ -128,6 +188,9 @@ class _PlacardOpportunitiesScreenState
           if (!isLocal && check['reason'] is String)
             _text(check['reason'] as String,
                 color: const Color(0xFFFFB74D)),
+          const SizedBox(height: 8),
+          TextButton(onPressed: () => _registerBet(row),
+              child: const Text('Registrar aposta')),
         ]),
       ),
     );
@@ -146,6 +209,7 @@ class _PlacardOpportunitiesScreenState
       ..sort((a, b) =>
           (a['commenceTime'] as String).compareTo(b['commenceTime'] as String));
     final report = _data['report'] as Map<String, dynamic>? ?? {};
+    final betReport = _data['betReport'] as Map<String, dynamic>? ?? {};
     final budget = _data['budget'] as Map<String, dynamic>? ?? {};
     final errors = _data['errors'] as List? ?? [];
     final captured = report['captured'] as num? ?? 0;
@@ -181,6 +245,13 @@ class _PlacardOpportunitiesScreenState
                         'n = ${report['n'] ?? 0} · ${report['nEvents'] ?? 0} jogos · CLV médio ${_number(report['mean'])}%'),
                     _text(
                         'IC95%: ${_number(report['lower'])}% a ${_number(report['upper'])}%'),
+                    _text(
+                        'Apostas com fechamento: ${betReport['withClosing'] ?? 0} · CLV da indicação ${_number(betReport['indicationMean'])}% · CLV da odd apostada ${_number(betReport['placedMean'])}%'),
+                    for (final bet in (betReport['rows'] as List? ?? []))
+                      if (bet is Map<String, dynamic> && bet['closingFairOdds'] is num)
+                        _text(
+                            '${bet['game']} · ${bet['market']} ${bet['selection']} ${bet['line'] ?? ''}: indicação ${_number(bet['indicationClvPct'])}% · apostada ${_number(bet['placedClvPct'])}%',
+                            color: const Color(0xFFBBBBCC)),
                     _text(
                         'Fechamentos capturados: $captured/${captured + missing} · taxa ${captureRate == null ? '—' : '${(captureRate * 100).toStringAsFixed(1)}%'} · pendentes: ${report['pending'] ?? 0}',
                         color: const Color(0xFFBBBBCC)),

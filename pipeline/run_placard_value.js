@@ -2,7 +2,7 @@ const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client
 const { database, summarize: summarizeBudget, CLOSING_RESERVE } = require('./odds_api_monthly_budget');
 const { createBrowser, scrapeCompetition } = require('./get_placard_odds');
 const { compare, compareBookmaker, references, matchingEvents, isNearValue, nearValueSelections, report, namesEqual, normalize,
-  comparedSelectionCount, placardSelections } = require('./placard_value');
+  comparedSelectionCount, placardSelections, betClvReport } = require('./placard_value');
 const competitions = require('./placard_config');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -496,7 +496,9 @@ async function publish(db, result, entries) {
   const budget = (await db.collection('_odds_api_budget').doc(generatedAt.slice(0, 7)).get()).data() || {};
   const budgetSummary = summarizeBudget(budget);
   const today = generatedAt.slice(0, 10);
-  const payload = { generatedAt, runId, pageCount, report: report(entries), errors: result.errors,
+  const bets = await db.collection('bets').get();
+  const betReport = betClvReport(entries, bets.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  const payload = { generatedAt, runId, pageCount, report: report(entries), betReport, errors: result.errors,
     budget: { totalRemaining: budgetSummary.totalRemaining, available: budgetSummary.available,
       readingAvailable: budgetSummary.readingAvailable, closingReserve: CLOSING_RESERVE,
       keyCount: budgetSummary.keyCount, keyStatuses: budgetSummary.keyStatuses,

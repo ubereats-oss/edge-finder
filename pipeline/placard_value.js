@@ -188,6 +188,33 @@ function compareBookmaker(bookmaker, game, events, now = Date.now(), { startTole
       apiCommenceTime: row.apiCommenceTime, sourceScheduleVerified: true, scheduleDeltaMs } : {}),
   })) };
 }
+function betClvReport(entries, bets) {
+  const byId = new Map(entries.map(entry => [entry.id, entry]));
+  const rows = [];
+  for (const bet of bets) {
+    const entry = byId.get(bet.indicationId);
+    if (!entry) continue;
+    const closing = Number(entry.closingFairOdds);
+    const indication = Number(entry.sourceOdds ?? entry.placardOdds);
+    const placed = Number(bet.odds);
+    const validClosing = entry.closingStatus === 'capturada' && Number.isFinite(closing) && closing > 1;
+    rows.push({
+      betId: bet.id, indicationId: entry.id, bookmaker: entry.bookmaker || 'Placard',
+      game: entry.game, market: entry.market, line: entry.line, selection: entry.selection,
+      indicationOdds: indication, placedOdds: placed,
+      closingFairOdds: validClosing ? closing : null,
+      indicationClvPct: validClosing && Number.isFinite(indication) && indication > 1
+        ? (indication / closing - 1) * 100 : null,
+      placedClvPct: validClosing && Number.isFinite(placed) && placed > 1
+        ? (placed / closing - 1) * 100 : null,
+    });
+  }
+  const paired = rows.filter(row => row.indicationClvPct !== null && row.placedClvPct !== null);
+  const mean = key => paired.length ? paired.reduce((sum, row) => sum + row[key], 0) / paired.length : null;
+  return { total: rows.length, withClosing: paired.length,
+    indicationMean: mean('indicationClvPct'), placedMean: mean('placedClvPct'), rows };
+}
+
 function report(entries) {
   const closed = entries.filter(e => Number.isFinite(e.clvPct));
   const captured = entries.filter(e => e.closingStatus === 'capturada').length;
@@ -224,4 +251,4 @@ function report(entries) {
     ciMethod: 'bootstrap por evento, 4000 reamostragens; uma amostra por evento/mercado/linha/lado' };
 }
 module.exports = { namesEqual, normalize, fairProbabilities, references, matchingEvents, placardSelections, compare, compareBookmaker,
-  comparedSelectionCount, isNearValue, nearValueSelections, report };
+  comparedSelectionCount, isNearValue, nearValueSelections, report, betClvReport };
