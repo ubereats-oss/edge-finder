@@ -22,6 +22,14 @@ test('saúde inclui ciclo local real, ausências, workflow, indicações e saldo
     assert.match(report.text.toLowerCase(), new RegExp(phrase.toLowerCase()));
   }
 });
+test('ciclo antigo pausado é pulado e motivos repetidos são agrupados', () => {
+  const result = composeHealth({ cycles: [
+    { startedAt: '2026-10-23T21:50:00Z', status: 'paused', reason: 'sem saldo' },
+    { startedAt: '2026-10-23T22:50:00Z', status: 'ciclo pulado', reason: 'sem saldo' },
+  ] }, now);
+  assert.equal(result.counts.skipped, 2);
+  assert.match(result.text, /2× sem saldo/);
+});
 test('sem registro local destaca computador desligado ou coleta parada', () => {
   assert.equal(scheduledSlots(now).length, 24);
   assert.match(composeHealth({}, now).text, /computador desligado ou coleta parada/);
