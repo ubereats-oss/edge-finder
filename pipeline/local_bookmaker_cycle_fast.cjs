@@ -97,26 +97,36 @@ function readCycleBudget(cycle) {
   }
   cycle.accumulatedMB = budget.carriedForwardMB + budget.measuredMB;
   cycle.budget = budget;
+  if (budget.measurementError) {
+    cycle.previousBudgetError = budget.measurementError;
+    delete budget.measurementError;
+  }
   fs.writeFileSync(file, JSON.stringify(budget, null, 2));
   if (Date.now() >= Date.parse(budget.expiresAt)) return 'Orçamento expirado; ciclos pausados até definir novo orçamento.';
-  if (budget.measurementError) return `Orçamento VPN pausado: ${budget.measurementError}`;
   if (cycle.accumulatedMB !== null && cycle.accumulatedMB >= budget.limitMB)
     return `Orçamento VPN atingido: ${cycle.accumulatedMB} MB de ${budget.limitMB} MB.`;
   return null;
 }
 
-function chargeCycleBudget(cycle, before, after) {
-  const budget = cycle.budget;
+function classifyVpnCharge(connected, before, after) {
+  if (!connected) return { bytes: 0, estimated: false, reason: 'ciclo sem conexão' };
   const total = value => value && value.receivedBytes + value.sentBytes;
   const start = total(before), end = total(after);
-  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) {
-    budget.measurementError = 'bytes do adaptador TunnelBear indisponíveis ou reiniciados';
-    cycle.budgetError = budget.measurementError;
-  } else {
-    cycle.vpnAdapterBytes = end - start;
-    cycle.vpnAdapterMB = cycle.vpnAdapterBytes / 1000000;
-    budget.adapterCycles.push({ startedAt: cycle.startedAt, bytes: cycle.vpnAdapterBytes,
-      before, after });
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start)
+    return { bytes: 60000000, estimated: true, reason: 'bytes da placa indisponíveis; estimativa conservadora' };
+  return { bytes: end - start, estimated: false, reason: null };
+}
+
+function chargeCycleBudget(cycle, before, after) {
+  const budget = cycle.budget;
+  const charge = classifyVpnCharge(Boolean(cycle.vpnConnectedAt), before, after);
+  cycle.vpnAdapterBytes = charge.bytes;
+  cycle.vpnAdapterMB = charge.bytes / 1000000;
+  cycle.vpnEstimate = charge.estimated;
+  cycle.budgetNote = charge.reason;
+  if (cycle.vpnConnectedAt) {
+    budget.adapterCycles.push({ startedAt: cycle.startedAt, bytes: charge.bytes,
+      estimated: charge.estimated, before, after });
     budget.measuredMB = budget.adapterCycles.reduce((sum, entry) => sum + entry.bytes / 1000000, 0);
   }
   cycle.accumulatedMB = budget.carriedForwardMB + budget.measuredMB;
@@ -199,10 +209,17 @@ async function main() {
     });
     await stage('vpnConnect', async () => {
       vpnStartedAt = Date.now();
-      cycle.vpn = core.tunnel('connect', startedAt, 'production_cycle');
+      try { cycle.vpn = core.tunnel('connect', startedAt, 'production_cycle'); }
+      catch (error) {
+        cycle.vpnFirstFailure = error.message;
+        if (/adaptador=Up/i.test(error.message)) throw error;
+        await wait(120000);
+        cycle.vpn = core.tunnel('connect', startedAt, 'production_cycle');
+      }
       vpnStartedAt = Date.parse(cycle.vpn.vpnStartedAt) || vpnStartedAt;
       vpnConnected = true;
       cycle.vpnConnectedAt = new Date().toISOString();
+      cycle.vpnProofChecks = cycle.vpn.checks || [];
       vpnBytesBefore = core.vpnNetworkBytes();
     });
     const sampleProcesses = () => {
@@ -359,7 +376,7 @@ async function main() {
     cycle.status = 'complete';
   } catch (error) {
     caught = error;
-    cycle.status = 'failed';
+    cycle.status = cycle.stages.vpnConnect?.error ? 'ciclo sem conexão' : 'failed';
     cycle.error = error.message;
   } finally {
     if (networkTimer) clearInterval(networkTimer);
@@ -376,7 +393,7 @@ async function main() {
       chargeCycleBudget(cycle, vpnBytesBefore, vpnBytesAfter);
       budgetCharged = true;
     }
-    if (networkBefore && !usageRecorded && !vpnConnected) {
+    if (networkBefore && !usageRecorded && !vpnConnected && cycle.vpnConnectedAt) {
       try {
         networkAfter ||= core.physicalNetworkBytes();
         const usage = core.recordTunnelUsage({ startedAt, beforeMB, afterMB,
@@ -386,6 +403,7 @@ async function main() {
         cycle.monthlyUsageMB = usage.totalMB;
       } catch (error) { cycle.usageError = error.message; }
     }
+    if (cycle.status === 'ciclo sem conexão') cycle.consumedMB = 0;
     if (caught && db) {
       try { await core.updateFailure(db, caught, !vpnConnected); }
       catch (error) { cycle.failureStatusError = error.message; }
@@ -394,11 +412,19 @@ async function main() {
     cycle.finishedAt = new Date().toISOString();
     cycle.totalDurationMs = Math.round(performance.now() - start);
     cycle.targetMet = cycle.totalDurationMs <= 600000;
-    cycle.vpnDurationMs ??= vpnStartedAt ? Date.now() - vpnStartedAt : 0;
+    cycle.vpnDurationMs ??= cycle.vpnConnectedAt ? Date.now() - vpnStartedAt : 0;
+    if (!cycle.vpnProofChecks && vpnStartedAt) {
+      const attempts = path.join(LOG_DIR, `tunnelbear_attempts_${startedAt.slice(0, 7)}.jsonl`);
+      cycle.vpnProofChecks = fs.existsSync(attempts) ? fs.readFileSync(attempts, 'utf8').split(/\r?\n/)
+        .flatMap(line => { try { const row = JSON.parse(line);
+          return row.cycleId === startedAt && row.status === 'check' ? [JSON.parse(row.detail)] : [];
+        } catch { return []; } }) : [];
+    }
     fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
     const logLine = { at: cycle.localDateTime, status: cycle.status, balanceMB: cycle.balanceMB,
       accumulatedMB: cycle.accumulatedMB, balanceReadDurationMs: cycle.balanceReadDurationMs,
       vpnAdapterBytes: cycle.vpnAdapterBytes ?? null, vpnAdapterMB: cycle.vpnAdapterMB ?? null,
+      vpnEstimate: cycle.vpnEstimate || false, vpnProofChecks: cycle.vpnProofChecks || [],
       budgetError: cycle.budgetError || null,
       balanceError: cycle.balanceError || null, reason: cycle.pauseReason || cycle.error || null,
       totalDurationMs: cycle.totalDurationMs, vpnDurationMs: cycle.vpnDurationMs,
@@ -418,4 +444,4 @@ async function main() {
   if (!cycle.targetMet) throw new Error(`Ciclo ultrapassou 10 minutos: ${cycle.totalDurationMs} ms.`);
 }
 
-module.exports = { main, boundedRead, edgeWindow };
+module.exports = { main, boundedRead, edgeWindow, classifyVpnCharge };

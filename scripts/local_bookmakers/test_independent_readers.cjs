@@ -1,7 +1,9 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { competition, localClock, ordered } = require('./local_competitions.cjs');
-const { parseBwinFeed, parseLebullHtml, retabetLeague, goldenparkClock } = require('./fast_readers.cjs');
+const { parseBwinFeed, parseLebullHtml, retabetLeague, goldenparkClock,
+  betclicClock } = require('./fast_readers.cjs');
+const { classifyVpnCharge } = require('../../pipeline/local_bookmaker_cycle_fast.cjs');
 
 test('GoldenPark interpreta a data curta da listagem na hora de Brasília', () => {
   assert.equal(goldenparkClock('Sex 23 out 17:00', new Date('2026-10-23T18:00:00Z')),
@@ -48,6 +50,60 @@ test('Bwin lê jogo, liga, horário e total do próprio feed', () => {
   assert.equal(data.games[0].apiSport, 'soccer_uefa_europa_league');
   assert.deepEqual(data.games[0].teams, ['Porto', 'Benfica']);
   assert.equal(data.games[0].markets[0].selections.length, 2);
+});
+
+test('Bwin NBA lê Money Line, handicap com sinais opostos e totais do feed games', () => {
+  const teams = ['New York Knicks', 'Boston Celtics'];
+  const fixture = { id: 7, name: { value: `${teams[0]} em casa dos ${teams[1]}` },
+    competition: { name: { value: 'NBA' } }, isOpenForBetting: true,
+    startDate: new Date(Date.now() + 3600000).toISOString(),
+    participants: teams.map((name, index) => ({ participantId: index + 1,
+      name: { value: name, short: index ? 'BOS Celtics' : 'NY Knicks' } })),
+    games: [
+      { name: { value: 'Money Line (EUA)' }, results: teams.map((_, index) => ({
+        sourceName: { value: String(index + 1) }, name: { value: index ? 'BOS Celtics' : 'NY Knicks' },
+        odds: index ? 1.62 : 2.05, visibility: 'Visible' })) },
+      { name: { value: 'Diferença de pontos' }, results: teams.map((name, index) => ({
+        playerId: index + 1, name: { value: `${name} ${index ? '-3.5' : '+3.5'}` },
+        attr: index ? '-3.5' : '+3.5', odds: index ? 1.85 : 1.72, visibility: 'Visible' })) },
+      { name: { value: 'Totais' }, results: ['Mais de 220.5', 'Menos de 220.5'].map(name => ({
+        name: { value: name }, odds: 1.78, visibility: 'Visible' })) },
+    ] };
+  const result = parseBwinFeed({ fixtures: [fixture] });
+  assert.equal(result.games.length, 1);
+  assert.deepEqual(result.games[0].teams, teams);
+  assert.deepEqual(result.games[0].markets.map(market => market.type), ['H2HT', 'HCOT', 'TPOT']);
+  assert.deepEqual(result.games[0].markets[1].selections.map(side => side.line), [3.5, -3.5]);
+  assert.deepEqual(result.games[0].markets[2].selections.map(side => side.line), [220.5, 220.5]);
+});
+
+test('Betclic interpreta os nove jogos NBA descartados às 16:15 sem trocar o dia', () => {
+  const now = new Date('2026-10-23T19:11:26Z');
+  const games = [
+    ['Boston Celtics x New York Knicks', 'Hoje', '00:00', '2026-10-23T23:10:00Z'],
+    ['Charlotte Hornets x Atlanta Hawks', 'Hoje', '00:00', '2026-10-23T23:10:00Z'],
+    ['Washington Wizards x Toronto Raptors', 'Hoje', '00:00', '2026-10-23T23:10:00Z'],
+    ['Indiana Pacers x Dallas Mavericks', 'Hoje', '00:00', '2026-10-23T23:10:00Z'],
+    ['Orlando Magic x Minnesota Timberwolves', 'Hoje', '00:00', '2026-10-23T23:10:00Z'],
+    ['Miami Heat x Detroit Pistons', '24 out', '01:00', '2026-10-24T00:10:00Z'],
+    ['San Antonio Spurs x Houston Rockets', '24 out', '02:30', '2026-10-24T01:40:00Z'],
+    ['Utah Jazz x New Orleans Pelicans', '24 out', '02:30', '2026-10-24T01:40:00Z'],
+    ['Sacramento Kings x Portland Trail Blazers', '24 out', '03:00', '2026-10-24T02:10:00Z'],
+  ];
+  for (const [game, day, clock, pinnacleStart] of games) {
+    const observed = betclicClock(day, clock, now);
+    assert.ok(observed, game);
+    assert.ok(Math.abs(Date.parse(observed) - Date.parse(pinnacleStart)) <= 600000, game);
+  }
+});
+
+test('ciclo sem conexão cobra 0 MB e falha de bytes conectado estima 60 MB sem bloquear', () => {
+  assert.deepEqual(classifyVpnCharge(false, null, null),
+    { bytes: 0, estimated: false, reason: 'ciclo sem conexão' });
+  assert.deepEqual(classifyVpnCharge(true, null, null),
+    { bytes: 60000000, estimated: true, reason: 'bytes da placa indisponíveis; estimativa conservadora' });
+  assert.deepEqual(classifyVpnCharge(true, { receivedBytes: 10, sentBytes: 5 },
+    { receivedBytes: 1010, sentBytes: 105 }), { bytes: 1100, estimated: false, reason: null });
 });
 
 test('LeBull lê competição e odds da sua listagem sem lista de outra casa', () => {

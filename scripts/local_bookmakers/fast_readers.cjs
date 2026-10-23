@@ -5,6 +5,8 @@ const axios = require('axios');
 const https = require('node:https');
 const dns = require('node:dns');
 const net = require('node:net');
+const fs = require('node:fs');
+const path = require('node:path');
 const { PRIORITY, competition, localClock, ordered } = require('./local_competitions.cjs');
 const { readSelections, adaptTotalsAndHandicaps } = require('../../pipeline/local_betano_reader.js');
 const { eligibleTotals } = require('./bwin_reader.cjs');
@@ -67,12 +69,42 @@ const httpsAgent = new https.Agent({ keepAlive: true, lookup(host, options, call
     : callback(null, addresses[0], 4), callback);
 } });
 
-async function responseText(context, url, timeout = 8000) {
-  const response = await axios.get(url, { timeout, proxy: false, httpsAgent,
+const diagnosticPruned = new Set();
+function saveDiscard(house, url, html, reason) {
+  const dir = path.resolve(__dirname, '../../.local_logs/betano/diagnostics', house);
+  fs.mkdirSync(dir, { recursive: true });
+  if (!diagnosticPruned.has(house)) {
+    const oldest = Date.now() - 3 * 86400000;
+    for (const name of fs.readdirSync(dir)) {
+      const file = path.join(dir, name);
+      if (fs.statSync(file).isFile() && fs.statSync(file).mtimeMs < oldest) fs.unlinkSync(file);
+    }
+    diagnosticPruned.add(house);
+  }
+  const $ = cheerio.load(String(html || ''));
+  const markets = $('[data-qa="market-box"],.container-event,.line-container.new').toArray()
+    .map(element => ({ title: $(element).find('[data-qa="market-title"],.question-header p').first().text().trim(),
+      text: $(element).text().trim() }));
+  const stem = `${new Date().toISOString().replace(/[:.]/g, '-')}-${Math.random().toString(36).slice(2, 8)}`;
+  fs.writeFileSync(path.join(dir, `${stem}.html`), String(html || ''));
+  fs.writeFileSync(path.join(dir, `${stem}.json`), JSON.stringify({ at: new Date().toISOString(),
+    url, reason, markets }, null, 2));
+}
+
+async function responseText(context, url, timeout = 8000, diagnosticHouse = null) {
+  let response;
+  try { response = await axios.get(url, { timeout, proxy: false, httpsAgent,
     maxRedirects: 4, validateStatus: () => true,
-    headers: { 'cache-control': 'no-cache' }, responseType: 'text' });
+    headers: { 'cache-control': 'no-cache' }, responseType: 'text' }); }
+  catch (error) {
+    if (diagnosticHouse) saveDiscard(diagnosticHouse, url, '', error.message);
+    throw error;
+  }
   context.report?.({ phase: 'http', url, httpStatus: response.status });
-  if (response.status !== 200) throw new Error(`HTTP ${response.status}: ${url}`);
+  if (response.status !== 200) {
+    if (diagnosticHouse) saveDiscard(diagnosticHouse, url, response.data, `HTTP ${response.status}`);
+    throw new Error(`HTTP ${response.status}: ${url}`);
+  }
   return response.data;
 }
 
@@ -179,6 +211,36 @@ async function betano(context) {
 }
 
 function bwinBasketballMarkets(fixture) {
+  if (Array.isArray(fixture.games) && fixture.games.length) {
+    const teams = (fixture.participants || []).slice(0, 2);
+    if (teams.length !== 2 || teams.some(team => !team.name?.value)) return null;
+    const valid = result => result.visibility === 'Visible' && Number(result.odds) > 1;
+    const selection = (result, index, line = null) => ({ name: String(index + 1),
+      fullName: result.name?.value || '', price: Number(result.odds), line, unavailable: false });
+    const moneyline = fixture.games.find(game => /^Money Line(?: \(EUA\))?$/i.test(game.name?.value || ''));
+    const sides = teams.map((team, index) => moneyline?.results?.find(result => valid(result)
+      && (result.sourceName?.value === String(index + 1)
+        || result.name?.value === team.name?.short)));
+    if (sides.some(side => !side) || sides[0] === sides[1]) return null;
+    const markets = [{ type: 'H2HT', title: moneyline.name.value,
+      selections: sides.map((side, index) => selection(side, index)) }];
+    const spread = fixture.games.find(game => /^Diferença de pontos$/i.test(game.name?.value || ''));
+    const spreadSides = teams.map(team => spread?.results?.find(result => valid(result)
+      && result.playerId === team.participantId));
+    const spreadLines = spreadSides.map(side => Number(side?.attr));
+    if (spreadSides.every(Boolean) && spreadLines.every(Number.isFinite)
+      && spreadLines[0] === -spreadLines[1]) markets.push({ type: 'HCOT', title: spread.name.value,
+      selections: spreadSides.map((side, index) => selection(side, index, spreadLines[index])) });
+    const total = fixture.games.find(game => /^Totais$/i.test(game.name?.value || ''));
+    const totals = ['Over', 'Under'].map(side => total?.results?.find(result => valid(result)
+      && new RegExp(side === 'Over' ? '^Mais de ' : '^Menos de ', 'i').test(result.name?.value || '')));
+    const totalLines = totals.map(side => Number(side?.name?.value?.match(/(\d+(?:[,.]\d+)?)/)?.[1]?.replace(',', '.')));
+    if (totals.every(Boolean) && totalLines.every(Number.isFinite) && totalLines[0] === totalLines[1])
+      markets.push({ type: 'TPOT', title: total.name.value,
+        selections: totals.map((side, index) => ({ ...selection(side, index, totalLines[index]),
+          name: index ? 'Under' : 'Over' })) });
+    return markets;
+  }
   const winner = (fixture.optionMarkets || []).find(market => /vencedor|winner/i.test(market.name?.value || '')
     && (market.options || []).filter(option => option.status === 'Visible' && Number(option.price?.odds) > 1).length === 2);
   if (!winner) return null;
@@ -201,7 +263,9 @@ function parseBwinFeed(feed, sourceUrl = BWIN_URL) {
   const audit = [];
   for (const fixture of feed.fixtures) {
     const identity = competition(fixture.competition?.name?.value);
-    const teams = String(fixture.name?.value || '').split(' - ').map(name => name.trim());
+    const teams = identity?.apiSport === 'basketball_nba' && fixture.participants?.length >= 2
+      ? fixture.participants.slice(0, 2).map(team => team.name?.value || '')
+      : String(fixture.name?.value || '').split(' - ').map(name => name.trim());
     const start = Date.parse(fixture.startDate);
     const markets = identity?.apiSport === 'basketball_nba'
       ? bwinBasketballMarkets(fixture) : eligibleTotals(fixture);
@@ -217,7 +281,8 @@ function parseBwinFeed(feed, sourceUrl = BWIN_URL) {
     games.push({ ...identity, teams,
       commenceTime: new Date(start).toISOString(), observedAt: new Date().toISOString(), sourceUrl,
       sourceEventId: String(fixture.id), sourceEventName: fixture.name.value,
-      sourceMarket: 'Bwin Total golos (2GV excluído)', markets });
+      sourceMarket: identity.apiSport === 'basketball_nba' ? 'Bwin NBA: Money Line, Diferença de pontos e Totais'
+        : 'Bwin Total golos (2GV excluído)', markets });
   }
   return { games: ordered(games), diagnostics, audit };
 }
@@ -227,6 +292,18 @@ async function bwin(context) {
     const urls = [BWIN_BASKETBALL_URL, BWIN_URL];
     const feeds = await Promise.allSettled(urls.map(url => responseJson(context, url, 20000)
       .then(feed => parseBwinFeed(feed, url))));
+    if (feeds[0].status === 'rejected' || !feeds[0].value.games.length) {
+      const page = await context.newPage();
+      try {
+        await page.goto('https://www.bwin.pt/pt/sports/basquetebol-7/apostar',
+          { waitUntil: 'commit', timeout: 30000 });
+        const response = (await browserHtml(page, [BWIN_BASKETBALL_URL], 20000))[0];
+        context.report?.({ phase: 'http', url: BWIN_BASKETBALL_URL, httpStatus: response.status || null });
+        if (response.status === 200 && response.html) feeds[0] = { status: 'fulfilled',
+          value: parseBwinFeed(JSON.parse(response.html), BWIN_BASKETBALL_URL) };
+      } catch (error) { context.report?.({ phase: 'nba_edge_failed', error: error.message }); }
+      finally { await page.close().catch(() => {}); }
+    }
     for (const [key] of PRIORITY) {
       const index = key === 'basketball_nba' ? 0 : 1;
       const result = feeds[index];
@@ -247,10 +324,12 @@ async function bwin(context) {
     try {
       const pending = page.waitForResponse(response => response.status() === 200
         && response.url().includes('/cds-api/bettingoffer/fixtures?')
-        && response.url().includes('sportIds=4'), { timeout: 45000 });
+        && response.url().includes('sportIds=4'), { timeout: 45000 }).catch(() => null);
       await page.goto('https://www.bwin.pt/pt/sports/futebol-4/apostar',
         { waitUntil: 'domcontentloaded', timeout: 45000 }).catch(() => {});
-      result = parseBwinFeed(await (await pending).json());
+      const response = await pending;
+      if (!response) throw new Error('Bwin: página sem resposta do feed de futebol em 45 s.');
+      result = parseBwinFeed(await response.json());
       for (const [key] of PRIORITY.filter(([sport]) => sport !== 'basketball_nba')) {
         const events = result.audit.filter(row => row.league === key);
         context.report?.({ phase: 'league', league: key, url: BWIN_URL, httpStatus: 200,
@@ -434,7 +513,7 @@ function retabetLeague(url) {
 async function retabet(context) {
   try {
     const catalogs = await Promise.allSettled([RETABET_INDEX, RETABET_BASKETBALL_INDEX]
-      .map(url => responseText(context, url, 20000)));
+      .map(url => responseText(context, url, 20000, 'esc_online')));
     const footballHtml = catalogs[0].status === 'fulfilled' ? catalogs[0].value : '';
     const $ = cheerio.load(footballHtml);
     const leagueUrls = [...new Set($('a[href]').toArray().map(x => new URL($(x).attr('href'), RETABET_INDEX).href)
@@ -587,8 +666,11 @@ async function escOnline(context) {
       .map(url => responseText(context, url, 20000)));
     const leaguePages = [{ url: ESC_NBA,
       identity: { apiSport: 'basketball_nba', competition: 'NBA' } }];
-    for (const result of catalog) if (result.status === 'fulfilled') {
+    for (const [catalogIndex, result] of catalog.entries()) if (result.status === 'fulfilled') {
       const $ = cheerio.load(result.value);
+      if (!$('a[href*="/betting/league/"]').length)
+        saveDiscard('esc_online', [ESC_ALL_LEAGUES, ESC_INDEX][catalogIndex], result.value,
+          'catálogo sem links de ligas');
       for (const element of $('a[href*="/betting/league/"]').toArray()) {
         const key = competition($(element).text()) || competition($(element).attr('href'));
         if (key) leaguePages.push({ url: new URL($(element).attr('href'), ESC_INDEX).href,
@@ -597,7 +679,7 @@ async function escOnline(context) {
     }
     const indexes = [...new Map(leaguePages.map(item => [item.url, item])).values()]
       .sort((a, b) => rank(a.identity) - rank(b.identity));
-    const pages = await Promise.allSettled(indexes.map(item => responseText(context, item.url, 20000)));
+    const pages = await Promise.allSettled(indexes.map(item => responseText(context, item.url, 20000, 'esc_online')));
     const matched = [];
     for (let index = 0; index < indexes.length; index++) {
       const { url, identity } = indexes[index], result = pages[index];
@@ -608,6 +690,10 @@ async function escOnline(context) {
         return [href, { href, label: $(x).find('[class*="TeamName"]')
           .toArray().map(y => $(y).text().trim()).join('\n'), identity, indexUrl: url }];
       })).values()];
+      if (result.status === 'fulfilled' && !seen.length)
+        saveDiscard('esc_online', url, result.value, 'página da liga sem links de jogos');
+      for (const link of seen.filter(link => link.label.split('\n').length !== 2))
+        saveDiscard('esc_online', link.href, result.value, 'jogo descartado: times incompletos');
       context.report?.({ phase: 'league', league: identity.apiSport, url,
         httpStatus: result.status === 'fulfilled' ? 200 : null, seen: seen.length,
         events: seen.map(link => ({ url: link.href, teams: link.label.split('\n'),
@@ -618,8 +704,9 @@ async function escOnline(context) {
     if (!matched.length) throw new Error('ESC direto sem eventos listados nas ligas alvo.');
     const settled = await Promise.allSettled(matched.map(async link => {
       try {
-        const html = await responseText(context, link.href, 20000);
+        const html = await responseText(context, link.href, 20000, 'esc_online');
         const game = parseEscEvent(html, link.href, link.label, link.identity);
+        if (!game) saveDiscard('esc_online', link.href, html, 'horário ou mercado incompleto');
         context.report?.({ phase: 'event_decision', league: link.identity.apiSport,
           indexUrl: link.indexUrl, url: link.href, teams: link.label.split('\n'),
           commenceTime: game?.commenceTime || localClock(cheerio.load(html)('body').text(),
@@ -643,7 +730,8 @@ async function escOnline(context) {
       const catalogResponse = await page.goto(ESC_ALL_LEAGUES,
         { waitUntil: 'commit', timeout: 30000 });
       await page.waitForTimeout(4000);
-      const $ = cheerio.load(await page.content());
+      const catalogHtml = await page.content();
+      const $ = cheerio.load(catalogHtml);
       const leaguePages = [{ url: ESC_NBA,
         identity: { apiSport: 'basketball_nba', competition: 'NBA' } },
       ...$('a[href*="/betting/league/"]').toArray().map(x => ({
@@ -652,6 +740,8 @@ async function escOnline(context) {
       })).filter(x => x.identity)];
       const indexes = [...new Map(leaguePages.map(x => [x.url, x])).values()]
         .sort((a, b) => rank(a.identity) - rank(b.identity));
+      if (indexes.length === 1) saveDiscard('esc_online', ESC_ALL_LEAGUES,
+        catalogHtml, 'catálogo Edge sem links de ligas configuradas');
       const listings = await browserHtml(page, indexes.map(x => x.url), 15000);
       const links = [];
       for (const [index, item] of indexes.entries()) {
@@ -661,6 +751,10 @@ async function escOnline(context) {
           return [href, { href, label: html(x).find('[class*="TeamName"]')
             .toArray().map(y => html(y).text().trim()).join('\n'), identity: item.identity }];
         })).values()];
+        if (!events.length) saveDiscard('esc_online', item.url, result.html || '',
+          result.error || `HTTP ${result.status ?? 'desconhecido'} ou sem jogos`);
+        for (const link of events.filter(link => link.label.split('\n').length !== 2))
+          saveDiscard('esc_online', link.href, result.html || '', 'jogo descartado: times incompletos');
         context.report?.({ phase: 'league', league: item.identity.apiSport, url: item.url,
           httpStatus: result.status || null, seen: events.length,
           events: events.map(x => ({ url: x.href, teams: x.label.split('\n'),
@@ -677,6 +771,8 @@ async function escOnline(context) {
       const games = ordered(unique.map((link, index) => {
         const game = responses[index].html && parseEscEvent(responses[index].html,
           link.href, link.label, link.identity);
+        if (!game) saveDiscard('esc_online', link.href, responses[index].html || '',
+          responses[index].error || `HTTP ${responses[index].status ?? 'desconhecido'} ou horário/mercado incompleto`);
         context.report?.({ phase: 'event_decision', league: link.identity.apiSport,
           url: link.href, teams: link.label.split('\n'), commenceTime: game?.commenceTime || null,
           reason: game ? 'aceito' : responses[index].error || `HTTP ${responses[index].status ?? 'desconhecido'} ou horário/mercado incompleto` });
@@ -730,7 +826,7 @@ async function goldenpark(context) {
     try {
       const catalogs = await Promise.allSettled([GOLDEN_SPORT, GOLDEN_INDEX,
         'https://apostas.goldenpark.pt/desporte/3-basquetebol']
-        .map(url => responseText(context, url, 20000)));
+        .map(url => responseText(context, url, 20000, 'goldenpark')));
       indexes = [...new Set([...indexes, ...catalogs.flatMap(result => {
         if (result.status !== 'fulfilled') return [];
         const $ = cheerio.load(result.value);
@@ -740,10 +836,15 @@ async function goldenpark(context) {
       })])]
         .sort((a, b) => rank(competition(a)) - rank(competition(b)));
     } catch (error) { context.report?.({ phase: 'goldenpark_catalog_failed', error: error.message }); }
-    const pages = await Promise.allSettled(indexes.map(url => responseText(context, url, 20000)
-      .then(html => goldenparkRows(html, url))));
+    const pages = await Promise.allSettled(indexes.map(url => responseText(context, url, 20000, 'goldenpark')
+      .then(html => ({ html, rows: goldenparkRows(html, url) }))));
     const matched = pages.flatMap((result, index) => {
-      const events = result.status === 'fulfilled' ? result.value : [];
+      const events = result.status === 'fulfilled' ? result.value.rows : [];
+      if (result.status === 'fulfilled' && !events.length)
+        saveDiscard('goldenpark', indexes[index], result.value.html, 'liga sem jogos');
+      for (const row of events.filter(row => row.reason !== 'aceito'))
+        saveDiscard('goldenpark', indexes[index], result.value.html,
+          `${row.teams.join(' x ')}: ${row.reason}`);
       context.report?.({ phase: 'league', league: competition(indexes[index])?.apiSport,
         url: indexes[index], httpStatus: result.status === 'fulfilled' ? 200 : null,
         seen: events.length, events: events.map(row => ({ teams: row.teams,
@@ -755,10 +856,14 @@ async function goldenpark(context) {
     const settled = await Promise.allSettled(matched.map(async row => {
       const url = new URL(row.href, GOLDEN_INDEX).href;
       try {
-        const game = parseEvent(await responseText(context, url, 20000), row, url,
+        const html = await responseText(context, url, 20000, 'goldenpark');
+        const game = parseEvent(html, row, url,
           row.href.match(/\/evento\/(\d+)/)?.[1] || row.href);
-        if (!game) context.report?.({ phase: 'event_discard', league: row.apiSport,
-          url, teams: row.teams, commenceTime: row.commenceTime, reason: 'mercados completos indisponíveis' });
+        if (!game) {
+          saveDiscard('goldenpark', url, html, 'mercados completos indisponíveis');
+          context.report?.({ phase: 'event_discard', league: row.apiSport,
+            url, teams: row.teams, commenceTime: row.commenceTime, reason: 'mercados completos indisponíveis' });
+        }
         return game;
       } catch (error) {
         context.report?.({ phase: 'event_discard', league: row.apiSport,
@@ -784,7 +889,12 @@ async function goldenpark(context) {
             timeout: Math.min(12000, deadline - Date.now()) });
           await page.locator('.line-container.new').first().waitFor({
             timeout: Math.min(4000, Math.max(1, deadline - Date.now())) }).catch(() => {});
-          const rows = goldenparkRows(await page.content(), indexUrl);
+          const html = await page.content();
+          const rows = goldenparkRows(html, indexUrl);
+          if (!rows.length) saveDiscard('goldenpark', indexUrl, html,
+            `HTTP ${response?.status() ?? 'desconhecido'} ou liga sem jogos`);
+          for (const row of rows.filter(row => row.reason !== 'aceito'))
+            saveDiscard('goldenpark', indexUrl, html, `${row.teams.join(' x ')}: ${row.reason}`);
           context.report?.({ phase: 'league', league: competition(indexUrl)?.apiSport,
             url: indexUrl, httpStatus: response?.status(), seen: rows.length,
             events: rows.map(row => ({ teams: row.teams, commenceTime: row.commenceTime,
@@ -793,20 +903,47 @@ async function goldenpark(context) {
             matched.push(...rows.filter(row => row.reason === 'aceito'));
           else empty.push({ liga: competition(indexUrl)?.competition, status: response?.status(), motivo: 'sem jogos na janela' });
         } catch (error) {
+          saveDiscard('goldenpark', indexUrl, '', error.message);
           empty.push({ liga: competition(indexUrl)?.competition, motivo: error.message });
         }
       }
       context.report?.({ phase: 'goldenpark_leagues', details: empty });
       const urls = matched.map(row => new URL(row.href, GOLDEN_INDEX).href);
       const responses = await browserHtml(page, urls);
-      const games = ordered(matched.map((row, index) => responses[index].html
-        && parseEvent(responses[index].html, row, urls[index],
-          row.href.match(/\/evento\/(\d+)/)?.[1] || row.href)).filter(Boolean));
+      const games = ordered(matched.map((row, index) => {
+        const game = responses[index].html && parseEvent(responses[index].html, row, urls[index],
+          row.href.match(/\/evento\/(\d+)/)?.[1] || row.href);
+        if (!game) saveDiscard('goldenpark', urls[index], responses[index].html || '',
+          responses[index].error || `HTTP ${responses[index].status ?? 'desconhecido'} ou mercados incompletos`);
+        return game;
+      }).filter(Boolean));
       if (!games.length) throw new Error(`GoldenPark: nenhuma liga prioritária com jogos e mercados completos; ${JSON.stringify(empty)}; ${JSON.stringify(responses.map(x => ({ status: x.status, error: x.error })))}`);
       return { games, method: 'page_fallback', source: 'GoldenPark HTML pré-jogo: 1X2 e Total de Golos',
         diagnostics: [{ directError: directError.message }] };
     } finally { await page.close().catch(() => {}); }
   }
+}
+
+function betclicClock(day, clock, now = new Date()) {
+  if (!/^\d{1,2}:\d{2}$/.test(String(clock || ''))) return null;
+  const heading = String(day || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  const explicit = heading.match(/\b(\d{1,2})\s*(?:de\s*)?(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)/);
+  let relative = /amanha/.test(heading) ? 'Amanhã' : 'Hoje';
+  if (explicit) {
+    const current = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon',
+      day: '2-digit', month: '2-digit', year: 'numeric' }).formatToParts(now);
+    const parts = Object.fromEntries(current.filter(item => item.type !== 'literal')
+      .map(item => [item.type, Number(item.value)]));
+    const difference = (Date.UTC(parts.year, months.indexOf(explicit[2]) , Number(explicit[1]))
+      - Date.UTC(parts.year, parts.month - 1, parts.day)) / 86400000;
+    if (difference !== 0 && difference !== 1) return null;
+    relative = difference ? 'Amanhã' : 'Hoje';
+  }
+  let result = localClock(`${relative} ${clock}`, 'Europe/Lisbon', now);
+  if (relative === 'Hoje' && result && Date.parse(result) <= now.getTime() + 600000)
+    result = localClock(`Amanhã ${clock}`, 'Europe/Lisbon', now);
+  return result;
 }
 
 function betclicCards(html, url) {
@@ -817,15 +954,16 @@ function betclicCards(html, url) {
     const teams = label.split(/\s+-\s+/).map(name => name.trim());
     const identity = competition(card.text()) || competition(url);
     const day = card.closest('.groupEvents').find('.groupEvents_head').first().text().trim();
-    const clock = card.text().match(/\b\d{1,2}:\d{2}\b/)?.[0];
-    const commenceTime = localClock(`${day} ${clock || ''}`, 'Europe/Lisbon');
+    const clock = card.find('[data-qa="scoreboard-hour"]').first().text().trim()
+      || card.text().match(/\b\d{1,2}:\d{2}\b/)?.[0];
+    const commenceTime = betclicClock(day, clock);
     const href = card.attr('href');
     const reason = !identity ? 'liga não configurada' : teams.length !== 2 || teams.some(name => !name)
       ? 'times incompletos' : !href ? 'link do jogo ausente' : !commenceTime
         ? 'horário não reconhecido' : Date.parse(commenceTime) <= Date.now() + 600000
           || Date.parse(commenceTime) > Date.now() + 12 * 3600000
           ? 'fora da janela de 12 horas' : 'aceito';
-    return { ...identity, teams, commenceTime, label,
+    return { ...identity, teams, commenceTime, label, rawDay: day, rawClock: clock || null,
       href: href ? new URL(href, url).href : null, reason };
   });
 }
@@ -894,7 +1032,7 @@ async function betclic(context) {
     context.report?.({ phase: 'league', league: competition(leagues[index])?.apiSport,
       url: leagues[index], httpStatus: result.status === 'fulfilled' ? 200 : null,
       seen: rows.length, events: rows.map(row => ({ url: row.href, teams: row.teams,
-        commenceTime: row.commenceTime, reason: row.reason })),
+        commenceTime: row.commenceTime, rawDay: row.rawDay, rawClock: row.rawClock, reason: row.reason })),
       reason: result.status === 'rejected' ? result.reason.message : null });
     return rows.filter(row => row.reason === 'aceito');
   }).sort((a, b) => rank(a) - rank(b) || Date.parse(a.commenceTime) - Date.parse(b.commenceTime));
@@ -926,4 +1064,4 @@ async function betclic(context) {
 
 module.exports = { betano, bwin, retabet, lebull, escOnline, goldenpark, betclic,
   parseBwinFeed, parseLebullHtml, parseRetabetEvent, parseEscEvent,
-  betclicCards, parseBetclicEvent, retabetLeague, goldenparkClock, count, responseText };
+  betclicCards, betclicClock, parseBetclicEvent, retabetLeague, goldenparkClock, count, responseText };
