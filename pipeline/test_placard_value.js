@@ -6,7 +6,6 @@ const { estimateCost, summarize, planReservation, keyFingerprint, parseHeaders,
   refreshBalances, CLOSING_RESERVE, READING_MARGIN, SCHEMA_VERSION,
   MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, trackUsage } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
-const { createArcadiaClient, adaptLeague, decimal } = require('./arcadia_pinnacle');
 const { captureClosing, exactTotals, exactSpreads, closingStartTolerance, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue } = require('./run_placard_value');
 const { readSelections, adaptTotalsAndHandicaps, tunnelCycleAffordable, monthKey, MAX_MEASURED_CYCLE_MB } = require('./local_betano_reader');
 const { parseMarkets, matchLink, eventTimeMatches } = require('../scripts/local_bookmakers/retabet_reader.cjs');
@@ -64,56 +63,6 @@ test('variações verificadas de clubes preservam os dois times e o horário do 
   assert.deepEqual(matchingEvents(game, [event]), [event]);
   assert.deepEqual(matchingEvents({ ...game, teams: ['AC Milan', 'AC Milão'] }, [event]), []);
   assert.deepEqual(matchingEvents(game, [{ ...event, commence_time: '2026-10-22T19:02:00Z' }]), []);
-});
-
-test('Arcadia converte o mesmo jogo e linha e só aceita as duas respostas com Age fresco', async () => {
-  assert.equal(decimal(-150), 1 + 100 / 150);
-  assert.equal(decimal(120), 2.2);
-  const game = { id: 42, type: 'matchup', startTime: '2026-10-23T20:00:00Z',
-    participants: [{ alignment: 'home', name: 'Benfica' }, { alignment: 'away', name: 'Porto' }] };
-  const prices = [
-    { matchupId: 42, period: 0, type: 'moneyline', prices: [
-      { designation: 'home', price: 120 }, { designation: 'draw', price: 220 }, { designation: 'away', price: 150 }] },
-    { matchupId: 42, period: 0, type: 'total', prices: [
-      { designation: 'over', points: 2.5, price: -110 }, { designation: 'under', points: 2.5, price: 100 }] },
-    { matchupId: 42, period: 0, type: 'spread', prices: [
-      { designation: 'home', points: -0.5, price: 115 }, { designation: 'away', points: 0.5, price: -125 }] },
-  ];
-  const adapted = adaptLeague([game], prices, 'soccer_epl', 10, '2026-10-23T19:00:00Z');
-  assert.equal(adapted.length, 1);
-  assert.equal(adapted[0].pinnacleSource, 'arcadia');
-  assert.equal(references(adapted[0], Date.parse('2026-10-23T19:00:00Z')).length, 7);
-  let instant = Date.parse('2026-10-23T19:00:00Z'), round = 0;
-  const client = createArcadiaClient({ now: () => instant,
-    wait: async ms => { instant += ms; round++; },
-    httpGet: async url => url.endsWith('/config/app.json')
-      ? { data: { api: { haywire: { apiKey: 'a'.repeat(32) } } } }
-      : { data: url.endsWith('/matchups') ? [game] : prices,
-        headers: round ? { age: '10' } : url.endsWith('/matchups') ? {} : { age: '200' } },
-  });
-  assert.equal((await client.fetchFresh('soccer_epl')).length, 1);
-  assert.deepEqual(client.usage(), { queries: 4, freshResponses: 2, freshPairs: 1,
-    fallbackUsed: 0, keyRefreshes: 0 });
-});
-
-test('Arcadia relê a chave pública após 403 sem aceitar resposta sem Age', async () => {
-  let keyReads = 0, marketFailures = 0;
-  const client = createArcadiaClient({ maxWaitMs: 0,
-    httpGet: async url => {
-      if (url.endsWith('/config/app.json')) {
-        keyReads++;
-        return { data: { api: { haywire: { apiKey: String(keyReads).repeat(32) } } } };
-      }
-      if (url.endsWith('/markets/straight') && marketFailures++ === 0) {
-        const error = new Error('403'); error.response = { status: 403 }; throw error;
-      }
-      return { data: [], headers: {} };
-    },
-  });
-  assert.equal(await client.fetchFresh('basketball_nba'), null);
-  assert.equal(keyReads, 2);
-  assert.equal(client.usage().keyRefreshes, 1);
-  assert.equal(client.usage().freshResponses, 0);
 });
 test('compara outra casa com identidade e IDs separados sem mudar preço mínimo ou Kelly', () => {
   const { game, event } = fixture();

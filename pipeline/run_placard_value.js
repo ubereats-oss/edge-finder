@@ -6,19 +6,6 @@ const { compare, compareBookmaker, references, matchingEvents, isNearValue, near
 const competitions = require('./placard_config');
 const fs = require('fs');
 const crypto = require('crypto');
-const { createArcadiaClient } = require('./arcadia_pinnacle');
-const arcadia = createArcadiaClient();
-
-async function pinnacleEvents(api, sport, params, timeout = 20000, deadlineAt = Infinity) {
-  const fresh = await arcadia.fetchFresh(sport, { deadlineAt });
-  if (fresh?.length) return { events: fresh, source: 'arcadia' };
-  arcadia.markFallback();
-  const { data } = await api.get(`https://api.the-odds-api.com/v4/sports/${sport}/odds`, {
-    timeout, params: { bookmakers: 'pinnacle', oddsFormat: 'decimal', ...params },
-  });
-  return { events: (data || []).map(event => ({ ...event, sport_key: sport,
-    pinnacleSource: 'the_odds_api' })), source: 'the_odds_api' };
-}
 
 async function allEntries(db) {
   const rows = [];
@@ -54,13 +41,11 @@ async function saveOpportunity(db, row) {
   await db.runTransaction(async tx => {
     const previous = await tx.get(ref);
     if (!previous.exists) tx.create(ref, { ...row, closingStatus: 'pendente' });
-    else tx.update(ref, { lastObservedAt: row.placardObservedAt, lastPlacardOdds: row.placardOdds,
-      lastPinnacleSource: row.pinnacleSource });
+    else tx.update(ref, { lastObservedAt: row.placardObservedAt, lastPlacardOdds: row.placardOdds });
   });
 }
 
 async function exactTotals(api, sport, event, lines, attempted, closing = false) {
-  if (event.pinnacleSource === 'arcadia') return;
   const available = references(event, Date.now(), closing).filter(r => r.market === 'totals').map(r => r.line);
   const missing = lines.filter(line => Number.isFinite(line) && Number.isInteger(line * 2) && !available.includes(line));
   if (!missing.length || attempted.has(event.id)) return;
@@ -81,7 +66,6 @@ async function exactTotals(api, sport, event, lines, attempted, closing = false)
 }
 
 async function exactSpreads(api, sport, event, lines, attempted, closing = false) {
-  if (event.pinnacleSource === 'arcadia') return;
   const available = references(event, Date.now(), closing).filter(r => r.market === 'spreads').map(r => `${r.selection}|${r.line}`);
   const missing = lines.filter(row => Number.isFinite(row.line) && Number.isInteger(row.line * 2)
     && !available.includes(`${row.selection}|${row.line}`));
@@ -101,16 +85,6 @@ function closingStartTolerance(entry, sport) {
   if (sport.startsWith('tennis_')) return 3 * 60 * 60 * 1000;
   if (entry.bookmaker === 'Betano' && entry.sourceScheduleVerified === true) return 10 * 60000;
   return 60000;
-}
-
-function closingEvent(entry, sport, events) {
-  const tolerance = closingStartTolerance(entry, sport);
-  const teams = entry.teams || String(entry.game || '').split(' x ');
-  const candidates = events.filter(event => Math.abs(Date.parse(event.commence_time) - Date.parse(entry.commenceTime)) <= tolerance
-    && (event.id === entry.eventId || (teams.length === 2
-      && ((namesEqual(teams[0], event.home_team) && namesEqual(teams[1], event.away_team))
-        || (namesEqual(teams[0], event.away_team) && namesEqual(teams[1], event.home_team))))));
-  return candidates.length === 1 ? candidates[0] : null;
 }
 
 function tennisCompetitionAlias(key) {
@@ -182,8 +156,6 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
     const page = await browser.newPage({ locale: 'pt-PT', timezoneId: 'UTC' });
     // Redescobre IDs, que podem mudar a cada temporada. Nunca usa URL de
     // outra liga como fallback quando o nome deixa de existir.
-    // O catálogo gratuito informa quais competições estão ativas; só os preços
-    // recorrem à The Odds API quando a Arcadia não oferece resposta fresca.
     let catalogSports;
     try {
       const catalogResponse = await api.get('https://api.the-odds-api.com/v4/sports', { timeout: 15000, params: { all: 'true' } });
@@ -256,8 +228,7 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
           if (near && event) {
             if (eventState.nearSignature !== signature) triggerSignatures.set(event.id, { ref: stateRef, signature });
           }
-          const refreshDue = process.env.PLACARD_FORCE_SCAN === '1'
-            || pinnacleRefreshDue(delta, eventState.lastPinnacleFetchAt, notFoundProbes[gameKey]);
+          const refreshDue = pinnacleRefreshDue(delta, eventState.lastPinnacleFetchAt, notFoundProbes[gameKey]);
           if (refreshDue || (event && triggerSignatures.has(event.id))) {
             if (event) dueEvents.set(event.id, event);
             else dueEvents.set(`new:${gameKey}`, null);
@@ -274,8 +245,8 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
             params.commenceTimeTo = new Date(Date.now() + 12 * 3600000).toISOString().replace(/\.\d{3}Z$/, 'Z');
           }
           try {
-            const selected = await pinnacleEvents(api, cfg.key, params);
-            refreshedEvents = selected.events;
+            const response = await api.get(`https://api.the-odds-api.com/v4/sports/${cfg.key}/odds`, { timeout: 20000, params });
+            refreshedEvents = response.data.map(e => ({ ...e, sport_key: cfg.key }));
             const fetchedAt = new Date().toISOString();
             for (const key of dueEvents.keys()) {
               if (key.startsWith('new:')) notFoundProbes[key.slice(4)] = fetchedAt;
@@ -288,13 +259,7 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
           }
           if (refreshedEvents.length) {
             const merged = new Map(events.map(e => [e.id, e]));
-            for (const e of refreshedEvents) {
-              for (const [id, prior] of merged) {
-                if (matchingEvents({ apiSport: cfg.key, teams: [e.home_team, e.away_team],
-                  commenceTime: e.commence_time }, [prior]).length === 1) merged.delete(id);
-              }
-              merged.set(e.id, e);
-            }
+            for (const e of refreshedEvents) merged.set(e.id, e);
             const expiresAt = Date.now() + 12 * 3600000;
             events = [...merged.values()].filter(e => {
               const start = Date.parse(e.commence_time);
@@ -340,8 +305,7 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
           const reason = result.reason === 'evento_sem_correspondencia' && known.length === 1
             ? 'preco_conhecido_aguardando_gatilho' : result.reason;
           diagnostics.push({ competition: cfg.label, teams: game.teams, reason,
-            comparedSelections, confirmedSelections: result.comparedSelections ?? 0,
-            pinnacleSource: matches.length === 1 ? matches[0].pinnacleSource : null, alternateError });
+            comparedSelections, confirmedSelections: result.comparedSelections ?? 0, alternateError });
           for (const row of result.rows) { await saveOpportunity(db, row); rows.push(row); }
         }
         if (refreshedEvents.length) await cacheRef.set({ events, notFoundProbes, updatedAt: new Date().toISOString() });
@@ -350,8 +314,7 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
           return sum + (matches.length === 1 ? comparedSelectionCount(game, matches[0]) : 0);
         }, 0);
         await db.collection('_placard_reads').add({ observedAt: new Date().toISOString(), workflowRunId: scanRunId, apiSport: cfg.key,
-          games, pinnacle: JSON.stringify(events), refreshedEventIds: refreshedEvents.map(e => e.id), comparedSelections,
-          pinnacleSources: [...new Set(events.map(e => e.pinnacleSource || 'the_odds_api'))] });
+          games, pinnacle: JSON.stringify(events), refreshedEventIds: refreshedEvents.map(e => e.id), comparedSelections });
     }, (cfg, error) => { errors.push({ competition: cfg.label, error: error.message }); });
   } finally { await browser.close(); }
   return { rows, errors, diagnostics, scanRunId, apiUsage: api.usage() };
@@ -405,7 +368,8 @@ async function processBookmakerRead(db, readId) {
     const params = { bookmakers: 'pinnacle', markets: markets.join(','), oddsFormat: 'decimal',
       commenceTimeFrom: new Date(Math.max(Date.now() - 5 * 60000, Math.min(...starts) - 10 * 60000)).toISOString().replace(/\.\d{3}Z$/, 'Z'),
       commenceTimeTo: new Date(Math.max(...starts) + 10 * 60000).toISOString().replace(/\.\d{3}Z$/, 'Z') };
-    const { events } = await pinnacleEvents(api, sport, params);
+    const { data } = await api.get(`https://api.the-odds-api.com/v4/sports/${sport}/odds`, { timeout: 20000, params });
+    const events = (data || []).map(event => ({ ...event, sport_key: sport }));
     await forEachCompetitionIsolated(sportGames, async game => {
       let alternateError = null;
       const matches = matchingEvents(game, events);
@@ -432,7 +396,7 @@ async function processBookmakerRead(db, readId) {
           const reference = refs.find(row => row.market === selection.market && row.line === selection.line && row.selection === selection.selection);
           if (reference) validations.push({ apiSport: sport, teams: game.teams, sourceEventId: game.sourceEventId,
             pinnacleEventId: event.id, sourceStart: game.commenceTime, pinnacleStart: event.commence_time,
-            observedAt: game.observedAt, pinnacleSource: event.pinnacleSource, ...selection, ...reference });
+            observedAt: game.observedAt, ...selection, ...reference });
         }
       }
       for (const row of comparison.rows) {
@@ -442,8 +406,7 @@ async function processBookmakerRead(db, readId) {
         rows.push(row);
       }
       diagnostics.push({ apiSport: sport, teams: game.teams, comparedSelections: comparison.comparedSelections || 0,
-        opportunities: comparison.rows.length, reason: comparison.reason || null,
-        pinnacleSource: matches.length === 1 ? matches[0].pinnacleSource : null, alternateError });
+        opportunities: comparison.rows.length, reason: comparison.reason || null, alternateError });
     }, (game, error) => errors.push({ apiSport: sport, teams: game.teams, error: error.message }));
   }, (group, error) => { errors.push({ apiSport: group[0], error: error.message }); });
   if (validationOnly) {
@@ -476,12 +439,10 @@ async function captureClosing(db, entries) {
       if (candidate && Date.parse(candidate.capturedAt) < start && Date.parse(candidate.updatedAt) >= start - 300000 && Date.parse(candidate.updatedAt) < start) {
         await ref.update({ closingStatus: 'capturada', closingFairOdds: 1 / candidate.probability,
           closingUpdatedAt: candidate.updatedAt, closingCapturedAt: candidate.capturedAt,
-          closingSource: candidate.source || 'the_odds_api',
           closingLeadSeconds: (start - Date.parse(candidate.updatedAt)) / 1000,
           clvPct: (e.placardOdds * candidate.probability - 1) * 100 });
       } else {
-        await ref.update({ closingStatus: 'indisponivel', closingReason: 'sem_preco_pregame_na_mesma_linha_nos_ultimos_5min',
-          closingSource: e.closingAttemptSource || null });
+        await ref.update({ closingStatus: 'indisponivel', closingReason: 'sem_preco_pregame_na_mesma_linha_nos_ultimos_5min' });
       }
     } else if (start - now <= 5 * 60000) {
       if (!due.has(e.apiSport)) due.set(e.apiSport, []);
@@ -493,20 +454,15 @@ async function captureClosing(db, entries) {
   const attemptedAlternates = new Set();
   for (const [sport, group] of due) {
     try {
-      const params = { markets: [...new Set(group.map(e => e.market))].join(',') };
-      if (group.every(e => e.pinnacleSource !== 'arcadia')) params.eventIds = [...new Set(group.map(e => e.eventId))].join(',');
-      else {
-        params.commenceTimeFrom = new Date(Math.min(...group.map(e => Date.parse(e.commenceTime))) - 10 * 60000).toISOString();
-        params.commenceTimeTo = new Date(Math.max(...group.map(e => Date.parse(e.commenceTime))) + 10 * 60000).toISOString();
-      }
-      const closingDeadline = Math.min(...group.map(e => Date.parse(e.commenceTime))) - 15000;
-      const { events, source } = await pinnacleEvents(api, sport, params, 15000, closingDeadline);
+      const { data } = await api.get(`https://api.the-odds-api.com/v4/sports/${sport}/odds`, {
+        timeout: 15000, params: { bookmakers: 'pinnacle', markets: [...new Set(group.map(e => e.market))].join(','), oddsFormat: 'decimal',
+          eventIds: [...new Set(group.map(e => e.eventId))].join(',') },
+      });
       for (const e of group) {
         if (Date.now() >= Date.parse(e.commenceTime)) continue;
-        await db.collection('_placard_opportunities').doc(e.id).update({ closingAttemptSource: source,
-          closingAttemptAt: new Date().toISOString() });
-        const event = closingEvent(e, sport, events);
-        if (!event) continue;
+        const event = data.find(ev => ev.id === e.eventId);
+        const tolerance = closingStartTolerance(e, sport);
+        if (!event || Math.abs(Date.parse(event.commence_time) - Date.parse(e.commenceTime)) > tolerance) continue;
         if (e.market === 'totals') {
           try { await exactTotals(api, sport, event, [e.line], attemptedAlternates, true); }
           catch (error) { console.error(`Linha de fechamento ${e.eventId}: ${error.message}`); }
@@ -518,11 +474,10 @@ async function captureClosing(db, entries) {
         const capturedAt = new Date().toISOString();
         if (Date.parse(capturedAt) >= Date.parse(e.commenceTime)) continue;
         const candidate = references({ ...event, sport_key: sport }, Date.parse(capturedAt), true)
-          .find(r => r.market === e.market && r.line === e.line && namesEqual(r.selection, e.selection));
+          .find(r => r.market === e.market && r.line === e.line && r.selection === e.selection);
         if (candidate && Date.parse(candidate.pinnacleUpdatedAt) >= Date.parse(e.commenceTime) - 300000) {
           await db.collection('_placard_opportunities').doc(e.id).update({ closingCandidate: {
             probability: candidate.probability, updatedAt: candidate.pinnacleUpdatedAt, capturedAt,
-            source: event.pinnacleSource,
           } });
         }
       }
@@ -542,7 +497,6 @@ async function publish(db, result, entries) {
   const budgetSummary = summarizeBudget(budget);
   const today = generatedAt.slice(0, 10);
   const payload = { generatedAt, runId, pageCount, report: report(entries), errors: result.errors,
-    sourceUsage: arcadia.usage(),
     budget: { totalRemaining: budgetSummary.totalRemaining, available: budgetSummary.available,
       readingAvailable: budgetSummary.readingAvailable, closingReserve: CLOSING_RESERVE,
       keyCount: budgetSummary.keyCount, keyStatuses: budgetSummary.keyStatuses,
@@ -582,8 +536,7 @@ async function main() {
     const result = state.result || { rows: [], errors: [], diagnostics: [] };
     result.closingUsage = closingUsage;
     const published = await publish(db, result, entries);
-    fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), budget: published.budget,
-      sourceUsage: published.sourceUsage }, null, 2));
+    fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), budget: published.budget }, null, 2));
     return;
   }
   if (process.env.PLACARD_BOOKMAKER_READ_ID) {
@@ -599,7 +552,6 @@ async function main() {
     result.closingUsage = closingUsage;
     const published = await publish(db, result, entries);
     fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), budget: published.budget,
-      sourceUsage: published.sourceUsage,
       bookmakerReadId: process.env.PLACARD_BOOKMAKER_READ_ID,
       opportunities: result.rows.length, errors: result.errors }, null, 2));
     return;
@@ -625,8 +577,7 @@ async function main() {
   result.rows = entries.filter(e => e.closingStatus === 'pendente' && Date.parse(e.commenceTime) > Date.now());
   result.closingUsage = closingUsage;
   const published = await publish(db, result, entries);
-  fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), budget: published.budget,
-    sourceUsage: published.sourceUsage, scan: due,
+  fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), budget: published.budget, scan: due,
     opportunities: result.rows.length, errors: result.errors }, null, 2));
   if (due && result.errors.length) console.warn(`Coleta parcial; as demais competições foram processadas: ${result.errors.map(e => `${e.competition || 'coleta'}: ${e.error}`).join(' | ')}`);
 }
