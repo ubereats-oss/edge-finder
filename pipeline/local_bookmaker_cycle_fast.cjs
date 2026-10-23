@@ -1,4 +1,4 @@
-// One scheduled VPN connection: six concurrent bounded reads, disconnect, then Firestore.
+// One scheduled VPN connection: six independent bounded reads, disconnect, then Firestore.
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync, execFile } = require('node:child_process');
@@ -15,10 +15,6 @@ const TASK_NAME = 'EdgeFinder-Betano-Local';
 const HOUSE_NAMES = {
   betano: 'Betano', retabet: 'Retabet', bwin: 'Bwin', lebull: 'LeBull',
   esc_online: 'ESC Online', goldenpark: 'GoldenPark',
-};
-const GATE_NAMES = {
-  betano: 'betano_soccer', retabet: 'retabet_soccer', bwin: 'bwin_soccer',
-  lebull: 'lebull_soccer', esc_online: 'esc online_soccer', goldenpark: 'goldenpark_soccer',
 };
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const PROCESS_SCRIPT = "$rows=Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue | Where-Object { $_.RemoteAddress -notin @('127.0.0.1','::1') } | Group-Object OwningProcess | ForEach-Object { $pidValue=[int]$_.Name; $process=Get-Process -Id $pidValue -ErrorAction SilentlyContinue; if ($process) { [pscustomobject]@{ pid=$pidValue; name=$process.ProcessName; connections=$_.Count } } }; @($rows) | ConvertTo-Json -Compress";
@@ -39,7 +35,7 @@ function edgeWindow(action) {
   return JSON.parse(result.stdout.trim());
 }
 
-async function boundedRead(context, read, footballPromise, timeoutMs = 60000,
+async function boundedRead(context, read, timeoutMs = 120000,
   minimizeWindow = edgeWindow, onProgress = () => {}, metrics = {}) {
   const pages = [];
   const pending = new Set();
@@ -68,7 +64,7 @@ async function boundedRead(context, read, footballPromise, timeoutMs = 60000,
     return page;
   } };
   let timer;
-  const task = Promise.resolve().then(() => read(scoped, footballPromise));
+  const task = Promise.resolve().then(() => read(scoped));
   task.catch(() => {});
   try {
     return await Promise.race([task, new Promise((_, reject) => {
@@ -128,7 +124,7 @@ async function awaitComparison(db, id, deadline) {
     };
     await wait(4000);
   }
-  return { status: 'timeout', comparedSelections: 0, errors: ['Comparação não concluiu em 180 segundos.'] };
+  return { status: 'timeout', comparedSelections: 0, errors: ['Comparação não concluiu em 120 segundos.'] };
 }
 
 async function main() {
@@ -138,7 +134,7 @@ async function main() {
   const start = performance.now();
   const outputFile = path.join(LOG_DIR, `cycle-${startedAt.replace(/[:.]/g, '-')}.json`);
   const cycle = { startedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
-    architecture: 'parallel_direct_feed_v1', stages: {}, reads: {}, feedAttempts: {} };
+    architecture: 'independent_own_listings_v2', stages: {}, reads: {}, feedAttempts: {} };
   const stage = async (name, work) => {
     const at = performance.now();
     const record = { startedAt: new Date().toISOString() };
@@ -158,12 +154,8 @@ async function main() {
       { encoding: 'utf8', timeout: 4000 }).stdout.trim();
     const pauseReason = readCycleBudget(cycle);
     if (pauseReason) { cycle.status = 'paused'; cycle.pauseReason = pauseReason; return; }
-    const gates = await stage('preparation', async () => {
+    await stage('preparation', async () => {
       db = core.database();
-      const snapshots = await Promise.all(Object.entries(GATE_NAMES).map(async ([key, id]) => [key,
-        (await db.collection('_bookmaker_validation').doc(id).get()).data()]));
-      const loaded = Object.fromEntries(snapshots);
-      if (loaded.betano?.passed !== true) throw new Error('Gate Betano futebol não aprovado.');
       const edge = await core.ensureEdge();
       browser = edge.browser;
       context = edge.context;
@@ -171,9 +163,7 @@ async function main() {
       catch (error) { cycle.edgeWindow = { minimized: false, error: error.message }; }
       networkBefore = core.physicalNetworkBytes();
       beforeMB = cycle.balanceMB;
-      return loaded;
     });
-    const enabled = gates;
     await stage('vpnConnect', async () => {
       vpnStartedAt = Date.now();
       cycle.vpn = core.tunnel('connect', startedAt, 'production_cycle');
@@ -192,22 +182,17 @@ async function main() {
 
     const tasks = {};
     cycle.browserMetrics = {};
-    const runHouse = (key, reader, footballPromise) => {
+    const runHouse = (key, reader) => {
       cycle.feedAttempts[key] = [];
       cycle.browserMetrics[key] = {};
-      tasks[key] = stage(`read.${key}`, () => boundedRead(context, reader, footballPromise,
-        60000, edgeWindow, detail => cycle.feedAttempts[key].push({ at: new Date().toISOString(), ...detail }),
+      tasks[key] = stage(`read.${key}`, () => boundedRead(context, reader,
+        120000, edgeWindow, detail => cycle.feedAttempts[key].push({ at: new Date().toISOString(), ...detail }),
         cycle.browserMetrics[key]));
       return tasks[key];
     };
-    const betanoTask = runHouse('betano', readers.betano);
-    const footballPromise = betanoTask.then(data => data.football);
-    footballPromise.catch(() => {});
-    if (enabled.bwin?.passed === true) runHouse('bwin', readers.bwin, footballPromise);
-    if (enabled.lebull?.passed === true) runHouse('lebull', readers.lebull, footballPromise);
-    if (enabled.esc_online?.passed === true) runHouse('esc_online', readers.escOnline, footballPromise);
-    if (enabled.goldenpark?.passed === true) runHouse('goldenpark', readers.goldenpark, footballPromise);
-    if (enabled.retabet?.passed === true) runHouse('retabet', readers.retabet, footballPromise);
+    for (const [key, reader] of Object.entries({ betano: readers.betano, bwin: readers.bwin,
+      lebull: readers.lebull, esc_online: readers.escOnline,
+      goldenpark: readers.goldenpark, retabet: readers.retabet })) runHouse(key, reader);
     const keys = Object.keys(tasks);
     const results = await Promise.allSettled(keys.map(key => tasks[key]));
     const collected = {};
@@ -217,6 +202,8 @@ async function main() {
         collected[key] = result.value;
         cycle.reads[key] = { status: result.value.games.length ? 'ready' : 'empty',
           method: result.value.method, games: result.value.games.length,
+          leagues: Object.fromEntries([...new Set(result.value.games.map(game => game.apiSport))]
+            .map(sport => [sport, result.value.games.filter(game => game.apiSport === sport).length])),
           selections: readers.count(result.value.games), diagnostics: result.value.diagnostics };
       } else cycle.reads[key] = { status: 'failed', error: result.reason.message };
       Object.assign(cycle.reads[key], cycle.browserMetrics[key], {
@@ -235,16 +222,23 @@ async function main() {
     });
     if (networkTimer) clearInterval(networkTimer);
     networkAfter = core.physicalNetworkBytes();
-    if (!collected.betano?.games.length) throw new Error('Betano não produziu odds elegíveis; ciclo não conta como sucesso.');
+    if (!Object.values(collected).some(data => data.games.length))
+      throw new Error('Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso.');
     const readIds = await stage('send', async () => {
       if (vpnConnected) throw new Error('Envio bloqueado: VPN ainda conectado.');
-      const entries = await Promise.all(Object.entries(collected).filter(([, data]) => data.games.length)
-        .map(async ([key, data]) => [key, await writeRead(db, key, data)]));
-      return Object.fromEntries(entries);
+      const toSend = Object.entries(collected).filter(([, data]) => data.games.length);
+      const entries = await Promise.allSettled(toSend.map(async ([key, data]) =>
+        [key, await writeRead(db, key, data)]));
+      for (let i = 0; i < entries.length; i++) if (entries[i].status === 'rejected')
+        cycle.reads[toSend[i][0]].sendError = entries[i].reason.message;
+      const sent = Object.fromEntries(entries.filter(result => result.status === 'fulfilled')
+        .map(result => result.value));
+      if (!Object.keys(sent).length) throw new Error('Nenhuma leitura foi enviada ao Firestore.');
+      return sent;
     });
     for (const [key, id] of Object.entries(readIds)) cycle.reads[key].readId = id;
     const comparisons = await stage('comparison', async () => {
-      const deadline = Date.now() + 180000;
+      const deadline = Date.now() + 120000;
       return Object.fromEntries(await Promise.all(Object.entries(readIds)
         .map(async ([key, id]) => [key, await awaitComparison(db, id, deadline)])));
     });
@@ -262,10 +256,9 @@ async function main() {
     await stage('heartbeat', async () => {
       const at = new Date().toISOString();
       await Promise.all(Object.entries(HOUSE_NAMES).map(async ([key]) => {
-        if (enabled[key]?.passed !== true) return;
         const read = cycle.reads[key];
         const okay = read?.comparison?.status === 'processed' && read.comparison.comparedSelections > 0;
-        const values = { enabled: okay, lastReadAt: at, taskName: TASK_NAME,
+        const values = { enabled: true, lastReadAt: at, taskName: TASK_NAME,
           computerName: process.env.COMPUTERNAME, lastTunnelBearMB: cycle.consumedMB,
           lastReadId: read?.readId || null, selections: read?.selections || 0,
           comparedSelections: read?.comparison?.comparedSelections || 0,
@@ -277,10 +270,6 @@ async function main() {
         await db.collection('local_bookmaker_status').doc(key).set(values, { merge: true });
       }));
     });
-    if (cycle.reads.betano.comparison?.status !== 'processed'
-      || cycle.reads.betano.comparison.comparedSelections < 1) {
-      throw new Error('Comparação Betano/Pinnacle não concluiu com seleção válida.');
-    }
     cycle.status = 'complete';
   } catch (error) {
     caught = error;
