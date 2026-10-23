@@ -156,3 +156,26 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: não executado, pois o token e o identificador da conversa Telegram ainda não foram fornecidos. Testes locais do módulo: 5/5 passaram; 33/33 testes do comparador passaram. O teste Flutter existente falhou ao montar o app porque não inicializa Firebase (`core/no-app`), sem apontar erro de compilação na alteração. Evidências: saídas de `node --test` e `flutter test test/widget_test.dart` nesta sessão.
 - Problemas encontrados: segredo e destinatário Telegram pendentes; o teste Flutter existente depende de inicialização Firebase ausente.
 - Pendências: receber token, configurar segredos, publicar, implantar e executar os dois aceites reais. Partes 5 a 8 não iniciadas.
+
+## 2026-10-23 — Parte 4: retomada e premissas de publicação
+
+- Início: 13:25:01 (relógio do Windows).
+- Pedido recebido: usar o token do robô fornecido pelo Alex e concluir a Parte 4.
+- Premissas verificadas antes da publicação: `origin/main` está em `ee5e2d5`; o código preparado permaneceu apenas nesta cópia de trabalho; o token foi recebido nesta sessão e não será gravado no repositório. Ainda é necessário identificar a conversa iniciada com o robô, configurar os dois segredos no Firebase e validar no Telegram e no serviço Firebase em produção.
+- O que foi feito: somente leitura do estado e registro prévio destas premissas; publicação pendente.
+- Arquivos alterados nesta etapa: `LOG_ATIVIDADES.md`.
+- Commit: pendente.
+- Resultado do aceite: pendente.
+- Problemas encontrados: nenhum nesta retomada.
+- Pendências: configurar, testar, publicar e aceitar.
+
+## 2026-10-23 — Parte 4: preparação para aceite de produção
+
+- Início: 13:25:01; fim da preparação: 13:28:56 (relógio do Windows).
+- Pedido recebido: concluir o aviso Telegram e a reconferência com o token fornecido, sem guardar credenciais no repositório.
+- O que foi feito: configurados `TELEGRAM_BOT_TOKEN` e `TELEGRAM_CHAT_ID` como segredos Firebase; identificada a conversa privada iniciada pelo Alex; enviada mensagem de teste pelo robô, recebida e confirmada pelo Alex. Preparados os gatilhos de indicação e uso externo suspeito, a reconferência autenticada com reserva de créditos e cache de 2 minutos, e a interface do app.
+- Arquivos alterados: `functions/index.js`, `functions/placard_part4.js`, `functions/odds_api_monthly_budget.js`, `functions/placard_value.js`, `functions/placard_aliases.json`, `functions/test_placard_part4.js`, `functions/package.json`, `functions/package-lock.json`, `lib/services/api_service.dart`, `lib/screens/placard_opportunities_screen.dart`, `LOG_ATIVIDADES.md`.
+- Commit: commit desta implementação na `main` (identificado no histórico Git).
+- Resultado do aceite nesta etapa: mensagem de teste `message_id=4` entregue na conversa privada e confirmada pelo Alex; 5/5 testes do módulo passaram; 19 chaves The Odds API presentes em segredo Firebase. Reconferência no serviço Firebase real ainda pendente. Evidências: resposta HTTP do Telegram e confirmação do Alex nesta sessão; saída `node --test functions/test_placard_part4.js`.
+- Problemas encontrados: a primeira consulta ao robô não retornou mensagens; após nova mensagem do Alex, `getUpdates` retornou a conversa. Nenhum token foi registrado no projeto.
+- Pendências: publicar e implantar as novas Functions; executar reconferência real e registrar o resultado. Partes 5 a 8 aguardam este aceite.

@@ -1,12 +1,14 @@
 const { onRequest } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
-const { onDocumentWritten } = require('firebase-functions/v2/firestore');
+const { onDocumentWritten, onDocumentCreated } = require('firebase-functions/v2/firestore');
 const { defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const crypto = require('crypto');
 const riskConfig = require('./risk_config');
 const closingOddsRules = require('./closing_odds_rules');
+const placardPart4 = require('./placard_part4');
 
 initializeApp();
 const db = getFirestore();
@@ -19,6 +21,9 @@ const db = getFirestore();
 const SYNC_ODDS_BR_SECRET = defineSecret('SYNC_ODDS_BR_SECRET');
 const SYNC_SECRET_HEADER = 'X-Sync-Secret';
 const GH_DISPATCH_TOKEN = defineSecret('GH_DISPATCH_TOKEN');
+const TELEGRAM_BOT_TOKEN = defineSecret('TELEGRAM_BOT_TOKEN');
+const TELEGRAM_CHAT_ID = defineSecret('TELEGRAM_CHAT_ID');
+const THE_ODDS_API_KEYS = defineSecret('THE_ODDS_API_KEYS');
 
 // ── Tabelas de calibração ─────────────────────────────────────────────────────
 const CALIB_TABLES = {
@@ -818,3 +823,63 @@ exports.closingOddsScheduler = onSchedule(
     console.log(`[closingOddsScheduler] workflow disparado para ${target.label} (${decision.jaIniciado ? 'já iniciado' : `faltam ~${Math.round((target.commence - now) / 60000)}min`}).`);
   }
 );
+
+exports.notifyPlacardOpportunity = onDocumentCreated({
+  document: '_placard_opportunities/{opportunityId}', region: 'southamerica-east1',
+  secrets: [TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID], retry: true,
+}, async event => {
+  const row = event.data?.data();
+  if (!row) return;
+  const ref = event.data.ref;
+  if ((await ref.get()).data()?.telegramMessageId) return;
+  const messageId = await placardPart4.sendTelegram(row, TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value());
+  await ref.set({ telegramMessageId: messageId, telegramSentAt: new Date().toISOString() }, { merge: true });
+});
+
+exports.notifyOddsApiExternalUse = onDocumentWritten({
+  document: '_odds_api_budget/{month}', region: 'southamerica-east1',
+  secrets: [TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID], retry: true,
+}, async event => {
+  const before = event.data?.before?.data()?.keyBalances || {};
+  const after = event.data?.after?.data()?.keyBalances || {};
+  for (const [fingerprint, balance] of Object.entries(after)) {
+    const difference = Number(balance.suspiciousDifference || 0);
+    const previous = Number(before[fingerprint]?.suspiciousDifference || 0);
+    if (difference <= previous || difference <= 0) continue;
+    await placardPart4.sendTelegramText(
+      `Edge Finder: chave ${Number(balance.index) + 1} da The Odds API com uso externo suspeito. Diferença: ${difference} crédito(s). A chave continua em uso.`,
+      TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value());
+  }
+});
+
+exports.revalidatePlacardOpportunities = onRequest({
+  region: 'southamerica-east1', cors: true, secrets: [THE_ODDS_API_KEYS], timeoutSeconds: 120,
+}, async (req, res) => {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Método inválido' });
+  const token = String(req.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+  try { await getAuth().verifyIdToken(token); }
+  catch (_) { return res.status(401).json({ error: 'Não autenticado' }); }
+  try {
+    const ids = Array.isArray(req.body?.ids) ? req.body.ids.filter(id => typeof id === 'string').slice(0, 20) : null;
+    let rows = [];
+    if (ids) {
+      const docs = await Promise.all(ids.map(id => db.collection('_placard_opportunities').doc(id).get()));
+      rows = docs.filter(doc => doc.exists).map(doc => ({ ...doc.data(), id: doc.id }));
+    } else {
+      const manifest = (await db.collection('results').doc('placard_current').get()).data() || {};
+      const run = db.collection('results').doc('placard_current').collection('runs').doc(manifest.runId || 'none');
+      for (let i = 0; i < Math.min(manifest.pageCount || 0, 100); i++) {
+        const page = (await run.collection('pages').doc(String(i)).get()).data();
+        rows.push(...(page?.rows || []));
+      }
+      rows = rows.filter(row => Date.parse(row.commenceTime || '') > Date.now());
+    }
+    const keys = placardPart4.keysFromSecret(THE_ODDS_API_KEYS.value());
+    if (!keys.length) throw new Error('Chaves The Odds API indisponíveis');
+    const result = await placardPart4.revalidate(db, rows, keys);
+    return res.status(200).json({ checkedAt: new Date().toISOString(), rows: result });
+  } catch (error) {
+    console.error(`[revalidatePlacardOpportunities] ${error.message}`);
+    return res.status(503).json({ error: 'Reconferência indisponível' });
+  }
+});

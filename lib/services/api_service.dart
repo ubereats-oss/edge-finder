@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 const _projectId = 'odds-app-edge';
 const _firestoreBase =
     'https://firestore.googleapis.com/v1/projects/$_projectId/databases/(default)/documents';
+const _placardRevalidationUrl =
+    'https://southamerica-east1-odds-app-edge.cloudfunctions.net/revalidatePlacardOpportunities';
 
 // ── Configuração GitHub Actions ────────────────────────────────────────────────
 const _githubRepo = 'ubereats-oss/edge-finder';
@@ -298,6 +300,20 @@ class ApiService {
       rows.addAll((page['rows'] as List? ?? []).cast<Map<String, dynamic>>());
     }
     return {...manifest, 'rows': rows};
+  }
+
+  static Future<Map<String, dynamic>> revalidatePlacardOpportunities() async {
+    final token = await _authToken();
+    final response = await http.post(Uri.parse(_placardRevalidationUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: '{}').timeout(const Duration(seconds: 120));
+    if (response.statusCode != 200) {
+      throw Exception('Reconferência indisponível: ${response.statusCode}');
+    }
+    return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
   /// Grava uma conferência de odds (tela "Conferir odds"). `data` já deve
