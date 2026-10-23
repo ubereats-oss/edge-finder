@@ -215,3 +215,15 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite nesta etapa: pendente da validação em produção. Teste do comparador: 34/34 passaram, inclusive indicação 2,10 e aposta 2,20 contra fechamento 2,00, resultando em 5% e 10%. O smoke test Flutter existente ainda falha em `core/no-app` por não inicializar Firebase no teste, como já registrado na Parte 4; o código da tela compilou.
 - Problemas encontrados: teste Flutter legado não prepara Firebase.
 - Pendências: publicar, registrar uma aposta de teste pelo endpoint autenticado usado pelo app, executar `Placard x Pinnacle`, conferir os dois CLVs e remover a aposta.
+
+## 2026-10-23 — Parte 5: aceite em produção
+
+- Início: 13:36:07; fim: 13:45:59 (relógio do Windows).
+- Pedido recebido: registrar a odd realmente apostada, mostrar o CLV da indicação e o da aposta, testar e apagar a aposta de teste.
+- Premissas verificadas antes da implementação: o app usa `bets` e autenticação do proprietário; o fechamento da mesma seleção/linha está na indicação; `Placard x Pinnacle` publica o relatório do app no Firestore.
+- O que foi feito: publicado `9e0097a` na `main`; criada aposta de teste pelo endpoint Firestore autenticado que o app usa; executado o workflow real para gerar o relatório; apagada a aposta; executado o workflow novamente para limpar o relatório; compilado e implantado o app Web no Firebase Hosting.
+- Arquivos alterados: `lib/screens/placard_opportunities_screen.dart`, `pipeline/placard_value.js`, `pipeline/run_placard_value.js`, `pipeline/test_placard_value.js`, `LOG_ATIVIDADES.md`.
+- Commit: `9e0097a` (implementação); este complemento de auditoria será publicado em commit próprio.
+- Resultado do aceite: passou. Aposta de teste `part5-test-20261023-1342` criada com HTTP 200, odd indicada 1,92, odd apostada 2,00 e fechamento justo 1,8585539917 para Bournemouth x AC Milan, vencedor Bournemouth. Execução GitHub Actions `39988998573` concluiu com sucesso; `results/placard_current` publicou CLV da indicação 3,306119% e CLV da aposta 7,610541%, ambos para a mesma indicação. A aposta foi apagada e sua ausência confirmada; execução `39989124585` concluiu com sucesso e o relatório publicado deixou de conter a linha de teste (`withClosing=0`). O app Web compilou e o Firebase Hosting foi publicado em `https://odds-app-edge.web.app` com HTTP 200 e as frases novas presentes no JavaScript servido. Evidências: respostas das APIs de autenticação/Firestore/GitHub, `results/placard_current`, saída de `flutter build web` e `firebase deploy --only hosting`.
+- Problemas encontrados: o smoke test Flutter legado falhou em `core/no-app` porque não inicializa Firebase; o teste do comparador passou 34/34. A compilação Web terminou com avisos de Wasm de dependência, sem falha.
+- Pendências: nenhuma da Parte 5; iniciar a Parte 6.
