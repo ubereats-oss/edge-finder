@@ -452,3 +452,12 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Arquivos alterados: os seis arquivos reaplicados do commit `707308d`, correções em `scripts/local_bookmakers/fast_readers.cjs`, este `LOG_ATIVIDADES.md`; logs e medida em `.local_logs/betano` ignorados pelo Git. Commit: esta publicação, pendente de hash.
 - Resultado do aceite: ciclo real abaixo de 10 min, 40 testes automáticos aprovados, decisões acima. Evidências: `coverage-baseline.json`, `coverage-test.json`, `cycle-2026-10-23T19-11-26-470Z.json` e `tunnelbear_attempts_2026-10.jsonl` na pasta `.local_logs/betano`.
 - Problemas e pendências: o HTML HTTP 200 da ESC Online não trouxe links de ligas; GoldenPark trouxe mercados NBA sem linha Pinnacle comparável. Confirmar que o checkout da tarefa agendada recebe o commit publicado. O junction temporário de logs é inofensivo para o executável agendado e fica preservado.
+
+## 2026-10-23 — Reaplicação seletiva: publicação e pasta agendada
+
+- Início da etapa: 16:15:17; verificação da pasta agendada: 16:16:44 (relógio do Windows).
+- Pedido recebido: publicar a decisão por casa e deixar a pasta da tarefa `EdgeFinder-Betano-Local` no mesmo commit da `main`.
+- O que foi feito: publicado `f8b082c` em `main`; as alterações não publicadas previamente existentes no checkout agendado foram preservadas em `stash@{0}` com mensagem `pre-edge-finder-scheduled-sync-20261023-1616`, sem reintroduzi-las sobre o código de produção; checkout agendado avançado por fast-forward de `0fbdf78` para `f8b082c`. A tarefa estava `Ready`, não executando. No próprio checkout agendado, 40 testes passaram e nenhum falhou.
+- Arquivos alterados: `LOG_ATIVIDADES.md` nesta entrada; o checkout agendado recebeu exatamente os sete arquivos publicados no commit anterior e os commits intermediários da `main`. Commit desta entrada: esta publicação.
+- Resultado do aceite: o checkout agendado estava limpo e em `f8b082c`, igual à `main` antes desta entrada final; após publicar esta entrada, será avançado também ao commit final. Evidências: `git rev-parse HEAD`, `git status --short`, estado da tarefa e testes locais nesta sessão.
+- Problemas e pendências: o trabalho anterior do checkout agendado permanece recuperável em `stash@{0}`. O junction `.local_logs/betano` do worktree de teste aponta para os logs da pasta agendada; não altera o executável e fica preservado.
