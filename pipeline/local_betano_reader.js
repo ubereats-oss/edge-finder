@@ -57,7 +57,7 @@ function physicalNetworkBytes() {
 }
 
 function vpnNetworkBytes() {
-  const script = "$adapter = Get-NetAdapter -Name 'Ethernet 2' -ErrorAction Stop; if ($adapter.InterfaceDescription -ne 'TunnelBear Adapter V9' -or $adapter.Status -ne 'Up') { throw 'Adaptador TunnelBear não está ativo.' }; $stats = Get-NetAdapterStatistics -Name $adapter.Name -ErrorAction Stop; [pscustomobject]@{ receivedBytes = [double]$stats.ReceivedBytes; sentBytes = [double]$stats.SentBytes } | ConvertTo-Json -Compress";
+  const script = "$adapter = [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() | Where-Object { $_.Name -eq 'Ethernet 2' -and $_.Description -eq 'TunnelBear Adapter V9' } | Select-Object -First 1; if (-not $adapter) { throw 'Adaptador TunnelBear não encontrado.' }; $stats = $adapter.GetIPv4Statistics(); [pscustomobject]@{ receivedBytes = [double]$stats.BytesReceived; sentBytes = [double]$stats.BytesSent } | ConvertTo-Json -Compress";
   const result = require('node:child_process').spawnSync('powershell.exe', ['-NoProfile', '-Command', script],
     { encoding: 'utf8', timeout: 20000 });
   if (result.status !== 0) return null;

@@ -82,26 +82,43 @@ function readCycleBudget(cycle) {
   const budget = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8'))
     : { limitMB: 2700, expiresAt: '2026-11-01T00:00:00-03:00', initialBalanceMB: null };
   cycle.balanceMB = null;
-  cycle.accumulatedMB = null;
-  const at = performance.now();
-  try {
-    const result = spawnSync('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass',
-      '-File', path.join(ROOT, 'scripts', 'local_bookmakers', 'tunnelbear.ps1'), 'meter-once'],
-    { encoding: 'utf8', timeout: 4500, killSignal: 'SIGKILL', windowsHide: true });
-    if (result.error || result.status !== 0) throw new Error(result.error?.message || result.stderr.trim() || 'Saldo indisponível.');
-    const balance = JSON.parse(result.stdout.trim()).remainingMB;
-    if (!Number.isFinite(balance) || balance < 0) throw new Error('Saldo inválido.');
-    cycle.balanceMB = balance;
-    if (budget.initialBalanceMB === null) budget.initialBalanceMB = balance;
-    cycle.accumulatedMB = budget.initialBalanceMB - balance;
-  } catch (error) { cycle.balanceError = error.message; }
-  cycle.balanceReadDurationMs = Math.round(performance.now() - at);
+  cycle.balanceReadDurationMs = 0;
+  if (!Number.isFinite(budget.carriedForwardMB)) {
+    const history = path.join(LOG_DIR, 'hourly-cycles.jsonl');
+    const recorded = fs.existsSync(history) ? fs.readFileSync(history, 'utf8').trim().split(/\r?\n/)
+      .map(line => { try { return JSON.parse(line).accumulatedMB; } catch { return null; } })
+      .filter(value => Number.isFinite(value)) : [];
+    budget.carriedForwardMB = Math.max(0, recorded.at(-1) || 0);
+    budget.measuredMB = 0;
+    budget.adapterCycles = [];
+    budget.measurementSource = 'TunnelBear Adapter V9 / GetIPv4Statistics';
+  }
+  cycle.accumulatedMB = budget.carriedForwardMB + budget.measuredMB;
   cycle.budget = budget;
   fs.writeFileSync(file, JSON.stringify(budget, null, 2));
   if (Date.now() >= Date.parse(budget.expiresAt)) return 'Orçamento expirado; ciclos pausados até definir novo orçamento.';
+  if (budget.measurementError) return `Orçamento VPN pausado: ${budget.measurementError}`;
   if (cycle.accumulatedMB !== null && cycle.accumulatedMB >= budget.limitMB)
     return `Orçamento VPN atingido: ${cycle.accumulatedMB} MB de ${budget.limitMB} MB.`;
   return null;
+}
+
+function chargeCycleBudget(cycle, before, after) {
+  const budget = cycle.budget;
+  const total = value => value && value.receivedBytes + value.sentBytes;
+  const start = total(before), end = total(after);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) {
+    budget.measurementError = 'bytes do adaptador TunnelBear indisponíveis ou reiniciados';
+    cycle.budgetError = budget.measurementError;
+  } else {
+    cycle.vpnAdapterBytes = end - start;
+    cycle.vpnAdapterMB = cycle.vpnAdapterBytes / 1000000;
+    budget.adapterCycles.push({ startedAt: cycle.startedAt, bytes: cycle.vpnAdapterBytes,
+      before, after });
+    budget.measuredMB = budget.adapterCycles.reduce((sum, entry) => sum + entry.bytes / 1000000, 0);
+  }
+  cycle.accumulatedMB = budget.carriedForwardMB + budget.measuredMB;
+  fs.writeFileSync(path.join(LOG_DIR, 'vpn-budget.json'), JSON.stringify(budget, null, 2));
 }
 
 async function writeRead(db, key, data) {
@@ -145,7 +162,7 @@ async function main() {
   };
   let browser, context, db, vpnConnected = false, vpnBytesBefore = null, vpnBytesAfter = null;
   let networkBefore = null, networkAfter = null, beforeMB = null, afterMB = null;
-  let networkTimer, usageRecorded = false;
+  let networkTimer, usageRecorded = false, budgetCharged = false;
   const processSamples = [];
   let caught;
   let vpnStartedAt = null;
@@ -220,6 +237,8 @@ async function main() {
       cycle.vpnDisconnectedAt = new Date().toISOString();
       cycle.vpnDurationMs = (Date.parse(cycle.disconnected.vpnDisconnectedAt) || Date.now()) - vpnStartedAt;
     });
+    chargeCycleBudget(cycle, vpnBytesBefore, vpnBytesAfter);
+    budgetCharged = true;
     if (networkTimer) clearInterval(networkTimer);
     networkAfter = core.physicalNetworkBytes();
     if (!Object.values(collected).some(data => data.games.length))
@@ -286,6 +305,10 @@ async function main() {
         cycle.vpnDurationMs = (Date.parse(cycle.disconnected.vpnDisconnectedAt) || Date.now()) - vpnStartedAt;
       } catch (error) { cycle.disconnectError = error.message; }
     }
+    if (vpnStartedAt && !budgetCharged && !vpnConnected) {
+      chargeCycleBudget(cycle, vpnBytesBefore, vpnBytesAfter);
+      budgetCharged = true;
+    }
     if (networkBefore && !usageRecorded && !vpnConnected) {
       try {
         networkAfter ||= core.physicalNetworkBytes();
@@ -308,6 +331,8 @@ async function main() {
     fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
     const logLine = { at: cycle.localDateTime, status: cycle.status, balanceMB: cycle.balanceMB,
       accumulatedMB: cycle.accumulatedMB, balanceReadDurationMs: cycle.balanceReadDurationMs,
+      vpnAdapterBytes: cycle.vpnAdapterBytes ?? null, vpnAdapterMB: cycle.vpnAdapterMB ?? null,
+      budgetError: cycle.budgetError || null,
       balanceError: cycle.balanceError || null, reason: cycle.pauseReason || cycle.error || null,
       totalDurationMs: cycle.totalDurationMs, vpnDurationMs: cycle.vpnDurationMs,
       houses: Object.fromEntries(Object.entries(cycle.reads).map(([key, read]) => [key,
