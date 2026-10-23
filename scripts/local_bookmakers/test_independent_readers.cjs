@@ -5,6 +5,30 @@ const { parseBwinFeed, parseLebullHtml, retabetLeague, goldenparkClock,
   betclicClock } = require('./fast_readers.cjs');
 const { classifyVpnCharge } = require('../../pipeline/local_bookmaker_cycle_fast.cjs');
 const { vpnBudgetForDay, shouldRunForPinnacleWindow } = require('./daily_budget.cjs');
+const { flushCycleQueue } = require('./cloud_cycle_queue.cjs');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+
+test('registro local sem internet fica na fila e é reenviado no ciclo seguinte', async () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'edge-cycle-health-'));
+  const cycle = { startedAt: '2026-10-23T21:50:00Z', finishedAt: '2026-10-23T21:53:00Z',
+    status: 'complete', vpnAdapterMB: 25, accumulatedMB: 700, budget: { limitMB: 2700 },
+    reads: { bwin: { games: 11 } } };
+  try {
+    const offline = { collection: () => ({ doc: () => ({ set: async () => { throw Error('sem internet'); } }) }) };
+    assert.equal((await flushCycleQueue(offline, cycle, directory)).pending, 1);
+    const sent = [];
+    const online = { collection: () => ({ doc: id => ({ set: async row => sent.push([id, row]) }) }) };
+    assert.equal((await flushCycleQueue(online, null, directory)).sent, 1);
+    assert.equal(sent[0][1].gamesByHouse.bwin, 11);
+    assert.equal(JSON.parse(fs.readFileSync(path.join(directory, 'cloud-cycle-pending.json'))).length, 0);
+  } finally {
+    const target = fs.realpathSync(directory);
+    assert.equal(path.dirname(target), fs.realpathSync(os.tmpdir()));
+    fs.rmSync(target, { recursive: true, force: true });
+  }
+});
 
 test('VPN divide saldo mensal pelos dias restantes e reinicia em novembro', () => {
   const budget = { month: '2026-10', carriedForwardMB: 150, measuredMB: 750,

@@ -1,14 +1,17 @@
 const { onRequest } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
+const { onTaskDispatched } = require('firebase-functions/v2/tasks');
 const { onDocumentWritten, onDocumentCreated } = require('firebase-functions/v2/firestore');
 const { defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+const { getFunctions } = require('firebase-admin/functions');
 const crypto = require('crypto');
 const riskConfig = require('./risk_config');
 const closingOddsRules = require('./closing_odds_rules');
 const placardPart4 = require('./placard_part4');
+const edgeHealth = require('./edge_health');
 
 initializeApp();
 const db = getFirestore();
@@ -834,6 +837,40 @@ exports.notifyPlacardOpportunity = onDocumentCreated({
   if ((await ref.get()).data()?.telegramMessageId) return;
   const messageId = await placardPart4.sendTelegram(row, TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value());
   await ref.set({ telegramMessageId: messageId, telegramSentAt: new Date().toISOString() }, { merge: true });
+});
+
+exports.dailyEdgeFinderHealth = onSchedule({
+  region: 'southamerica-east1', schedule: '0 8 * * *', timeZone: 'America/Sao_Paulo',
+  secrets: [TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, GH_DISPATCH_TOKEN],
+}, async () => {
+  const report = await edgeHealth.loadHealth(db, GH_DISPATCH_TOKEN.value());
+  const ref = db.collection('_edge_health_reports').doc(edgeHealth.reportDay());
+  const generatedAt = new Date().toISOString();
+  await ref.set({ generatedAt, text: report.text, counts: report.counts, status: 'sending' });
+  try {
+    const messageId = await placardPart4.sendTelegramText(report.text,
+      TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value());
+    await ref.set({ status: 'sent', messageId, sentAt: new Date().toISOString() }, { merge: true });
+  } catch (error) {
+    await ref.set({ status: 'send_failed', error: error.message }, { merge: true });
+    await getFunctions().taskQueue('retryDailyEdgeFinderHealth').enqueue({ reportDay: edgeHealth.reportDay() },
+      { scheduleDelaySeconds: 3600 });
+  }
+});
+
+exports.retryDailyEdgeFinderHealth = onTaskDispatched({
+  region: 'southamerica-east1', secrets: [TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID],
+  retryConfig: { maxAttempts: 1 },
+}, async request => {
+  const ref = db.collection('_edge_health_reports').doc(request.data.reportDay);
+  const report = (await ref.get()).data();
+  if (!report || report.status === 'sent') return;
+  try {
+    const messageId = await placardPart4.sendTelegramText(report.text,
+      TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value());
+    await ref.set({ status: 'sent', messageId, sentAt: new Date().toISOString(), retried: true }, { merge: true });
+  } catch (error) { await ref.set({ status: 'send_failed', error: error.message,
+    retryFailedAt: new Date().toISOString() }, { merge: true }); }
 });
 
 exports.notifyOddsApiExternalUse = onDocumentWritten({

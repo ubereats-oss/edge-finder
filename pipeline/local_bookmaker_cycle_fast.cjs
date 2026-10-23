@@ -9,6 +9,7 @@ const readers = require('../scripts/local_bookmakers/fast_readers.cjs');
 const { failureReasons } = require('../scripts/local_bookmakers/daily_summary.cjs');
 const { PRIORITY } = require('../scripts/local_bookmakers/local_competitions.cjs');
 const { vpnBudgetForDay, shouldRunForPinnacleWindow } = require('../scripts/local_bookmakers/daily_budget.cjs');
+const { flushCycleQueue } = require('../scripts/local_bookmakers/cloud_cycle_queue.cjs');
 const { matchingEvents, namesEqual } = require('../functions/placard_value.js');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -464,6 +465,9 @@ async function main() {
       { encoding: 'utf8', timeout: 4500, killSignal: 'SIGKILL', windowsHide: true });
     if (summary.error || summary.status !== 0)
       console.error(`Resumo diário: ${summary.error?.message || summary.stderr.trim()}`);
+    try { cycle.healthSync = await flushCycleQueue(db || core.database(), cycle, LOG_DIR); }
+    catch (error) { cycle.healthSync = { error: error.message }; }
+    fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
     console.log(JSON.stringify({ outputFile, status: cycle.status, totalDurationMs: cycle.totalDurationMs,
       consumedMB: cycle.consumedMB, vpnDisconnected: !vpnConnected }));
   }
