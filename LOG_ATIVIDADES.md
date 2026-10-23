@@ -275,3 +275,14 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: pendente de ciclo real cujo log registre bytes do adaptador VPN.
 - Problemas encontrados: contador NDIS do adaptador virtual indisponível enquanto desconectado; é necessário confirmar uma fonte de bytes do mesmo adaptador durante a conexão.
 - Pendências: identificar contador da placa VPN, implementar orçamento e aceitar num ciclo real.
+
+## 2026-10-23 — Parte 7: resultado do aceite
+
+- Início: 14:08:48; fim: 14:18:11 (relógio do Windows).
+- Pedido recebido: medir o orçamento de 2.700 MB pelos bytes do adaptador VPN, somados por ciclo, até 31/10; pausar a partir de 01/11.
+- O que foi feito: a leitura da placa passou a usar `NetworkInterface.GetIPv4Statistics()` para `TunnelBear Adapter V9`; cada ciclo grava a diferença dos contadores e a acumula em `vpn-budget.json`. O histórico anterior foi migrado uma única vez a partir do último consumo já registrado, sem nova leitura da janela TunnelBear. Falha de contador bloqueia os próximos ciclos.
+- Arquivos alterados: `pipeline/local_betano_reader.js`, `pipeline/local_bookmaker_cycle_fast.cjs`, `LOG_ATIVIDADES.md`; instalação dos dois arquivos de código e do orçamento no diretório usado pela tarefa local.
+- Commit: `339ab8e` (implementação); este registro será publicado no commit de auditoria subsequente.
+- Resultado do aceite: ciclo real `cycle-2026-10-23T17-15-02-754Z.json` completo em 128.201 ms, VPN 79.681 ms, adaptador 34.440.652 bytes (34,440652 MB), acumulado 184,440652 MB = 150 MB migrados + 34,440652 MB medidos. `hourly-cycles.jsonl` contém `vpnAdapterBytes=34440652`; adaptador desconectado ao final. Testes Node: 34/34 e leitores independentes 3/3.
+- Problemas encontrados: `Get-NetAdapterStatistics` não expõe estatísticas desse adaptador nem quando conectado; a API .NET do Windows expõe os contadores. Os 150 MB migrados foram medidos pelo controle anterior, porque os ciclos anteriores não tinham bytes do adaptador.
+- Pendências: nenhuma do aceite da Parte 7; iniciar a Parte 8.
