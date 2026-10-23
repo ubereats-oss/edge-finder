@@ -4,7 +4,8 @@ const path = require('node:path');
 const LOG_DIR = path.resolve(__dirname, '../../.local_logs/betano');
 const NAMES = { betano: 'Betano', bwin: 'Bwin', lebull: 'LeBull', esc_online: 'ESC Online',
   goldenpark: 'GoldenPark', retabet: 'Retabet', betclic: 'Betclic' };
-const STATUSES = { complete: 'concluído', failed: 'falhou', paused: 'pausado' };
+const STATUSES = { complete: 'concluído', failed: 'falhou', paused: 'pausado',
+  'ciclo pulado': 'ciclo pulado', 'ciclo sem conexão': 'falhou sem conexão' };
 
 function failureReasons(read) {
   if (!['empty', 'timeout', 'failed'].includes(read.readingStatus)) return [];
@@ -45,6 +46,8 @@ function generateSummary() {
   const duration = value => Number.isFinite(value) ? `${number(value / 1000)} s` : 'indisponível';
   const clean = text => text.replace(/\u001b\[[0-9;]*m/g, '').split(/\r?\nCall log:/)[0].replace(/\s+/g, ' ').trim();
   const lines = [`Resumo da coleta local — ${today}`, 'MB decimais do navegador; média por ciclo em que a casa foi executada.', '', 'Ciclos:'];
+  const daily = rows.at(-1)?.dailyVpn;
+  if (daily) lines.push(`VPN hoje: cota ${number(daily.allowance)} MB; gastos ${number(daily.todayUsed)} MB; disponíveis ${number(daily.remaining)} MB; saldo mensal ${number(daily.monthlyRemaining)} MB.`);
   for (const row of rows) {
     const at = new Date(row.at).toLocaleTimeString('pt-BR', { hour12: false });
     lines.push(`${at} | ${STATUSES[row.status] || row.status} | duração: ${duration(row.totalDurationMs)} | VPN: ${duration(row.vpnDurationMs)} | saldo: ${number(row.balanceMB)} MB | acumulado: ${number(row.accumulatedMB)} MB${row.reason ? ' | motivo: ' + clean(row.reason) : ''}${row.balanceError ? ' | falha no saldo: ' + clean(row.balanceError) : ''}`);

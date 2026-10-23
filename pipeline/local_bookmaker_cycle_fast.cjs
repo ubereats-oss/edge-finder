@@ -8,6 +8,7 @@ const core = require('./local_betano_reader.js');
 const readers = require('../scripts/local_bookmakers/fast_readers.cjs');
 const { failureReasons } = require('../scripts/local_bookmakers/daily_summary.cjs');
 const { PRIORITY } = require('../scripts/local_bookmakers/local_competitions.cjs');
+const { vpnBudgetForDay, shouldRunForPinnacleWindow } = require('../scripts/local_bookmakers/daily_budget.cjs');
 const { matchingEvents, namesEqual } = require('../functions/placard_value.js');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -96,15 +97,27 @@ function readCycleBudget(cycle) {
     budget.measurementSource = 'TunnelBear Adapter V9 / GetIPv4Statistics';
   }
   cycle.accumulatedMB = budget.carriedForwardMB + budget.measuredMB;
+  let daily = vpnBudgetForDay(budget, new Date(cycle.startedAt));
+  if (daily.reset) {
+    budget.carriedForwardMB = 0;
+    budget.measuredMB = 0;
+    budget.adapterCycles = [];
+    cycle.accumulatedMB = 0;
+    daily = vpnBudgetForDay({ ...budget, month: daily.month }, new Date(cycle.startedAt));
+  }
+  budget.month = daily.month;
+  budget.limitMB = daily.limitMB;
+  delete budget.expiresAt;
+  cycle.dailyVpn = daily;
   cycle.budget = budget;
   if (budget.measurementError) {
     cycle.previousBudgetError = budget.measurementError;
     delete budget.measurementError;
   }
   fs.writeFileSync(file, JSON.stringify(budget, null, 2));
-  if (Date.now() >= Date.parse(budget.expiresAt)) return 'Orçamento expirado; ciclos pausados até definir novo orçamento.';
   if (cycle.accumulatedMB !== null && cycle.accumulatedMB >= budget.limitMB)
     return `Orçamento VPN atingido: ${cycle.accumulatedMB} MB de ${budget.limitMB} MB.`;
+  if (daily.remaining <= 0) return `Parte diária do VPN esgotada: ${daily.todayUsed.toFixed(3)} MB de ${daily.allowance.toFixed(3)} MB.`;
   return null;
 }
 
@@ -130,6 +143,7 @@ function chargeCycleBudget(cycle, before, after) {
     budget.measuredMB = budget.adapterCycles.reduce((sum, entry) => sum + entry.bytes / 1000000, 0);
   }
   cycle.accumulatedMB = budget.carriedForwardMB + budget.measuredMB;
+  cycle.dailyVpn = vpnBudgetForDay(budget, new Date(cycle.startedAt));
   fs.writeFileSync(path.join(LOG_DIR, 'vpn-budget.json'), JSON.stringify(budget, null, 2));
 }
 
@@ -183,7 +197,7 @@ async function main() {
     cycle.localDateTime = spawnSync('powershell.exe', ['-NoProfile', '-Command', 'Get-Date -Format o'],
       { encoding: 'utf8', timeout: 4000 }).stdout.trim();
     const pauseReason = readCycleBudget(cycle);
-    if (pauseReason) { cycle.status = 'paused'; cycle.pauseReason = pauseReason; return; }
+    if (pauseReason) { cycle.status = 'ciclo pulado'; cycle.pauseReason = pauseReason; return; }
     await stage('preparation', async () => {
       db = core.database();
       const snapshot = await Promise.allSettled(PRIORITY.map(async ([key]) => {
@@ -199,6 +213,8 @@ async function main() {
         cycle.pinnacleWindow[key] = result.status === 'fulfilled'
           ? result.value[1] : { error: result.reason.message, events: [] };
       }
+      cycle.pinnacleDecision = shouldRunForPinnacleWindow(cycle.pinnacleWindow);
+      if (!cycle.pinnacleDecision.run) return;
       const edge = await core.ensureEdge();
       browser = edge.browser;
       context = edge.context;
@@ -207,6 +223,11 @@ async function main() {
       networkBefore = core.physicalNetworkBytes();
       beforeMB = cycle.balanceMB;
     });
+    if (!cycle.pinnacleDecision.run) {
+      cycle.status = 'ciclo pulado';
+      cycle.pauseReason = cycle.pinnacleDecision.reason;
+      return;
+    }
     await stage('vpnConnect', async () => {
       vpnStartedAt = Date.now();
       try { cycle.vpn = core.tunnel('connect', startedAt, 'production_cycle'); }
@@ -404,6 +425,11 @@ async function main() {
       } catch (error) { cycle.usageError = error.message; }
     }
     if (cycle.status === 'ciclo sem conexão') cycle.consumedMB = 0;
+    if (cycle.status === 'ciclo pulado') {
+      cycle.consumedMB = 0;
+      cycle.vpnAdapterBytes = 0;
+      cycle.vpnAdapterMB = 0;
+    }
     if (caught && db) {
       try { await core.updateFailure(db, caught, !vpnConnected); }
       catch (error) { cycle.failureStatusError = error.message; }
@@ -425,6 +451,7 @@ async function main() {
       accumulatedMB: cycle.accumulatedMB, balanceReadDurationMs: cycle.balanceReadDurationMs,
       vpnAdapterBytes: cycle.vpnAdapterBytes ?? null, vpnAdapterMB: cycle.vpnAdapterMB ?? null,
       vpnEstimate: cycle.vpnEstimate || false, vpnProofChecks: cycle.vpnProofChecks || [],
+      dailyVpn: cycle.dailyVpn || null,
       budgetError: cycle.budgetError || null,
       balanceError: cycle.balanceError || null, reason: cycle.pauseReason || cycle.error || null,
       totalDurationMs: cycle.totalDurationMs, vpnDurationMs: cycle.vpnDurationMs,
