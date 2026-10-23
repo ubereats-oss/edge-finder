@@ -19,6 +19,27 @@ function parseEvent(html, game, url, sourceEventId) {
   for (const container of $('.container-event').toArray()) {
     const title = $(container).find('.question-header p').first().text().trim();
     const items = choices($, container);
+    if (game.apiSport === 'basketball_nba') {
+      if (/^(Vencedor|Vencedor do jogo)$/i.test(title) && items.length === 2)
+        markets.push({ type: 'H2HT', title, selections: items.map((item, index) => ({
+          name: index === 0 ? '1' : '2', fullName: item.label,
+          price: item.price, line: null, unavailable: false })) });
+      if (/Total de Pontos/i.test(title)) {
+        const lines = new Map();
+        for (const item of items) {
+          const found = item.label.match(/^(Mais|Menos) de (\d+(?:[,.]\d+)?)$/i);
+          if (!found) continue;
+          const line = Number(found[2].replace(',', '.'));
+          if (!lines.has(line)) lines.set(line, {});
+          lines.get(line)[/^mais/i.test(found[1]) ? 'Over' : 'Under'] = item.price;
+        }
+        for (const [line, both] of lines) if (both.Over && both.Under)
+          markets.push({ type: 'TPOT', title: `${title} ${line}`,
+            selections: ['Over', 'Under'].map(name => ({ name, fullName: `${name} ${line}`,
+              price: both[name], line, unavailable: false })) });
+      }
+      continue;
+    }
     if (title === 'Resultado do jogo' && items.length >= 3) {
       const selections = items.slice(0, 3).map((item, index) => ({
         name: ['1', 'X', '2'][index], fullName: ['1', 'X', '2'][index], price: item.price,

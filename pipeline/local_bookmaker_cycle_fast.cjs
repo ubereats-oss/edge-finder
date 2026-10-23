@@ -7,6 +7,8 @@ const { loadEnvFileIfPresent } = require('./odds_api_client');
 const core = require('./local_betano_reader.js');
 const readers = require('../scripts/local_bookmakers/fast_readers.cjs');
 const { failureReasons } = require('../scripts/local_bookmakers/daily_summary.cjs');
+const { PRIORITY } = require('../scripts/local_bookmakers/local_competitions.cjs');
+const { matchingEvents, namesEqual } = require('../functions/placard_value.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const LOG_DIR = path.join(ROOT, '.local_logs', 'betano');
@@ -151,7 +153,8 @@ async function main() {
   const start = performance.now();
   const outputFile = path.join(LOG_DIR, `cycle-${startedAt.replace(/[:.]/g, '-')}.json`);
   const cycle = { startedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
-    architecture: 'independent_own_listings_v2', stages: {}, reads: {}, feedAttempts: {} };
+    architecture: 'independent_own_listings_v2', stages: {}, reads: {}, feedAttempts: {},
+    leagueAudit: {}, pinnacleWindow: {} };
   const stage = async (name, work) => {
     const at = performance.now();
     const record = { startedAt: new Date().toISOString() };
@@ -173,6 +176,19 @@ async function main() {
     if (pauseReason) { cycle.status = 'paused'; cycle.pauseReason = pauseReason; return; }
     await stage('preparation', async () => {
       db = core.database();
+      const snapshot = await Promise.allSettled(PRIORITY.map(async ([key]) => {
+        const doc = (await db.collection('_placard_pinnacle_latest').doc(key).get()).data() || {};
+        const events = (doc.events || []).filter(event => {
+          const delta = Date.parse(event.commence_time) - Date.now();
+          return delta > 0 && delta <= 12 * 3600000;
+        });
+        return [key, { updatedAt: doc.updatedAt || null, events }];
+      }));
+      for (let i = 0; i < PRIORITY.length; i++) {
+        const key = PRIORITY[i][0], result = snapshot[i];
+        cycle.pinnacleWindow[key] = result.status === 'fulfilled'
+          ? result.value[1] : { error: result.reason.message, events: [] };
+      }
       const edge = await core.ensureEdge();
       browser = edge.browser;
       context = edge.context;
@@ -201,9 +217,47 @@ async function main() {
     cycle.browserMetrics = {};
     const runHouse = (key, reader) => {
       cycle.feedAttempts[key] = [];
+      const httpByUrl = new Map();
+      cycle.leagueAudit[key] = Object.fromEntries(PRIORITY.map(([league]) => [league,
+        { requests: [], seen: 0, events: [], reason: 'não consultada ou não encontrada no catálogo' }]));
       cycle.browserMetrics[key] = {};
       tasks[key] = stage(`read.${key}`, () => boundedRead(context, reader,
-        120000, edgeWindow, detail => cycle.feedAttempts[key].push({ at: new Date().toISOString(), ...detail }),
+        120000, edgeWindow, detail => {
+          const at = new Date().toISOString();
+          cycle.feedAttempts[key].push({ at, ...detail });
+          if (detail.phase === 'http') {
+            httpByUrl.set(detail.url, detail.httpStatus);
+            for (const audit of Object.values(cycle.leagueAudit[key])) {
+              for (const request of audit.requests) if (request.url === detail.url)
+                request.httpStatus = detail.httpStatus;
+              for (const event of audit.events) if (event.url === detail.url)
+                event.httpStatus = detail.httpStatus;
+            }
+          }
+          if (detail.phase === 'league' && cycle.leagueAudit[key][detail.league]) {
+            const audit = cycle.leagueAudit[key][detail.league];
+            audit.requests.push({ at, url: detail.url || null,
+              httpStatus: detail.httpStatus ?? httpByUrl.get(detail.url) ?? null,
+              reason: detail.reason || null });
+            audit.seen += detail.seen ?? 0;
+            audit.events.push(...(detail.events || []).map(event => ({ ...event,
+              httpStatus: event.httpStatus ?? httpByUrl.get(event.url) ?? null })));
+            audit.reason = detail.reason || null;
+          }
+          if (detail.phase === 'event_decision' && cycle.leagueAudit[key][detail.league]) {
+            const audit = cycle.leagueAudit[key][detail.league];
+            const event = audit.events.find(row => row.url === detail.url);
+            if (event) Object.assign(event, { teams: detail.teams,
+              commenceTime: detail.commenceTime, reason: detail.reason });
+            else audit.events.push({ url: detail.url, teams: detail.teams,
+              commenceTime: detail.commenceTime, reason: detail.reason });
+          }
+          if (detail.phase === 'event_discard' && cycle.leagueAudit[key][detail.league]) {
+            const audit = cycle.leagueAudit[key][detail.league];
+            const event = audit.events.find(row => row.teams?.join('|') === detail.teams?.join('|'));
+            if (event) event.reason = detail.reason;
+          }
+        },
         cycle.browserMetrics[key]));
       return tasks[key];
     };
@@ -218,8 +272,20 @@ async function main() {
       const key = keys[index], result = results[index];
       if (result.status === 'fulfilled') {
         collected[key] = result.value;
+        const foundPinnacle = Object.fromEntries(PRIORITY.map(([league]) => [league,
+          result.value.games.filter(game => game.apiSport === league
+            && (cycle.pinnacleWindow[league]?.events || []).filter(event =>
+              Math.abs(Date.parse(event.commence_time) - Date.parse(game.commenceTime)) <= 10 * 60000
+              && game.teams.length === 2 && ((namesEqual(game.teams[0], event.home_team)
+                && namesEqual(game.teams[1], event.away_team))
+                || (namesEqual(game.teams[0], event.away_team)
+                  && namesEqual(game.teams[1], event.home_team)))).length === 1).length]));
+        const matchedPinnacle = Object.fromEntries(PRIORITY.map(([league]) => [league,
+          result.value.games.filter(game => game.apiSport === league
+            && matchingEvents(game, cycle.pinnacleWindow[league]?.events || []).length === 1).length]));
         cycle.reads[key] = { status: result.value.games.length ? 'ready' : 'empty',
           method: result.value.method, games: result.value.games.length,
+          foundPinnacle, matchedPinnacle,
           leagues: Object.fromEntries([...new Set(result.value.games.map(game => game.apiSport))]
             .map(sport => [sport, result.value.games.filter(game => game.apiSport === sport).length])),
           selections: readers.count(result.value.games), diagnostics: result.value.diagnostics };
