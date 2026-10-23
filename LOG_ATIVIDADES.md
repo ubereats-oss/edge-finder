@@ -49,3 +49,15 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite nesta etapa: 32 de 32 testes passaram; execução do workflow e comparações reais ainda pendentes. Evidência: `node --test pipeline/test_placard_value.js` às 10:07.
 - Problemas encontrados: o catálogo Placard não respondeu na execução local anterior.
 - Pendências: validar o workflow real; registrar o resultado e os catálogos de icehockey, americanfootball e mma que falham no GitHub.
+
+## 2026-10-23 — Parte 1: resultado do aceite no GitHub Actions
+
+- Início: 10:07:19 (relógio do Windows).
+- Fim do aceite: 10:15:04 (relógio do Windows).
+- Pedido recebido: validar a Parte 1 no ambiente real e continuar somente se houver leituras e comparações sem erro de teto mensal.
+- O que foi feito: executado manualmente o workflow `Placard x Pinnacle` no commit `12e695b` e acompanhado até terminar; confrontados log, artefato de resumo e resultado salvo no Firestore.
+- Arquivos alterados: somente `LOG_ATIVIDADES.md` nesta entrada adicional de auditoria.
+- Commit: `12e695b` (implementação da Parte 1); commit desta entrada adicional para registrar o resultado posterior à execução.
+- Resultado do aceite: passou. Execução `39958739448` concluída com sucesso; 16 consultas à The Odds API, 31 créditos consumidos, 19 jogos e 41 seleções comparadas, sem ocorrência de “Teto mensal de leituras atingido”. Resumo: saldo real 5.254, 19 chaves em situação normal e sincronização completa. Evidências: log e artefato `placard-summary-39958739448` do GitHub Actions; `_placard_control/scan` com `scanRunId=39958739448-1` e `confirmedSelections=41`.
+- Problemas encontrados: catálogos Placard de icehockey, americanfootball e mma indisponíveis no GitHub; as competições restantes foram processadas.
+- Pendências: tratar esses três catálogos em tarefa própria; Partes 2 a 8 seguem na ordem aprovada.
