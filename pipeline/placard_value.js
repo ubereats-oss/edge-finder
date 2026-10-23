@@ -147,8 +147,6 @@ function compare(game, events, now = Date.now()) {
     const id = crypto.createHash('sha256').update(JSON.stringify([game.apiSport, event.id, s.market, s.line, s.selection])).digest('hex');
     rows.push({ ...s, ...ref, id, apiSport: game.apiSport, eventId: event.id,
       game: `${event.home_team} x ${event.away_team}`, competition: game.competition,
-      teams: [event.home_team, event.away_team], pinnacleSource: event.pinnacleSource || 'the_odds_api',
-      pinnacleAgeSeconds: event.pinnacleAgeSeconds ?? null,
       commenceTime: game.commenceTime, apiCommenceTime: event.commence_time, placardObservedAt: game.observedAt,
       comparedAt: new Date(now).toISOString(), sourceUrl: game.sourceUrl,
       minValueOdds: 1.01 / ref.probability, edgePct,

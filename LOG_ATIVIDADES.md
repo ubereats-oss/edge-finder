@@ -98,3 +98,26 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: não passou. Execução `39961876139` terminou com sucesso operacional, mas registrou 124 consultas à Arcadia, zero respostas frescas, zero pares frescos e 11 usos da reserva (40 créditos The Odds API). O log contém `Arcadia soccer_portugal_primeira_liga: 403`; 32 linhas de erro Arcadia HTTP 403 e 62 releituras de chave no resumo da execução. Evidências: log e artefato `placard-summary-39961876139` do GitHub Actions.
 - Problemas encontrados: a API `.se` devolveu HTTP 403 no GitHub Actions mesmo após reler a chave pública; a causa do bloqueio não está comprovada. A rotina recorreu à The Odds API.
 - Pendências: obter resposta fresca da Arcadia no ambiente real antes de aceitar a Parte 3; Partes 4 a 8 não iniciadas.
+
+## 2026-10-23 — Passo 1: premissas para desfazer a Parte 3
+
+- Início: 12:42:21 (relógio do Windows).
+- Pedido recebido: reverter `696ef30`, manter a The Odds API como única fonte e validar no GitHub Actions.
+- Premissas verificadas antes da implementação: `origin/main` está em `9d0310a`; `696ef30` contém a integração Arcadia e uma entrada anterior do log; o workflow `Placard x Pinnacle` aceita disparo manual e executa `pipeline/run_placard_value.js` no GitHub Actions. A entrada anterior do log deve permanecer, apesar da reversão de código.
+- O que foi feito: registro prévio das premissas e inclusão da nova regra de auditoria em `AGENTS.md`; reversão e aceite pendentes.
+- Arquivos alterados nesta etapa: `AGENTS.md`, `LOG_ATIVIDADES.md`.
+- Commit: pendente.
+- Resultado do aceite: pendente da execução real no GitHub Actions.
+- Problemas encontrados: nenhum nesta etapa.
+- Pendências: reverter código, rodar testes, publicar e validar o workflow.
+
+## 2026-10-23 — Passo 1: reversão preparada
+
+- Início: 12:42:21; fim da preparação: 12:43:05 (relógio do Windows).
+- Pedido recebido: retirar a Arcadia e voltar à The Odds API como fonte única da Pinnacle.
+- O que foi feito: os três arquivos de código alterados por `696ef30` foram restaurados para o estado anterior; `pipeline/arcadia_pinnacle.js` foi removido; a auditoria histórica foi preservada.
+- Arquivos alterados: `AGENTS.md`, `LOG_ATIVIDADES.md`, `pipeline/placard_value.js`, `pipeline/run_placard_value.js`, `pipeline/test_placard_value.js`; removido `pipeline/arcadia_pinnacle.js`.
+- Commit: commit desta preparação na `main` (o hash está no histórico Git).
+- Resultado do aceite nesta etapa: 33/33 testes locais passaram; o aceite de produção no GitHub Actions ainda está pendente. Evidência: `node --test pipeline/test_placard_value.js` às 12:43.
+- Problemas encontrados: nenhum na reversão local.
+- Pendências: publicar, executar `Placard x Pinnacle` e verificar zero consultas Arcadia e comparações quando houver jogos.
