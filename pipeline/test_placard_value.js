@@ -1,7 +1,7 @@
 // Sem rede, chaves, Firebase ou alterações em parâmetros de risco.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { compare, compareBookmaker, comparedSelectionCount, fairProbabilities, references, report, namesEqual, matchingEvents } = require('./placard_value');
+const { compare, compareBookmaker, comparedSelectionCount, fairProbabilities, references, report, betClvReport, namesEqual, matchingEvents } = require('./placard_value');
 const { estimateCost, summarize, planReservation, keyFingerprint, parseHeaders,
   refreshBalances, CLOSING_RESERVE, READING_MARGIN, SCHEMA_VERSION,
   MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, trackUsage } = require('./odds_api_monthly_budget');
@@ -385,6 +385,21 @@ test('veredito respeita n≥100 e IC positivo; correlação não cria novas amos
   assert.equal(report(entries.slice(1)).verdict, 'não confirmado');
   assert.equal(report(entries.map(e => ({ ...e, clvPct: -2 }))).verdict, 'não confirmado');
   assert.equal(report(entries.map(e => ({ ...e, eventId: 'same-event' }))).lower, null);
+});
+
+test('aposta vinculada mostra CLV da indicação e da odd apostada na mesma seleção e fechamento', () => {
+  const entries = [{ id: 'indicacao-1', bookmaker: 'Placard', game: 'Porto x Benfica',
+    market: 'totals', line: 2.5, selection: 'Over', sourceOdds: 2.1,
+    closingStatus: 'capturada', closingFairOdds: 2 }];
+  const bets = [{ id: 'aposta-1', indicationId: 'indicacao-1', odds: 2.2 },
+    { id: 'aposta-sem-indicacao', odds: 3 }];
+  const result = betClvReport(entries, bets);
+  assert.equal(result.total, 1);
+  assert.equal(result.withClosing, 1);
+  assert.ok(Math.abs(result.indicationMean - 5) < 1e-10);
+  assert.ok(Math.abs(result.placedMean - 10) < 1e-10);
+  assert.equal(result.rows[0].line, 2.5);
+  assert.equal(betClvReport([{ ...entries[0], closingStatus: 'indisponivel' }], bets).withClosing, 0);
 });
 test('data relativa do Placard usa UTC explícito e vira o ano corretamente', () => {
   assert.equal(kickoff('Hoje, 19:00', now), '2026-10-20T19:00:00.000Z');

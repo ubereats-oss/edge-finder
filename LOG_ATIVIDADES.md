@@ -191,3 +191,27 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: passou. O Alex confirmou o recebimento da mensagem de teste `message_id=4`. O gatilho Firebase da indicação de teste registrou `telegramMessageId=5`. A Function `revalidatePlacardOpportunities` respondeu HTTP 200 para Brest x Nice: situação `expirou`, motivo `odd abaixo da mínima`, leitura Placard de 16:15:02 UTC, odd 2,26, mínima atual 2,488956, Pinnacle atualizada às 16:33:29 UTC; resposta às 16:33:59 UTC, logo idade da leitura Placard de aproximadamente 19 minutos. O cache de reconferência foi gravado às 16:33:59 UTC e o consumo de outra leitura foi registrado no orçamento. Evidências: respostas do Telegram e da Function nesta sessão, documentos `_placard_opportunities` e `_placard_revalidation_cache`, e confirmação do Alex; documento de teste apagado e ausência confirmada.
 - Problemas encontrados: a primeira implantação pediu confirmação da política de tentativas; a segunda, com `--force` do Firebase CLI, implantou as três Functions. O teste Flutter existente falha por ausência de inicialização Firebase no teste (`core/no-app`), sem falha apontada nas alterações. A versão Web do app ainda não foi compilada nem implantada nesta etapa.
 - Pendências: nenhuma para o aceite ajustado da Parte 4; a publicação da interface Web depende de compilação e implantação em tarefa autorizada.
+
+## 2026-10-23 — Parte 5: premissas antes da implementação
+
+- Início: 13:36:07 (relógio do Windows).
+- Pedido recebido: registrar a odd realmente apostada e mostrar no relatório o CLV dela ao lado do CLV da indicação; testar com uma aposta real de teste e removê-la.
+- Premissas verificadas: o app já grava apostas em `bets` com o campo `odds`, mas a tela Placard ainda não oferece registro ligado à indicação; as indicações e suas odds de fechamento estão em `_placard_opportunities`, com `closingFairOdds` e `clvPct`; o resumo Placard é publicado pelo workflow GitHub Actions em `results/placard_current`; a coleção `bets` é protegida pela regra `isOwner()` no app e pode ser lida pelo pipeline com a conta de serviço.
+- O que foi feito nesta etapa: leitura do fluxo e registro prévio das premissas.
+- Arquivos alterados nesta etapa: `LOG_ATIVIDADES.md`.
+- Commit: pendente.
+- Resultado do aceite: pendente de aposta de teste, relatório de produção com os dois CLVs e exclusão da aposta.
+- Problemas encontrados: nenhum nesta etapa.
+- Pendências: implementar, testar, publicar, executar o workflow em produção, conferir e remover a aposta de teste.
+
+## 2026-10-23 — Parte 5: implementação preparada
+
+- Início: 13:36:07; fim da preparação: 13:39:35 (relógio do Windows).
+- Pedido recebido: capturar a odd efetivamente apostada e mostrar os dois CLVs no relatório.
+- Premissas verificadas antes de alterar o código: `bets.odds` já guarda a odd efetiva; `bets.indicationId` pode ligar a aposta à indicação; o mesmo registro de indicação contém seleção, linha e odd justa de fechamento; a base Firestore `(default)` é STANDARD em `southamerica-east1`.
+- O que foi feito: acrescentado formulário de aposta na tela Placard com odd e valor; o pipeline associa apostas a indicações por ID e publica no relatório os CLVs pareados, usando a mesma odd justa de fechamento para ambos.
+- Arquivos alterados: `lib/screens/placard_opportunities_screen.dart`, `pipeline/placard_value.js`, `pipeline/run_placard_value.js`, `pipeline/test_placard_value.js`, `LOG_ATIVIDADES.md`.
+- Commit: commit desta implementação na `main` (identificado no histórico Git).
+- Resultado do aceite nesta etapa: pendente da validação em produção. Teste do comparador: 34/34 passaram, inclusive indicação 2,10 e aposta 2,20 contra fechamento 2,00, resultando em 5% e 10%. O smoke test Flutter existente ainda falha em `core/no-app` por não inicializar Firebase no teste, como já registrado na Parte 4; o código da tela compilou.
+- Problemas encontrados: teste Flutter legado não prepara Firebase.
+- Pendências: publicar, registrar uma aposta de teste pelo endpoint autenticado usado pelo app, executar `Placard x Pinnacle`, conferir os dois CLVs e remover a aposta.
