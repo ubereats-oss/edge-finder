@@ -1,13 +1,29 @@
 const crypto = require('crypto');
 const aliases = require('./placard_aliases.json');
 const { KELLY_FRACTION } = require('./risk_config');
-const normalize = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
-const normalizedAliases = new Map(Object.entries(aliases).map(([name, values]) => [normalize(name), values]));
+const transliterate = s => String(s).replace(/[łŁ]/g, 'l').replace(/[øØ]/g, 'o')
+  .replace(/[đĐ]/g, 'd').replace(/ß/g, 'ss').replace(/[æÆ]/g, 'ae');
+const words = s => transliterate(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(/\s+/).filter(Boolean);
+const normalize = s => words(s).join('');
+const clubAffixes = new Set(['fc', 'sc', 'cf', 'ac', 'jk', 'fk', 'sk', 'afc', 'gnk', 'tsg', 'pfc']);
+function nameForms(name) {
+  const parts = words(name);
+  const forms = new Set([parts.join('')]);
+  while (parts.length > 1 && clubAffixes.has(parts[0])) parts.shift();
+  while (parts.length > 1 && clubAffixes.has(parts[parts.length - 1])) parts.pop();
+  forms.add(parts.join(''));
+  return forms;
+}
+function shareForm(left, right) {
+  return [...left].some(value => value && right.has(value));
+}
+const aliasGroups = Object.entries(aliases).map(([name, values]) => [name, ...values].map(nameForms));
 function namesEqual(placard, canonical) {
-  const left = normalize(placard), right = normalize(canonical);
-  if (left === right || (normalizedAliases.get(left) || []).some(n => normalize(n) === right)) return true;
-  return [...normalizedAliases.entries()].some(([name, values]) => normalize(name) === right
-    && values.some(value => normalize(value) === left));
+  const left = nameForms(placard), right = nameForms(canonical);
+  if (shareForm(left, right)) return true;
+  return aliasGroups.some(group => group.some(form => shareForm(left, form))
+    && group.some(form => shareForm(right, form)));
 }
 function fairProbabilities(prices) {
   if (prices.length < 2 || prices.some(p => !Number.isFinite(p) || p <= 1)) return null;
@@ -93,7 +109,10 @@ function placardSelections(game, event) {
 function matchingEvents(game, events) {
   const tolerance = game.apiSport?.startsWith('tennis_') ? 3 * 60 * 60 * 1000 : 60000;
   return events.filter(e => Math.abs(Date.parse(e.commence_time) - Date.parse(game.commenceTime)) <= tolerance
-    && game.teams.every(t => namesEqual(t, e.home_team) || namesEqual(t, e.away_team)));
+    && game.teams?.length === 2 && ((namesEqual(game.teams[0], e.home_team) && namesEqual(game.teams[1], e.away_team)
+      && !namesEqual(game.teams[0], e.away_team) && !namesEqual(game.teams[1], e.home_team))
+      || (namesEqual(game.teams[0], e.away_team) && namesEqual(game.teams[1], e.home_team)
+        && !namesEqual(game.teams[0], e.home_team) && !namesEqual(game.teams[1], e.away_team))));
 }
 function nearValueSelections(game, event, now = Date.now()) {
   const refs = references(event, now, false, 24 * 60 * 60 * 1000);

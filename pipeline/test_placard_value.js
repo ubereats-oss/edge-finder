@@ -1,7 +1,7 @@
 // Sem rede, chaves, Firebase ou alterações em parâmetros de risco.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { compare, compareBookmaker, comparedSelectionCount, fairProbabilities, references, report, namesEqual } = require('./placard_value');
+const { compare, compareBookmaker, comparedSelectionCount, fairProbabilities, references, report, namesEqual, matchingEvents } = require('./placard_value');
 const { estimateCost, summarize, planReservation, keyFingerprint, parseHeaders,
   refreshBalances, CLOSING_RESERVE, READING_MARGIN, SCHEMA_VERSION,
   MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, trackUsage } = require('./odds_api_monthly_budget');
@@ -42,6 +42,27 @@ test('apelidos, empate e Kelly central de 25%', () => {
   assert.ok(namesEqual('PSG', 'Paris Saint Germain'));
   assert.ok(namesEqual('NY Knicks', 'New York Knicks'));
   assert.ok(namesEqual('Virtus Bologna', 'Virtus Segafredo Bologna'));
+});
+
+test('variações verificadas de clubes preservam os dois times e o horário do jogo', () => {
+  const pairs = [
+    ['Ferencvaros TC', 'Ferencváros TC'], ['SC União Torreense', 'Torreense'],
+    ['Marselha', 'Marseille'], ['GNK Dinamo Zagreb', 'Dinamo Zagreb'],
+    ['Juventus FC', 'Juventus'], ['OFI Creta', 'OFI Crete'],
+    ['Besiktas', 'Besiktas JK'], ['FC Viktoria Plzen', 'Viktoria Plzeň'],
+    ['Jagiellonia Bialystok', 'Jagiellonia Białystok'], ['Salzburgo', 'Salzburg'],
+    ['Lillestrom SK', 'Lillestrom'], ['Hoffenheim', 'TSG Hoffenheim'],
+    ['Olympiacos', 'Olympiakos Piraeus'], ['AC Omonia Nicosia', 'Omonoia FC'],
+    ['AFC Bournemouth', 'Bournemouth'], ['AC Milão', 'AC Milan'],
+  ];
+  for (const [source, pinnacle] of pairs) assert.ok(namesEqual(source, pinnacle), `${source} / ${pinnacle}`);
+  assert.equal(namesEqual('AC Milan', 'Inter Milan'), false);
+  const game = { apiSport: 'soccer_uefa_europa_league', teams: ['AFC Bournemouth', 'AC Milão'],
+    commenceTime: '2026-10-22T19:00:00Z' };
+  const event = { home_team: 'Bournemouth', away_team: 'AC Milan', commence_time: game.commenceTime };
+  assert.deepEqual(matchingEvents(game, [event]), [event]);
+  assert.deepEqual(matchingEvents({ ...game, teams: ['AC Milan', 'AC Milão'] }, [event]), []);
+  assert.deepEqual(matchingEvents(game, [{ ...event, commence_time: '2026-10-22T19:02:00Z' }]), []);
 });
 test('compara outra casa com identidade e IDs separados sem mudar preço mínimo ou Kelly', () => {
   const { game, event } = fixture();
