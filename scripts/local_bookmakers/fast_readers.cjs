@@ -15,8 +15,8 @@ const { parseEvent } = require('./goldenpark_reader.cjs');
 const { parseMarkets: betclicMarkets } = require('./betclic_reader.cjs');
 
 const BETANO = 'https://www.betano.pt';
-const NBA_PATH = '/api/sports/BASK/hot/trending/leagues/441g/events?req=s,stnf,c,mb';
-const FOOTBALL_PATH = '/api/sports/FOOT/hot/trending/leagues/433g/events?req=s,stnf,c,mb';
+const NBA_PATH = '/api/sports/BASK/hot/trending/leagues/441g/events/?req=s,stnf,c,mb';
+const FOOTBALL_PATH = '/api/sports/FOOT/hot/trending/leagues/433g/events/?req=s,stnf,c,mb';
 const BWIN_URL = 'https://www.bwin.pt/cds-api/bettingoffer/fixtures?x-bwin-accessid=YmQwNTFkNDAtNzM3Yi00YWIyLThkNDYtYWFmNGY2N2Y1OWIx&lang=pt&country=PT&userCountry=PT&fixtureTypes=Standard&state=Latest&offerMapping=Filtered&offerCategories=Gridable&fixtureCategories=Gridable,NonGridable,Other&sportIds=4&isPriceBoost=false&statisticsModes=None&skip=0&take=50&sortBy=Tags';
 const RETABET_INDEX = 'https://www.retabet.pt/desportos/futebol/1';
 const LEBULL_FEED = 'https://lebullpt-ssr.boxwebcdn.work/pt';
@@ -190,10 +190,12 @@ async function lebull(context) {
     try {
       await page.goto('https://www.lebull.pt/apostas-desportivas',
         { waitUntil: 'domcontentloaded', timeout: 45000 });
+      await page.frameLocator('iframe[src*="lebullpt-ssr.boxwebcdn.work"]')
+        .locator('.game-row .team-column-name').first().waitFor({ timeout: 50000 });
       const frame = page.frames().find(item => item.url().includes('lebullpt-ssr.boxwebcdn.work/pt'));
-      if (!frame) throw new Error('LeBull: iframe de odds não carregou.');
-      await frame.locator('.game-row').first().waitFor({ timeout: 25000 });
+      if (!frame) throw new Error('LeBull: iframe de odds não carregou em 50 s.');
       result = parseLebullHtml(await frame.content());
+      if (!result.games.length) throw new Error('LeBull: quadro carregado, sem jogos elegíveis nas ligas e janela configuradas.');
     } finally { await page.close().catch(() => {}); }
     return { ...result, method: 'page_fallback', source: 'LeBull iframe HTML pré-jogo: 1X2 e totais',
       diagnostics: [{ directError: directError.message }, ...result.diagnostics] };
@@ -202,15 +204,15 @@ async function lebull(context) {
 
 function parseRetabetEvent(source, url) {
   const $ = cheerio.load(source);
+  $('style,script,noscript').remove();
   const title = $('title').text().match(/^Aposte no (.+) com Retabet$/i)?.[1];
   const names = title?.split(/\s+-\s+/);
-  const header = $('body').text().replace(/\s+/g, ' ').slice(0, 1200);
+  const header = $('body').text().replace(/\s+/g, ' ');
   const leagueText = $('[class*="breadcrumb"], [class*="competition-name"], [class*="league-name"]')
     .toArray().map(element => $(element).text().trim()).find(text => competition(text));
-  const identity = competition(leagueText);
+  const identity = retabetLeague(url);
   const commenceTime = localClock(header, 'Europe/Lisbon');
-  $('style,script,noscript').remove();
-  if (names?.length !== 2 || !identity || !identity.apiSport.startsWith('soccer_')
+  if (names?.length !== 2 || !identity || (leagueText && competition(leagueText)?.apiSport !== identity.apiSport)
     || !commenceTime || Date.parse(commenceTime) <= Date.now() + 600000
     || Date.parse(commenceTime) > Date.now() + 12 * 3600000) return null;
   const markets = $('.bets__wrapper.jbet').toArray().map(wrapper => ({
@@ -228,12 +230,32 @@ function parseRetabetEvent(source, url) {
     sourceMarket: 'HTML pré-jogo Retabet', markets: parsed };
 }
 
+const RETABET_ROUTES = new Map([
+  ['internacional/liga-europa', 'soccer_uefa_europa_league'],
+  ['internacional/liga-dos-campeoes', 'soccer_uefa_champs_league'],
+  ['portugal/primeira-liga', 'soccer_portugal_primeira_liga'],
+  ['inglaterra/premier-league', 'soccer_epl'],
+  ['espanha/laliga', 'soccer_spain_la_liga'],
+  ['italia/serie-a', 'soccer_italy_serie_a'],
+  ['alemanha/bundesliga', 'soccer_germany_bundesliga'],
+  ['fran-a/ligue-1', 'soccer_france_ligue_one'],
+  ['paises-baixos/eredivisie', 'soccer_netherlands_eredivisie'],
+  ['inglaterra/inglaterra-championship', 'soccer_efl_champ'],
+]);
+function retabetLeague(url) {
+  const parts = new URL(url).pathname.split('/');
+  if (parts[1] !== 'desportos' || parts[2] !== 'futebol' || !/^\d{7,}$/.test(parts.at(-1))) return null;
+  const key = RETABET_ROUTES.get(`${parts[3]}/${parts[4]}`);
+  const entry = PRIORITY.find(([apiSport]) => apiSport === key);
+  return entry ? { apiSport: entry[0], competition: entry[1] } : null;
+}
+
 async function retabet(context) {
   try {
     const html = await responseText(context, RETABET_INDEX, 20000);
     const $ = cheerio.load(html);
     const links = [...new Set($('a[href]').toArray().map(x => new URL($(x).attr('href'), RETABET_INDEX).href)
-      .filter(url => /^https:\/\/www\.retabet\.pt\/desportos\/futebol\/.*\/\d{7,}$/.test(url)))];
+      .filter(url => url.startsWith('https://www.retabet.pt/') && retabetLeague(url)))];
     if (!links.length) throw new Error('Retabet direto sem eventos listados.');
     const settled = await Promise.allSettled(links.slice(0, 12).map(async url => parseRetabetEvent(
       await responseText(context, url, 20000), url)));
@@ -249,7 +271,7 @@ async function retabet(context) {
       await page.locator('a[href*="/desportos/futebol/"]').first().waitFor({ timeout: 20000 });
       const $ = cheerio.load(await page.content());
       const links = [...new Set($('a[href]').toArray().map(x => new URL($(x).attr('href'), RETABET_INDEX).href)
-        .filter(url => /^https:\/\/www\.retabet\.pt\/desportos\/futebol\/.*\/\d{7,}$/.test(url)))];
+        .filter(url => url.startsWith('https://www.retabet.pt/') && retabetLeague(url)))];
       const candidates = links.slice(0, 12);
       const responses = await browserHtml(page, candidates);
       const games = ordered(candidates.map((url, index) => responses[index].html
@@ -355,8 +377,8 @@ function goldenparkRows(html, indexUrl) {
 }
 
 async function goldenpark(context) {
+  let indexes = [GOLDEN_INDEX];
   try {
-    let indexes = [GOLDEN_INDEX];
     try {
       const $ = cheerio.load(await responseText(context, GOLDEN_SPORT, 20000));
       indexes = [...new Set([...indexes, ...$('a[href*="/competicao/"]').toArray()
@@ -382,15 +404,30 @@ async function goldenpark(context) {
     context.report?.({ phase: 'direct_failed', error: directError.message });
     const page = await context.newPage();
     try {
-      await page.goto(GOLDEN_INDEX, { waitUntil: 'domcontentloaded', timeout: 45000 });
-      await page.locator('.line-container.new').first().waitFor({ timeout: 20000 });
-      const matched = goldenparkRows(await page.content(), GOLDEN_INDEX).slice(0, 8);
+      const deadline = Date.now() + 105000;
+      const matched = [];
+      const empty = [];
+      for (const indexUrl of indexes.slice(0, 10)) {
+        if (Date.now() >= deadline || matched.length >= 8) break;
+        try {
+          const response = await page.goto(indexUrl, { waitUntil: 'domcontentloaded',
+            timeout: Math.min(12000, deadline - Date.now()) });
+          await page.locator('.line-container.new').first().waitFor({
+            timeout: Math.min(4000, Math.max(1, deadline - Date.now())) }).catch(() => {});
+          const rows = goldenparkRows(await page.content(), indexUrl);
+          if (rows.length) matched.push(...rows.slice(0, 8 - matched.length));
+          else empty.push({ liga: competition(indexUrl)?.competition, status: response?.status(), motivo: 'sem jogos na janela' });
+        } catch (error) {
+          empty.push({ liga: competition(indexUrl)?.competition, motivo: error.message });
+        }
+      }
+      context.report?.({ phase: 'goldenpark_leagues', details: empty });
       const urls = matched.map(row => new URL(row.href, GOLDEN_INDEX).href);
       const responses = await browserHtml(page, urls);
       const games = ordered(matched.map((row, index) => responses[index].html
         && parseEvent(responses[index].html, row, urls[index],
           row.href.match(/\/evento\/(\d+)/)?.[1] || row.href)).filter(Boolean));
-      if (!games.length) throw new Error(`GoldenPark: ${JSON.stringify(responses.map(x => ({ status: x.status, error: x.error })))}`);
+      if (!games.length) throw new Error(`GoldenPark: nenhuma liga prioritária com jogos e mercados completos; ${JSON.stringify(empty)}; ${JSON.stringify(responses.map(x => ({ status: x.status, error: x.error })))}`);
       return { games, method: 'page_fallback', source: 'GoldenPark HTML pré-jogo: 1X2 e Total de Golos',
         diagnostics: [{ directError: directError.message }] };
     } finally { await page.close().catch(() => {}); }
@@ -457,4 +494,4 @@ async function betclic(context) {
 
 module.exports = { betano, bwin, retabet, lebull, escOnline, goldenpark, betclic,
   parseBwinFeed, parseLebullHtml, parseRetabetEvent, parseEscEvent,
-  betclicCards, parseBetclicEvent, count, responseText };
+  betclicCards, parseBetclicEvent, retabetLeague, count, responseText };

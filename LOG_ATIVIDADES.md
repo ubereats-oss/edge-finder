@@ -338,3 +338,16 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Mudança desde ontem: `1c6b419` (23/10, 14:07) retirou a lista Betano usada para selecionar os jogos de Retabet e GoldenPark. Retabet passou a tomar os primeiros 12 links genéricos e a deduzir liga/horário da página; GoldenPark passou a procurar sua própria listagem, mantendo a página fixa da Liga Europa como fallback. Isso explica a regressão comprovada da seleção/horário na Retabet; na GoldenPark a ausência de partidas observada hoje impede atribuir a falha só à mudança de código.
 - Problemas encontrados: a captura de tela da página Eredivisie da Retabet falhou depois do timeout de 45 s; o HTML parcial foi guardado. Nenhum código de coleta foi alterado.
 - Pendências: somente publicação deste registro; correções dos leitores não foram solicitadas.
+
+## 2026-10-23 — Correção das cinco casas: premissas antes da implementação
+
+- Início: 14:42:20 (relógio do Windows).
+- Pedido recebido: corrigir Betano, LeBull, ESC Online, Retabet e GoldenPark, manter ciclo em até 10 minutos e isolamento de falhas, testar e validar com ciclo real nesta máquina.
+- Premissas verificadas: a API Betano sem barra final devolveu 403 e desafio Cloudflare; a navegação Edge à URL com barra final devolveu 200. O iframe LeBull respondeu 200, mas só ficou visível após 44,6 s; o leitor verifica cedo. ESC Online contém `MarítimoHoje - 16:45`, que falha pela fronteira de palavra exigida em `localClock`. Retabet contém horário após a posição 5.225 do texto bruto e o leitor usa só os primeiros 1.200 caracteres; entre os 12 primeiros links, apenas um era de liga configurada. GoldenPark exibiu apenas campeão da Liga Europa e nenhuma linha de jogo em 45 s; a hipótese de não haver partidas dessa liga fora das quintas não foi comprovada. Evidências em `.local_logs/betano/diagnostico-2026-10-23/` e entrada de diagnóstico anterior.
+- Estado antes da alteração: `EdgeFinder-Betano-Local` pronta, VPN desconectada; código em `8353885`.
+- O que foi feito nesta etapa: somente registro das premissas.
+- Arquivos alterados nesta etapa: `LOG_ATIVIDADES.md`.
+- Commit: pendente.
+- Resultado do aceite: pendente de testes e ciclo real no Windows.
+- Problemas encontrados: hipótese GoldenPark ainda sem confirmação; o código deve avançar para ligas seguintes quando uma estiver vazia.
+- Pendências: implementar as cinco correções, testar, executar o ciclo e publicar com o resultado.
