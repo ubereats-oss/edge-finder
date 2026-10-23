@@ -5,9 +5,10 @@ const crypto = require('crypto');
 const axios = require('axios');
 
 const CLOSING_RESERVE = 800;
+const READING_MARGIN = 200;
 const MONTHLY_SPEND_CAP = 5000;
 const MONTHLY_READ_CAP = MONTHLY_SPEND_CAP - CLOSING_RESERVE;
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 const PENDING_TTL_MS = 2 * 60 * 1000;
 const API_ROOT = 'https://api.the-odds-api.com/v4';
 
@@ -87,11 +88,18 @@ function summarize(state = {}) {
     pendingCredits,
     available,
     closingReserve: CLOSING_RESERVE,
-    readingAvailable: Math.max(0, available - CLOSING_RESERVE),
+    readingAvailable: Math.max(0, available - CLOSING_RESERVE - READING_MARGIN),
     lastSyncedAt: state.lastSyncedAt || null,
     keyCount: balances.length,
     syncComplete: state.syncComplete === true,
     dailyUsage: state.dailyUsage || {},
+    keyStatuses: (state.keyFingerprints || []).map((fingerprint, index) => {
+      const row = state.keyBalances?.[fingerprint] || {};
+      const difference = Number(row.suspiciousDifference || 0);
+      return { index: index + 1, status: difference > 0 ? 'uso externo suspeito' : 'normal',
+        difference, apiUsed: row.used ?? null, systemUsed: row.systemUsed ?? 0,
+        baselineUsed: row.baselineUsed ?? null, remaining: row.remaining ?? null };
+    }),
   };
 }
 
@@ -104,41 +112,54 @@ function removeExpiredPending(pendingRequests, now) {
 
 function updateObservation(previous, observation, observedAt) {
   if (!previous || observation.used === null || previous.used === null || previous.used === undefined) {
-    return { ...observation, observedAt };
+    return { ...previous, ...observation, observedAt };
   }
   // x-requests-used é cumulativo até a virada mensal. Ignora respostas antigas
   // que terminem depois de uma resposta mais recente da mesma chave.
   if (observation.used < previous.used) return previous;
-  return { ...observation, observedAt };
+  return { ...previous, ...observation, observedAt };
+}
+
+function trackUsage(previous, observation, observedAt, ownCost = 0) {
+  const next = updateObservation(previous, observation, observedAt);
+  const baselineUsed = previous?.baselineUsed ?? observation.used ?? null;
+  const systemUsed = Number(previous?.systemUsed || 0) + ownCost;
+  const difference = baselineUsed === null || next.used === null
+    ? 0 : Math.max(0, next.used - baselineUsed - systemUsed);
+  return { ...next, baselineUsed, systemUsed,
+    suspiciousDifference: Math.max(Number(previous?.suspiciousDifference || 0), difference) };
 }
 
 function planReservation(state, keys, cost, label, excludedIndexes = new Set()) {
   const fingerprints = keys.map(keyFingerprint);
-  if (state.schemaVersion !== SCHEMA_VERSION || state.syncComplete !== true
-    || fingerprints.some(fingerprint => !state.keyBalances?.[fingerprint])) {
-    throw new Error('Saldos reais das chaves ainda não foram reconciliados; chamada paga bloqueada.');
-  }
+  const realBalancesAvailable = state.schemaVersion === SCHEMA_VERSION && state.syncComplete === true
+    && fingerprints.every(fingerprint => Number.isFinite(state.keyBalances?.[fingerprint]?.remaining));
   const pendingRequests = removeExpiredPending(state.pendingRequests, Date.now());
   const candidates = keys.map((key, index) => {
     const fingerprint = fingerprints[index];
-    const remaining = Number(state.keyBalances[fingerprint].remaining || 0)
+    const known = state.keyBalances?.[fingerprint]?.remaining;
+    const remaining = (Number.isFinite(known) ? known : Infinity)
       - pendingCostForKey(pendingRequests, fingerprint);
     return { key, index, fingerprint, remaining };
   }).filter(row => row.remaining >= cost && !excludedIndexes.has(row.index))
     .sort((a, b) => b.remaining - a.remaining);
-  const available = Math.max(0, summarize({ ...state, pendingRequests }).totalRemaining
-    - Object.values(pendingRequests).reduce((sum, row) => sum + Number(row.cost || 0), 0));
+  const pendingCost = Object.values(pendingRequests).reduce((sum, row) => sum + Number(row.cost || 0), 0);
+  const available = Math.max(0, summarize({ ...state, pendingRequests }).totalRemaining - pendingCost);
   const closing = /closing/i.test(label);
-  const requiredFloor = closing ? 0 : CLOSING_RESERVE;
-  const spent = monthlyUsed(state) + Object.values(pendingRequests).reduce((sum, row) => sum + Number(row.cost || 0), 0);
-  const monthlyLimit = closing ? MONTHLY_SPEND_CAP : MONTHLY_READ_CAP;
-  if (spent + cost > monthlyLimit) {
-    throw new Error(`Teto mensal de ${closing ? 'créditos totais' : 'leituras'} atingido: usado=${spent}, limite=${monthlyLimit}, custo=${cost} (${label}).`);
+  if (realBalancesAvailable) {
+    const requiredFloor = closing ? 0 : CLOSING_RESERVE + READING_MARGIN;
+    if (available - cost < requiredFloor || !candidates.length) {
+      throw new Error(`Saldo real insuficiente: total=${available}, reserva_fechamentos=${CLOSING_RESERVE}, margem=${READING_MARGIN}, disponível_leituras=${Math.max(0, available - requiredFloor)}, custo=${cost} (${label}).`);
+    }
+  } else {
+    const spent = monthlyUsed(state) + pendingCost;
+    const monthlyLimit = closing ? MONTHLY_SPEND_CAP : MONTHLY_READ_CAP;
+    if (spent + cost > monthlyLimit || !candidates.length) {
+      throw new Error(`Teto mensal de ${closing ? 'créditos totais' : 'leituras'} atingido no modo sem saldo real: usado=${spent}, limite=${monthlyLimit}, custo=${cost} (${label}).`);
+    }
   }
-  if (available - cost < requiredFloor || !candidates.length) {
-    throw new Error(`Saldo real insuficiente: total=${available}, reserva_fechamentos=${CLOSING_RESERVE}, disponível_leituras=${Math.max(0, available - CLOSING_RESERVE)}, custo=${cost} (${label}).`);
-  }
-  return { ...candidates[0], availableAfter: available - cost };
+  return { ...candidates[0], availableAfter: realBalancesAvailable ? available - cost : null,
+    balanceMode: realBalancesAvailable ? 'real' : 'limite_antigo' };
 }
 
 async function refreshBalances(keys, { httpGet = axios.get, db = database(), now = Date.now() } = {}) {
@@ -171,7 +192,7 @@ async function refreshBalances(keys, { httpGet = axios.get, db = database(), now
   await db.runTransaction(async tx => {
     const snap = await tx.get(ref);
     const prior = snap.data() || {};
-    const sameMonth = prior.schemaVersion === SCHEMA_VERSION && prior.month === monthId(new Date(now));
+    const sameMonth = prior.month === monthId(new Date(now));
     const keyBalances = sameMonth
       ? Object.fromEntries(fingerprints.filter(fingerprint => prior.keyBalances?.[fingerprint])
         .map(fingerprint => [fingerprint, prior.keyBalances[fingerprint]]))
@@ -179,7 +200,7 @@ async function refreshBalances(keys, { httpGet = axios.get, db = database(), now
     for (const observation of observations) {
       const priorBalance = keyBalances[observation.fingerprint];
       keyBalances[observation.fingerprint] = {
-        ...updateObservation(priorBalance, observation, observedAt),
+        ...trackUsage(priorBalance, observation, observedAt),
         index: observation.index,
       };
     }
@@ -243,7 +264,7 @@ async function reconcile(reservation, headers) {
     const keyBalances = { ...(state.keyBalances || {}) };
     const previous = keyBalances[reservation.keyFingerprint] || {};
     keyBalances[reservation.keyFingerprint] = {
-      ...updateObservation(previous, observation, observedAt), index: reservation.keyIndex,
+      ...trackUsage(previous, observation, observedAt, observation.last ?? reservation.cost), index: reservation.keyIndex,
     };
     const pendingRequests = { ...(state.pendingRequests || {}) };
     delete pendingRequests[reservation.id];
@@ -284,7 +305,7 @@ async function recordUnreservedResponse(key, index, headers) {
     const state = snap.data() || {};
     if (state.schemaVersion !== SCHEMA_VERSION || !state.keyBalances?.[fingerprint]) return;
     const keyBalances = { ...state.keyBalances,
-      [fingerprint]: { ...updateObservation(state.keyBalances[fingerprint], observation, observedAt), index } };
+      [fingerprint]: { ...trackUsage(state.keyBalances[fingerprint], observation, observedAt, observation.last ?? 0), index } };
     const doc = { ...state, keyBalances };
     result = summarize(doc);
     tx.set(ref, { keyBalances, totalRemaining: result.totalRemaining, available: result.available,
@@ -315,6 +336,6 @@ async function releaseQuotaRejected(reservation) {
 module.exports = {
   reserve, reconcile, refreshBalances, releaseQuotaRejected, estimateCost,
   recordUnreservedResponse, summarize, planReservation, keyFingerprint, parseHeaders,
-  database, CLOSING_RESERVE, SCHEMA_VERSION,
-  MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, monthlyUsed,
+  database, CLOSING_RESERVE, READING_MARGIN, SCHEMA_VERSION,
+  MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, monthlyUsed, trackUsage,
 };

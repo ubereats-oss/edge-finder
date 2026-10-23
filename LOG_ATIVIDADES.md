@@ -37,3 +37,15 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: não passou. Nenhuma chave literal nos arquivos atuais rastreados; 32/32 testes passaram; saldo real de 5.285 créditos e 19 chaves com situação normal no resumo. A execução produziu zero comparações novas e sete falhas do catálogo Placard, uma por esporte, todas com “Nenhum slug Placard respondeu”. Evidências: saída do teste, `placard_run_summary.json` local, resumo `results/placard_current` e log da execução às 06:36–06:37.
 - Problemas encontrados: o catálogo do Placard não respondeu na máquina nesta execução; o requisito de comparações novas ficou sem prova.
 - Pendências: aceitar e publicar a implementação da Parte 1 após uma execução com comparações novas; Partes 2 a 8 não iniciadas.
+
+## 2026-10-23 — Parte 1: publicação para aceite no GitHub Actions
+
+- Início: 10:07:19 (relógio do Windows).
+- Fim da preparação: 10:07:44 (relógio do Windows); o resultado do aceite será acrescentado ao final deste arquivo quando a execução terminar.
+- Pedido recebido: publicar a implementação preparada da cota e das 19 chaves, executar o workflow real e prosseguir somente após o aceite.
+- O que foi feito: repetidos os testes da rotina e preparada a publicação da implementação da Parte 1, mantendo os segredos fora do repositório.
+- Arquivos alterados: `pipeline/odds_api_client.js`, `pipeline/odds_api_monthly_budget.js`, `pipeline/run_placard_value.js`, `pipeline/test_placard_value.js`, `LOG_ATIVIDADES.md`.
+- Commit: commit desta publicação na `main` (identificado no histórico; o arquivo não pode conter seu próprio hash).
+- Resultado do aceite nesta etapa: 32 de 32 testes passaram; execução do workflow e comparações reais ainda pendentes. Evidência: `node --test pipeline/test_placard_value.js` às 10:07.
+- Problemas encontrados: o catálogo Placard não respondeu na execução local anterior.
+- Pendências: validar o workflow real; registrar o resultado e os catálogos de icehockey, americanfootball e mma que falham no GitHub.

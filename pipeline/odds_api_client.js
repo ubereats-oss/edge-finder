@@ -21,9 +21,9 @@ function defaultKeysFromEnv() {
   }
 
   const keys = [];
-  for (let i = 1; i <= 19; i++) {
-    const key = i === 1 ? process.env.ODDS_API_KEY : process.env[`ODDS_API_KEY_${i}`];
-    if (key && key.trim()) keys.push(key.trim());
+  for (let i = 0; i <= 19; i++) {
+    const key = i === 0 ? process.env.ODDS_API_KEY : process.env[`ODDS_API_KEY_${i}`];
+    if (key && key.trim() && !keys.includes(key.trim())) keys.push(key.trim());
   }
   return keys;
 }
@@ -99,7 +99,8 @@ function createOddsApiClient({
   async function get(url, options = {}) {
     let lastError = null;
     const budget = require('./odds_api_monthly_budget');
-    await ensureBalanceSync(budget);
+    try { await ensureBalanceSync(budget); }
+    catch (error) { logger.warn(`[${label}] saldo real indisponível; limite antigo aplicado: ${error.message}`); }
 
     while (exhaustedKeys.size < keys.length) {
       const reservation = await budget.reserve(url, options.params, label, keys, exhaustedKeys);
