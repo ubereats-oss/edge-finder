@@ -351,3 +351,15 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: pendente de testes e ciclo real no Windows.
 - Problemas encontrados: hipótese GoldenPark ainda sem confirmação; o código deve avançar para ligas seguintes quando uma estiver vazia.
 - Pendências: implementar as cinco correções, testar, executar o ciclo e publicar com o resultado.
+
+## 2026-10-23 — Correção das cinco casas: ajuste após o ciclo das 14:50
+
+- Início: 14:42:20; verificação intermediária: 14:53 (relógio do Windows).
+- Pedido recebido: corrigir os cinco leitores e validar no ciclo real da máquina.
+- Premissas: as da entrada anterior; o catálogo GoldenPark pode listar só uma liga mesmo quando a página de competição contém links para outras; o HTML ESC pode colar texto também depois do horário.
+- O que foi feito: a primeira versão corrigiu barra da API Betano, espera LeBull, hora ESC, filtro e busca completa Retabet, e avanço GoldenPark; 38 testes passaram. Publicação inicial: `75f2514`. O ciclo agendado das 14:50 terminou em 117.362 ms, consumiu 34,153006 MB pela placa VPN e registrou causas por casa, mas as cinco casas não leram. A evidência mostrou que a API Betano ainda retornou 403 pelo cliente direto; a página de competição GoldenPark continha links de outras ligas que o catálogo não forneceu; e no HTML ESC a hora também estava colada ao nome seguinte. Ajuste: Betano consulta a API com barra pelo Edge; GoldenPark extrai ligas também da página da competição; ESC aceita texto colado após a hora; Retabet dá até 20 s à requisição da página de jogo.
+- Arquivos alterados: `scripts/local_bookmakers/fast_readers.cjs`, `scripts/local_bookmakers/local_competitions.cjs`, `scripts/local_bookmakers/test_independent_readers.cjs`, `LOG_ATIVIDADES.md`.
+- Commit: pendente nesta etapa.
+- Resultado do aceite: primeira tentativa não conclusiva para os cinco leitores; repetição pendente. Evidências: `.local_logs/betano/cycle-2026-10-23T17-50-01-966Z.json`, `hourly-cycles.jsonl` e HTML do diagnóstico das 14:41. Os 38 testes passaram novamente após o ajuste.
+- Problemas encontrados: 403 direto Betano; catálogo GoldenPark incompleto; fronteira depois da hora ESC; timeout Retabet; LeBull hidratou sem jogos elegíveis.
+- Pendências: repetir um ciclo real com a versão ajustada e registrar resultado final.
