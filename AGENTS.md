@@ -19,6 +19,9 @@
 ## Automações e retomadas
 - Nenhuma sessão cria automações, agendamentos ou retomadas automáticas sem pedido explícito na mensagem atual do usuário.
 
+## Registro de atividades
+- Toda tarefa executada neste projeto registra uma entrada em `LOG_ATIVIDADES.md` ao terminar. Cada entrada informa data, hora de início e fim, resumo do pedido, o que foi feito, arquivos alterados, commit, resultado do aceite com números e evidências, problemas e pendências. Acrescentar entradas somente ao final; nunca alterar ou apagar entradas anteriores nem registrar tokens, chaves ou senhas.
+
 ## Arquitetura
 - `pipeline/` — scripts Node.js de coleta e modelo
 - `lib/screens/` — telas Flutter
