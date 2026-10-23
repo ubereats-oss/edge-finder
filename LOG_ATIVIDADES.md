@@ -309,3 +309,32 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: ciclo real `cycle-2026-10-23T17-21-08-617Z.json` completo em 137.118 ms, VPN 83.046 ms, Betclic leu cinco jogos próprios em cinco ligas, 45 seleções, leitura `local-betclic-1792776159988-921` enviada ao Firestore; Bwin leu seis jogos. O resumo local `resumo-2026-10-23.txt` lista Betclic com um sucesso e não lista Casino Portugal. Testes Node: 37/37.
 - Problemas encontrados: a comparação na nuvem devolveu `processed_with_errors` e zero seleções cruzadas para Betclic, com a mensagem `Futebol bloqueado até validar 20 seleções contra Pinnacle.` O bloqueio de validação não foi alterado porque não faz parte do aceite desta parte.
 - Pendências: validar Betclic na nuvem antes de contar comparações ou indicações; nenhuma pendência no aceite solicitado para a Parte 8.
+
+## 2026-10-23 — Diagnóstico das cinco casas: premissas
+
+- Início: 14:28:36 (relógio do Windows).
+- Pedido recebido: identificar sem alterar a coleta as causas de falha de Betano, LeBull, ESC Online, Retabet e GoldenPark; capturar HTML e telas com uma conexão VPN e medir seus bytes; comparar GoldenPark e Retabet com 22/10 às 14:39.
+- Premissas verificadas antes do diagnóstico: a tarefa `EdgeFinder-Betano-Local` está pronta, o adaptador TunnelBear desconectado e o ciclo de 22/10 às 14:39 registrou sucesso para Betano, Bwin, GoldenPark e Retabet, LeBull vazia e ESC Online em timeout. O commit `1c6b419` alterou os leitores de listagem própria depois daquele ciclo; o commit `339ab8e` trocou apenas a fonte do contador da VPN.
+- O que foi feito nesta etapa: leitura do estado e do histórico e registro prévio; nenhuma conexão VPN ainda.
+- Arquivos alterados: `LOG_ATIVIDADES.md`.
+- Commit: pendente.
+- Resultado do aceite: pendente das capturas e da comparação.
+- Problemas encontrados: nenhum nesta etapa.
+- Pendências: executar o diagnóstico e publicar este registro com o resultado.
+
+## 2026-10-23 — Diagnóstico das cinco casas: resultado
+
+- Início: 14:28:36; fim das leituras e análise: 14:40:18 (relógio do Windows).
+- Pedido recebido: investigar as cinco falhas com uma conexão VPN e comparar GoldenPark e Retabet com o ciclo de 22/10 às 14:39, sem modificar a coleta.
+- O que foi feito: uma conexão VPN; páginas abertas no Edge persistente, com HTML e capturas guardados em `.local_logs/betano/diagnostico-2026-10-23/`; resposta completa da API Betano guardada separadamente em arquivos `*-headers.json` e `*-body.bin`; adaptador VPN lido antes e depois; VPN desconectada. Comparados o ciclo de 22/10 e os leitores antes/depois do commit `1c6b419`.
+- Arquivos alterados: somente `LOG_ATIVIDADES.md` no repositório; artefatos ignorados na pasta local de diagnóstico.
+- Commit: registro a publicar na `main` (hash identificável no histórico Git).
+- Resultado: 53.136.384 bytes (53,136384 MB) no adaptador TunnelBear durante o diagnóstico, conforme `vpn-inicio.json` e `vpn-fim.json`.
+- Betano: o acesso sem barra final à API devolveu HTTP 403, `server: cloudflare`, corpo `Betano Splash Screen` com desafio `/cdn-cgi/challenge-platform`; a página normal de futebol respondeu 200. A navegação Edge à API recebeu 301 para a URL com barra final e depois 200. Evidências: `betano-edge-request-*`, `betano-feed-direto-*`, `betano-futebol.*`, `betano-api-403.*` e `betano_lebull-resultado.json`.
+- LeBull: o quadro `https://lebullpt-ssr.boxwebcdn.work/pt?currency=EUR&parent=www.lebull.pt&` foi pedido e respondeu HTTP 200, mas não estava entre os frames logo após o carregamento da página; após 44,6 s havia quadro e jogos. A resposta HTML direta contém apenas seis linhas skeleton, sem times/odds, antes da hidratação. O leitor atual tenta esse HTML e verifica o frame imediatamente, explicando a falha observada. Evidências: `lebull-inicial.*`, `lebull-quadro-direto.*`, `lebull-espera-45s.*`, `lebull-espera-quadro.html` e os JSONs de rede.
+- ESC Online: a página de jogo respondeu 200 e contém `Total de Golos` com 10 seleções, liga `Liga Portugal` e `Hoje - 16:45`; a extração de texto concatena `MarítimoHoje`, e `localClock()` exige fronteira de palavra antes de `Hoje`, retornando nulo. O leitor descarta o jogo antes de ler o mercado. Evidências: `esc-jogo.*`, `esc_retab-resultado.json`, `fast_readers.cjs:264-289`, `local_competitions.cjs:31-51`.
+- Retabet: a página de GD Chaves–FC Vizela respondeu 200, com `Portugal Liga 2`, `Hoje 18:45`, `1-X-2` e `Mais/menos golos`; o leitor olha apenas os primeiros 1.200 caracteres do texto bruto, dominados por script, e o horário aparece após a posição 5.225, portanto não o encontra. Dos primeiros 12 links lidos, só o sétimo era de liga configurada (Eredivisie), e essa página não completou em 45 s; o HTML parcial foi salvo, sem captura devido ao timeout. Evidências: `retabet-jogo.*`, `retabet-eredivisie.html`, `retabet-lista.*`, `fast_readers.cjs:203-263`.
+- GoldenPark: após HTTP 200 e 45,005 s, `.line-container.new` não apareceu; a tela mostrava apenas o mercado de campeão da Liga Europa 2026/27, sem partidas. O ciclo anterior registrou `GoldenPark direto sem eventos listados` e timeout no mesmo seletor. Ontem às 14:39 havia 4 jogos e 36 seleções. A razão de a casa não listar partidas nessa página hoje não está demonstrada. Evidências: `goldenpark-lista.*`, `goldenpark-resultado.json`, ciclos `2026-10-22T17-39-35-609Z` e `2026-10-23T17-21-08-617Z`.
+- Mudança desde ontem: `1c6b419` (23/10, 14:07) retirou a lista Betano usada para selecionar os jogos de Retabet e GoldenPark. Retabet passou a tomar os primeiros 12 links genéricos e a deduzir liga/horário da página; GoldenPark passou a procurar sua própria listagem, mantendo a página fixa da Liga Europa como fallback. Isso explica a regressão comprovada da seleção/horário na Retabet; na GoldenPark a ausência de partidas observada hoje impede atribuir a falha só à mudança de código.
+- Problemas encontrados: a captura de tela da página Eredivisie da Retabet falhou depois do timeout de 45 s; o HTML parcial foi guardado. Nenhum código de coleta foi alterado.
+- Pendências: somente publicação deste registro; correções dos leitores não foram solicitadas.
