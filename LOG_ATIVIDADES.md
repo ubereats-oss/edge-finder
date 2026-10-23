@@ -263,3 +263,15 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: os três arquivos instalados passaram `node --check`; o módulo dos leitores carregou na cópia principal. O ciclo real anterior, executado nesta máquina com os mesmos arquivos, terminou em 130.787 ms e leu 6 jogos da Bwin, com 22 seleções comparadas. Evidências: log do ciclo, saídas de sintaxe e carga do módulo, estado da tarefa `Ready`.
 - Problemas encontrados: a cópia principal da branch `main` está atrasada e tem alterações não relacionadas de outra sessão; por isso somente os arquivos da coleta foram instalados, ficando modificados localmente até uma atualização geral da cópia principal. Essa atualização não faz parte deste pedido.
 - Pendências: nenhuma do aceite da Parte 6; iniciar a Parte 7. As falhas das cinco casas constam no log do ciclo.
+
+## 2026-10-23 — Parte 7: premissas antes da implementação
+
+- Início: 14:08:48 (relógio do Windows).
+- Pedido recebido: controlar os 2.700 MB até 31/10 pelos bytes da placa VPN somados por ciclo e pausar a partir de 01/11.
+- Premissas verificadas: o ciclo atual lê uma vez o saldo do TunnelBear antes da conexão e usa a diferença desde `initialBalanceMB=10219` para bloquear; o adaptador se chama `Ethernet 2`, descrição `TunnelBear Adapter V9`, e `Get-NetAdapterStatistics` não retornou dados quando estava desconectado. Nos dois ciclos reais da Parte 6, a fonte da medição caiu para limite superior do Wi-Fi, pois `vpnNetworkBytes()` retornou nulo. O orçamento antigo permanece em `.local_logs/betano/vpn-budget.json`; a rotina já pausa depois de 31/10.
+- O que foi feito nesta etapa: só leitura do estado e registro prévio das premissas; nenhuma alteração de código ou conexão VPN.
+- Arquivos alterados nesta etapa: `LOG_ATIVIDADES.md`.
+- Commit: pendente.
+- Resultado do aceite: pendente de ciclo real cujo log registre bytes do adaptador VPN.
+- Problemas encontrados: contador NDIS do adaptador virtual indisponível enquanto desconectado; é necessário confirmar uma fonte de bytes do mesmo adaptador durante a conexão.
+- Pendências: identificar contador da placa VPN, implementar orçamento e aceitar num ciclo real.
