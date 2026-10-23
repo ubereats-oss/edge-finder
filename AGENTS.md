@@ -19,6 +19,9 @@
 ## Automações e retomadas
 - Nenhuma sessão cria automações, agendamentos ou retomadas automáticas sem pedido explícito na mensagem atual do usuário.
 
+## Escopo congelado
+- O escopo do Edge Finder está congelado em 23/10/2026. Mudanças só são permitidas para corrigir falhas apontadas pela mensagem diária de saúde ou por pedido explícito do Alex.
+
 ## Registro de atividades
 - Toda tarefa executada neste projeto registra uma entrada em `LOG_ATIVIDADES.md` ao terminar. Cada entrada informa data, hora de início e fim, resumo do pedido, o que foi feito, arquivos alterados, commit, resultado do aceite com números e evidências, problemas e pendências. Acrescentar entradas somente ao final; nunca alterar ou apagar entradas anteriores nem registrar tokens, chaves ou senhas.
 
