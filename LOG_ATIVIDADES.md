@@ -132,3 +132,27 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: passou. Execução `39980735909` concluída com sucesso no commit `099cffc`, zero linhas Arcadia no log, 4 consultas The Odds API, 5 créditos, 35 diagnósticos, 51 seleções comparadas e 6 confirmadas; `scanRunId=39980735909-1`. Evidências: log e artefato `placard-summary-39980735909` do GitHub Actions; `_placard_control/scan` no Firestore.
 - Problemas encontrados: catálogos de icehockey, americanfootball e mma permaneceram indisponíveis; não afetam este aceite.
 - Pendências: nenhuma do Passo 1; iniciar a Parte 4.
+
+## 2026-10-23 — Parte 4: premissas antes da implementação
+
+- Início: 12:57:22 (relógio do Windows).
+- Pedido recebido: avisos no Telegram para indicações novas e reconferência de Placard ao abrir o app, com aceite no Telegram e no Firebase real.
+- Premissas verificadas: o workflow GitHub Actions `Placard x Pinnacle` grava indicações em `_placard_opportunities`; cada leitura salva jogos e odds Placard em `_placard_reads`; o app lê `results/placard_current` e hoje apenas calcula a idade da indicação; as Functions rodam em Firebase e os segredos The Odds API foram configurados na Parte 1. A leitura do Placard pode ter até 30 minutos e deve ter a idade exibida, sem presumir atualização instantânea.
+- Dependência ainda não satisfeita: token do robô Telegram e conversa iniciada pelo Alex para identificar o destinatário; pedido enviado ao Alex nesta etapa.
+- O que foi feito: somente leitura do código e registro das premissas; implementação pendente.
+- Arquivos alterados nesta etapa: `LOG_ATIVIDADES.md`.
+- Commit: pendente.
+- Resultado do aceite: pendente de mensagem de teste recebida e chamada ao serviço Firebase publicado.
+- Problemas encontrados: nenhum nesta etapa.
+- Pendências: implementar, publicar e aceitar no ambiente real antes da Parte 5.
+
+## 2026-10-23 — Parte 4: parada por segredo ausente
+
+- Início: 12:57:22; fim da preparação: 13:11:30 (relógio do Windows).
+- Pedido recebido: avisar indicações novas pelo Telegram e reconferir o Placard com a leitura mais recente e a The Odds API no Firebase.
+- O que foi feito: preparada na cópia de trabalho a Function de aviso, a Function autenticada de reconferência, a leitura do app e testes; pedido ao Alex o token do robô e a conversa iniciada. Nenhum código desta parte foi publicado ou implantado.
+- Arquivos alterados apenas localmente: `functions/index.js`, `functions/placard_part4.js`, `functions/odds_api_monthly_budget.js`, `functions/placard_value.js`, `functions/placard_aliases.json`, `functions/test_placard_part4.js`, `functions/package.json`, `functions/package-lock.json`, `lib/services/api_service.dart`, `lib/screens/placard_opportunities_screen.dart`; esta entrada em `LOG_ATIVIDADES.md` será publicada sozinha.
+- Commit: commit desta entrada de auditoria na `main` (identificado no histórico Git); nenhum commit de implementação da Parte 4.
+- Resultado do aceite: não executado, pois o token e o identificador da conversa Telegram ainda não foram fornecidos. Testes locais do módulo: 5/5 passaram; 33/33 testes do comparador passaram. O teste Flutter existente falhou ao montar o app porque não inicializa Firebase (`core/no-app`), sem apontar erro de compilação na alteração. Evidências: saídas de `node --test` e `flutter test test/widget_test.dart` nesta sessão.
+- Problemas encontrados: segredo e destinatário Telegram pendentes; o teste Flutter existente depende de inicialização Firebase ausente.
+- Pendências: receber token, configurar segredos, publicar, implantar e executar os dois aceites reais. Partes 5 a 8 não iniciadas.
