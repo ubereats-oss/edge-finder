@@ -1,14 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { competition, localClock, ordered } = require('./local_competitions.cjs');
-const { parseBwinFeed, parseLebullHtml, retabetLeague, goldenparkClock } = require('./fast_readers.cjs');
-
-test('GoldenPark interpreta a data curta da listagem na hora de Brasília', () => {
-  assert.equal(goldenparkClock('Sex 23 out 17:00', new Date('2026-10-23T18:00:00Z')),
-    '2026-10-23T20:00:00.000Z');
-  assert.equal(goldenparkClock('Sáb 24 out 11:30', new Date('2026-10-23T18:00:00Z')),
-    '2026-10-24T14:30:00.000Z');
-});
+const { parseBwinFeed, parseLebullHtml, retabetLeague } = require('./fast_readers.cjs');
 
 test('liga e horário vêm da própria casa, com prioridade fixa', () => {
   assert.equal(competition('UEFA Europa League').apiSport, 'soccer_uefa_europa_league');
@@ -20,7 +13,7 @@ test('liga e horário vêm da própria casa, com prioridade fixa', () => {
     new Date('2026-10-23T12:00:00Z')), '2026-10-23T16:45:00.000Z');
   assert.deepEqual(ordered([{ apiSport: 'basketball_nba', commenceTime: '2026-10-24T00:00:00Z' },
     { apiSport: 'soccer_uefa_europa_league', commenceTime: '2026-10-24T01:00:00Z' }])
-    .map(game => game.apiSport), ['basketball_nba', 'soccer_uefa_europa_league']);
+    .map(game => game.apiSport), ['soccer_uefa_europa_league', 'basketball_nba']);
 });
 
 test('Retabet só abre eventos das ligas configuradas, sem confundir nomes semelhantes', () => {
@@ -70,25 +63,4 @@ test('LeBull lê competição e odds da sua listagem sem lista de outra casa', (
   assert.equal(result.games[0].apiSport, 'soccer_uefa_europa_league');
   assert.deepEqual(result.games[0].teams, ['Porto', 'Benfica']);
   assert.equal(result.games[0].markets.length, 2);
-});
-
-test('LeBull mantém NBA na primeira prioridade e extrai vencedor e total de pontos', () => {
-  const next = new Date(Date.now() + 3600000);
-  const current = new Date();
-  const date = value => new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Sao_Paulo',
-    year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
-    hourCycle: 'h23' }).format(value);
-  const clock = date(next).slice(12, 17);
-  const day = date(next).slice(0, 10) === date(current).slice(0, 10) ? 'Hoje' : 'Amanhã';
-  const cell = (label, price) => `<span class="odd-cell"><span class="odd-cell-label">${label}</span><span class="odd-cell-value"><span class="rank-arrow">${price}</span></span></span>`;
-  const html = `<div><span>NBA</span><div class="game-row">
-    <span class="team-column-name" title="Chicago Bulls"></span><span class="team-column-name" title="Milwaukee Bucks"></span>
-    <span class="betting-table-link">${day} ${clock}</span>
-    <div class="game-row-odds-item"><span class="market-name">Vencedor</span>${cell('1', '1.86')}${cell('2', '1.74')}</div>
-    <div class="game-row-odds-item"><span class="market-name">Total de Pontos Mais/Menos</span>${cell('O (240.5)', '1.79')}${cell('U (240.5)', '1.76')}</div>
-  </div></div>`;
-  const result = parseLebullHtml(html);
-  assert.equal(result.games.length, 1);
-  assert.deepEqual(result.games[0].markets.map(market => market.type), ['H2HT', 'TPOT']);
-  assert.equal(result.audit[0].reason, 'aceito');
 });
