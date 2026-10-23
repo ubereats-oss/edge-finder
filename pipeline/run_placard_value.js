@@ -305,7 +305,8 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
           const reason = result.reason === 'evento_sem_correspondencia' && known.length === 1
             ? 'preco_conhecido_aguardando_gatilho' : result.reason;
           diagnostics.push({ competition: cfg.label, teams: game.teams, reason,
-            comparedSelections, confirmedSelections: result.comparedSelections ?? 0, alternateError });
+            comparedSelections, confirmedSelections: result.comparedSelections ?? 0,
+            blockedSelections: result.blockedSelections || [], alternateError });
           for (const row of result.rows) { await saveOpportunity(db, row); rows.push(row); }
         }
         if (refreshedEvents.length) await cacheRef.set({ events, notFoundProbes, updatedAt: new Date().toISOString() });
@@ -406,7 +407,8 @@ async function processBookmakerRead(db, readId) {
         rows.push(row);
       }
       diagnostics.push({ apiSport: sport, teams: game.teams, comparedSelections: comparison.comparedSelections || 0,
-        opportunities: comparison.rows.length, reason: comparison.reason || null, alternateError });
+        opportunities: comparison.rows.length, blockedSelections: comparison.blockedSelections || [],
+        reason: comparison.reason || null, alternateError });
     }, (game, error) => errors.push({ apiSport: sport, teams: game.teams, error: error.message }));
   }, (group, error) => { errors.push({ apiSport: group[0], error: error.message }); });
   if (validationOnly) {
