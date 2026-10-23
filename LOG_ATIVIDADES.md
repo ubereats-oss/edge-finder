@@ -363,3 +363,15 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: primeira tentativa não conclusiva para os cinco leitores; repetição pendente. Evidências: `.local_logs/betano/cycle-2026-10-23T17-50-01-966Z.json`, `hourly-cycles.jsonl` e HTML do diagnóstico das 14:41. Os 38 testes passaram novamente após o ajuste.
 - Problemas encontrados: 403 direto Betano; catálogo GoldenPark incompleto; fronteira depois da hora ESC; timeout Retabet; LeBull hidratou sem jogos elegíveis.
 - Pendências: repetir um ciclo real com a versão ajustada e registrar resultado final.
+
+## 2026-10-23 — Correção das cinco casas: aceite nesta máquina
+
+- Início: 14:42:20; fim da implementação e do aceite: 15:01:53 (relógio do Windows).
+- Pedido recebido: corrigir cinco leitores com base no diagnóstico das 14:41, testar, executar ciclo real e publicar.
+- Premissas: as da primeira entrada desta tarefa; os links de Primeira Liga, Premier League, La Liga, Serie A, Bundesliga e Ligue 1 da GoldenPark constam no HTML guardado no diagnóstico.
+- O que foi feito: a Betano consulta os feeds com barra pelo Edge quando o acesso direto é bloqueado; a LeBull espera o quadro; o relógio da ESC aceita `Hoje` ou `Amanhã` colado aos dois lados; a Retabet procura a hora na página inteira e filtra liga antes de abrir; a GoldenPark continua pelas ligas conhecidas quando uma não tem jogos. O ciclo mantém leituras independentes e limite de 10 minutos.
+- Arquivos alterados: `scripts/local_bookmakers/fast_readers.cjs`, `scripts/local_bookmakers/local_competitions.cjs`, `scripts/local_bookmakers/test_independent_readers.cjs` e `LOG_ATIVIDADES.md`.
+- Commit: `75f2514`, `c7b024f` e o commit de consolidação que inclui esta entrada.
+- Resultado do aceite: 38/38 testes passaram; ciclo real iniciado às 14:58:53, completo em 156.717 ms (2 min 36,717 s), VPN desligado ao final e 44.985.965 bytes (44,985965 MB) consumidos no adaptador. Betano: 0 jogo elegível, embora o Edge tenha recebido HTTP 200 com 18 eventos de futebol e 12 de basquete; LeBull: 0, quadro carregado sem jogo elegível; ESC Online: 4 jogos; Retabet: 4; GoldenPark: 0, sete ligas consultadas com HTTP 200 e sem partidas na janela. Bwin: 6; Betclic: 5. Evidências: `.local_logs/betano/cycle-2026-10-23T17-58-53-226Z.json`, `hourly-cycles.jsonl` e HTML do diagnóstico.
+- Problemas encontrados: o cliente HTTP direto da Betano ainda recebe 403; a janela atual não oferece evento Betano elegível, nem partida GoldenPark nas sete ligas acessíveis. Nenhum desses motivos impediu as outras leituras.
+- Pendências: não sei se Betano e GoldenPark terão jogos elegíveis em ciclos futuros; nenhuma alteração adicional foi feita para presumir isso.

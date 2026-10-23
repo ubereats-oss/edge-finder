@@ -23,6 +23,15 @@ const LEBULL_FEED = 'https://lebullpt-ssr.boxwebcdn.work/pt';
 const ESC_INDEX = 'https://www.estorilsolcasinos.pt/pt/betting/sport/futebol-844/matches/date-0';
 const GOLDEN_INDEX = 'https://apostas.goldenpark.pt/competicao/6675-liga-europa?jogar=si';
 const GOLDEN_SPORT = 'https://apostas.goldenpark.pt/desporte/13-futebol';
+const GOLDEN_KNOWN_LEAGUES = [
+  GOLDEN_INDEX,
+  'https://apostas.goldenpark.pt/competicao/154-primeira-liga',
+  'https://apostas.goldenpark.pt/competicao/94-premier-league',
+  'https://apostas.goldenpark.pt/competicao/306-laliga',
+  'https://apostas.goldenpark.pt/competicao/305-serie-a',
+  'https://apostas.goldenpark.pt/competicao/268-bundesliga',
+  'https://apostas.goldenpark.pt/competicao/96-ligue-1-mcdonald-s-r',
+];
 const BETCLIC_HOME = 'https://www.betclic.pt/futebol-s1';
 const BETCLIC_EUROPA = 'https://www.betclic.pt/futebol-sfootball/liga-europa-c3453';
 const count = games => games.reduce((sum, game) => sum + game.markets.reduce((n, market) => n + market.selections.length, 0), 0);
@@ -104,6 +113,7 @@ async function betano(context) {
         const data = await response.json();
         if (!Array.isArray(data?.data?.events)) throw new Error(`Betano: JSON sem eventos: ${path}`);
         payloads.push(data);
+        diagnostics.push({ phase: 'edge_feed', status: 200, events: data.data.events.length, path });
       } catch (error) { diagnostics.push({ phase: 'edge_feed', error: error.message }); }
     }
   } catch (error) { diagnostics.push({ phase: 'own_listing', error: error.message }); }
@@ -113,7 +123,7 @@ async function betano(context) {
     byEvent.set(`${game.apiSport}|${game.sourceEventId}`, adaptTotalsAndHandicaps(game));
   const games = ordered(future([...byEvent.values()]));
   if (!games.length) throw new Error(`Betano sem odds elegíveis nas próximas 12 horas: ${
-    diagnostics.map(row => row.error).join('; ') || 'listagens sem eventos das ligas alvo'}`);
+    diagnostics.map(row => row.error || `${row.phase} HTTP ${row.status}, ${row.events} eventos`).join('; ') || 'listagens sem eventos das ligas alvo'}`);
   return { games, diagnostics, method: 'own_listing', source: 'Betano JSON da própria listagem' };
 }
 
@@ -391,7 +401,7 @@ function goldenparkRows(html, indexUrl) {
 }
 
 async function goldenpark(context) {
-  let indexes = [GOLDEN_INDEX];
+  let indexes = GOLDEN_KNOWN_LEAGUES;
   try {
     try {
       const catalogs = await Promise.allSettled([GOLDEN_SPORT, GOLDEN_INDEX]
