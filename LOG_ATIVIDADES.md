@@ -74,3 +74,15 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Dez exemplos conferidos (local → Pinnacle): Ferencvaros TC/SC União Torreense → Ferencváros TC/Torreense; Besiktas/Crystal Palace → Besiktas JK/Crystal Palace; FC Viktoria Plzen/PFC Levski Sofia → Viktoria Plzeň/PFC Levski Sofia; Jagiellonia Bialystok/Anderlecht → Jagiellonia Białystok/Anderlecht; NK Celje/Salzburgo → NK Celje/Salzburg; Lillestrom SK/Real Sociedad → Lillestrom/Real Sociedad; Hoffenheim/Lyon → TSG Hoffenheim/Lyon; Olympiacos/Sparta Praga → Olympiakos Piraeus/Sparta Prague; SK Sturm Graz/Marselha → SK Sturm Graz/Marseille; GNK Dinamo Zagreb/NEC Nijmegen → Dinamo Zagreb/NEC Nijmegen.
 - Problemas encontrados: a implementação anterior não transliterava `ł` e não reconhecia siglas ou as variantes observadas; nenhuma incompatibilidade restante neste conjunto salvo.
 - Pendências: nenhuma da Parte 2.
+
+## 2026-10-23 — Parte 3: publicação para aceite da fonte Pinnacle
+
+- Início: 10:21:04 (relógio do Windows).
+- Fim da preparação: 10:30:40 (relógio do Windows); o resultado do aceite real será acrescentado ao final após a execução.
+- Pedido recebido: usar Arcadia `.se` com chave pública atual e respostas com `Age < 120 s`, mantendo a The Odds API como reserva para comparação e fechamento.
+- O que foi feito: adicionada a leitura da chave no `app.json` e sua renovação após HTTP 403, consulta de jogos e mercados a cada 20 s até resposta fresca dentro do prazo, adaptação de resultado/totais/handicaps e registro da fonte em comparações, indicações e fechamentos. A consulta à The Odds API fica como reserva de preços.
+- Arquivos alterados: `pipeline/arcadia_pinnacle.js`, `pipeline/run_placard_value.js`, `pipeline/placard_value.js`, `pipeline/test_placard_value.js`, `LOG_ATIVIDADES.md`.
+- Commit: commit desta publicação na `main` (identificado no histórico Git; o arquivo não pode conter seu próprio hash).
+- Resultado do aceite nesta etapa: 35/35 testes passaram; execução real de `Placard x Pinnacle` ainda pendente. Evidência: `node --test pipeline/test_placard_value.js` às 10:30.
+- Problemas encontrados: a Arcadia alterna respostas com e sem `Age`, por isso ambas as respostas necessárias ao preço exigem idade válida abaixo de 120 s.
+- Pendências: executar e comprovar uso real da Arcadia, número de consultas frescas e acionamentos da reserva.
