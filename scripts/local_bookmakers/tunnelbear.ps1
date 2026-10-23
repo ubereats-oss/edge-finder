@@ -62,50 +62,6 @@ function Wait-TunnelBearStatus([string]$Expected, [int]$TimeoutSeconds = 90) {
   throw "TunnelBear não atingiu o estado '$Expected'; estado observado: '$($state.Status)'."
 }
 
-function Get-VpnAdapter {
-  return [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() |
-    Where-Object { $_.Name -eq 'Ethernet 2' -and $_.Description -eq 'TunnelBear Adapter V9' } |
-    Select-Object -First 1
-}
-
-function Get-VpnProof {
-  $adapter = Get-VpnAdapter
-  if (-not $adapter) { throw 'Adaptador TunnelBear Adapter V9 não encontrado.' }
-  if ($adapter.OperationalStatus -ne [System.Net.NetworkInformation.OperationalStatus]::Up) {
-    return @{ Connected = $false; Adapter = $adapter.OperationalStatus.ToString(); Country = $null }
-  }
-  try {
-    $ip = Invoke-RestMethod -Uri 'https://ipwho.is/' -TimeoutSec 8
-    return @{ Connected = ($ip.success -eq $true -and $ip.country_code -eq 'PT');
-      Adapter = 'Up'; Country = $ip.country_code; PublicIp = $ip.ip }
-  } catch {
-    return @{ Connected = $false; Adapter = 'Up'; Country = $null; Error = $_.Exception.Message }
-  }
-}
-
-function Get-TunnelBearSwitch {
-  $root = [System.Windows.Automation.AutomationElement]::RootElement
-  $windowCondition = New-Object System.Windows.Automation.PropertyCondition(
-    [System.Windows.Automation.AutomationElement]::NameProperty, 'TunnelBear')
-  $window = $root.FindFirst([System.Windows.Automation.TreeScope]::Children, $windowCondition)
-  if (-not $window) { throw 'Janela TunnelBear indisponível para clicar no interruptor.' }
-  $switchCondition = New-Object System.Windows.Automation.PropertyCondition(
-    [System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'vpnSwitch')
-  $switch = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $switchCondition)
-  if (-not $switch) { throw 'Interruptor TunnelBear indisponível.' }
-  return $switch.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
-}
-
-function Wait-VpnProof([bool]$Expected, [int]$TimeoutSeconds) {
-  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
-  do {
-    $proof = Get-VpnProof
-    if ($proof.Connected -eq $Expected) { return $proof }
-    Start-Sleep -Seconds 2
-  } while ([DateTime]::UtcNow -lt $deadline)
-  throw "VPN sem confirmação pela placa e IP português: adaptador=$($proof.Adapter), país=$($proof.Country), erro=$($proof.Error)."
-}
-
 function Get-MeterReading([int]$StableSeconds = 90) {
   $last = $null
   $lastChangedAt = [DateTime]::UtcNow
@@ -154,21 +110,50 @@ try {
     if (-not $reading) { throw 'Saldo TunnelBear indisponível.' }
     [pscustomobject]@{ action = $Action; remainingMB = [int]($reading -replace '\D', '') } | ConvertTo-Json -Compress
   } elseif ($Action -eq 'connect') {
-    Write-ConnectionAttempt 1 'started'
-    $vpnStartedAt = Get-Date -Format o
-    $proof = Get-VpnProof
-    if (-not $proof.Connected) {
-      $switch = Get-TunnelBearSwitch
-      if ($switch.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::Off) { $switch.Toggle() }
-      $proof = Wait-VpnProof $true 90
+    $lastError = $null
+    for ($attempt = 1; $attempt -le 1; $attempt++) {
+      try {
+        Write-ConnectionAttempt $attempt 'started'
+        $state = Get-TunnelBearState
+        if (-not ($state.Countries -contains 'Portugal')) {
+          throw "Portugal não está selecionado no TunnelBear (seleção atual: $($state.Countries -join ', '))."
+        }
+        $vpnStartedAt = Get-Date -Format o
+        if ($state.Status -eq 'Disconnected') { $state.Switch.Toggle() }
+        $state = Wait-TunnelBearStatus 'Connection secured' 120
+        $ipConfirmed = $false
+        for ($probe = 1; $probe -le 3; $probe++) {
+          try {
+            $ipWho = Invoke-RestMethod -Uri 'https://ipwho.is/' -TimeoutSec 20
+            $ipApi = Invoke-RestMethod -Uri 'https://ipapi.co/json/' -TimeoutSec 20
+            if ($ipWho.success -eq $true -and $ipWho.country_code -eq 'PT' -and $ipApi.country_code -eq 'PT') {
+              $ipConfirmed = $true
+              break
+            }
+            $lastError = "IP não confirmado como português nos dois serviços (ipwho=$($ipWho.country_code), ipapi=$($ipApi.country_code))."
+          } catch { $lastError = $_.Exception.Message }
+          if ($probe -lt 3) { Start-Sleep -Seconds 5 }
+        }
+        if (-not $ipConfirmed) { throw $lastError }
+        Write-ConnectionAttempt $attempt 'connected' 'Portugal confirmado em dois serviços de IP.'
+        [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT'; attempt = $attempt; vpnStartedAt = $vpnStartedAt } | ConvertTo-Json -Compress
+        exit 0
+      } catch {
+        $lastError = $_.Exception.Message
+        Write-ConnectionAttempt $attempt 'failed' $lastError
+        try {
+          $state = Get-TunnelBearState
+          if ($state.Status -ne 'Disconnected') { $state.Switch.Toggle(); $null = Wait-TunnelBearStatus 'Disconnected' 30 }
+        } catch { $lastError += "; falha ao desligar antes de nova tentativa: $($_.Exception.Message)" }
+      }
     }
-    Write-ConnectionAttempt 1 'connected' "Adaptador=$($proof.Adapter), país=$($proof.Country)."
-    [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT';
-      publicIp = $proof.PublicIp; adapter = $proof.Adapter; attempt = 1; vpnStartedAt = $vpnStartedAt } | ConvertTo-Json -Compress
+    throw "Falha de conexão na única tentativa deste ciclo: $lastError"
   } elseif ($Action -eq 'disconnect') {
-    $switch = Get-TunnelBearSwitch
-    if ($switch.Current.ToggleState -ne [System.Windows.Automation.ToggleState]::Off) { $switch.Toggle() }
-    $null = Wait-VpnProof $false 30
+    $state = Get-TunnelBearState
+    if ($state.Status -ne 'Disconnected') {
+      $state.Switch.Toggle()
+    }
+    $null = Wait-TunnelBearStatus 'Disconnected'
     [pscustomobject]@{ action = 'disconnect'; status = 'disconnected'; vpnDisconnectedAt = (Get-Date -Format o) } | ConvertTo-Json -Compress
   } else {
     $meter = Get-MeterReading $StableSeconds
@@ -178,10 +163,10 @@ try {
   $message = $_.Exception.Message
   if ($Action -eq 'meter-once') { [Console]::Error.WriteLine($message); exit 1 }
   try {
-    $switch = Get-TunnelBearSwitch
-    if ($switch.Current.ToggleState -ne [System.Windows.Automation.ToggleState]::Off) {
-      $switch.Toggle()
-      $null = Wait-VpnProof $false 30
+    $state = Get-TunnelBearState
+    if ($state.Status -ne 'Disconnected') {
+      $state.Switch.Toggle()
+      $null = Wait-TunnelBearStatus 'Disconnected'
     }
   } catch {
     $message += "; falha ao garantir VPN desligado: $($_.Exception.Message)"
