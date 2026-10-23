@@ -13,8 +13,8 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   const start = now - DAY_MS;
   const recent = cycles.filter(row => Date.parse(row.startedAt) >= start && Date.parse(row.startedAt) < now);
   const complete = recent.filter(row => row.status === 'complete');
-  const skipped = recent.filter(row => row.status === 'ciclo pulado');
-  const failed = recent.filter(row => !['complete', 'ciclo pulado'].includes(row.status));
+  const skipped = recent.filter(row => ['ciclo pulado', 'paused'].includes(row.status));
+  const failed = recent.filter(row => !['complete', 'ciclo pulado', 'paused'].includes(row.status));
   const missing = scheduledSlots(now).filter(slot => !recent.some(row =>
     Math.abs(Date.parse(row.startedAt) - slot) <= 15 * 60000));
   const houses = [...new Set(recent.flatMap(row => Object.entries(row.gamesByHouse || {})
@@ -33,7 +33,14 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   const lines = [`Saúde Edge Finder — ${brasilDay(new Date(now))}, últimas 24 horas`];
   if (!recent.length) lines.push('⚠️ computador desligado ou coleta parada — nenhum registro de ciclo local chegou.');
   lines.push(`Ciclos locais: ${complete.length} rodados; ${skipped.length} pulados; ${failed.length} com falha; ${missing.length} ausentes.`);
-  if (skipped.length) lines.push(`Pulados: ${skipped.map(row => row.reason || 'motivo não registrado').join(' | ')}.`);
+  if (skipped.length) {
+    const reasons = new Map();
+    for (const row of skipped) {
+      const reason = row.reason || 'motivo não registrado';
+      reasons.set(reason, (reasons.get(reason) || 0) + 1);
+    }
+    lines.push(`Pulados: ${[...reasons].map(([reason, count]) => `${count}× ${reason}`).join(' | ')}.`);
+  }
   lines.push(`Casas com jogos: ${houses.join(', ') || 'nenhuma'}.`);
   lines.push(`Placard x Pinnacle: ${success} execuções com sucesso; ${workflowFailures.length} sem sucesso.`);
   lines.push(`Indicações enviadas: ${sent}.`);
@@ -55,11 +62,15 @@ async function loadHealth(db, token, now = Date.now(), fetchImpl = fetch) {
   ]);
   let runs = [];
   try {
-    const response = await fetchImpl('https://api.github.com/repos/ubereats-oss/edge-finder/actions/workflows/placard_value.yml/runs?per_page=100', {
-      headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json',
-        'User-Agent': 'Edge-Finder-health' }, signal: AbortSignal.timeout(15000) });
-    if (!response.ok) throw new Error(`GitHub HTTP ${response.status}`);
-    runs = (await response.json()).workflow_runs || [];
+    for (let page = 1; ; page++) {
+      const response = await fetchImpl(`https://api.github.com/repos/ubereats-oss/edge-finder/actions/workflows/placard_value.yml/runs?per_page=100&page=${page}`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json',
+          'User-Agent': 'Edge-Finder-health' }, signal: AbortSignal.timeout(15000) });
+      if (!response.ok) throw new Error(`GitHub HTTP ${response.status}`);
+      const batch = (await response.json()).workflow_runs || [];
+      runs.push(...batch);
+      if (batch.length < 100 || Date.parse(batch.at(-1).created_at) < Date.parse(since)) break;
+    }
   } catch (error) { errors.push(`consulta GitHub: ${error.message}`); }
   for (const report of reports.docs) {
     const row = report.data();
