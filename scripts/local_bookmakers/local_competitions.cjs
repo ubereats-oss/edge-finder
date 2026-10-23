@@ -1,4 +1,5 @@
 const PRIORITY = [
+  ['basketball_nba', 'NBA', ['nba', 'eua - nba']],
   ['soccer_uefa_europa_league', 'Liga Europa', ['liga europa', 'europa league', 'uefa europa league']],
   ['soccer_uefa_champs_league', 'Liga dos Campeões', ['liga dos campeoes', 'champions league', 'uefa champions league']],
   ['soccer_portugal_primeira_liga', 'Primeira Liga', ['primeira liga', 'liga portugal', 'portugal - 1a liga']],
@@ -9,7 +10,6 @@ const PRIORITY = [
   ['soccer_france_ligue_one', 'Ligue 1', ['ligue 1', 'franca - ligue 1']],
   ['soccer_netherlands_eredivisie', 'Eredivisie', ['eredivisie', 'paises baixos - eredivisie']],
   ['soccer_efl_champ', 'Championship', ['championship', 'efl championship', 'inglaterra - championship']],
-  ['basketball_nba', 'NBA', ['nba', 'eua - nba']],
 ];
 
 const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')

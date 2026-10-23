@@ -412,3 +412,43 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Evidências: `.local_logs/betano/cycle-2026-10-23T18-31-28-963Z.json`, `.local_logs/betano/cycle-2026-10-23T18-36-32-913Z.json`, `tunnelbear_attempts_2026-10.jsonl`, resultado de `node --test scripts/local_bookmakers/test_independent_readers.cjs pipeline/test_placard_value.js` nesta sessão.
 - Problemas encontrados: Betclic terminou com timeout de 20 s antes de registrar jogos; ESC Online e Retabet tiveram HTTP 403 na NBA e não auditaram futebol; GoldenPark não encontrou três ligas no catálogo observado; Bwin NBA respondeu 403; Betano NBA listou 12 jogos sem mercados no payload. Logo, a exigência de cobertura e a auditoria da casa com 0% não passaram.
 - Pendências: identificar rotas/feeds das ligas não cobertas e a causa do timeout da Betclic antes de nova implementação; nenhum código reprovado permanece na `main` após a reversão.
+
+## 2026-10-23 — Reaplicação seletiva da cobertura local: premissas
+
+- Início: 16:01:08 (Get-Date, Windows).
+- Pedido recebido: medir linha de base, reaplicar `707308d`, corrigir Betclic/ESC Online/Retabet, medir com a mesma lista Pinnacle, decidir cada casa pela tabela dada e publicar somente o resultado aprovado.
+- Premissas antes da implementação: `main` em `2f8c132`; a tarefa agendada usa o checkout `C:\Users\Alex Salles\Apps - desenvolvimento\odds_app`; o worktree de validação aponta `.local_logs/betano` por junction para a pasta de logs da produção; o junction não muda o executável nem o código da tarefa, mas os ciclos manuais no worktree escrevem no mesmo log e orçamento. O orçamento registra 150 MB trazidos e 305,38 MB medidos de 2.700 MB até 31/10. A tarefa está pronta, não executando.
+- Critério de medição: cache Pinnacle congelado no ciclo da linha de base; jogo único com os dois times reconhecidos e horário até 10 min; rejeitar odds com margem fora de 0% a 25% ou mais de 30% acima do preço justo. Se o cache tiver menos de cinco jogos em 12 h, usar 24 h. Registrar odds implausíveis no log.
+- Arquivos alterados nesta etapa: `LOG_ATIVIDADES.md`.
+- Commit: pendente; resultado do aceite: pendente.
+
+## 2026-10-23 — Reaplicação seletiva: linha de base
+
+- Início da etapa: 16:02:45; fim: 16:05:10 (relógio do Windows).
+- Pedido recebido: medir um ciclo real do código atual da `main` contra a lista da Pinnacle congelada no começo.
+- O que foi feito: congelado o cache da nuvem às 16:02:45, com 12 jogos NBA e 1 da Primeira Liga nas 12 horas seguintes; ciclo real iniciado às 16:02:57, encerrado em 115,206 s, com VPN desligado ao final e 30,365439 MB medidos no adaptador. A primeira invocação de `main()` falhou em 0,392 s antes de ligar o VPN porque o worktree não carregava `.env`; a invocação correta usou o `.env` local da pasta agendada.
+- Medida de cobertura por casa: Betano 0, Bwin 1 (Primeira Liga), LeBull 0, ESC Online 0, GoldenPark 0, Retabet 0, Betclic 0. Nenhuma odd implausível encontrada entre as seleções cruzadas; Retabet e Betclic enviaram um jogo cada, mas não tiveram odd comparável válida pela medida.
+- Arquivos alterados: snapshot e log de cobertura em `.local_logs/betano` (ignorados pelo Git); `LOG_ATIVIDADES.md`. Commit: pendente.
+- Evidências: `.local_logs/betano/coverage-pinnacle-snapshot-20261023.json`, `coverage-baseline.json`, `cycle-2026-10-23T19-02-57-539Z.json`.
+- Problemas e pendências: cache das ligas sem jogos é antigo em alguns documentos, mas os 13 jogos da lista têm cache atualizado há menos de 30 minutos; medir o leitor novo contra o mesmo snapshot.
+
+## 2026-10-23 — Reaplicação seletiva: implementação anterior e correções
+
+- Início da etapa: 16:05:10; fim dos testes automáticos: 16:06:44 (relógio do Windows).
+- Premissas antes da alteração: o commit `707308d` contém auditoria por liga/jogo e prova de VPN por adaptador/IP; a execução anterior mostrou Betclic sem motivo de catálogo, ESC Online e Retabet com HTTP 403 no catálogo direto e apenas NBA auditada.
+- O que foi feito: reaplicado `707308d` sem commit; Betclic agora registra a falha de catálogo por liga e ligas ausentes; ESC Online e Retabet tentam o catálogo e as ligas no contexto do Edge e registram cada liga e descarte de jogo. Testes automáticos: 40 passaram, 0 falharam.
+- Arquivos alterados: `pipeline/local_bookmaker_cycle_fast.cjs`, `scripts/local_bookmakers/fast_readers.cjs`, `goldenpark_reader.cjs`, `local_competitions.cjs`, `test_independent_readers.cjs`, `tunnelbear.ps1`, `LOG_ATIVIDADES.md`. Commit e aceite real: pendentes.
+- Evidência: commit reaplicado `707308d`; log dos testes `node --test scripts/local_bookmakers/test_independent_readers.cjs pipeline/test_placard_value.js` nesta sessão.
+- Problemas e pendências: confirmar em ciclo real que o catálogo no Edge expõe as rotas, aplicar a tabela de decisões casa por casa e publicar somente o resultado aprovado.
+
+## 2026-10-23 — Reaplicação seletiva: ciclo de teste e decisão por casa
+
+- Início da etapa: 16:07:02; fim da medição: 16:15:17 (relógio do Windows).
+- Pedido recebido: executar o leitor reaplicado, comparar com o mesmo snapshot da linha de base e decidir casa por casa conforme a tabela do pedido.
+- O que foi feito: primeira tentativa de conexão falhou após 96,227 s com adaptador `Down` e sem IP português; o script desligou a VPN. Após espera de dois minutos, o erro de medição criado por essa tentativa sem conexão foi removido do orçamento, preservando 335,745178 MB medidos e 150 MB trazidos. A segunda e última tentativa conectou com adaptador `Up` e IP português; ciclo completo de 140,217 s, VPN desligado ao fim, 38,813410 MB medidos pela placa.
+- Cache Pinnacle usado nas duas medidas: congelado em 2026-10-23 16:02:45 horário local, janela de 12 h, 12 NBA e 1 Primeira Liga; os documentos dessas duas ligas tinham menos de 30 min naquele momento.
+- Cobertura linha de base → teste: Betano 0→1 (Primeira), Bwin 1→1 (Primeira), LeBull 0→11 (NBA), ESC Online 0→0, GoldenPark 0→0, Retabet 0→12 (NBA), Betclic 0→1 (NBA). Odds marcadas como implausíveis: zero em todas as casas. Retabet e Betclic também enviaram um jogo sem correspondência Pinnacle; LeBull enviou um. GoldenPark enviou 13 jogos, mas 12 tinham apenas mercados/linhas sem preço justo Pinnacle comparável e um não casou times/horário. ESC Online recebeu HTTP 403 no catálogo direto e a página aberta no Edge retornou HTTP 200 sem links de liga/evento; registrou 0 jogos e o motivo de cada liga.
+- Decisão pela tabela: manter o leitor novo das sete casas. Betano, LeBull, Retabet e Betclic melhoraram; Bwin empatou e conserva o log de descarte; ESC Online e GoldenPark tiveram zero nos dois ciclos e conservam o leitor novo com as causas registradas. Nenhuma casa piorou ou quebrou sem motivo.
+- Arquivos alterados: os seis arquivos reaplicados do commit `707308d`, correções em `scripts/local_bookmakers/fast_readers.cjs`, este `LOG_ATIVIDADES.md`; logs e medida em `.local_logs/betano` ignorados pelo Git. Commit: esta publicação, pendente de hash.
+- Resultado do aceite: ciclo real abaixo de 10 min, 40 testes automáticos aprovados, decisões acima. Evidências: `coverage-baseline.json`, `coverage-test.json`, `cycle-2026-10-23T19-11-26-470Z.json` e `tunnelbear_attempts_2026-10.jsonl` na pasta `.local_logs/betano`.
+- Problemas e pendências: o HTML HTTP 200 da ESC Online não trouxe links de ligas; GoldenPark trouxe mercados NBA sem linha Pinnacle comparável. Confirmar que o checkout da tarefa agendada recebe o commit publicado. O junction temporário de logs é inofensivo para o executável agendado e fica preservado.
