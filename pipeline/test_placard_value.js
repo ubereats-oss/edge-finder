@@ -90,6 +90,40 @@ test('Betano aceita diferença de início de até 10 minutos só com partida ún
     { startToleranceMs: 10 * 60000 }).reason, 'evento_ambiguo');
   assert.throws(() => compareBookmaker('Betano', game, [event], now, { startToleranceMs: 11 * 60000 }), /tolerância/);
 });
+test('qualidade barra margem, preço extremo, nomes, liga e horário com motivo por seleção', () => {
+  const { game, event } = fixture();
+  const check = (changedGame, changedEvent = event) => compareBookmaker('Betano', changedGame,
+    [changedEvent], now, { startToleranceMs: 10 * 60000 });
+  assert.equal(check(game).rows.length, 1);
+  assert.ok(check({ ...game, markets: [{ type: 'MRES', selections: [
+    { price: 5, line: null }, { price: 5, line: null }, { price: 5, line: null } ] }] })
+    .blockedSelections.every(row => row.reason === 'margem_fora_0_25'));
+  const extreme = { ...game, markets: [{ type: 'MRES', selections: [
+    { price: 3, line: null }, { price: 2.4, line: null }, { price: 3.5, line: null } ] }] };
+  assert.ok(check(extreme).blockedSelections.some(row => row.reason === 'diferenca_preco_acima_30'));
+  assert.equal(check({ ...game, teams: ['Porto', 'Outra Equipa'] }).blockedSelections[0].reason,
+    'evento_sem_correspondencia');
+  assert.equal(check({ ...game, competition: 'Premier League' }).blockedSelections[0].reason,
+    'liga_divergente_nome_variado');
+  assert.equal(check(game, { ...event, commence_time: '2026-10-20T14:11:00Z' })
+    .blockedSelections[0].reason, 'evento_sem_correspondencia');
+});
+test('qualidade exige linha idêntica e sinal correspondente em handicap e totais', () => {
+  const { game, event } = fixture();
+  game.markets = [{ type: 'HCOT', selections: [
+    { price: 2.2, line: -1.5 }, { price: 1.8, line: 1.5 } ] }];
+  event.bookmakers[0].markets = [{ key: 'spreads', outcomes: [
+    { name: 'Porto', point: -2.5, price: 1.91 }, { name: 'Benfica', point: 2.5, price: 1.91 } ] }];
+  assert.ok(compare(game, [event], now).blockedSelections.every(row => row.reason === 'linha_divergente'));
+  event.bookmakers[0].markets[0].outcomes[0].point = 1.5;
+  event.bookmakers[0].markets[0].outcomes[1].point = -1.5;
+  assert.ok(compare(game, [event], now).blockedSelections.every(row => row.reason === 'sinal_handicap_divergente'));
+  game.markets = [{ type: 'HCTG', selections: [
+    { price: 2.2, line: 221.5 }, { price: 1.8, line: 221.5 } ] }];
+  event.bookmakers[0].markets = [{ key: 'totals', outcomes: [
+    { name: 'Over', point: 222.5, price: 1.91 }, { name: 'Under', point: 222.5, price: 1.91 } ] }];
+  assert.ok(compare(game, [event], now).blockedSelections.every(row => row.reason === 'linha_divergente'));
+});
 test('leitor Betano transforma JSON de rede em vencedor, handicap e total sem ler texto da página', () => {
   const games = readSelections({ data: { events: [{ id: 7, sportId: 'BASK', startTime: Date.parse('2026-10-20T14:00:00Z'),
     shortName: 'Porto x Benfica', leagueName: 'NBA', url: '/odds/test', participants: [{ name: 'Porto' }, { name: 'Benfica' }],
@@ -230,9 +264,10 @@ test('códigos Placard HTOH, HCOT e TGHC cobrem vencedor e handicap', () => {
     { key: 'h2h', outcomes: [{ name: 'Porto', price: 2 }, { name: 'Draw', price: 4 }, { name: 'Benfica', price: 2 }] },
     { key: 'spreads', outcomes: [{ name: 'Porto', point: -1.5, price: 1.91 }, { name: 'Benfica', point: 1.5, price: 1.91 }] },
   ];
-  assert.equal(compare(game, [event], now).rows.length, 3);
+  assert.equal(compare(game, [event], now).rows.length, 1);
+  assert.equal(compare(game, [event], now).blockedSelections.filter(row => row.reason === 'margem_fora_0_25').length, 2);
   game.markets[1].type = 'TGHC';
-  assert.equal(compare(game, [event], now).rows.length, 3);
+  assert.equal(compare(game, [event], now).rows.length, 1);
 });
 test('estima custo por mercado, incluindo histórico e linhas alternativas', () => {
   const options = { bookmakers: 'pinnacle', markets: 'h2h,totals' };
@@ -370,12 +405,12 @@ test('reconcilia partidas de ténis pelo par de jogadores quando o horário esti
   const start = '2026-10-20T14:05:00.000Z';
   const game = { apiSport: 'tennis_wta_ningbo_open', teams: ['Marie Bouzkova', 'Anastasia Zakharova'],
     competition: 'Ningbo - Individual', commenceTime: start, observedAt: new Date(now).toISOString(),
-    markets: [{ type: 'H2HT', selections: [{ price: '2.2', line: null }, { price: '2.2', line: null }] }] };
+    markets: [{ type: 'H2HT', selections: [{ price: '2.2', line: null }, { price: '1.6', line: null }] }] };
   const event = { id: 'wta', sport_key: game.apiSport, home_team: game.teams[0], away_team: game.teams[1],
     commence_time: '2026-10-20T14:00:00Z', bookmakers: [{ key: 'pinnacle', last_update: new Date(now).toISOString(),
       markets: [{ key: 'h2h', outcomes: [{ name: game.teams[0], price: 2 }, { name: game.teams[1], price: 2 }] }] }] };
   const result = compare(game, [event], now);
-  assert.equal(result.rows.length, 2);
+  assert.equal(result.rows.length, 1);
   assert.equal(result.rows[0].commenceTime, start);
   assert.equal(result.rows[0].apiCommenceTime, event.commence_time);
 });

@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const aliases = require('./placard_aliases.json');
 const { KELLY_FRACTION } = require('./risk_config');
+const { competition: configuredCompetition } = require('../scripts/local_bookmakers/local_competitions.cjs');
 const transliterate = s => String(s).replace(/[łŁ]/g, 'l').replace(/[øØ]/g, 'o')
   .replace(/[đĐ]/g, 'd').replace(/ß/g, 'ss').replace(/[æÆ]/g, 'ae');
 const words = s => transliterate(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -86,7 +87,7 @@ function placardSelections(game, event) {
   const teamNames = game.teams.map(t => [event.home_team, event.away_team].filter(n => namesEqual(t, n)));
   if (teamNames.some(a => a.length !== 1) || teamNames[0][0] === teamNames[1][0]) return [];
   const rows = [];
-  for (const m of game.markets) {
+  for (const [marketIndex, m] of (game.markets || []).entries()) {
     let selections;
     if (m.type === 'MRES') selections = [teamNames[0][0], 'Draw', teamNames[1][0]];
     else if (['H2HT', 'HTOH'].includes(m.type)) selections = [teamNames[0][0], teamNames[1][0]];
@@ -94,6 +95,9 @@ function placardSelections(game, event) {
     else if (['HCOT', 'TGHC'].includes(m.type) || /handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`)) selections = [teamNames[0][0], teamNames[1][0]];
     else continue;
     if (m.selections.length !== selections.length) continue;
+    const prices = m.selections.map(selection => Number(selection.price));
+    const margin = prices.every(price => Number.isFinite(price) && price > 1)
+      ? prices.reduce((sum, price) => sum + 1 / price, 0) - 1 : null;
     for (let i = 0; i < selections.length; i++) {
       const s = m.selections[i];
       const price = Number(s.price), line = s.line === null ? null : Number(s.line);
@@ -101,10 +105,23 @@ function placardSelections(game, event) {
       const market = ['TPOT', 'HCTG'].includes(m.type) ? 'totals'
         : ['HCOT', 'TGHC'].includes(m.type) || /handicap|spread|hcap|hcp|sprd|hdc|hnd|^ah/i.test(`${m.type || ''} ${m.title || ''}`) ? 'spreads' : 'h2h';
       rows.push({ market,
-        selection: selections[i], line, placardOdds: price });
+        selection: selections[i], line, placardOdds: price, margin,
+        sourceMarketIndex: marketIndex, sourceSelectionIndex: i });
     }
   }
   return rows;
+}
+function blockedFromGame(game, reason) {
+  return (game.markets || []).flatMap((market, marketIndex) => (market.selections || [])
+    .map((selection, sourceSelectionIndex) => ({ market: market.type, marketIndex,
+      sourceSelectionIndex, selection: selection.name || selection.fullName || null,
+      line: selection.line ?? null, odds: Number(selection.price) || null, reason })));
+}
+function leagueMatchesForVariant(game, event) {
+  const teams = game.teams || [];
+  const literal = teams.every(team => [event.home_team, event.away_team]
+    .some(name => String(team).trim().toLowerCase() === String(name).trim().toLowerCase()));
+  return literal || configuredCompetition(game.competition)?.apiSport === event.sport_key;
 }
 function matchingEvents(game, events) {
   const tolerance = game.apiSport?.startsWith('tennis_') ? 3 * 60 * 60 * 1000 : 60000;
@@ -129,20 +146,38 @@ function comparedSelectionCount(game, event, now = Date.now()) {
 }
 function isNearValue(game, event, now = Date.now()) { return nearValueSelections(game, event, now).length > 0; }
 function compare(game, events, now = Date.now()) {
-  if (!game.commenceTime || now >= Date.parse(game.commenceTime) || Date.parse(game.commenceTime) > now + 12 * 3600000) return { rows: [], reason: 'fora_janela_12h' };
+  if (!game.commenceTime || now >= Date.parse(game.commenceTime) || Date.parse(game.commenceTime) > now + 12 * 3600000) return { rows: [], reason: 'fora_janela_12h', blockedSelections: blockedFromGame(game, 'fora_janela_12h') };
   const age = now - Date.parse(game.observedAt);
-  if (!Number.isFinite(age) || age < 0 || age > 120000) return { rows: [], reason: 'placard_antigo' };
-  const matches = matchingEvents(game, events);
-  if (matches.length !== 1) return { rows: [], reason: matches.length ? 'evento_ambiguo' : 'evento_sem_correspondencia' };
+  if (!Number.isFinite(age) || age < 0 || age > 120000) return { rows: [], reason: 'placard_antigo', blockedSelections: blockedFromGame(game, 'placard_antigo') };
+  const matches = matchingEvents(game, events).filter(event =>
+    Math.abs(Date.parse(event.commence_time) - Date.parse(game.commenceTime)) <= 10 * 60000);
+  if (matches.length !== 1) { const reason = matches.length ? 'evento_ambiguo' : 'evento_sem_correspondencia';
+    return { rows: [], reason, blockedSelections: blockedFromGame(game, reason) }; }
   const event = matches[0];
+  if (!leagueMatchesForVariant(game, event)) return { rows: [], reason: 'liga_divergente_nome_variado',
+    blockedSelections: blockedFromGame(game, 'liga_divergente_nome_variado') };
   const refs = references(event, now);
-  const rows = [];
+  const rows = [], blockedSelections = [];
   let comparedSelections = 0;
-  for (const s of placardSelections(game, event)) {
+  const selections = placardSelections(game, event);
+  const mapped = new Set(selections.map(s => `${s.sourceMarketIndex}:${s.sourceSelectionIndex}`));
+  for (const raw of blockedFromGame(game, 'mercado_ou_odd_invalida')) {
+    if (!mapped.has(`${raw.marketIndex}:${raw.sourceSelectionIndex}`)) blockedSelections.push(raw);
+  }
+  for (const s of selections) {
+    const blocked = reason => blockedSelections.push({ market: s.market, line: s.line,
+      selection: s.selection, odds: s.placardOdds, reason });
+    if (s.margin === null || s.margin < 0 || s.margin > 0.25) { blocked('margem_fora_0_25'); continue; }
     const ref = refs.find(r => r.market === s.market && r.line === s.line && r.selection === s.selection);
-    if (!ref) continue;
+    if (!ref) {
+      const sameMarket = refs.filter(r => r.market === s.market && r.selection === s.selection);
+      blocked(s.market === 'spreads' && sameMarket.some(r => Math.sign(r.line) !== Math.sign(s.line))
+        ? 'sinal_handicap_divergente' : sameMarket.length ? 'linha_divergente' : 'mercado_ou_preco_ausente');
+      continue;
+    }
     comparedSelections++;
-    if (s.placardOdds <= 1.01 / ref.probability) continue;
+    if (Math.abs(s.placardOdds * ref.probability - 1) > 0.30) { blocked('diferenca_preco_acima_30'); continue; }
+    if (s.placardOdds <= 1.01 / ref.probability) { blocked('sem_valor'); continue; }
     const edgePct = (s.placardOdds * ref.probability - 1) * 100;
     const id = crypto.createHash('sha256').update(JSON.stringify([game.apiSport, event.id, s.market, s.line, s.selection])).digest('hex');
     rows.push({ ...s, ...ref, id, apiSport: game.apiSport, eventId: event.id,
@@ -152,7 +187,8 @@ function compare(game, events, now = Date.now()) {
       minValueOdds: 1.01 / ref.probability, edgePct,
       kellyPct: Math.max(0, edgePct / (s.placardOdds - 1) * KELLY_FRACTION) });
   }
-  return { rows, comparedSelections, reason: rows.length ? null : comparedSelections ? 'sem_valor' : 'sem_linha_equivalente_ou_preco_recente' };
+  return { rows, comparedSelections, blockedSelections,
+    reason: rows.length ? null : comparedSelections ? 'sem_valor' : 'sem_linha_equivalente_ou_preco_recente' };
 }
 function compareBookmaker(bookmaker, game, events, now = Date.now(), { startToleranceMs = 0 } = {}) {
   if (!bookmaker || typeof bookmaker !== 'string') throw new TypeError('bookmaker obrigatório');
@@ -173,7 +209,8 @@ function compareBookmaker(bookmaker, game, events, now = Date.now(), { startTole
       const awayMatches = game.teams.filter(team => namesEqual(team, event.away_team)).length;
       return game.teams.length === 2 && homeMatches === 1 && awayMatches === 1;
     });
-    if (candidates.length !== 1) return { rows: [], reason: candidates.length ? 'evento_ambiguo' : 'evento_sem_correspondencia' };
+    if (candidates.length !== 1) { const reason = candidates.length ? 'evento_ambiguo' : 'evento_sem_correspondencia';
+      return { rows: [], reason, blockedSelections: blockedFromGame(game, reason) }; }
     const [event] = candidates;
     scheduleDeltaMs = Date.parse(event.commence_time) - sourceStart;
     comparisonGame = { ...game, commenceTime: event.commence_time };
