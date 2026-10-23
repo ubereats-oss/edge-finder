@@ -1,4 +1,4 @@
-// One scheduled VPN connection: six independent bounded reads, disconnect, then Firestore.
+// One scheduled VPN connection: independent bounded reads, disconnect, then Firestore.
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync, execFile } = require('node:child_process');
@@ -14,7 +14,7 @@ const WINDOW_SCRIPT = path.join(ROOT, 'scripts', 'local_bookmakers', 'edge_windo
 const TASK_NAME = 'EdgeFinder-Betano-Local';
 const HOUSE_NAMES = {
   betano: 'Betano', retabet: 'Retabet', bwin: 'Bwin', lebull: 'LeBull',
-  esc_online: 'ESC Online', goldenpark: 'GoldenPark',
+  esc_online: 'ESC Online', goldenpark: 'GoldenPark', betclic: 'Betclic',
 };
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const PROCESS_SCRIPT = "$rows=Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue | Where-Object { $_.RemoteAddress -notin @('127.0.0.1','::1') } | Group-Object OwningProcess | ForEach-Object { $pidValue=[int]$_.Name; $process=Get-Process -Id $pidValue -ErrorAction SilentlyContinue; if ($process) { [pscustomobject]@{ pid=$pidValue; name=$process.ProcessName; connections=$_.Count } } }; @($rows) | ConvertTo-Json -Compress";
@@ -209,7 +209,8 @@ async function main() {
     };
     for (const [key, reader] of Object.entries({ betano: readers.betano, bwin: readers.bwin,
       lebull: readers.lebull, esc_online: readers.escOnline,
-      goldenpark: readers.goldenpark, retabet: readers.retabet })) runHouse(key, reader);
+      goldenpark: readers.goldenpark, retabet: readers.retabet,
+      betclic: readers.betclic })) runHouse(key, reader);
     const keys = Object.keys(tasks);
     const results = await Promise.allSettled(keys.map(key => tasks[key]));
     const collected = {};
