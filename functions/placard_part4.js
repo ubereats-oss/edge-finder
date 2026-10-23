@@ -2,15 +2,21 @@ const budget = require('./odds_api_monthly_budget');
 const { references, placardSelections, matchingEvents } = require('./placard_value');
 
 const TWO_MINUTES = 120000;
+const NEW_LOCAL_READERS_STARTED_AT = Date.parse('2026-10-23T22:08:00Z');
+const NEW_LOCAL_READERS_WARNING_MS = 24 * 60 * 60 * 1000;
 
-function telegramMessage(row) {
+function telegramMessage(row, now = Date.now()) {
   const start = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo',
     dateStyle: 'short', timeStyle: 'short' }).format(new Date(row.commenceTime));
   const minimum = Number(row.minValueOdds || (1.01 / row.probability));
   return `${row.test ? 'Teste de indicação' : 'Nova indicação'} Edge Finder\nCasa: ${row.bookmaker || 'Placard'}\nJogo: ${row.game}\n`
     + `Mercado: ${row.market}${row.line === null || row.line === undefined ? '' : ` (${row.line})`}\n`
     + `Seleção: ${row.selection}\nOdd da casa: ${Number(row.sourceOdds || row.placardOdds).toFixed(2)}\n`
-    + `Odd mínima com valor: ${minimum.toFixed(3)}\nInício: ${start}`;
+    + `Odd mínima com valor: ${minimum.toFixed(3)}\nInício: ${start}`
+    + (['betano', 'bwin', 'betclic'].includes(String(row.bookmaker || '').toLowerCase())
+      && now >= NEW_LOCAL_READERS_STARTED_AT
+      && now < NEW_LOCAL_READERS_STARTED_AT + NEW_LOCAL_READERS_WARNING_MS
+      ? '\nleitura nova — conferir a odd no site antes de apostar' : '');
 }
 
 async function sendTelegramText(text, token, chatId, fetchImpl = fetch) {

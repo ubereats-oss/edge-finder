@@ -39,6 +39,16 @@ test('aviso contém casa, jogo, mercado, seleção, odds e início', () => {
   }
 });
 
+test('leitores Betano, Bwin e Betclic incluem aviso nas primeiras 24 horas', () => {
+  const start = Date.parse('2026-10-23T22:08:00Z');
+  for (const bookmaker of ['Betano', 'Bwin', 'Betclic']) {
+    const indication = { ...row, bookmaker };
+    assert.match(telegramMessage(indication, start + 1000), /leitura nova — conferir a odd no site antes de apostar/);
+    assert.doesNotMatch(telegramMessage(indication, start + 86400000), /leitura nova/);
+  }
+  assert.doesNotMatch(telegramMessage(row, start + 1000), /leitura nova/);
+});
+
 test('reconferência usa leitura Placard mais recente e cache Pinnacle abaixo de dois minutos', async () => {
   const output = await revalidate(fakeDb(), [row], [], () => { throw Error('consulta indevida'); }, now);
   assert.equal(output[0].status, 'ainda vale');

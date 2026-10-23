@@ -64,22 +64,32 @@ function Wait-TunnelBearStatus([string]$Expected, [int]$TimeoutSeconds = 90) {
 
 function Get-VpnAdapter {
   return [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() |
-    Where-Object { $_.Name -eq 'Ethernet 2' -and $_.Description -eq 'TunnelBear Adapter V9' } |
+    Where-Object { $_.Description -eq 'TunnelBear Adapter V9' } |
     Select-Object -First 1
 }
 
 function Get-VpnProof {
   $adapter = Get-VpnAdapter
-  if (-not $adapter) { throw 'Adaptador TunnelBear Adapter V9 não encontrado.' }
+  if (-not $adapter) { return @{ Connected = $false; Adapter = 'NotFound'; Country = $null;
+      Error = 'Adaptador TunnelBear Adapter V9 não encontrado.' } }
   if ($adapter.OperationalStatus -ne [System.Net.NetworkInformation.OperationalStatus]::Up) {
     return @{ Connected = $false; Adapter = $adapter.OperationalStatus.ToString(); Country = $null }
   }
+  $errors = @()
   try {
-    $ip = Invoke-RestMethod -Uri 'https://ipwho.is/' -TimeoutSec 8
-    return @{ Connected = ($ip.success -eq $true -and $ip.country_code -eq 'PT');
-      Adapter = 'Up'; Country = $ip.country_code; PublicIp = $ip.ip }
+    $ip = Invoke-RestMethod -Uri 'https://ipwho.is/' -TimeoutSec 3
+    if ($ip.success -eq $true -and $ip.country_code -eq 'PT') {
+      return @{ Connected = $true; Adapter = 'Up'; Country = 'PT'; PublicIp = $ip.ip; Service = 'ipwho.is' }
+    }
+    $errors += "ipwho.is: $($ip.country_code)"
+  } catch { $errors += "ipwho.is: $($_.Exception.Message)" }
+  try {
+    $ip = Invoke-RestMethod -Uri 'https://ipapi.co/json/' -TimeoutSec 3
+    return @{ Connected = ($ip.country_code -eq 'PT'); Adapter = 'Up'; Country = $ip.country_code;
+      PublicIp = $ip.ip; Service = 'ipapi.co'; Error = ($errors -join '; ') }
   } catch {
-    return @{ Connected = $false; Adapter = 'Up'; Country = $null; Error = $_.Exception.Message }
+    $errors += "ipapi.co: $($_.Exception.Message)"
+    return @{ Connected = $false; Adapter = 'Up'; Country = $null; Error = ($errors -join '; ') }
   }
 }
 
@@ -98,10 +108,18 @@ function Get-TunnelBearSwitch {
 
 function Wait-VpnProof([bool]$Expected, [int]$TimeoutSeconds) {
   $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  $checks = @()
   do {
+    $at = [DateTime]::UtcNow
     $proof = Get-VpnProof
-    if ($proof.Connected -eq $Expected) { return $proof }
-    Start-Sleep -Seconds 2
+    $check = [pscustomobject]@{ at = $at.ToString('o'); adapter = $proof.Adapter;
+      country = $proof.Country; publicIp = $proof.PublicIp; service = $proof.Service;
+      connected = $proof.Connected; error = $proof.Error }
+    $checks += $check
+    if ($Expected) { Write-ConnectionAttempt 1 'check' ($check | ConvertTo-Json -Compress) }
+    if ($proof.Connected -eq $Expected) { $proof.Checks = $checks; return $proof }
+    $remaining = 5 - ([DateTime]::UtcNow - $at).TotalSeconds
+    if ($remaining -gt 0) { Start-Sleep -Milliseconds ([int]($remaining * 1000)) }
   } while ([DateTime]::UtcNow -lt $deadline)
   throw "VPN sem confirmação pela placa e IP português: adaptador=$($proof.Adapter), país=$($proof.Country), erro=$($proof.Error)."
 }
@@ -157,14 +175,21 @@ try {
     Write-ConnectionAttempt 1 'started'
     $vpnStartedAt = Get-Date -Format o
     $proof = Get-VpnProof
+    $initialCheck = [pscustomobject]@{ at = [DateTime]::UtcNow.ToString('o'); adapter = $proof.Adapter;
+      country = $proof.Country; publicIp = $proof.PublicIp; service = $proof.Service;
+      connected = $proof.Connected; error = $proof.Error }
+    Write-ConnectionAttempt 1 'check' ($initialCheck | ConvertTo-Json -Compress)
+    $checks = @($initialCheck)
     if (-not $proof.Connected) {
       $switch = Get-TunnelBearSwitch
       if ($switch.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::Off) { $switch.Toggle() }
-      $proof = Wait-VpnProof $true 90
+      $proof = Wait-VpnProof $true 60
+      $checks += $proof.Checks
     }
     Write-ConnectionAttempt 1 'connected' "Adaptador=$($proof.Adapter), país=$($proof.Country)."
     [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT';
-      publicIp = $proof.PublicIp; adapter = $proof.Adapter; attempt = 1; vpnStartedAt = $vpnStartedAt } | ConvertTo-Json -Compress
+      publicIp = $proof.PublicIp; adapter = $proof.Adapter; attempt = 1;
+      vpnStartedAt = $vpnStartedAt; checks = $checks } | ConvertTo-Json -Depth 6 -Compress
   } elseif ($Action -eq 'disconnect') {
     $switch = Get-TunnelBearSwitch
     if ($switch.Current.ToggleState -ne [System.Windows.Automation.ToggleState]::Off) { $switch.Toggle() }
