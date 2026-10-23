@@ -35,7 +35,7 @@ function timeParts(date, zone) {
 }
 
 function localClock(value, zone, now = new Date()) {
-  const shown = String(value || '').match(/\b(Hoje|Amanh[ãa])\s*[-,]?\s*(\d{1,2}):(\d{2})\b/i);
+  const shown = String(value || '').match(/(Hoje|Amanh[ãa])\s*[-,]?\s*(\d{1,2}):(\d{2})\b/i);
   if (!shown) return null;
   const current = timeParts(now, zone);
   const day = Date.UTC(current.year, current.month - 1, current.day

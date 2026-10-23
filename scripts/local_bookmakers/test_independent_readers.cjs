@@ -1,7 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { competition, localClock, ordered } = require('./local_competitions.cjs');
-const { parseBwinFeed, parseLebullHtml } = require('./fast_readers.cjs');
+const { parseBwinFeed, parseLebullHtml, retabetLeague } = require('./fast_readers.cjs');
 
 test('liga e horário vêm da própria casa, com prioridade fixa', () => {
   assert.equal(competition('UEFA Europa League').apiSport, 'soccer_uefa_europa_league');
@@ -9,9 +9,21 @@ test('liga e horário vêm da própria casa, com prioridade fixa', () => {
   assert.equal(competition('Liga Conferência Europa da UEFA'), null);
   assert.equal(localClock('Hoje 13:45', 'America/Sao_Paulo',
     new Date('2026-10-23T12:00:00Z')), '2026-10-23T16:45:00.000Z');
+  assert.equal(localClock('MarítimoHoje - 13:45', 'America/Sao_Paulo',
+    new Date('2026-10-23T12:00:00Z')), '2026-10-23T16:45:00.000Z');
   assert.deepEqual(ordered([{ apiSport: 'basketball_nba', commenceTime: '2026-10-24T00:00:00Z' },
     { apiSport: 'soccer_uefa_europa_league', commenceTime: '2026-10-24T01:00:00Z' }])
     .map(game => game.apiSport), ['soccer_uefa_europa_league', 'basketball_nba']);
+});
+
+test('Retabet só abre eventos das ligas configuradas, sem confundir nomes semelhantes', () => {
+  const base = 'https://www.retabet.pt/desportos/futebol/';
+  assert.equal(retabetLeague(`${base}paises-baixos/eredivisie/a-b/38617901`).apiSport,
+    'soccer_netherlands_eredivisie');
+  assert.equal(retabetLeague(`${base}espanha/laliga/a-b/38617902`).apiSport,
+    'soccer_spain_la_liga');
+  assert.equal(retabetLeague(`${base}inglaterra/inglaterra-premier-league-2/a-b/38617903`), null);
+  assert.equal(retabetLeague(`${base}peru/liga-1/a-b/38617904`), null);
 });
 
 test('Bwin lê jogo, liga, horário e total do próprio feed', () => {
