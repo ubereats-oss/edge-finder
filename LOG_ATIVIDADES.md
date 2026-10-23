@@ -86,3 +86,15 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite nesta etapa: 35/35 testes passaram; execução real de `Placard x Pinnacle` ainda pendente. Evidência: `node --test pipeline/test_placard_value.js` às 10:30.
 - Problemas encontrados: a Arcadia alterna respostas com e sem `Age`, por isso ambas as respostas necessárias ao preço exigem idade válida abaixo de 120 s.
 - Pendências: executar e comprovar uso real da Arcadia, número de consultas frescas e acionamentos da reserva.
+
+## 2026-10-23 — Parte 3: resultado do aceite no GitHub Actions
+
+- Início: 10:21:04 (relógio do Windows).
+- Fim do aceite: 10:42:25 (relógio do Windows).
+- Pedido recebido: comprovar em uma execução real que `Placard x Pinnacle` usa preços frescos da Arcadia e informar consultas, respostas frescas e usos da reserva.
+- O que foi feito: executado manualmente o workflow no commit `696ef30`, acompanhado até o fim e examinados log e artefato de resumo.
+- Arquivos alterados: somente `LOG_ATIVIDADES.md` nesta entrada adicional de auditoria.
+- Commit: `696ef30` (implementação da Parte 3); commit desta entrada adicional para registrar o resultado posterior à execução.
+- Resultado do aceite: não passou. Execução `39961876139` terminou com sucesso operacional, mas registrou 124 consultas à Arcadia, zero respostas frescas, zero pares frescos e 11 usos da reserva (40 créditos The Odds API). O log contém `Arcadia soccer_portugal_primeira_liga: 403`; 32 linhas de erro Arcadia HTTP 403 e 62 releituras de chave no resumo da execução. Evidências: log e artefato `placard-summary-39961876139` do GitHub Actions.
+- Problemas encontrados: a API `.se` devolveu HTTP 403 no GitHub Actions mesmo após reler a chave pública; a causa do bloqueio não está comprovada. A rotina recorreu à The Odds API.
+- Pendências: obter resposta fresca da Arcadia no ambiente real antes de aceitar a Parte 3; Partes 4 a 8 não iniciadas.
