@@ -298,3 +298,14 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: pendente de resumo diário com Betclic ativa e Casino Portugal ausente.
 - Problemas encontrados: a Betclic pode responder HTTP 403; essa condição deve ser registrada por ciclo sem impedir as demais casas.
 - Pendências: implementar, testar e aceitar no ciclo local real.
+
+## 2026-10-23 — Parte 8: resultado do aceite
+
+- Início: 14:18:11; fim: 14:25:02 (relógio do Windows).
+- Pedido recebido: ativar Betclic na coleta independente, retirar Casino Portugal e confirmar a lista no resumo diário.
+- O que foi feito: Betclic lê listagens e mercados de seu próprio site, integra o ciclo em paralelo e envia jogos ao Firestore; HTTP 403 é registrado como falha da Betclic sem interromper outras casas. O alvo opcional Casino Portugal foi removido. Código, orçamento e quatro logs de ciclos manuais foram instalados/mesclados no diretório da tarefa agendada; resumo diário foi regravado.
+- Arquivos alterados: `pipeline/local_bookmaker_cycle_fast.cjs`, `scripts/local_bookmakers/fast_readers.cjs`, `scripts/local_bookmakers/daily_summary.cjs`, `scripts/local_bookmakers/scheduled_feed_probe.cjs`, `LOG_ATIVIDADES.md`; logs locais e `vpn-budget.json` no diretório da tarefa.
+- Commit: `7a5a504` (implementação); este registro será publicado no commit de auditoria subsequente.
+- Resultado do aceite: ciclo real `cycle-2026-10-23T17-21-08-617Z.json` completo em 137.118 ms, VPN 83.046 ms, Betclic leu cinco jogos próprios em cinco ligas, 45 seleções, leitura `local-betclic-1792776159988-921` enviada ao Firestore; Bwin leu seis jogos. O resumo local `resumo-2026-10-23.txt` lista Betclic com um sucesso e não lista Casino Portugal. Testes Node: 37/37.
+- Problemas encontrados: a comparação na nuvem devolveu `processed_with_errors` e zero seleções cruzadas para Betclic, com a mensagem `Futebol bloqueado até validar 20 seleções contra Pinnacle.` O bloqueio de validação não foi alterado porque não faz parte do aceite desta parte.
+- Pendências: validar Betclic na nuvem antes de contar comparações ou indicações; nenhuma pendência no aceite solicitado para a Parte 8.
