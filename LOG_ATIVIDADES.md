@@ -25,3 +25,15 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: não passou pelo requisito de sigilo. Treze das 19 chaves locais aparecem no histórico público. Evidências: blob `e5ef480654b3a020965da60a6f41edc355972d2c` em `pipeline/save_odds_history.js`, introduzido no commit `2315194` e removido da versão corrente em `01bd506`; blob `81ca547c922bee565ba4d581e658ed6d5c965018` em `pipeline/get_nba_props.js` também pertence ao histórico de `origin/main`.
 - Problemas encontrados: exposição histórica de chaves; removê-las da versão corrente não as apaga dos commits antigos.
 - Pendências: limite da cota não alterado; Partes 2 a 8 não iniciadas.
+
+## 2026-10-23 — Retomada da Parte 1: cota e chaves da The Odds API
+
+- Início: 06:27:02 (relógio do Windows).
+- Fim do aceite: 06:37:21 (relógio do Windows).
+- Pedido recebido: guardar as 19 chaves em segredos, usar saldo real acima da reserva de 1.000 créditos, identificar uso externo por chave e validar uma comparação nova do Placard.
+- O que foi feito: configurados os segredos `THE_ODDS_API_KEYS` no GitHub e no Firebase; preparadas localmente a lógica de saldo, a medição por chave e o resumo; executados 32 testes e uma leitura real do Placard.
+- Arquivos alterados: `pipeline/odds_api_client.js`, `pipeline/odds_api_monthly_budget.js`, `pipeline/run_placard_value.js` e `pipeline/test_placard_value.js` apenas na cópia de trabalho; somente `LOG_ATIVIDADES.md` publicado nesta parada.
+- Commit: commit desta entrada na `main`; a implementação não foi publicada porque o aceite falhou.
+- Resultado do aceite: não passou. Nenhuma chave literal nos arquivos atuais rastreados; 32/32 testes passaram; saldo real de 5.285 créditos e 19 chaves com situação normal no resumo. A execução produziu zero comparações novas e sete falhas do catálogo Placard, uma por esporte, todas com “Nenhum slug Placard respondeu”. Evidências: saída do teste, `placard_run_summary.json` local, resumo `results/placard_current` e log da execução às 06:36–06:37.
+- Problemas encontrados: o catálogo do Placard não respondeu na máquina nesta execução; o requisito de comparações novas ficou sem prova.
+- Pendências: aceitar e publicar a implementação da Parte 1 após uma execução com comparações novas; Partes 2 a 8 não iniciadas.
