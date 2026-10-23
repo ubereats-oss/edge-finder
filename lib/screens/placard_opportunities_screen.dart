@@ -13,6 +13,7 @@ class PlacardOpportunitiesScreen extends StatefulWidget {
 class _PlacardOpportunitiesScreenState
     extends State<PlacardOpportunitiesScreen> {
   Map<String, dynamic> _data = {};
+  Map<String, Map<String, dynamic>> _checks = {};
   bool _loading = false;
   String? _error;
   Timer? _timer;
@@ -41,6 +42,14 @@ class _PlacardOpportunitiesScreenState
     try {
       final result = await ApiService.fetchPlacardOpportunities();
       if (mounted) setState(() => _data = result);
+      final checked = await ApiService.revalidatePlacardOpportunities();
+      if (mounted) {
+        setState(() => _checks = {
+              for (final item in (checked['rows'] as List? ?? []))
+                if (item is Map<String, dynamic>)
+                  item['id'] as String: item,
+            });
+      }
     } catch (e) {
       if (mounted) {
         setState(() => _error = e.toString().replaceFirst('Exception: ', ''));
@@ -58,17 +67,20 @@ class _PlacardOpportunitiesScreenState
 
   Widget _opportunity(Map<String, dynamic> row) {
     final now = DateTime.now();
+    final check = _checks[row['id'] as String?] ?? {};
+    final isLocal = row['bookmaker'] != null && row['bookmaker'] != 'Placard';
     final observed =
-        DateTime.tryParse(row['placardObservedAt'] as String? ?? '');
+        DateTime.tryParse(check['observedAt'] as String? ??
+            row['lastObservedAt'] as String? ??
+            row['placardObservedAt'] as String? ?? '');
     final age = observed == null ? null : now.difference(observed).inSeconds;
-    final stale = age == null || age < 0 || age > 120;
     final ageText = age == null
         ? 'desconhecida'
         : age < 60
-            ? '${age}s'
+            ? '$age s'
             : age < 3600
-                ? '${age ~/ 60}min'
-                : '${age ~/ 3600}h ${(age % 3600) ~/ 60}min';
+                ? '${age ~/ 60} min'
+                : '${age ~/ 3600} h ${(age % 3600) ~/ 60} min';
     final side = row['selection'] == 'Over'
         ? 'Mais'
         : row['selection'] == 'Under'
@@ -83,6 +95,9 @@ class _PlacardOpportunitiesScreenState
             : 'Total: $side ${row['line']}';
     final stake = (row['kellyPct'] as num? ?? 0).toDouble();
     final amount = PrefsService.getBanca() * stake / 100;
+    final status = isLocal
+        ? 'não reconferível agora'
+        : check['status'] as String? ?? 'reconferência indisponível';
     return Card(
       color: const Color(0xFF1E1E2E),
       child: Padding(
@@ -102,8 +117,17 @@ class _PlacardOpportunitiesScreenState
                 color: const Color(0xFFBBBBCC)),
           const SizedBox(height: 8),
           _text(
-              'Idade da leitura: $ageText${stale ? ' · Preço antigo: reconfirme' : ''}',
-              color: stale ? const Color(0xFFFFB74D) : const Color(0xFF81C784)),
+              '${isLocal ? 'Última leitura: $ageText' : 'Placard lido há $ageText'} · $status',
+              color: status == 'ainda vale'
+                  ? const Color(0xFF81C784)
+                  : const Color(0xFFFFB74D)),
+          if (!isLocal && check['placardOdds'] is num)
+            _text(
+                'Odd atual Placard ${_number(check['placardOdds'])} · Mínima atual ${_number(check['minValueOdds'], 3)}',
+                color: const Color(0xFFBBBBCC)),
+          if (!isLocal && check['reason'] is String)
+            _text(check['reason'] as String,
+                color: const Color(0xFFFFB74D)),
         ]),
       ),
     );
