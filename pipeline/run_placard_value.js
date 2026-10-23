@@ -499,13 +499,15 @@ async function publish(db, result, entries) {
   const payload = { generatedAt, runId, pageCount, report: report(entries), errors: result.errors,
     budget: { totalRemaining: budgetSummary.totalRemaining, available: budgetSummary.available,
       readingAvailable: budgetSummary.readingAvailable, closingReserve: CLOSING_RESERVE,
-      keyCount: budgetSummary.keyCount, lastSyncedAt: budgetSummary.lastSyncedAt,
+      keyCount: budgetSummary.keyCount, keyStatuses: budgetSummary.keyStatuses,
+      lastSyncedAt: budgetSummary.lastSyncedAt,
       syncComplete: budgetSummary.syncComplete,
       todayUsage: budget.dailyUsage?.[today] || { total: 0, closing: 0, placardScan: 0, otherRead: 0, requests: 0 },
       lastScanCredits: result.apiUsage?.creditsSpent || 0, lastClosingCredits: result.closingUsage?.creditsSpent || 0 },
     cadenceMinutes: 30, priceMaxAgeSeconds: 120, closingWindowMinutes: 5 };
   await run.set({ ...payload, diagnostics: result.diagnostics });
   await ref.set(payload);
+  return payload;
 }
 
 async function main() {
@@ -533,8 +535,8 @@ async function main() {
     const state = (await control.get()).data() || {};
     const result = state.result || { rows: [], errors: [], diagnostics: [] };
     result.closingUsage = closingUsage;
-    await publish(db, result, entries);
-    fs.writeFileSync('placard_run_summary.json', JSON.stringify(report(entries), null, 2));
+    const published = await publish(db, result, entries);
+    fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), budget: published.budget }, null, 2));
     return;
   }
   if (process.env.PLACARD_BOOKMAKER_READ_ID) {
@@ -548,8 +550,9 @@ async function main() {
     entries = await allEntries(db);
     result.rows = entries.filter(e => e.closingStatus === 'pendente' && Date.parse(e.commenceTime) > Date.now());
     result.closingUsage = closingUsage;
-    await publish(db, result, entries);
-    fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), bookmakerReadId: process.env.PLACARD_BOOKMAKER_READ_ID,
+    const published = await publish(db, result, entries);
+    fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), budget: published.budget,
+      bookmakerReadId: process.env.PLACARD_BOOKMAKER_READ_ID,
       opportunities: result.rows.length, errors: result.errors }, null, 2));
     return;
   }
@@ -573,8 +576,8 @@ async function main() {
   }
   result.rows = entries.filter(e => e.closingStatus === 'pendente' && Date.parse(e.commenceTime) > Date.now());
   result.closingUsage = closingUsage;
-  await publish(db, result, entries);
-  fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), scan: due,
+  const published = await publish(db, result, entries);
+  fs.writeFileSync('placard_run_summary.json', JSON.stringify({ ...report(entries), budget: published.budget, scan: due,
     opportunities: result.rows.length, errors: result.errors }, null, 2));
   if (due && result.errors.length) console.warn(`Coleta parcial; as demais competições foram processadas: ${result.errors.map(e => `${e.competition || 'coleta'}: ${e.error}`).join(' | ')}`);
 }

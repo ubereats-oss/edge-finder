@@ -3,7 +3,8 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { compare, compareBookmaker, comparedSelectionCount, fairProbabilities, references, report, namesEqual } = require('./placard_value');
 const { estimateCost, summarize, planReservation, keyFingerprint, parseHeaders,
-  refreshBalances, CLOSING_RESERVE, MONTHLY_SPEND_CAP, MONTHLY_READ_CAP } = require('./odds_api_monthly_budget');
+  refreshBalances, CLOSING_RESERVE, READING_MARGIN, SCHEMA_VERSION,
+  MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, trackUsage } = require('./odds_api_monthly_budget');
 const { kickoff } = require('./get_placard_odds');
 const { captureClosing, exactTotals, exactSpreads, closingStartTolerance, competitionUrl, forEachCompetitionIsolated, pinnacleRefreshDue } = require('./run_placard_value');
 const { readSelections, adaptTotalsAndHandicaps, tunnelCycleAffordable, monthKey, MAX_MEASURED_CYCLE_MB } = require('./local_betano_reader');
@@ -220,14 +221,14 @@ test('estima custo por mercado, incluindo histórico e linhas alternativas', () 
   assert.equal(estimateCost('https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds',
     { bookmakers: 'pinnacle', markets: 'h2h,totals,spreads' }), 3);
 });
-test('ledger deriva saldo total e leituras da soma real das chaves menos a reserva de fechamento', () => {
+test('ledger deriva saldo e preserva reserva de fechamento mais margem para leituras', () => {
   const a = keyFingerprint('key-a');
   const b = keyFingerprint('key-b');
-  const state = { schemaVersion: 2, syncComplete: true, closingReserve: CLOSING_RESERVE,
+  const state = { schemaVersion: SCHEMA_VERSION, syncComplete: true, closingReserve: CLOSING_RESERVE,
     keyFingerprints: [a, b], keyBalances: { [a]: { remaining: 4000 }, [b]: { remaining: 1925 } },
     pendingRequests: {} };
   assert.equal(summarize(state).totalRemaining, 5925);
-  assert.equal(summarize(state).readingAvailable, 5125);
+  assert.equal(summarize(state).readingAvailable, 4925);
   assert.equal(planReservation(state, ['key-a', 'key-b'], 3, 'placard-scan').availableAfter, 5922);
   assert.throws(() => planReservation({ ...state, keyBalances: { [a]: { remaining: 500 }, [b]: { remaining: 300 } } },
     ['key-a', 'key-b'], 3, 'placard-scan'), /disponível_leituras=0/);
@@ -239,17 +240,33 @@ test('ledger usa saldo mais recente e falha fechado sem o header de saldo real',
     { remaining: 5925, used: 100, last: 3 });
   assert.throws(() => parseHeaders({ 'x-requests-used': '100' }), /x-requests-remaining/);
 });
-test('teto mensal limita leituras a 4.200 e preserva até 5.000 para leituras e fechamentos', () => {
+test('saldo real dispensa teto fixo; falha de leitura recorre ao limite antigo', () => {
   const key = keyFingerprint('key-a');
-  const state = { schemaVersion: 2, syncComplete: true, closingReserve: CLOSING_RESERVE,
+  const state = { schemaVersion: SCHEMA_VERSION, syncComplete: true, closingReserve: CLOSING_RESERVE,
     keyFingerprints: [key], keyBalances: { [key]: { remaining: 6000, used: MONTHLY_READ_CAP - 1 } }, pendingRequests: {} };
   assert.equal(MONTHLY_SPEND_CAP, 5000);
   assert.equal(MONTHLY_READ_CAP, 4200);
-  assert.equal(planReservation(state, ['key-a'], 1, 'placard-scan').availableAfter, 5999);
-  assert.throws(() => planReservation(state, ['key-a'], 2, 'placard-scan'), /Teto mensal de leituras/);
-  const closingState = { ...state, keyBalances: { [key]: { remaining: 6000, used: 4999 } } };
-  assert.equal(planReservation(closingState, ['key-a'], 1, 'placard-closing').availableAfter, 5999);
+  assert.equal(READING_MARGIN, 200);
+  assert.equal(planReservation(state, ['key-a'], 2, 'placard-scan').balanceMode, 'real');
+  const fallback = { ...state, syncComplete: false };
+  assert.equal(planReservation(fallback, ['key-a'], 1, 'placard-scan').balanceMode, 'limite_antigo');
+  assert.throws(() => planReservation(fallback, ['key-a'], 2, 'placard-scan'), /Teto mensal de leituras/);
+  const closingState = { ...fallback, keyBalances: { [key]: { remaining: 6000, used: 4999 } } };
+  assert.equal(planReservation(closingState, ['key-a'], 1, 'placard-closing').balanceMode, 'limite_antigo');
   assert.throws(() => planReservation(closingState, ['key-a'], 2, 'placard-closing'), /Teto mensal de créditos totais/);
+  const floorState = { ...state, keyBalances: { [key]: { remaining: 1000, used: 5000 } } };
+  assert.throws(() => planReservation(floorState, ['key-a'], 1, 'placard-scan'), /Saldo real insuficiente/);
+  assert.equal(planReservation(floorState, ['key-a'], 1, 'placard-closing').balanceMode, 'real');
+});
+
+test('uso externo é a diferença entre gasto da API desde a primeira leitura e gasto próprio', () => {
+  const at = '2026-10-23T12:00:00Z';
+  const first = trackUsage(null, { remaining: 4000, used: 10, last: 0 }, at);
+  const own = trackUsage(first, { remaining: 3997, used: 13, last: 3 }, at, 3);
+  assert.equal(own.suspiciousDifference, 0);
+  const external = trackUsage(own, { remaining: 3995, used: 15, last: 0 }, at);
+  assert.equal(external.suspiciousDifference, 2);
+  assert.equal(external.systemUsed, 3);
 });
 test('Pinnacle atualiza em toda leitura até 2h e de hora em hora entre 2h e 6h', () => {
   const instant = Date.parse('2026-10-21T12:00:00Z');
@@ -277,7 +294,7 @@ test('reconcilia o ledger com os headers de saldo de cada chave sem persistir as
       ? { 'x-requests-remaining': '4000', 'x-requests-used': '10', 'x-requests-last': '0' }
       : { 'x-requests-remaining': '1925', 'x-requests-used': '20', 'x-requests-last': '0' } }) });
   assert.equal(first.totalRemaining, 5925);
-  assert.equal(first.readingAvailable, 5125);
+  assert.equal(first.readingAvailable, 4925);
   assert.equal(saved.syncComplete, true);
   assert.equal(JSON.stringify(saved).includes('key-a'), false);
   const second = await refreshBalances(keys, { db, now: Date.parse('2026-10-21T12:01:00Z'),
@@ -285,6 +302,8 @@ test('reconcilia o ledger com os headers de saldo de cada chave sem persistir as
       ? { 'x-requests-remaining': '3997', 'x-requests-used': '13', 'x-requests-last': '3' }
       : { 'x-requests-remaining': '1925', 'x-requests-used': '20', 'x-requests-last': '0' } }) });
   assert.equal(second.totalRemaining, 5922);
+  assert.equal(second.keyStatuses[0].status, 'uso externo suspeito');
+  assert.equal(second.keyStatuses[0].difference, 3);
 });
 test('busca handicap alternativo exato uma vez por evento', async t => {
   t.mock.method(Date, 'now', () => now);
