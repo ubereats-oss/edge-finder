@@ -4,6 +4,32 @@ const { competition, localClock, ordered } = require('./local_competitions.cjs')
 const { parseBwinFeed, parseLebullHtml, retabetLeague, goldenparkClock,
   betclicClock } = require('./fast_readers.cjs');
 const { classifyVpnCharge } = require('../../pipeline/local_bookmaker_cycle_fast.cjs');
+const { vpnBudgetForDay, shouldRunForPinnacleWindow } = require('./daily_budget.cjs');
+
+test('VPN divide saldo mensal pelos dias restantes e reinicia em novembro', () => {
+  const budget = { month: '2026-10', carriedForwardMB: 150, measuredMB: 750,
+    adapterCycles: [{ startedAt: '2026-10-23T15:00:00Z', bytes: 30000000 }] };
+  const october = vpnBudgetForDay(budget, new Date('2026-10-23T22:00:00Z'));
+  assert.equal(october.monthlyRemaining, 1800);
+  assert.equal(october.allowance, 1830 / 9);
+  assert.equal(october.remaining, 1830 / 9 - 30);
+  const november = vpnBudgetForDay(budget, new Date('2026-11-01T12:00:00Z'));
+  assert.equal(november.reset, true);
+  assert.equal(november.limitMB, 4000);
+  assert.equal(november.allowance, 4000 / 30);
+});
+test('VPN usa apenas horários Pinnacle: três horas, cache vazio ou velho', () => {
+  const now = Date.parse('2026-10-23T22:00:00Z');
+  assert.equal(shouldRunForPinnacleWindow({}, now).run, true);
+  const window = { basketball_nba: { updatedAt: new Date(now - 60000).toISOString(),
+    events: [{ commence_time: new Date(now + 4 * 3600000).toISOString() }] } };
+  assert.equal(shouldRunForPinnacleWindow(window, now).run, false);
+  window.basketball_nba.events[0].commence_time = new Date(now + 3 * 3600000).toISOString();
+  assert.equal(shouldRunForPinnacleWindow(window, now).run, true);
+  window.basketball_nba.events[0].commence_time = new Date(now + 4 * 3600000).toISOString();
+  window.basketball_nba.updatedAt = new Date(now - 3 * 3600000).toISOString();
+  assert.equal(shouldRunForPinnacleWindow(window, now).run, true);
+});
 
 test('GoldenPark interpreta a data curta da listagem na hora de Brasília', () => {
   assert.equal(goldenparkClock('Sex 23 out 17:00', new Date('2026-10-23T18:00:00Z')),

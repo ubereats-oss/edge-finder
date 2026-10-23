@@ -56,7 +56,34 @@ function safeError(error) {
 }
 
 function monthId(now = new Date()) {
-  return now.toISOString().slice(0, 7);
+  return brasilDay(now).slice(0, 7);
+}
+function brasilDay(now = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Sao_Paulo',
+    year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now);
+  const value = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${value.year}-${value.month}-${value.day}`;
+}
+function daysRemaining(day) {
+  const [year, month, date] = day.split('-').map(Number);
+  return new Date(Date.UTC(year, month, 0)).getUTCDate() - date + 1;
+}
+function dailyReadBudget(state, now = new Date(), availableOverride = null) {
+  const day = brasilDay(now);
+  const usage = state.dailyUsage?.[day] || {};
+  const spentToday = Number(usage.total || 0);
+  const readingSpent = Math.max(0, spentToday - Number(usage.closing || 0));
+  const pendingToday = Object.values(state.pendingRequests || {}).filter(row =>
+    brasilDay(new Date(row.createdAt)) === day);
+  const pendingCost = pendingToday.reduce((sum, row) => sum + Number(row.cost || 0), 0);
+  const pendingReading = pendingToday.filter(row => !/closing/i.test(row.label))
+    .reduce((sum, row) => sum + Number(row.cost || 0), 0);
+  const available = availableOverride ?? summarize(state).available;
+  const allowance = Math.max(0, Math.floor((available + spentToday + pendingCost - CLOSING_RESERVE)
+    / daysRemaining(day)));
+  return { day, daysRemaining: daysRemaining(day), allowance,
+    spent: readingSpent + pendingReading,
+    remaining: Math.max(0, allowance - readingSpent - pendingReading) };
 }
 
 function monthRef(db, month = monthId()) {
@@ -88,11 +115,12 @@ function summarize(state = {}) {
     pendingCredits,
     available,
     closingReserve: CLOSING_RESERVE,
-    readingAvailable: Math.max(0, available - CLOSING_RESERVE - READING_MARGIN),
+    readingAvailable: Math.max(0, available - CLOSING_RESERVE),
     lastSyncedAt: state.lastSyncedAt || null,
     keyCount: balances.length,
     syncComplete: state.syncComplete === true,
     dailyUsage: state.dailyUsage || {},
+    dailyReadBudget: dailyReadBudget(state, new Date(), available),
     keyStatuses: (state.keyFingerprints || []).map((fingerprint, index) => {
       const row = state.keyBalances?.[fingerprint] || {};
       const difference = Number(row.suspiciousDifference || 0);
@@ -147,10 +175,13 @@ function planReservation(state, keys, cost, label, excludedIndexes = new Set()) 
   const available = Math.max(0, summarize({ ...state, pendingRequests }).totalRemaining - pendingCost);
   const closing = /closing/i.test(label);
   if (realBalancesAvailable) {
-    const requiredFloor = closing ? 0 : CLOSING_RESERVE + READING_MARGIN;
+    const requiredFloor = closing ? 0 : CLOSING_RESERVE;
     if (available - cost < requiredFloor || !candidates.length) {
-      throw new Error(`Saldo real insuficiente: total=${available}, reserva_fechamentos=${CLOSING_RESERVE}, margem=${READING_MARGIN}, disponível_leituras=${Math.max(0, available - requiredFloor)}, custo=${cost} (${label}).`);
+      throw new Error(`Saldo real insuficiente: total=${available}, reserva_fechamentos=${CLOSING_RESERVE}, disponível_leituras=${Math.max(0, available - requiredFloor)}, custo=${cost} (${label}).`);
     }
+    const daily = dailyReadBudget({ ...state, pendingRequests }, new Date(), available);
+    if (!closing && daily.remaining < cost) throw new Error(
+      `Cota diária de leituras atingida: dia=${daily.day}, limite=${daily.allowance}, gasto=${daily.spent}, restante=${daily.remaining}, custo=${cost} (${label}).`);
   } else {
     const spent = monthlyUsed(state) + pendingCost;
     const monthlyLimit = closing ? MONTHLY_SPEND_CAP : MONTHLY_READ_CAP;
@@ -269,7 +300,7 @@ async function reconcile(reservation, headers) {
     const pendingRequests = { ...(state.pendingRequests || {}) };
     delete pendingRequests[reservation.id];
     const dailyUsage = { ...(state.dailyUsage || {}) };
-    const day = observedAt.slice(0, 10);
+    const day = brasilDay(new Date(observedAt));
     const entry = { ...(dailyUsage[day] || { total: 0, closing: 0, placardScan: 0, otherRead: 0, requests: 0 }) };
     const usedDelta = observation.used !== null && previous.used !== null && previous.used !== undefined
       ? Math.max(0, observation.used - previous.used) : null;
@@ -337,5 +368,5 @@ module.exports = {
   reserve, reconcile, refreshBalances, releaseQuotaRejected, estimateCost,
   recordUnreservedResponse, summarize, planReservation, keyFingerprint, parseHeaders,
   database, CLOSING_RESERVE, READING_MARGIN, SCHEMA_VERSION,
-  MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, monthlyUsed, trackUsage,
+  MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, monthlyUsed, trackUsage, brasilDay, daysRemaining, dailyReadBudget,
 };
