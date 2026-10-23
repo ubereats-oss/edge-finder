@@ -12,6 +12,7 @@ const { parseMarkets: retabetMarkets } = require('./retabet_reader.cjs');
 const { parseMarkets: lebullMarkets } = require('./lebull_reader.cjs');
 const { parseTotals } = require('./esc_online_reader.cjs');
 const { parseEvent } = require('./goldenpark_reader.cjs');
+const { parseMarkets: betclicMarkets } = require('./betclic_reader.cjs');
 
 const BETANO = 'https://www.betano.pt';
 const NBA_PATH = '/api/sports/BASK/hot/trending/leagues/441g/events?req=s,stnf,c,mb';
@@ -22,6 +23,8 @@ const LEBULL_FEED = 'https://lebullpt-ssr.boxwebcdn.work/pt';
 const ESC_INDEX = 'https://www.estorilsolcasinos.pt/pt/betting/sport/futebol-844/matches/date-0';
 const GOLDEN_INDEX = 'https://apostas.goldenpark.pt/competicao/6675-liga-europa?jogar=si';
 const GOLDEN_SPORT = 'https://apostas.goldenpark.pt/desporte/13-futebol';
+const BETCLIC_HOME = 'https://www.betclic.pt/futebol-s1';
+const BETCLIC_EUROPA = 'https://www.betclic.pt/futebol-sfootball/liga-europa-c3453';
 const count = games => games.reduce((sum, game) => sum + game.markets.reduce((n, market) => n + market.selections.length, 0), 0);
 const rank = identity => PRIORITY.findIndex(([key]) => key === identity?.apiSport);
 const resolver = new dns.promises.Resolver();
@@ -394,5 +397,64 @@ async function goldenpark(context) {
   }
 }
 
-module.exports = { betano, bwin, retabet, lebull, escOnline, goldenpark,
-  parseBwinFeed, parseLebullHtml, parseRetabetEvent, parseEscEvent, count, responseText };
+function betclicCards(html, url) {
+  const $ = cheerio.load(html);
+  return $('a.cardEvent').toArray().map(element => {
+    const card = $(element);
+    const label = card.attr('aria-label') || '';
+    const teams = label.split(/\s+-\s+/).map(name => name.trim());
+    const identity = competition(card.text()) || competition(url);
+    const day = card.closest('.groupEvents').find('.groupEvents_head').first().text().trim();
+    const clock = card.text().match(/\b\d{1,2}:\d{2}\b/)?.[0];
+    const commenceTime = localClock(`${day} ${clock || ''}`, 'Europe/Lisbon');
+    const href = card.attr('href');
+    return teams.length === 2 && teams.every(Boolean) && identity && commenceTime && href
+      ? { ...identity, teams, commenceTime, label, href: new URL(href, url).href } : null;
+  }).filter(row => row && Date.parse(row.commenceTime) > Date.now() + 600000
+    && Date.parse(row.commenceTime) <= Date.now() + 12 * 3600000);
+}
+
+function parseBetclicEvent(html, card) {
+  const $ = cheerio.load(html);
+  const boxes = $('[data-qa="market-box"]').toArray().map(box => ({
+    title: $(box).find('[data-qa="market-title"]').first().text().trim(),
+    rows: $(box).find('.marketBox_lineSelection').toArray().map(row => ({
+      label: $(row).find('.marketBox_label').first().text().trim()
+        || $(row).find('bc-button-label').first().text().trim(),
+      price: $(row).find('[data-qa="market-selection"] bcdk-bet-button-odds-animated').first().text().trim(),
+    })),
+  }));
+  const markets = betclicMarkets(boxes);
+  return markets && { apiSport: card.apiSport, competition: card.competition,
+    teams: card.teams, commenceTime: card.commenceTime, observedAt: new Date().toISOString(),
+    sourceUrl: card.href, sourceEventId: card.href.match(/-m(\d+)$/)?.[1] || null,
+    sourceEventName: card.label,
+    sourceMarket: 'Betclic HTML pré-jogo: resultado regulamentar e total de golos', markets };
+}
+
+async function betclic(context) {
+  const catalog = await responseText(context, BETCLIC_HOME, 20000);
+  const $ = cheerio.load(catalog);
+  const leagues = [...new Set([BETCLIC_EUROPA, ...$('a[href]').toArray()
+    .map(element => new URL($(element).attr('href'), BETCLIC_HOME).href)
+    .filter(url => url.startsWith('https://www.betclic.pt/') && competition(url))])]
+    .sort((a, b) => rank(competition(a)) - rank(competition(b))).slice(0, 10);
+  const lists = await Promise.allSettled(leagues.map(url => responseText(context, url, 20000)
+    .then(html => betclicCards(html, url))));
+  const cards = lists.flatMap(result => result.status === 'fulfilled' ? result.value : [])
+    .sort((a, b) => rank(a) - rank(b) || Date.parse(a.commenceTime) - Date.parse(b.commenceTime))
+    .slice(0, 8);
+  if (!cards.length) throw new Error('Betclic: listagem própria sem jogos das ligas alvo nas próximas 12 horas.');
+  const events = await Promise.allSettled(cards.map(card => responseText(context, card.href, 20000)
+    .then(html => parseBetclicEvent(html, card))));
+  const games = ordered(events.filter(result => result.status === 'fulfilled' && result.value)
+    .map(result => result.value));
+  if (!games.length) throw new Error('Betclic: jogos listados sem mercados completos.');
+  return { games, method: 'direct_feed', source: 'Betclic HTML pré-jogo: resultado e total de golos',
+    diagnostics: [...lists, ...events].filter(result => result.status === 'rejected')
+      .map(result => result.reason.message) };
+}
+
+module.exports = { betano, bwin, retabet, lebull, escOnline, goldenpark, betclic,
+  parseBwinFeed, parseLebullHtml, parseRetabetEvent, parseEscEvent,
+  betclicCards, parseBetclicEvent, count, responseText };

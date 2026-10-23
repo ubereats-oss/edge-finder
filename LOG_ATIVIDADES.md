@@ -286,3 +286,15 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: ciclo real `cycle-2026-10-23T17-15-02-754Z.json` completo em 128.201 ms, VPN 79.681 ms, adaptador 34.440.652 bytes (34,440652 MB), acumulado 184,440652 MB = 150 MB migrados + 34,440652 MB medidos. `hourly-cycles.jsonl` contém `vpnAdapterBytes=34440652`; adaptador desconectado ao final. Testes Node: 34/34 e leitores independentes 3/3.
 - Problemas encontrados: `Get-NetAdapterStatistics` não expõe estatísticas desse adaptador nem quando conectado; a API .NET do Windows expõe os contadores. Os 150 MB migrados foram medidos pelo controle anterior, porque os ciclos anteriores não tinham bytes do adaptador.
 - Pendências: nenhuma do aceite da Parte 7; iniciar a Parte 8.
+
+## 2026-10-23 — Parte 8: premissas antes da implementação
+
+- Início: 14:18:11 (relógio do Windows).
+- Pedido recebido: retirar Casino Portugal da coleta, incluir Betclic na coleta independente e registrar HTTP 403 sem interromper as demais casas; confirmar casas ativas no resumo diário.
+- Premissas verificadas: o ciclo agendado `local_bookmaker_cycle_fast.cjs` executa seis casas em paralelo e já não executa Casino Portugal; o único alvo remanescente dessa casa está no diagnóstico opcional `scheduled_feed_probe.cjs`. Betclic ainda não está na lista ativa; `betclic_reader.cjs` lê apenas Liga Europa e depende de lista externa de jogos, portanto não atende à coleta independente da Parte 6. O resumo diário usa lista estática `NAMES` e pode listar casas ativas mesmo com falha de leitura.
+- O que foi feito nesta etapa: somente leitura do código e registro das premissas.
+- Arquivos alterados nesta etapa: `LOG_ATIVIDADES.md`.
+- Commit: pendente.
+- Resultado do aceite: pendente de resumo diário com Betclic ativa e Casino Portugal ausente.
+- Problemas encontrados: a Betclic pode responder HTTP 403; essa condição deve ser registrada por ciclo sem impedir as demais casas.
+- Pendências: implementar, testar e aceitar no ciclo local real.

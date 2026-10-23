@@ -7,7 +7,6 @@ const TARGETS = {
   lebull: 'https://www.lebull.pt/apostas-desportivas/',
   esc_online: 'https://www.estorilsolcasinos.pt/pt/betting/home',
   goldenpark: 'https://www.goldenpark.pt/',
-  casino_portugal: 'https://www.casinoportugal.pt/desporto/d_all/s_69',
   retabet_euroleague: 'https://www.retabet.pt/desportos/basquetebol/2',
 };
 

@@ -3,7 +3,7 @@ const path = require('node:path');
 
 const LOG_DIR = path.resolve(__dirname, '../../.local_logs/betano');
 const NAMES = { betano: 'Betano', bwin: 'Bwin', lebull: 'LeBull', esc_online: 'ESC Online',
-  goldenpark: 'GoldenPark', retabet: 'Retabet' };
+  goldenpark: 'GoldenPark', retabet: 'Retabet', betclic: 'Betclic' };
 const STATUSES = { complete: 'concluído', failed: 'falhou', paused: 'pausado' };
 
 function failureReasons(read) {
