@@ -121,3 +121,14 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite nesta etapa: 33/33 testes locais passaram; o aceite de produção no GitHub Actions ainda está pendente. Evidência: `node --test pipeline/test_placard_value.js` às 12:43.
 - Problemas encontrados: nenhum na reversão local.
 - Pendências: publicar, executar `Placard x Pinnacle` e verificar zero consultas Arcadia e comparações quando houver jogos.
+
+## 2026-10-23 — Passo 1: aceite no GitHub Actions
+
+- Início: 12:42:21; fim: 12:56:57 (relógio do Windows).
+- Pedido recebido: comprovar em produção que a Arcadia saiu e que a comparação usa apenas a The Odds API.
+- O que foi feito: publicado `099cffc` na `main`; disparado e acompanhado o workflow `Placard x Pinnacle` até o fim; confrontados log, artefato e `_placard_control/scan` no Firestore.
+- Arquivos alterados nesta entrada: somente `LOG_ATIVIDADES.md`.
+- Commit: `099cffc` (reversão e regra de auditoria); commit desta entrada adicional (identificado no histórico Git).
+- Resultado do aceite: passou. Execução `39980735909` concluída com sucesso no commit `099cffc`, zero linhas Arcadia no log, 4 consultas The Odds API, 5 créditos, 35 diagnósticos, 51 seleções comparadas e 6 confirmadas; `scanRunId=39980735909-1`. Evidências: log e artefato `placard-summary-39980735909` do GitHub Actions; `_placard_control/scan` no Firestore.
+- Problemas encontrados: catálogos de icehockey, americanfootball e mma permaneceram indisponíveis; não afetam este aceite.
+- Pendências: nenhuma do Passo 1; iniciar a Parte 4.
