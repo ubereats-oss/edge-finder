@@ -61,3 +61,16 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Resultado do aceite: passou. Execução `39958739448` concluída com sucesso; 16 consultas à The Odds API, 31 créditos consumidos, 19 jogos e 41 seleções comparadas, sem ocorrência de “Teto mensal de leituras atingido”. Resumo: saldo real 5.254, 19 chaves em situação normal e sincronização completa. Evidências: log e artefato `placard-summary-39958739448` do GitHub Actions; `_placard_control/scan` com `scanRunId=39958739448-1` e `confirmedSelections=41`.
 - Problemas encontrados: catálogos Placard de icehockey, americanfootball e mma indisponíveis no GitHub; as competições restantes foram processadas.
 - Pendências: tratar esses três catálogos em tarefa própria; Partes 2 a 8 seguem na ordem aprovada.
+
+## 2026-10-23 — Parte 2: cruzamento de nomes de times
+
+- Início: 10:15:29 (relógio do Windows).
+- Fim do aceite: 10:20:31 (relógio do Windows); publicação registrada no commit desta parte.
+- Pedido recebido: reconhecer variações de nomes, exigir dois times e horário compatível e recruzar os 483 casos salvos.
+- O que foi feito: normalizadas letras acentuadas e variantes, removidas siglas de clubes apenas nas extremidades do nome, acrescentados apelidos observados e exigida correspondência inequívoca entre os dois lados do jogo.
+- Arquivos alterados: `pipeline/placard_value.js`, `pipeline/placard_aliases.json`, `pipeline/test_placard_value.js`, `LOG_ATIVIDADES.md`.
+- Commit: commit desta parte na `main` (identificado pelo histórico Git; o arquivo não pode conter o hash do próprio commit).
+- Resultado do aceite: 483/483 rejeições por nome de 58 leituras salvas agora encontram exatamente um jogo da Pinnacle; são 14 confrontos distintos, zero ambiguidades e diferença de horário de 0 s nos 10 exemplos abaixo. Testes: 33/33 passaram. Evidências: `_bookmaker_reads` (as primeiras 58 leituras por `observedAt`), jogos nas subcoleções `games`, odds Pinnacle já salvas em `_placard_reads` e teste `node --test pipeline/test_placard_value.js`.
+- Dez exemplos conferidos (local → Pinnacle): Ferencvaros TC/SC União Torreense → Ferencváros TC/Torreense; Besiktas/Crystal Palace → Besiktas JK/Crystal Palace; FC Viktoria Plzen/PFC Levski Sofia → Viktoria Plzeň/PFC Levski Sofia; Jagiellonia Bialystok/Anderlecht → Jagiellonia Białystok/Anderlecht; NK Celje/Salzburgo → NK Celje/Salzburg; Lillestrom SK/Real Sociedad → Lillestrom/Real Sociedad; Hoffenheim/Lyon → TSG Hoffenheim/Lyon; Olympiacos/Sparta Praga → Olympiakos Piraeus/Sparta Prague; SK Sturm Graz/Marselha → SK Sturm Graz/Marseille; GNK Dinamo Zagreb/NEC Nijmegen → Dinamo Zagreb/NEC Nijmegen.
+- Problemas encontrados: a implementação anterior não transliterava `ł` e não reconhecia siglas ou as variantes observadas; nenhuma incompatibilidade restante neste conjunto salvo.
+- Pendências: nenhuma da Parte 2.
