@@ -7,6 +7,7 @@ function compactCycle(cycle) {
     spentMB: Number(cycle.vpnAdapterMB ?? cycle.consumedMB ?? 0),
     estimated: Boolean(cycle.vpnEstimate),
     vpnBudgetMonth: cycle.budget?.month || '2026-10',
+    vpnProviderExhausted: /TUNNELBEAR_DATA_EXHAUSTED/.test(cycle.error || ''),
     vpnBudgetExhausted: Number(cycle.budget?.limitMB || 2700) - Number(cycle.accumulatedMB || 0) < 60,
     vpnMonthlySpentMB: Number(cycle.accumulatedMB ?? 0),
     vpnMonthlyRemainingMB: Math.max(0, Number(cycle.budget?.limitMB || 0) - Number(cycle.accumulatedMB || 0)),
@@ -30,6 +31,7 @@ async function flushCycleQueue(db, cycle, logDir) {
         await db.collection('_odds_api_budget').doc(row.vpnBudgetMonth || '2026-10').set({ vpn: {
           spentMB: row.vpnMonthlySpentMB, remainingMB: row.vpnMonthlyRemainingMB,
           observedAt: row.finishedAt || row.startedAt,
+          ...(row.vpnProviderExhausted ? { providerExhausted: true } : {}),
         } }, { merge: true });
       })(),
         new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('envio à nuvem excedeu 5 s')), 5000); })]);
