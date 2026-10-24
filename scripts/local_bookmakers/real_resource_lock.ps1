@@ -1,5 +1,6 @@
 ﻿function Enter-LocalResourceLock([string]$ScriptPath, [string[]]$Arguments) {
-  $dataRoot = if ($env:EDGE_DATA_ROOT) { $env:EDGE_DATA_ROOT } else { Split-Path -Parent (Split-Path -Parent $PSScriptRoot) }
+  $dataRoot = if ($env:EDGE_DATA_ROOT) { $env:EDGE_DATA_ROOT } else { Join-Path $env:USERPROFILE 'Apps - desenvolvimento\odds_app' }
+  $env:EDGE_DATA_ROOT = $dataRoot
   $file = Join-Path $dataRoot '.local_logs\local-cycle.lock'
   try {
     $owner = Get-Content -LiteralPath $file -Raw | ConvertFrom-Json
