@@ -37,7 +37,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Testes sem rede
-        run: node --test pipeline/test_placard_value.js
+        run: node --test pipeline/test_placard_value.js pipeline/test_market_integrity.cjs
       - name: Verificar trabalho pendente sem consumir Odds API
         id: plan
         run: node pipeline/run_placard_value.js --plan

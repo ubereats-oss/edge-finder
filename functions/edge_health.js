@@ -1,5 +1,6 @@
 const { summarize, monthlyUsed, brasilDay } = require('./odds_api_monthly_budget');
 const { report: clvReport } = require('./placard_value');
+const { isAnnulled } = require('./market_integrity');
 
 const DAY_MS = 24 * 3600000;
 const reportDay = (now = new Date()) => brasilDay(now);
@@ -18,7 +19,7 @@ const number = value => Number.isFinite(value) ? value.toFixed(2).replace('.', '
 function octoberReview(cycles, opportunities, budget) {
   const inOctober = value => Date.parse(value) >= Date.parse(OCT_START) && Date.parse(value) < Date.parse(OCT_END);
   const monthCycles = cycles.filter(row => inOctober(row.startedAt));
-  const sent = opportunities.filter(row => inOctober(row.telegramSentAt));
+  const sent = opportunities.filter(row => inOctober(row.telegramSentAt) && !isAnnulled(row));
   const stats = clvReport(sent);
   const lines = ['Levantamento de outubro (Brasília):'];
   for (const [key, name] of Object.entries(HOUSE_NAMES)) {

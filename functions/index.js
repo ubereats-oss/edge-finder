@@ -13,6 +13,7 @@ const closingOddsRules = require('./closing_odds_rules');
 const placardPart4 = require('./placard_part4');
 const edgeHealth = require('./edge_health');
 const budgetAlerts = require('./budget_alerts');
+const marketIntegrity = require('./market_integrity');
 
 initializeApp();
 const db = getFirestore();
@@ -835,7 +836,15 @@ exports.notifyPlacardOpportunity = onDocumentCreated({
   const row = event.data?.data();
   if (!row) return;
   const ref = event.data.ref;
-  if ((await ref.get()).data()?.telegramMessageId) return;
+  const current = (await ref.get()).data();
+  if (current?.telegramMessageId || marketIntegrity.isAnnulled(current || row)) return;
+  const retabet = String(row.bookmaker || '').toLowerCase() === 'retabet';
+  const gate = retabet ? (await db.collection('_bookmaker_validation').doc('retabet_identity').get()).data() : null;
+  if (!marketIntegrity.notificationAllowed(current || row, gate)) {
+    await ref.set({ notificationStatus: retabet ? 'suspensa' : 'barrada',
+      notificationReason: retabet ? 'Retabet aguarda aceite e identidade do mercado' : marketIntegrity.REASON }, { merge: true });
+    return;
+  }
   const messageId = await placardPart4.sendTelegram(row, TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value());
   await ref.set({ telegramMessageId: messageId, telegramSentAt: new Date().toISOString() }, { merge: true });
 });

@@ -1,12 +1,21 @@
-param(
+﻿param(
   [Parameter(Mandatory = $true)]
-  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once')]
+  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state')]
   [string]$Action,
   [ValidateRange(5, 90)]
   [int]$StableSeconds = 90
 )
 
 $ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+if ($Action -eq 'state') {
+  $vpnAdapter = [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() |
+    Where-Object { $_.Description -eq 'TunnelBear Adapter V9' } | Select-Object -First 1
+  if (-not $vpnAdapter) { [Console]::Error.WriteLine('Adaptador VPN não encontrado.'); exit 1 }
+  [pscustomobject]@{ action = 'state'; status = $vpnAdapter.OperationalStatus.ToString();
+    description = 'Estado da conexão VPN; consulta sem alteração' } | ConvertTo-Json -Compress
+  exit 0
+}
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
 

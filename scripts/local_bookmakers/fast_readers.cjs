@@ -11,6 +11,7 @@ const { PRIORITY, competition, localClock, ordered } = require('./local_competit
 const { readSelections, adaptTotalsAndHandicaps } = require('../../pipeline/local_betano_reader.js');
 const { eligibleTotals } = require('./bwin_reader.cjs');
 const { parseMarkets: retabetMarkets } = require('./retabet_reader.cjs');
+const { listingIdentities, verifyPageIdentity } = require('./retabet_identity.cjs');
 const { parseMarkets: lebullMarkets } = require('./lebull_reader.cjs');
 const { parseTotals } = require('./esc_online_reader.cjs');
 const { parseEvent } = require('./goldenpark_reader.cjs');
@@ -433,11 +434,13 @@ async function lebull(context) {
   }
 }
 
-function parseRetabetEvent(source, url) {
+function parseRetabetEvent(source, url, listing) {
   const $ = cheerio.load(source);
   $('style,script,noscript').remove();
-  const title = $('title').text().match(/^Aposte no (.+) com Retabet$/i)?.[1];
-  const names = title?.split(/\s+-\s+/);
+  const verified = verifyPageIdentity(source, url, listing);
+  if (!verified.verified) throw new Error(verified.reason);
+  const names = verified.teams;
+  const title = names.join(' - ');
   const header = $('body').text().replace(/\s+/g, ' ');
   const leagueText = $('[class*="breadcrumb"], [class*="competition-name"], [class*="league-name"]')
     .toArray().map(element => $(element).text().trim()).find(text => competition(text));
@@ -446,7 +449,9 @@ function parseRetabetEvent(source, url) {
   if (names?.length !== 2 || !identity || (leagueText && competition(leagueText)?.apiSport !== identity.apiSport)
     || !commenceTime || Date.parse(commenceTime) <= Date.now() + 600000
     || Date.parse(commenceTime) > Date.now() + 12 * 3600000) return null;
-  const markets = $('.bets__wrapper.jbet').toArray().map(wrapper => ({
+  const eventBlocks = $('.jev.module[data-i]').toArray().filter(node => $(node).attr('data-i') === verified.sourceEventId);
+  if (eventBlocks.length !== 1) throw new Error('Bloco de mercados Retabet sem ID único do jogo');
+  const markets = $(eventBlocks[0]).find('.bets__wrapper.jbet').toArray().map(wrapper => ({
     title: $(wrapper).find('.mt').first().text().trim(),
     options: $(wrapper).find('li.jopc').toArray().map(option => ({
       label: $(option).find('.jqt').first().text().trim(), price: $(option).find('.jpr').first().text().trim(),
@@ -459,6 +464,7 @@ function parseRetabetEvent(source, url) {
   return { ...identity, teams: names,
     commenceTime, observedAt: new Date().toISOString(), sourceUrl: url,
     sourceEventId: new URL(url).pathname.split('/').at(-1), sourceEventName: title,
+    listingTeams: verified.listingTeams, sourceIdentityVerified: true,
     sourceMarket: 'HTML pré-jogo Retabet', markets: parsed };
 }
 
@@ -542,13 +548,14 @@ async function retabet(context) {
         events: links.map(href => ({ url: href, teams: null, commenceTime: null,
           reason: 'aguarda página do jogo' })),
         reason: result.status === 'rejected' ? result.reason.message : null });
-      candidates.push(...links.map(href => ({ href, league: key, indexUrl: url })));
+      const identities = listingIdentities(result.status === 'fulfilled' ? result.value : '', url);
+      candidates.push(...links.map(href => ({ href, league: key, indexUrl: url, listing: identities.get(href) })));
     }
     if (!candidates.length) throw new Error('Retabet direto sem eventos listados.');
     const settled = await Promise.allSettled(candidates.map(async candidate => {
       try {
         const html = await responseText(context, candidate.href, 20000);
-        const game = parseRetabetEvent(html, candidate.href);
+        const game = parseRetabetEvent(html, candidate.href, candidate.listing);
         const page = cheerio.load(html);
         const title = page('title').text().match(/^Aposte no (.+) com Retabet$/i)?.[1] || '';
         context.report?.({ phase: 'event_decision', league: candidate.league,
@@ -584,8 +591,10 @@ async function retabet(context) {
         .sort((a, b) => rank({ apiSport: a.key }) - rank({ apiSport: b.key }));
       const listingResponses = await browserHtml(page, requested.map(item => item.url), 15000);
       const candidates = [];
+      const identities = new Map();
       for (const [index, item] of requested.entries()) {
         const response = listingResponses[index];
+        for (const [href, identity] of listingIdentities(response.html || '', item.url)) identities.set(href, identity);
         const list = cheerio.load(response.html || '');
         const links = [...new Set(list('a[href]').toArray().map(x => new URL(list(x).attr('href'), item.url).href)
           .filter(url => retabetLeague(url)?.apiSport === item.key))];
@@ -602,10 +611,12 @@ async function retabet(context) {
       const unique = [...new Set(candidates)];
       const responses = await browserHtml(page, unique, 15000);
       const games = ordered(unique.map((url, index) => {
-        const game = responses[index].html && parseRetabetEvent(responses[index].html, url);
+        let game = null, identityError = null;
+        try { game = responses[index].html && parseRetabetEvent(responses[index].html, url, identities.get(url)); }
+        catch (error) { identityError = error.message; }
         context.report?.({ phase: 'event_decision', league: retabetLeague(url)?.apiSport,
           url, teams: game?.teams || null, commenceTime: game?.commenceTime || null,
-          reason: game ? 'aceito' : responses[index].error || `HTTP ${responses[index].status ?? 'desconhecido'} ou dados incompletos` });
+          reason: game ? 'aceito' : identityError || responses[index].error || `HTTP ${responses[index].status ?? 'desconhecido'} ou dados incompletos` });
         return game;
       }).filter(Boolean));
       if (!games.length) throw new Error(`Retabet: ${responses.length} jogos consultados, nenhum com liga, horário e mercados completos; ${JSON.stringify(responses.map(x => ({ status: x.status, error: x.error })))}`);
