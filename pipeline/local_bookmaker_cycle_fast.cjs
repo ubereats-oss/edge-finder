@@ -98,17 +98,10 @@ function readCycleBudget(cycle) {
     budget.measurementSource = 'TunnelBear Adapter V9 / GetIPv4Statistics';
   }
   cycle.accumulatedMB = budget.carriedForwardMB + budget.measuredMB;
-  let daily = vpnBudgetForDay(budget, new Date(cycle.startedAt));
-  if (daily.reset) {
-    budget.carriedForwardMB = 0;
-    budget.measuredMB = 0;
-    budget.adapterCycles = [];
-    cycle.accumulatedMB = 0;
-    daily = vpnBudgetForDay({ ...budget, month: daily.month }, new Date(cycle.startedAt));
-  }
+  const daily = vpnBudgetForDay(budget, new Date(cycle.startedAt));
   budget.month = daily.month;
   budget.limitMB = daily.limitMB;
-  delete budget.expiresAt;
+  budget.expiresAt = '2026-11-01T00:00:00-03:00';
   cycle.dailyVpn = daily;
   cycle.budget = budget;
   if (budget.measurementError) {
@@ -116,10 +109,7 @@ function readCycleBudget(cycle) {
     delete budget.measurementError;
   }
   fs.writeFileSync(file, JSON.stringify(budget, null, 2));
-  if (cycle.accumulatedMB !== null && cycle.accumulatedMB >= budget.limitMB)
-    return `Orçamento VPN atingido: ${cycle.accumulatedMB} MB de ${budget.limitMB} MB.`;
-  if (daily.remaining <= 0) return `Parte diária do VPN esgotada: ${daily.todayUsed.toFixed(3)} MB de ${daily.allowance.toFixed(3)} MB.`;
-  return null;
+  return daily.reason;
 }
 
 function classifyVpnCharge(connected, before, after) {
@@ -227,6 +217,12 @@ async function main() {
     if (!cycle.pinnacleDecision.run) {
       cycle.status = 'ciclo pulado';
       cycle.pauseReason = cycle.pinnacleDecision.reason;
+      return;
+    }
+    const connectionDecision = vpnBudgetForDay(cycle.budget, new Date());
+    if (!connectionDecision.run) {
+      cycle.status = 'ciclo pulado';
+      cycle.pauseReason = connectionDecision.reason;
       return;
     }
     await stage('vpnConnect', async () => {

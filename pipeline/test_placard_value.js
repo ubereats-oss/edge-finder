@@ -284,7 +284,7 @@ test('ledger deriva saldo e preserva reserva de fechamento para leituras', () =>
     keyFingerprints: [a, b], keyBalances: { [a]: { remaining: 4000 }, [b]: { remaining: 1925 } },
     pendingRequests: {} };
   assert.equal(summarize(state).totalRemaining, 5925);
-  assert.equal(summarize(state).readingAvailable, 5125);
+  assert.equal(summarize(state).readingAvailable, 4925);
   assert.equal(planReservation(state, ['key-a', 'key-b'], 3, 'placard-scan').availableAfter, 5922);
   assert.throws(() => planReservation({ ...state, keyBalances: { [a]: { remaining: 500 }, [b]: { remaining: 300 } } },
     ['key-a', 'key-b'], 3, 'placard-scan'), /disponível_leituras=0/);
@@ -314,23 +314,27 @@ test('saldo real dispensa teto fixo; falha de leitura recorre ao limite antigo',
   assert.throws(() => planReservation(floorState, ['key-a'], 1, 'placard-scan'), /Saldo real insuficiente/);
   assert.equal(planReservation(floorState, ['key-a'], 1, 'placard-closing').balanceMode, 'real');
 });
-test('cota diária distribui saldo real além da reserva por dias restantes e reinicia no dia 1º', () => {
+test('créditos sem cota diária e com reserva total de 1000 em outubro e novembro', () => {
   const oct = new Date('2026-10-23T22:00:00Z');
   assert.equal(daysRemaining('2026-10-23'), 9);
   const state = { dailyUsage: { '2026-10-23': { total: 90, closing: 10 } }, pendingRequests: {} };
   const today = dailyReadBudget(state, oct, 4310);
-  assert.equal(today.allowance, 400);
+  assert.equal(today.allowance, 3310);
   assert.equal(today.spent, 80);
-  assert.equal(today.remaining, 320);
-  assert.equal(dailyReadBudget({ dailyUsage: {} }, new Date('2026-11-01T12:00:00Z'), 3900).allowance, 103);
+  assert.equal(today.remaining, 3310);
+  assert.equal(dailyReadBudget({ dailyUsage: {} }, new Date('2026-11-01T12:00:00Z'), 3900).allowance, 2900);
   assert.equal(dailyReadBudget({ dailyUsage: {} }, oct, 700).remaining, 0);
 });
-test('cota diária esgotada bloqueia leitura nova e preserva fechamento', () => {
+test('gasto diário não bloqueia leitura; saldo 1000 só permite fechamentos', () => {
   const fingerprint = keyFingerprint('key-daily');
   const state = { schemaVersion: SCHEMA_VERSION, syncComplete: true,
     keyFingerprints: [fingerprint], keyBalances: { [fingerprint]: { remaining: 1200, used: 1000 } },
     dailyUsage: { [brasilDay()]: { total: 1000, closing: 0 } }, pendingRequests: {} };
-  assert.throws(() => planReservation(state, ['key-daily'], 1, 'placard-scan'), /Cota diária/);
+  assert.equal(planReservation(state, ['key-daily'], 200, 'placard-scan').availableAfter, 1000);
+  assert.throws(() => planReservation(state, ['key-daily'], 201, 'placard-scan'), /Saldo real insuficiente/);
+  const floor = { ...state, keyBalances: { [fingerprint]: { remaining: 1000 } } };
+  assert.throws(() => planReservation(floor, ['key-daily'], 1, 'placard-scan'), /Saldo real insuficiente/);
+  assert.equal(planReservation(floor, ['key-daily'], 1, 'placard-closing').balanceMode, 'real');
   assert.equal(planReservation(state, ['key-daily'], 1, 'placard-closing').balanceMode, 'real');
 });
 
@@ -369,7 +373,7 @@ test('reconcilia o ledger com os headers de saldo de cada chave sem persistir as
       ? { 'x-requests-remaining': '4000', 'x-requests-used': '10', 'x-requests-last': '0' }
       : { 'x-requests-remaining': '1925', 'x-requests-used': '20', 'x-requests-last': '0' } }) });
   assert.equal(first.totalRemaining, 5925);
-  assert.equal(first.readingAvailable, 5125);
+  assert.equal(first.readingAvailable, 4925);
   assert.equal(saved.syncComplete, true);
   assert.equal(JSON.stringify(saved).includes('key-a'), false);
   const second = await refreshBalances(keys, { db, now: Date.parse('2026-10-21T12:01:00Z'),

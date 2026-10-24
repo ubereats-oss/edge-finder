@@ -6,6 +6,8 @@ function compactCycle(cycle) {
     status: cycle.status, reason: cycle.pauseReason || cycle.error || null,
     spentMB: Number(cycle.vpnAdapterMB ?? cycle.consumedMB ?? 0),
     estimated: Boolean(cycle.vpnEstimate),
+    vpnBudgetMonth: cycle.budget?.month || '2026-10',
+    vpnBudgetExhausted: Number(cycle.budget?.limitMB || 2700) - Number(cycle.accumulatedMB || 0) < 60,
     vpnMonthlySpentMB: Number(cycle.accumulatedMB ?? 0),
     vpnMonthlyRemainingMB: Math.max(0, Number(cycle.budget?.limitMB || 0) - Number(cycle.accumulatedMB || 0)),
     gamesByHouse: Object.fromEntries(Object.entries(cycle.reads || {})
@@ -23,7 +25,13 @@ async function flushCycleQueue(db, cycle, logDir) {
     const row = pending[0];
     let timer;
     try {
-      await Promise.race([db.collection('_local_cycle_health').doc(row.startedAt.replace(/[^0-9]/g, '')).set(row),
+      await Promise.race([(async () => {
+        await db.collection('_local_cycle_health').doc(row.startedAt.replace(/[^0-9]/g, '')).set(row);
+        await db.collection('_odds_api_budget').doc(row.vpnBudgetMonth || '2026-10').set({ vpn: {
+          spentMB: row.vpnMonthlySpentMB, remainingMB: row.vpnMonthlyRemainingMB,
+          observedAt: row.finishedAt || row.startedAt,
+        } }, { merge: true });
+      })(),
         new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('envio à nuvem excedeu 5 s')), 5000); })]);
     } catch (error) {
       row.syncError = error.message;

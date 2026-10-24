@@ -1,5 +1,5 @@
 // Usa os saldos reais por chave retornados pela The Odds API. Mantém 800
-// créditos somados indisponíveis para leituras; apenas chamadas de fechamento
+// créditos de fechamento e 200 de margem indisponíveis para leituras; fechamentos
 // podem consumir essa reserva.
 const crypto = require('crypto');
 const axios = require('axios');
@@ -79,11 +79,10 @@ function dailyReadBudget(state, now = new Date(), availableOverride = null) {
   const pendingReading = pendingToday.filter(row => !/closing/i.test(row.label))
     .reduce((sum, row) => sum + Number(row.cost || 0), 0);
   const available = availableOverride ?? summarize(state).available;
-  const allowance = Math.max(0, Math.floor((available + spentToday + pendingCost - CLOSING_RESERVE)
-    / daysRemaining(day)));
+  const allowance = Math.max(0, available - CLOSING_RESERVE - READING_MARGIN);
   return { day, daysRemaining: daysRemaining(day), allowance,
     spent: readingSpent + pendingReading,
-    remaining: Math.max(0, allowance - readingSpent - pendingReading) };
+    remaining: allowance };
 }
 
 function monthRef(db, month = monthId()) {
@@ -115,7 +114,7 @@ function summarize(state = {}) {
     pendingCredits,
     available,
     closingReserve: CLOSING_RESERVE,
-    readingAvailable: Math.max(0, available - CLOSING_RESERVE),
+    readingAvailable: Math.max(0, available - CLOSING_RESERVE - READING_MARGIN),
     lastSyncedAt: state.lastSyncedAt || null,
     keyCount: balances.length,
     syncComplete: state.syncComplete === true,
@@ -175,13 +174,10 @@ function planReservation(state, keys, cost, label, excludedIndexes = new Set()) 
   const available = Math.max(0, summarize({ ...state, pendingRequests }).totalRemaining - pendingCost);
   const closing = /closing/i.test(label);
   if (realBalancesAvailable) {
-    const requiredFloor = closing ? 0 : CLOSING_RESERVE;
+    const requiredFloor = closing ? 0 : CLOSING_RESERVE + READING_MARGIN;
     if (available - cost < requiredFloor || !candidates.length) {
       throw new Error(`Saldo real insuficiente: total=${available}, reserva_fechamentos=${CLOSING_RESERVE}, disponível_leituras=${Math.max(0, available - requiredFloor)}, custo=${cost} (${label}).`);
     }
-    const daily = dailyReadBudget({ ...state, pendingRequests }, new Date(), available);
-    if (!closing && daily.remaining < cost) throw new Error(
-      `Cota diária de leituras atingida: dia=${daily.day}, limite=${daily.allowance}, gasto=${daily.spent}, restante=${daily.remaining}, custo=${cost} (${label}).`);
   } else {
     const spent = monthlyUsed(state) + pendingCost;
     const monthlyLimit = closing ? MONTHLY_SPEND_CAP : MONTHLY_READ_CAP;
@@ -241,6 +237,7 @@ async function refreshBalances(keys, { httpGet = axios.get, db = database(), now
       : {};
     const doc = {
       schemaVersion: SCHEMA_VERSION,
+      ...(prior.vpn ? { vpn: prior.vpn } : {}),
       month: monthId(new Date(now)),
       closingReserve: CLOSING_RESERVE,
       keyFingerprints: fingerprints,
