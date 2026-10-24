@@ -91,7 +91,7 @@ test('caso real Lincoln/Cardiff é barrado pelo filtro por identidade confirmada
 });
 
 test('Retabet usa nomes do corpo, confere a listagem e rejeita Lincoln/Cardiff e ID divergente', t => {
-  t.mock.method(Date, 'now', () => at);
+  t.mock.timers.enable({ apis: ['Date'], now: at });
   const identity = listingIdentities(listing(), url).get(url);
   assert.deepEqual(identity.teams, ['Cardiff', 'Birmingham']);
   const game = parseRetabetEvent(page(), url, identity);
