@@ -29,12 +29,7 @@ function Get-TunnelBearState {
   if (-not $window) { throw 'Janela principal do TunnelBear não encontrada.' }
   if ($window.Current.Name -ne 'TunnelBear') { throw ('Aviso: ' + $window.Current.Name) }
 
-  $popupCondition = New-Object System.Windows.Automation.PropertyCondition(
-    [System.Windows.Automation.AutomationElement]::NameProperty, 'Close update popup')
-  $updatePopupClose = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $popupCondition)
-  if ($updatePopupClose) {
-    throw 'Aviso de atualização do TunnelBear.'
-  }
+  Handle-TunnelBearKnownScreens $window
   $dialogs = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
     (New-Object System.Windows.Automation.PropertyCondition(
       [System.Windows.Automation.AutomationElement]::ControlTypeProperty,

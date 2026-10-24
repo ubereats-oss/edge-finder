@@ -438,6 +438,12 @@ async function main() {
     cycle.totalDurationMs = Math.round(performance.now() - start);
     cycle.targetMet = cycle.totalDurationMs <= 600000;
     cycle.vpnDurationMs ??= cycle.vpnConnectedAt ? Date.now() - vpnStartedAt : 0;
+    if (vpnStartedAt) {
+      const attemptFile = path.join(LOG_DIR, `tunnelbear_attempts_${startedAt.slice(0, 7)}.jsonl`);
+      cycle.tunnelBearEvents = fs.existsSync(attemptFile) ? fs.readFileSync(attemptFile, 'utf8').replace(/^\uFEFF/, '').split(/\r?\n/)
+        .flatMap(line => { try { const row = JSON.parse(line); return row.cycleId === startedAt &&
+          ['upgrade_closed', 'update_ignored', 'update_closed', 'data_exhausted'].includes(row.status) ? [row] : []; } catch { return []; } }) : [];
+    }
     if (!cycle.vpnProofChecks && vpnStartedAt) {
       const attempts = path.join(LOG_DIR, `tunnelbear_attempts_${startedAt.slice(0, 7)}.jsonl`);
       cycle.vpnProofChecks = fs.existsSync(attempts) ? fs.readFileSync(attempts, 'utf8').split(/\r?\n/)
