@@ -109,10 +109,131 @@ test('notificador da Retabet exige aceite e prova de identidade; anulada nunca e
     { selection: 'Under', placardOdds: 2.1, probability: 0.5 }], 2);
   assert.equal(integrity.notificationAllowed({ bookmaker: 'Retabet', marketIntegrity, sourceIdentityVerified: true }, { passed: false }), false);
   assert.equal(integrity.notificationAllowed({ bookmaker: 'Retabet', marketIntegrity }, { passed: true }), false);
-  assert.equal(integrity.notificationAllowed({ bookmaker: 'Retabet', marketIntegrity, sourceIdentityVerified: true }, { passed: true }), true);
+  assert.equal(integrity.notificationAllowed({ bookmaker: 'Retabet', marketIntegrity, placardOdds: 2.1, probability: 0.5,
+    sourceIdentityVerified: true }, { passed: true }), true);
   assert.equal(integrity.notificationAllowed({ bookmaker: 'Bwin' }), false);
-  assert.equal(integrity.notificationAllowed({ bookmaker: 'Bwin', marketIntegrity }), true);
+  assert.equal(integrity.notificationAllowed({ bookmaker: 'Bwin', marketIntegrity, placardOdds: 2.1, probability: 0.5 }), true);
   assert.equal(integrity.notificationAllowed({ bookmaker: 'Bwin', annulled: true }), false);
+});
+
+test('teto positivo usa nomes exatos, fallback máximo + 2pp e não ativa se Lincoln passar', () => {
+  const { calibratePositiveEdge } = require('./calibrate_positive_edge.cjs');
+  const entry = { game: 'Lincoln City x Burnley', selection: 'Under', placardOdds: 2.25, probability: 0.4933022141653564 };
+  const data = { capturedAt: '2026-10-24', pinnacleEvents: [{ id: 'event', home_team: 'A', away_team: 'B' }],
+    opportunities: [entry], reads: [{ id: 'read', bookmaker: 'Casa', validations: [
+      { teams: ['A', 'B'], pinnacleEventId: 'event', selection: 'A', placardOdds: 2.08, probability: 0.5 },
+      { teams: ['FC A', 'B'], pinnacleEventId: 'event', selection: 'A', placardOdds: 10, probability: 0.5 },
+      { teams: ['A', 'B'], pinnacleEventId: 'event', selection: 'B', placardOdds: 1.9, probability: 0.5 },
+    ] }] };
+  const calibrated = calibratePositiveEdge(data);
+  assert.equal(calibrated.sampleSize, 1);
+  assert.ok(Math.abs(calibrated.ceilingPct - 6) < 1e-10);
+  assert.equal(calibrated.fallback, true);
+  assert.equal(calibrated.enabled, true);
+  const high = calibratePositiveEdge({ ...data, reads: Array.from({ length: 200 }, (_, i) => ({ id: String(i),
+    validations: [{ teams: ['A', 'B'], pinnacleEventId: 'event', selection: 'A', placardOdds: 2.4, probability: 0.5 }] })) });
+  assert.equal(high.fallback, false);
+  assert.equal(high.enabled, false);
+  assert.equal(integrity.assessPositiveEdge(2.25, entry.probability, high).approved, true);
+});
+
+test('teto publicado tem três vantagens positivas, barra Lincoln sem veto de identidade e aceita o limite', () => {
+  const policy = integrity.positiveEdgeLimits;
+  assert.equal(policy.sampleSize, 3);
+  assert.equal(policy.eligiblePairs, 2076);
+  assert.equal(policy.fallback, true);
+  assert.equal(policy.enabled, true);
+  assert.equal(policy.ceilingPct, 5.890199518677773);
+  assert.equal(integrity.assessPositiveEdge(2.25, 0.4933022141653564).approved, false);
+  assert.equal(integrity.assessPositiveEdge(2, 0.5, { enabled: true, ceilingPct: 0 }).approved, true);
+  for (const model of [pipeline, cloud]) {
+    const event = { id: 'lincoln-test', sport_key: 'soccer_efl_champ', home_team: 'Lincoln City', away_team: 'Burnley',
+      commence_time: '2026-10-24T14:00:00Z', bookmakers: [{ key: 'pinnacle', last_update: '2026-10-24T04:52:19Z',
+        markets: [{ key: 'totals', outcomes: [{ name: 'Over', point: 2.5, price: 1.92 }, { name: 'Under', point: 2.5, price: 1.97 }] }] }] };
+    const game = { apiSport: event.sport_key, teams: ['Lincoln City', 'Burnley'], competition: 'Championship',
+      commenceTime: event.commence_time, observedAt: '2026-10-24T04:50:58.819Z', sourceEventId: 'not-confirmed-invalid',
+      markets: [{ type: 'HCTG', selections: [{ price: 1.46, line: 2.5 }, { price: 2.25, line: 2.5 }] }] };
+    const result = model.compareBookmaker('Bwin', game, [event], Date.parse('2026-10-24T04:52:55Z'));
+    assert.equal(result.rows.length, 0);
+    assert.ok(result.marketIntegrity.every(row => row.approved));
+    assert.ok(result.blockedSelections.some(row => row.selection === 'Under' && row.reason === integrity.EDGE_REASON));
+  }
+});
+
+for (const house of ['esc_online', 'goldenpark', 'betclic']) test(`${house}: página real correta aceita; jogo trocado, invertido e title falso não passam`, () => {
+  const { verifyIdentity, requireIdentity } = require('../scripts/local_bookmakers/page_identity.cjs');
+  const saved = require('../scripts/local_bookmakers/fixtures/page_identity_saved.cjs')[house];
+  assert.equal(verifyIdentity(house, saved.pageHeader, saved.listingTeams).verified, true);
+  const swapped = saved.pageHeader.replaceAll('Lech Poznan', 'Cardiff').replaceAll('Sunderland', 'Birmingham');
+  assert.throws(() => requireIdentity(house, `<title>Lech Poznan - Sunderland</title>${swapped}`, saved.listingTeams), /divergem/);
+  assert.equal(verifyIdentity(house, saved.pageHeader, [...saved.listingTeams].reverse()).verified, false);
+  assert.equal(verifyIdentity(house, '<title>Lech Poznan - Sunderland</title>', saved.listingTeams).verified, false);
+});
+
+test('leitores ESC/GoldenPark/Betclic aceitam o evento preservado e descartam outro jogo antes de ler odds', t => {
+  t.mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-10-22T14:00:00Z') });
+  const saved = require('../scripts/local_bookmakers/fixtures/page_identity_saved.cjs');
+  const { parseEscEvent, parseBetclicEvent } = require('../scripts/local_bookmakers/fast_readers.cjs');
+  const { parseEvent } = require('../scripts/local_bookmakers/goldenpark_reader.cjs');
+  const listing = { teams: ['Lech Poznan', 'Sunderland'], apiSport: 'soccer_uefa_europa_league', competition: 'Liga Europa',
+    commenceTime: '2026-10-22T16:45:00Z', href: 'https://www.betclic.pt/lech-sunderland-m123', label: 'Lech Poznan - Sunderland' };
+  for (const house of ['esc_online', 'goldenpark', 'betclic']) {
+    const source = saved[house].pageHeader + ' Hoje 13:45 ' + saved[house].markets;
+    const parse = html => house === 'esc_online' ? parseEscEvent(html, 'https://www.estorilsolcasinos.pt/event-123',
+      'Lech Poznan\nSunderland', listing) : house === 'goldenpark' ? parseEvent(html, listing, 'https://apostas.goldenpark.pt/evento/123', '123')
+        : parseBetclicEvent(html, listing);
+    const game = parse(source);
+    assert.ok(game, house);
+    assert.equal(game.sourceIdentityVerified, true);
+    assert.deepEqual(game.teams, listing.teams);
+    const wrong = source.replaceAll('Lech Poznan', 'Cardiff').replaceAll('Sunderland', 'Birmingham');
+    if (house === 'goldenpark') assert.throws(() => parse(wrong), /divergem/);
+    else assert.equal(parse(wrong), null);
+  }
+});
+
+test('LeBull não confunde listagem com página de jogo; envio permanece fechado sem aceite', () => {
+  const { verifyIdentity } = require('../scripts/local_bookmakers/page_identity.cjs');
+  const saved = require('../scripts/local_bookmakers/fixtures/page_identity_saved.cjs').lebull;
+  assert.equal(verifyIdentity('lebull', saved.pageHeader, saved.listingTeams).verified, false);
+  // Estrutura simulada de página individual: prova da regra, não aceite de página real LeBull.
+  const page = '<div><span class="team-column-name">A</span><span class="team-column-name">B</span></div>';
+  assert.equal(verifyIdentity('lebull', page, ['A', 'B']).verified, true);
+  assert.equal(verifyIdentity('lebull', page, ['Cardiff', 'Birmingham']).verified, false);
+  const assessment = integrity.assessMarket([{ selection: 'A', placardOdds: 2.1, probability: 0.5 },
+    { selection: 'B', placardOdds: 1.9, probability: 0.5 }], 2);
+  for (const bookmaker of ['LeBull', 'ESC Online', 'GoldenPark', 'Betclic']) {
+    const row = { bookmaker, marketIntegrity: assessment, placardOdds: 2.1, probability: 0.5 };
+    assert.equal(integrity.notificationAllowed(row, { passed: true }), false);
+    assert.equal(integrity.notificationAllowed({ ...row, sourceIdentityVerified: true }, { passed: false }), false);
+    assert.equal(integrity.notificationAllowed({ ...row, sourceIdentityVerified: true }, { passed: true }), true);
+    assert.equal(integrity.notificationAllowed({ ...row, placardOdds: 2.25, sourceIdentityVerified: true }, { passed: true }), false);
+  }
+});
+
+test('auditoria do teto preserva aprovadas e exclui suspeita do desempenho e veredito', () => {
+  const { auditPositiveEdges } = require('./audit_positive_edge.cjs');
+  const entries = [{ id: 'ok', game: 'A x B', placardOdds: 2.08, probability: 0.5, eventId: 'ok', clvPct: -1 },
+    { id: 'bad', game: 'C x D', placardOdds: 2.25, probability: 0.5, eventId: 'bad', clvPct: 100 }];
+  const audit = auditPositiveEdges(entries);
+  assert.equal(audit[0].annulled, false);
+  assert.equal(audit[1].annulled, true);
+  assert.equal(audit[1].reason, integrity.EDGE_REASON);
+  for (const model of [pipeline, cloud]) {
+    const report = model.report(entries.map(row => ({ ...row, annulled: audit.find(a => a.id === row.id).annulled })));
+    assert.equal(report.total, 1);
+    assert.equal(report.mean, -1);
+    assert.equal(report.verdict, 'não confirmado');
+  }
+});
+
+test('auditoria publicada cobre as quatro indicações mantidas sem novas anulações', () => {
+  const audit = require('./positive_edge_audit_2026-10-24.json');
+  assert.equal(audit.length, 4);
+  assert.equal(audit.filter(row => row.annulled).length, 0);
+  assert.ok(audit.every(row => row.edgePct <= integrity.positiveEdgeLimits.ceilingPct));
+  assert.deepEqual(audit.map(row => row.houseOdds), [1.92, 3.35, 7.1, 2.6]);
+  assert.ok(!audit.some(row => row.game === 'Lincoln City x Burnley'));
 });
 
 test('identidade Retabet aceita os nomes e o ID do HTML real preservado de GD Chaves–FC Vizela', () => {

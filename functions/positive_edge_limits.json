@@ -1,0 +1,58 @@
+{
+  "version": "2026-10-24-positive-edge-v1",
+  "inputCapturedAt": "2026-10-24T09:30:18.927Z",
+  "inputSha256": "edfca900b1d8bb7d7c1edc2f03289fcb0bee2f44e3f18a6288bc9bf89e0df5fe",
+  "formula": "100 * (odd_casa / preco_justo_pinnacle - 1)",
+  "eligiblePairs": 2076,
+  "sampleSize": 3,
+  "percentile": 99.5,
+  "method": "nearest-rank",
+  "percentilePct": 3.8901995186777727,
+  "maximumPct": 3.8901995186777727,
+  "fallback": true,
+  "fallbackRule": "maximo observado + 2 pontos percentuais",
+  "ceilingPct": 5.890199518677773,
+  "lincolnEdgePct": 10.992998187205183,
+  "enabled": true,
+  "positives": [
+    {
+      "bookmaker": "Betano",
+      "teams": [
+        "Alverca",
+        "Arouca"
+      ],
+      "selection": "Draw",
+      "market": "h2h",
+      "line": null,
+      "houseOdds": 3.35,
+      "fairOdds": 3.3141850353571902,
+      "edgePct": 1.0806567605827544
+    },
+    {
+      "bookmaker": "Placard",
+      "teams": [
+        "Dinamo Zagreb",
+        "NEC Nijmegen"
+      ],
+      "selection": "NEC Nijmegen",
+      "market": "h2h",
+      "line": null,
+      "houseOdds": 7.1,
+      "fairOdds": 6.845088224236847,
+      "edgePct": 3.7240100844949
+    },
+    {
+      "bookmaker": "Placard",
+      "teams": [
+        "Bournemouth",
+        "AC Milan"
+      ],
+      "selection": "Bournemouth",
+      "market": "h2h",
+      "line": null,
+      "houseOdds": 1.92,
+      "fairOdds": 1.8481050271299317,
+      "edgePct": 3.8901995186777727
+    }
+  ]
+}

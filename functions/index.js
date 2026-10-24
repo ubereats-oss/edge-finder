@@ -838,11 +838,14 @@ exports.notifyPlacardOpportunity = onDocumentCreated({
   const ref = event.data.ref;
   const current = (await ref.get()).data();
   if (current?.telegramMessageId || marketIntegrity.isAnnulled(current || row)) return;
-  const retabet = String(row.bookmaker || '').toLowerCase() === 'retabet';
-  const gate = retabet ? (await db.collection('_bookmaker_validation').doc('retabet_identity').get()).data() : null;
+  const identityGateId = marketIntegrity.identityGate(row.bookmaker);
+  const gate = identityGateId ? (await db.collection('_bookmaker_validation').doc(identityGateId).get()).data() : null;
   if (!marketIntegrity.notificationAllowed(current || row, gate)) {
-    await ref.set({ notificationStatus: retabet ? 'suspensa' : 'barrada',
-      notificationReason: retabet ? 'Retabet aguarda aceite e identidade do mercado' : marketIntegrity.REASON }, { merge: true });
+    const edge = marketIntegrity.assessPositiveEdge((current || row).sourceOdds ?? (current || row).placardOdds,
+      (current || row).probability);
+    await ref.set({ notificationStatus: identityGateId && (gate?.passed !== true || row.sourceIdentityVerified !== true) ? 'suspensa' : 'barrada',
+      notificationReason: !edge.approved ? marketIntegrity.EDGE_REASON : identityGateId
+        ? `${row.bookmaker} aguarda aceite e identidade do jogo` : marketIntegrity.REASON }, { merge: true });
     return;
   }
   const messageId = await placardPart4.sendTelegram(row, TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value());

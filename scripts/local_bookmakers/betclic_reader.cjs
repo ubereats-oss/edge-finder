@@ -1,4 +1,5 @@
 const cheerio = require('cheerio');
+const { requireIdentity } = require('./page_identity.cjs');
 const URL = 'https://www.betclic.pt/futebol-sfootball/liga-europa-c3453';
 const IGNORE = new Set(['fc', 'sc', 'ac', 'afc', 'pfc', 'gnk', 'nk', 'kks', 'rsc', 'de', 'do', 'da', 'the']);
 
@@ -79,10 +80,13 @@ async function readBetclic(context, footballGames, limit = 10) {
     for (const { card, game } of matched.slice(0, limit)) {
       try {
         let boxes = [];
+        let verified;
         for (let attempt = 1; attempt <= 2 && !boxes.length; attempt++) {
           const response = await page.goto(card.href, { waitUntil: 'domcontentloaded', timeout: 45000 });
           if (response?.status() !== 200) continue;
-          const html = cheerio.load(await response.text());
+          const source = await response.text();
+          verified = requireIdentity('betclic', source, card.label.split(' - '));
+          const html = cheerio.load(source);
           boxes = html('[data-qa="market-box"]').toArray().map(box => ({
             title: html(box).find('[data-qa="market-title"]').first().text().trim(),
             rows: html(box).find('.marketBox_lineSelection').toArray().map(row => ({
@@ -95,7 +99,7 @@ async function readBetclic(context, footballGames, limit = 10) {
         if (!boxes.length) throw new Error('Mercados da página não carregaram após duas navegações.');
         const markets = parseMarkets(boxes);
         if (!markets) throw new Error('Resultado regulamentar e total de golos completos não encontrados.');
-        games.push({ apiSport: game.apiSport, teams: game.teams, competition: game.competition,
+        games.push({ apiSport: game.apiSport, ...verified, competition: game.competition,
           commenceTime: game.commenceTime, observedAt: new Date().toISOString(), sourceUrl: card.href,
           sourceEventId: card.href.match(/-m(\d+)$/)?.[1] || null, sourceEventName: card.label,
           sourceMarket: 'Betclic HTML pré-jogo: resultado regulamentar e total de golos', markets });

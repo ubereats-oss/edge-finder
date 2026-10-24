@@ -154,12 +154,20 @@ function compare(game, events, now = Date.now(), { bookmaker = 'Placard' } = {})
     }
     if (s.placardOdds <= 1.01 / ref.probability) continue;
     const edgePct = (s.placardOdds * ref.probability - 1) * 100;
+    const positiveEdgeAssessment = integrity.assessPositiveEdge(s.placardOdds, ref.probability);
+    if (!positiveEdgeAssessment.approved) {
+      blockedSelections.push({ market: s.market, line: s.line, selection: s.selection,
+        odds: s.placardOdds, pinnacleOdds: ref.pinnacleOdds, fairOdds: 1 / ref.probability,
+        reason: integrity.EDGE_REASON, ...positiveEdgeAssessment });
+      continue;
+    }
     const id = crypto.createHash('sha256').update(JSON.stringify([game.apiSport, event.id, s.market, s.line, s.selection])).digest('hex');
     rows.push({ ...s, ...ref, id, apiSport: game.apiSport, eventId: event.id,
       game: `${event.home_team} x ${event.away_team}`, competition: game.competition,
       commenceTime: game.commenceTime, apiCommenceTime: event.commence_time, placardObservedAt: game.observedAt,
       comparedAt: new Date(now).toISOString(), sourceUrl: game.sourceUrl,
       marketIntegrity: assessment,
+      positiveEdgeAssessment,
       ...(typeof game.sourceIdentityVerified === 'boolean' ? { sourceIdentityVerified: game.sourceIdentityVerified } : {}),
       minValueOdds: 1.01 / ref.probability, edgePct,
       kellyPct: Math.max(0, edgePct / (s.placardOdds - 1) * KELLY_FRACTION) });
