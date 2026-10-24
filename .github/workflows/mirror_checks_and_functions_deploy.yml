@@ -48,8 +48,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Test The Odds API key detector
+        run: node --test scripts/test_check_no_odds_api_keys.cjs
+        env:
+          THE_ODDS_API_KEYS: ${{ secrets.THE_ODDS_API_KEYS }}
+          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+
       - name: Check for committed The Odds API keys
         run: node scripts/check_no_odds_api_keys.js
+        env:
+          THE_ODDS_API_KEYS: ${{ secrets.THE_ODDS_API_KEYS }}
+          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
 
       - name: Verify closing odds and risk mirrors
         run: node scripts/verify_mirrors.js
