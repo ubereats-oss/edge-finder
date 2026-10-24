@@ -87,3 +87,28 @@ test('atualização falha preserva release anterior e registra; sem anterior blo
     assert.throws(() => update(directory(), () => {}, run), /simulated/);
   } finally { if (old) process.env.GITHUB_TOKEN = old; else delete process.env.GITHUB_TOKEN; }
 });
+test('falha npm preserva release anterior sem ativar instalação parcial', () => {
+  const root = directory(), release = path.join(root, 'previous'); fs.mkdirSync(release); fs.writeFileSync(path.join(release, '.ready'), 'ok');
+  const previous = { sha: 'previous', release, dependencies: 'simulated-dependencies' };
+  const pointer = path.join(root, 'current.json'); fs.writeFileSync(pointer, JSON.stringify(previous));
+  const sha = 'a'.repeat(40), old = process.env.GITHUB_TOKEN; process.env.GITHUB_TOKEN = 'simulated';
+  const execute = (exe, args) => {
+    if (args.includes('rev-parse')) return sha;
+    if (args.includes('archive')) fs.writeFileSync(args[args.indexOf('--output') + 1], 'archive');
+    if (exe === 'tar') {
+      const folder = args[args.indexOf('-C') + 1];
+      fs.writeFileSync(path.join(folder, 'package.json'), '{"dependencies":{}}');
+      fs.writeFileSync(path.join(folder, 'package-lock.json'), '{}');
+    }
+    if (exe === 'cmd.exe') throw Error('npm install simulated failure');
+    return '';
+  };
+  try { assert.deepEqual(update(root, () => {}, execute), previous); assert.deepEqual(JSON.parse(fs.readFileSync(pointer)), previous); }
+  finally { if (old) process.env.GITHUB_TOKEN = old; else delete process.env.GITHUB_TOKEN; }
+});
+test('trava padrão independe do checkout do executor', () => {
+  const { defaultDataRoot } = require('./resource_lock.cjs');
+  const old = process.env.EDGE_DATA_ROOT; delete process.env.EDGE_DATA_ROOT;
+  try { assert.equal(defaultDataRoot(), path.join(os.homedir(), 'Apps - desenvolvimento', 'odds_app')); }
+  finally { if (old) process.env.EDGE_DATA_ROOT = old; }
+});

@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const defaultDataRoot = () => process.env.EDGE_DATA_ROOT || path.join(require('node:os').homedir(), 'Apps - desenvolvimento', 'odds_app');
 const { spawn } = require('node:child_process');
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const alive = pid => { try { process.kill(pid, 0); return true; } catch (e) { return e.code === 'EPERM'; } };
@@ -55,10 +56,11 @@ async function run(dataRoot, command, args) {
     child.on('error', reject); child.on('exit', code => resolve(code ?? 1));
   }); } finally { release(); }
 }
-module.exports = { acquire, inherited, run, trackChild };
+module.exports = { acquire, inherited, run, trackChild, defaultDataRoot };
 if (require.main === module) {
   const at = process.argv.indexOf('--');
-  const root = process.env.EDGE_DATA_ROOT || path.resolve(__dirname, '../..');
+  const root = defaultDataRoot();
+  process.env.EDGE_DATA_ROOT = root;
   if (at < 0) throw new Error('Use resource_lock.cjs -- comando argumentos');
   run(root, process.argv[at + 1], process.argv.slice(at + 2)).then(code => process.exitCode = code)
     .catch(error => { console.error(error.message); process.exitCode = 1; });
