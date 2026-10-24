@@ -1,4 +1,5 @@
 const URL = 'https://www.estorilsolcasinos.pt/pt/betting/sport/futebol-844/matches/date-0';
+const { requireIdentity } = require('./page_identity.cjs');
 const IGNORE = new Set(['fc', 'sc', 'ac', 'afc', 'pfc', 'gnk', 'nk', 'kks', 'rsc', 'de', 'do', 'da', 'the']);
 
 function tokens(value) {
@@ -65,6 +66,7 @@ async function readEscOnline(context, footballGames, limit = 8) {
           return { header: document.body.innerText.slice(0, 1300) };
         });
         if (!observed) throw new Error('Mercado Total de Golos ausente.');
+        const verified = requireIdentity('esc_online', await page.content(), link.label.split(/\n+/).map(value => value.trim()).filter(Boolean));
         await page.waitForFunction(() => {
           const market = [...document.querySelectorAll('p')]
             .find(element => element.textContent.trim() === 'Total de Golos')
@@ -104,7 +106,7 @@ async function readEscOnline(context, footballGames, limit = 8) {
         if (!shown || `${shown[1].padStart(2, '0')}:${shown[2]}` !== expected) throw new Error('Horário ESC não confere com Betano.');
         const markets = parseTotals(rows);
         if (!markets.length) throw new Error('Totais regulamentares completos indisponíveis.');
-        games.push({ apiSport: game.apiSport, teams: game.teams, competition: game.competition,
+        games.push({ apiSport: game.apiSport, ...verified, competition: game.competition,
           commenceTime: game.commenceTime, observedAt: new Date().toISOString(), sourceUrl: link.href,
           sourceEventId: link.href.match(/-(\d+)$/)?.[1] || null, sourceEventName: link.label.replace(/\n+/g, ' - '),
           sourceMarket: 'ESC Online Total de Golos; Resultado Final 2Up excluído', markets });

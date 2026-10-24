@@ -1,5 +1,6 @@
 const cheerio = require('cheerio');
 const { matchRow } = require('./lebull_reader.cjs');
+const { requireIdentity } = require('./page_identity.cjs');
 
 const URL = 'https://apostas.goldenpark.pt/competicao/6675-liga-europa?jogar=si';
 const price = value => {
@@ -14,6 +15,7 @@ function choices($, box) {
 }
 
 function parseEvent(html, game, url, sourceEventId) {
+  const verified = requireIdentity('goldenpark', html, game.listingTeams || game.teams);
   const $ = cheerio.load(html);
   const markets = [];
   for (const container of $('.container-event').toArray()) {
@@ -65,7 +67,7 @@ function parseEvent(html, game, url, sourceEventId) {
       }
     }
   }
-  return markets.length ? { apiSport: game.apiSport, teams: game.teams, competition: game.competition,
+  return markets.length ? { apiSport: game.apiSport, ...verified, competition: game.competition,
     commenceTime: game.commenceTime, observedAt: new Date().toISOString(), sourceUrl: url,
     sourceEventId, sourceEventName: game.teams.join(' - '),
     sourceMarket: 'GoldenPark HTML pré-jogo: Resultado do jogo e Total de Golos', markets } : null;
@@ -92,7 +94,8 @@ async function readGoldenpark(context, footballGames, limit = 9) {
       const eventResponse = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
       if (eventResponse?.status() !== 200) { diagnostics.push({ url, status: eventResponse?.status() }); continue; }
       await page.locator('.container-event').first().waitFor({ timeout: 15000 });
-      const parsed = parseEvent(await page.content(), game, url, row.href.match(/\/evento\/(\d+)/)?.[1] || row.href);
+      const parsed = parseEvent(await page.content(), { ...game, listingTeams: row.teams }, url,
+        row.href.match(/\/evento\/(\d+)/)?.[1] || row.href);
       if (parsed) games.push(parsed);
     }
   } finally { await page.close().catch(() => {}); }

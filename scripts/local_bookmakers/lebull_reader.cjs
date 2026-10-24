@@ -102,6 +102,8 @@ async function readLebull(context, footballGames, limit = 8) {
       const markets = parseMarkets(row.oddsItems);
       if (!markets) { diagnostics.push({ teams: row.teams, reason: '1X2 e totais completos indisponíveis.' }); continue; }
       games.push({ apiSport: game.apiSport, teams: game.teams, competition: game.competition,
+        listingTeams: row.teams, sourceIdentityVerified: false,
+        identityReason: 'página individual do jogo LeBull não comprovada; envio suspenso',
         commenceTime: game.commenceTime, observedAt: new Date().toISOString(), sourceUrl: frame.url(),
         sourceEventId: `${tokens(row.teams[0]).join('-')}-${tokens(row.teams[1]).join('-')}-${Date.parse(game.commenceTime)}`,
         sourceEventName: row.teams.join(' - '), sourceMarket: 'LeBull iframe HTML: 1X2 e Total de Golos Mais/Menos', markets });

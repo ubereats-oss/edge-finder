@@ -12,6 +12,7 @@ const { readSelections, adaptTotalsAndHandicaps } = require('../../pipeline/loca
 const { eligibleTotals } = require('./bwin_reader.cjs');
 const { parseMarkets: retabetMarkets } = require('./retabet_reader.cjs');
 const { listingIdentities, verifyPageIdentity } = require('./retabet_identity.cjs');
+const { verifyIdentity } = require('./page_identity.cjs');
 const { parseMarkets: lebullMarkets } = require('./lebull_reader.cjs');
 const { parseTotals } = require('./esc_online_reader.cjs');
 const { parseEvent } = require('./goldenpark_reader.cjs');
@@ -394,10 +395,13 @@ function parseLebullHtml(source, limit = Infinity) {
           : !markets ? 'mercados completos indisponíveis'
             : games.length >= limit ? 'limite de jogos da casa' : 'aceito';
     audit.push({ league: identity?.apiSport || null, teams: row.teams, commenceTime,
-      rawClock: row.clock.trim(), reason });
+      rawClock: row.clock.trim(), reason,
+      identityReason: 'LeBull: página individual do jogo não comprovada; somente registro, envio suspenso' });
     if (reason === 'aceito') games.push({ ...identity, teams: row.teams,
         commenceTime, observedAt: new Date().toISOString(), sourceUrl: LEBULL_FEED,
         sourceEventId: `${row.teams.join('-')}-${Date.parse(commenceTime)}`,
+        sourceIdentityVerified: false, listingTeams: row.teams,
+        identityReason: 'página individual do jogo LeBull não comprovada; envio suspenso',
         sourceEventName: row.teams.join(' - '), sourceMarket: 'LeBull iframe HTML: resultado e totais', markets });
   }
   return { games: ordered(games), diagnostics: [{ rows: rows.length }], audit };
@@ -630,7 +634,13 @@ function parseEscEvent(source, url, label, league = null) {
   const $ = cheerio.load(source);
   $('style,script,noscript').remove();
   const identity = league || competition(url);
-  const teams = label.split(/\n+|\s+-\s+/).map(value => value.trim()).filter(Boolean);
+  const listingTeams = label.split(/\n+|\s+-\s+/).map(value => value.trim()).filter(Boolean);
+  const verified = verifyIdentity('esc_online', source, listingTeams);
+  if (!verified.verified) {
+    saveDiscard('esc_online', url, source, verified.reason);
+    return null;
+  }
+  const teams = verified.teams;
   const commenceTime = localClock($('body').text().replace(/\s+/g, ' '),
     'America/Sao_Paulo');
   if (!identity || teams.length !== 2
@@ -649,6 +659,7 @@ function parseEscEvent(source, url, label, league = null) {
   const markets = identity.apiSport === 'basketball_nba' ? escBasketballTotals(rows) : parseTotals(rows);
   if (!markets.length) return null;
   return { ...identity, teams,
+    listingTeams, sourceIdentityVerified: true,
     commenceTime, observedAt: new Date().toISOString(), sourceUrl: url,
     sourceEventId: url.match(/-(\d+)$/)?.[1] || null, sourceEventName: label,
     sourceMarket: 'ESC Online Total de Golos; Resultado Final 2Up excluído', markets };
@@ -922,8 +933,15 @@ async function goldenpark(context) {
       const urls = matched.map(row => new URL(row.href, GOLDEN_INDEX).href);
       const responses = await browserHtml(page, urls);
       const games = ordered(matched.map((row, index) => {
-        const game = responses[index].html && parseEvent(responses[index].html, row, urls[index],
-          row.href.match(/\/evento\/(\d+)/)?.[1] || row.href);
+        let game = null;
+        try {
+          game = responses[index].html && parseEvent(responses[index].html, row, urls[index],
+            row.href.match(/\/evento\/(\d+)/)?.[1] || row.href);
+        } catch (error) {
+          saveDiscard('goldenpark', urls[index], responses[index].html || '', error.message);
+          context.report?.({ phase: 'event_discard', league: row.apiSport, url: urls[index], reason: error.message });
+          return null;
+        }
         if (!game) saveDiscard('goldenpark', urls[index], responses[index].html || '',
           responses[index].error || `HTTP ${responses[index].status ?? 'desconhecido'} ou mercados incompletos`);
         return game;
@@ -981,6 +999,11 @@ function betclicCards(html, url) {
 
 function parseBetclicEvent(html, card) {
   const $ = cheerio.load(html);
+  const verified = verifyIdentity('betclic', html, card.teams);
+  if (!verified.verified) {
+    saveDiscard('betclic', card.href, html, verified.reason);
+    return null;
+  }
   const boxes = $('[data-qa="market-box"]').toArray().map(box => ({
     title: $(box).find('[data-qa="market-title"]').first().text().trim(),
     rows: $(box).find('.marketBox_lineSelection').toArray().map(row => ({
@@ -992,7 +1015,8 @@ function parseBetclicEvent(html, card) {
   const markets = card.apiSport === 'basketball_nba'
     ? betclicBasketballMarkets(boxes) : betclicMarkets(boxes);
   return markets && { apiSport: card.apiSport, competition: card.competition,
-    teams: card.teams, commenceTime: card.commenceTime, observedAt: new Date().toISOString(),
+    teams: verified.teams, listingTeams: card.teams, sourceIdentityVerified: true,
+    commenceTime: card.commenceTime, observedAt: new Date().toISOString(),
     sourceUrl: card.href, sourceEventId: card.href.match(/-m(\d+)$/)?.[1] || null,
     sourceEventName: card.label,
     sourceMarket: 'Betclic HTML pré-jogo: resultado regulamentar e total de golos', markets };

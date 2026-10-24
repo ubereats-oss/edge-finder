@@ -15,7 +15,7 @@ function fixture() {
   const game = { teams: ['FC Porto', 'SL Benfica'], apiSport: 'soccer_portugal_primeira_liga',
     competition: 'Portugal - Primeira Liga', commenceTime: '2026-10-20T14:00:00Z',
     observedAt: new Date(now).toISOString(), sourceUrl: 'https://www.placard.pt/apostas',
-    markets: [{ type: 'MRES', selections: [2.20, 3.30, 3.30].map(price => ({ price: String(price), line: null, unavailable: false })) }] };
+    markets: [{ type: 'MRES', selections: [2.08, 3.30, 3.30].map(price => ({ price: String(price), line: null, unavailable: false })) }] };
   const event = { id: 'fixture', sport_key: game.apiSport, home_team: 'Porto', away_team: 'Benfica', commence_time: game.commenceTime,
     bookmakers: [{ key: 'pinnacle', last_update: new Date(now).toISOString(), markets: [{ key: 'h2h',
       outcomes: [{ name: 'Porto', price: 2 }, { name: 'Draw', price: 4 }, { name: 'Benfica', price: 4 }] }] }] };
@@ -32,8 +32,8 @@ test('apelidos, empate e Kelly central de 25%', () => {
   const rows = compare(game, [event], now).rows;
   const home = rows.find(r => r.selection === 'Porto');
   assert.ok(home);
-  assert.ok(Math.abs(home.edgePct - 10) < 1e-8);
-  assert.ok(Math.abs(home.kellyPct - 2.083333333333333) < 1e-8);
+  assert.ok(Math.abs(home.edgePct - 4) < 1e-8);
+  assert.ok(Math.abs(home.kellyPct - 0.925925925925926) < 1e-8);
   assert.equal(rows.length, 1);
   assert.ok(namesEqual('Borussia M`gladbach', 'Borussia Monchengladbach'));
   assert.ok(namesEqual('Slavia Praga', 'Slavia Praha'));
@@ -226,7 +226,7 @@ test('descarta preços antigos, futuros e jogo iniciado', () => {
 });
 test('totais: exige mesma linha; inteira é condicional a não haver devolução', () => {
   const { game, event } = fixture();
-  game.markets = [{ type: 'HCTG', selections: [{ price: '2.2', line: '2.5' }, { price: '1.8', line: '2.5' }] }];
+  game.markets = [{ type: 'HCTG', selections: [{ price: '2.08', line: '2.5' }, { price: '1.8', line: '2.5' }] }];
   event.bookmakers[0].markets = [{ key: 'totals', outcomes: [{ name: 'Over', point: 2.5, price: 1.91 }, { name: 'Under', point: 2.5, price: 1.91 }] }];
   assert.equal(compare(game, [event], now).rows.length, 1);
   game.markets[0].selections.forEach(s => { s.line = '3.5'; });
@@ -241,7 +241,7 @@ test('totais: exige mesma linha; inteira é condicional a não haver devolução
 test('handicap exige mesma seleção e linha Pinnacle, preservando linhas assinadas', () => {
   const { game, event } = fixture();
   game.markets = [{ type: 'HAND', title: 'Handicap', selections: [
-    { price: '2.2', line: '-1.5' }, { price: '1.8', line: '1.5' },
+    { price: '2.08', line: '-1.5' }, { price: '1.8', line: '1.5' },
   ] }];
   event.bookmakers[0].markets = [{ key: 'spreads', outcomes: [
     { name: 'Porto', point: -1.5, price: 1.91 }, { name: 'Benfica', point: 1.5, price: 1.91 },
@@ -258,7 +258,7 @@ test('códigos Placard HTOH, HCOT e TGHC cobrem vencedor e handicap', () => {
   const { game, event } = fixture();
   game.markets = [
     { type: 'HTOH', selections: [{ price: '2.8', line: null }, { price: '2.8', line: null }] },
-    { type: 'HCOT', selections: [{ price: '2.2', line: '-1.5' }, { price: '1.8', line: '1.5' }] },
+    { type: 'HCOT', selections: [{ price: '2.08', line: '-1.5' }, { price: '1.8', line: '1.5' }] },
   ];
   event.bookmakers[0].markets = [
     { key: 'h2h', outcomes: [{ name: 'Porto', price: 2 }, { name: 'Draw', price: 4 }, { name: 'Benfica', price: 2 }] },
@@ -428,7 +428,7 @@ test('reconcilia partidas de ténis pelo par de jogadores quando o horário esti
   const start = '2026-10-20T14:05:00.000Z';
   const game = { apiSport: 'tennis_wta_ningbo_open', teams: ['Marie Bouzkova', 'Anastasia Zakharova'],
     competition: 'Ningbo - Individual', commenceTime: start, observedAt: new Date(now).toISOString(),
-    markets: [{ type: 'H2HT', selections: [{ price: '2.2', line: null }, { price: '1.6', line: null }] }] };
+    markets: [{ type: 'H2HT', selections: [{ price: '2.08', line: null }, { price: '1.6', line: null }] }] };
   const event = { id: 'wta', sport_key: game.apiSport, home_team: game.teams[0], away_team: game.teams[1],
     commence_time: '2026-10-20T14:00:00Z', bookmakers: [{ key: 'pinnacle', last_update: new Date(now).toISOString(),
       markets: [{ key: 'h2h', outcomes: [{ name: game.teams[0], price: 2 }, { name: game.teams[1], price: 2 }] }] }] };
