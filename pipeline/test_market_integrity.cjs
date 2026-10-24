@@ -236,6 +236,21 @@ test('auditoria publicada cobre as quatro indicações mantidas sem novas anula�
   assert.ok(!audit.some(row => row.game === 'Lincoln City x Burnley'));
 });
 
+test('comparação rejeita leitura antiga sem identidade das quatro casas mesmo abaixo do teto', () => {
+  const event = { id: 'identity-proof', sport_key: 'basketball_nba', home_team: 'A', away_team: 'B',
+    commence_time: '2026-10-24T14:00:00Z', bookmakers: [{ key: 'pinnacle', last_update: new Date(at).toISOString(),
+      markets: [{ key: 'h2h', outcomes: [{ name: 'A', price: 2 }, { name: 'B', price: 2 }] }] }] };
+  const game = { apiSport: event.sport_key, teams: ['A', 'B'], competition: 'NBA',
+    observedAt: new Date(at).toISOString(), commenceTime: event.commence_time,
+    markets: [{ type: 'H2HT', selections: [{ price: 2.08, line: null }, { price: 1.9, line: null }] }] };
+  for (const model of [pipeline, cloud]) for (const bookmaker of ['LeBull', 'ESC Online', 'GoldenPark', 'Betclic']) {
+    const rejected = model.compareBookmaker(bookmaker, game, [event], at);
+    assert.equal(rejected.rows.length, 0, bookmaker);
+    assert.ok(rejected.marketIntegrity.every(row => row.detail === 'identidade da página do jogo não comprovada'));
+    assert.equal(model.compareBookmaker(bookmaker, { ...game, sourceIdentityVerified: true }, [event], at).rows.length, 1, bookmaker);
+  }
+});
+
 test('identidade Retabet aceita os nomes e o ID do HTML real preservado de GD Chaves–FC Vizela', () => {
   const saved = require('../scripts/local_bookmakers/fixtures/retabet_saved_identity.json');
   const identity = listingIdentities(saved.listing, saved.url).get(saved.url);

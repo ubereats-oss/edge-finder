@@ -18,6 +18,8 @@ function exactTeams(a, b) {
 }
 function identityFailure(game, bookmaker, policy = limits) {
   if (game.sourceIdentityVerified === false) return game.identityReason || 'identidade da página do jogo não comprovada';
+  if (identityGate(bookmaker) && String(bookmaker).toLowerCase() !== 'retabet' && game.sourceIdentityVerified !== true)
+    return 'identidade da página do jogo não comprovada';
   if (game.listingTeams && !exactTeams(game.teams, game.listingTeams))
     return 'nomes da página divergem da listagem';
   if (policy.confirmedInvalidSources.some(bad => bad.bookmaker.toLowerCase() === String(bookmaker).toLowerCase()
