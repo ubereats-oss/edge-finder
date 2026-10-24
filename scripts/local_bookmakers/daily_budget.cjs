@@ -11,17 +11,18 @@ function daysRemaining(day) {
 function vpnBudgetForDay(budget, now = new Date()) {
   const day = brasilDay(now);
   const month = day.slice(0, 7);
-  const limitMB = month <= '2026-10' ? 2700 : 4000;
-  const currentMonth = budget.month || '2026-10';
-  const reset = currentMonth !== month;
-  const measured = reset ? 0 : Number(budget.measuredMB || 0);
-  const carried = reset ? 0 : Number(budget.carriedForwardMB || 0);
+  const limitMB = 2700;
+  const measured = Number(budget.measuredMB || 0);
+  const carried = Number(budget.carriedForwardMB || 0);
   const spent = measured + carried;
-  const todayUsed = reset ? 0 : (budget.adapterCycles || []).filter(entry =>
+  const todayUsed = (budget.adapterCycles || []).filter(entry =>
     brasilDay(new Date(entry.startedAt)) === day).reduce((sum, entry) => sum + Number(entry.bytes || 0) / 1000000, 0);
-  const allowance = Math.max(0, (limitMB - spent + todayUsed) / daysRemaining(day));
-  return { day, month, limitMB, reset, spent, todayUsed, daysRemaining: daysRemaining(day),
-    allowance, remaining: Math.max(0, allowance - todayUsed), monthlyRemaining: Math.max(0, limitMB - spent) };
+  const monthlyRemaining = Math.max(0, limitMB - spent);
+  const paused = day >= '2026-11-01';
+  const reason = paused ? 'aguardando orçamento de novembro'
+    : monthlyRemaining < 60 ? `Orçamento VPN esgotado para novos ciclos: ${monthlyRemaining.toFixed(3)} MB restantes; mínimo 60 MB.` : null;
+  return { day, month: budget.month || '2026-10', limitMB, reset: false, spent, todayUsed,
+    remaining: monthlyRemaining, monthlyRemaining, paused, run: !reason, reason };
 }
 function shouldRunForPinnacleWindow(window, now = Date.now()) {
   const rows = Object.values(window || {});

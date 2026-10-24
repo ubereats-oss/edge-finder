@@ -12,6 +12,7 @@ const riskConfig = require('./risk_config');
 const closingOddsRules = require('./closing_odds_rules');
 const placardPart4 = require('./placard_part4');
 const edgeHealth = require('./edge_health');
+const budgetAlerts = require('./budget_alerts');
 
 initializeApp();
 const db = getFirestore();
@@ -862,6 +863,13 @@ exports.retryDailyEdgeFinderHealth = onTaskDispatched({
   region: 'southamerica-east1', secrets: [TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID],
   retryConfig: { maxAttempts: 1 },
 }, async request => {
+  if (request.data.alertId) {
+    const alert = (await db.collection('_edge_budget_alerts').doc(request.data.alertId).get()).data();
+    if (alert) await budgetAlerts.deliverOnce(db, alert, text => placardPart4.sendTelegramText(text,
+      TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value()), data =>
+      getFunctions().taskQueue('retryDailyEdgeFinderHealth').enqueue(data, { scheduleDelaySeconds: 3600 }));
+    return;
+  }
   const ref = db.collection('_edge_health_reports').doc(request.data.reportDay);
   const report = (await ref.get()).data();
   if (!report || report.status === 'sent') return;
@@ -870,13 +878,21 @@ exports.retryDailyEdgeFinderHealth = onTaskDispatched({
       TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value());
     await ref.set({ status: 'sent', messageId, sentAt: new Date().toISOString(), retried: true }, { merge: true });
   } catch (error) { await ref.set({ status: 'send_failed', error: error.message,
-    retryFailedAt: new Date().toISOString() }, { merge: true }); }
+    retryFailedAt: new Date().toISOString() }, { merge: true });
+    await getFunctions().taskQueue('retryDailyEdgeFinderHealth').enqueue({ reportDay: request.data.reportDay },
+      { scheduleDelaySeconds: 3600 }); }
 });
 
 exports.notifyOddsApiExternalUse = onDocumentWritten({
   document: '_odds_api_budget/{month}', region: 'southamerica-east1',
   secrets: [TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID], retry: true,
 }, async event => {
+  const state = event.data?.after?.data();
+  for (const alert of budgetAlerts.budgetAlerts(event.params.month, state)) {
+    await budgetAlerts.deliverOnce(db, alert, text => placardPart4.sendTelegramText(text,
+      TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value()), data =>
+      getFunctions().taskQueue('retryDailyEdgeFinderHealth').enqueue(data, { scheduleDelaySeconds: 3600 }));
+  }
   const before = event.data?.before?.data()?.keyBalances || {};
   const after = event.data?.after?.data()?.keyBalances || {};
   for (const [fingerprint, balance] of Object.entries(after)) {
