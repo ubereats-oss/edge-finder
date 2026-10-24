@@ -1,9 +1,13 @@
-param(
+﻿param(
   [Parameter(Mandatory = $true)]
   [ValidateSet('minimize', 'restore', 'state')]
   [string]$Action
 )
 $ErrorActionPreference = 'Stop'
+if ($Action -ne 'state') {
+  . (Join-Path $PSScriptRoot 'real_resource_lock.ps1')
+  Enter-LocalResourceLock $PSCommandPath @($Action)
+}
 Add-Type -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;

@@ -1,9 +1,12 @@
 const HOUR_MS = 3600000;
+const { actions } = require('./local_operator_alerts');
 
 function budgetAlerts(month, state = {}) {
   const alerts = [];
+  if (state.vpn?.operatorIssue && state.vpn.operatorIssue !== 'data' && actions[state.vpn.operatorIssue])
+    alerts.push({ id: `vpn-action-${month}-${state.vpn.operatorIssue}`, text: `Edge Finder: coleta local bloqueada. Alex: ${actions[state.vpn.operatorIssue]}` });
   if (state.vpn?.providerExhausted)
-    alerts.push({ id: `vpn-provider-${month}`, text: `Edge Finder: TunnelBear informou que a franquia de dados acabou. Coleta local parada, sem dispensar a tela. Conferir a franquia no aplicativo.` });
+    alerts.push({ id: `vpn-provider-${month}`, text: `Edge Finder: TunnelBear informou que a franquia de dados acabou. ${actions.data}` });
   if (state.syncComplete && Number.isFinite(state.totalRemaining) && state.totalRemaining <= 1000)
     alerts.push({ id: `credits-${month}`, text: `Edge Finder: créditos da The Odds API chegaram à reserva de 1.000 (800 para fechamentos + 200 de margem). Saldo: ${state.totalRemaining}. Somente fechamentos.` });
   if (state.vpn?.remainingMB < 60)

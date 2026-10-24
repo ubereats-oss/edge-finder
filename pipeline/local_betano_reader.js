@@ -6,7 +6,7 @@ const admin = require('firebase-admin');
 const { loadEnvFileIfPresent } = require('./odds_api_client');
 const competitions = require('./placard_config');
 const path = require('node:path');
-const fs = require('node:fs');
+const fs = require('../scripts/local_bookmakers/safe_files.cjs');
 const { readRetabet } = require('../scripts/local_bookmakers/retabet_reader.cjs');
 const { readBwin } = require('../scripts/local_bookmakers/bwin_reader.cjs');
 const { readBetclic } = require('../scripts/local_bookmakers/betclic_reader.cjs');
@@ -28,28 +28,36 @@ const TASK_NAME = 'EdgeFinder-Betano-Local';
 const MONTHLY_TUNNEL_CAP_MB = 4000;
 const MAX_MEASURED_CYCLE_MB = 18;
 const NEXT_CYCLE_RESERVE_MB = 200;
-const OUTPUT_DIR = path.join(PROJECT, '.local_logs', 'betano');
+const OUTPUT_DIR = path.join(process.env.EDGE_DATA_ROOT || PROJECT, '.local_logs', 'betano');
 const BWIN_VALIDATION_REQUEST = path.join(OUTPUT_DIR, 'bwin-validation-request.json');
 const BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font']);
 const BLOCKED_TRACKING_URL = /google-analytics|googletagmanager|doubleclick|facebook\.net|hotjar|optimove|go-mpulse|bsqd\.me/i;
 
 function tunnel(action, cycleId = '', purpose = '') {
-  const args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', TUNNEL, action];
-  if (action === 'meter') args.push('-StableSeconds', '15');
-  const result = require('node:child_process').spawnSync('powershell.exe', args,
-    { encoding: 'utf8', timeout: 240000, env: { ...process.env,
-      EDGE_TUNNEL_ATTEMPT_LOG: path.join(OUTPUT_DIR, `tunnelbear_attempts_${monthKey()}.jsonl`),
-      EDGE_TUNNEL_CYCLE_ID: cycleId, EDGE_TUNNEL_PURPOSE: purpose } });
+  const attemptFile = path.join(OUTPUT_DIR, `tunnelbear_attempts_${monthKey()}.jsonl`);
+  const invoke = (operation, restarted = false) => {
+    const args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', TUNNEL, operation];
+    if (operation === 'meter') args.push('-StableSeconds', '15');
+    return require('node:child_process').spawnSync('powershell.exe', args,
+      { encoding: 'utf8', timeout: operation === 'recover' ? 90000 : 240000, env: { ...process.env,
+        EDGE_TUNNEL_ATTEMPT_LOG: attemptFile, EDGE_TUNNEL_CYCLE_ID: cycleId, EDGE_TUNNEL_PURPOSE: purpose,
+        EDGE_TUNNEL_RESTARTED: restarted ? '1' : '0' } });
+  };
+  const { runTunnel } = require('../scripts/local_bookmakers/tunnel_runner.cjs');
+  const result = runTunnel(action, invoke, () => fs.existsSync(attemptFile) && fs.readFileSync(attemptFile, 'utf8')
+    .split(/\r?\n/).some(line => { try { const row = JSON.parse(line); return row.cycleId === cycleId && row.status === 'hung_reopened'; } catch { return false; } }));
   if (result.status !== 0) throw new Error((result.stderr || result.stdout || `TunnelBear ${action} falhou`).trim());
   return JSON.parse(result.stdout.trim());
 }
 
 function physicalNetworkBytes() {
-  const script = "$adapter = Get-NetAdapter -Name 'Wi-Fi' -ErrorAction Stop; if ($adapter.Status -ne 'Up') { throw 'Wi-Fi não está ativo.' }; $stats = Get-NetAdapterStatistics -Name $adapter.Name -ErrorAction Stop; if (-not $stats) { throw 'Contadores Wi-Fi indisponíveis.' }; [pscustomobject]@{ receivedBytes = [double]$stats.ReceivedBytes; sentBytes = [double]$stats.SentBytes } | ConvertTo-Json -Compress";
-  const result = require('node:child_process').spawnSync('powershell.exe', ['-NoProfile', '-Command', script],
+  const args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(PROJECT, 'scripts/local_bookmakers/network_adapter.ps1')];
+  if (physicalNetworkBytes.interfaceIndex) args.push('-InterfaceIndex', String(physicalNetworkBytes.interfaceIndex));
+  const result = require('node:child_process').spawnSync('powershell.exe', args,
     { encoding: 'utf8', timeout: 20000 });
   if (result.status !== 0) throw new Error((result.stderr || result.stdout || 'Falha ao ler bytes da rede física.').trim());
   const bytes = JSON.parse(result.stdout.trim());
+  physicalNetworkBytes.interfaceIndex = bytes.interfaceIndex;
   if (![bytes.receivedBytes, bytes.sentBytes].every(value => Number.isFinite(value) && value >= 0)) {
     throw new Error('Contadores de bytes da rede física inválidos.');
   }
@@ -94,6 +102,16 @@ function database() {
     credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
   });
   return admin.firestore();
+}
+
+async function authenticate(db, timeoutMs = 15000) {
+  let timer;
+  try {
+    await Promise.race([db.collection('_placard_pinnacle_latest').limit(1).get(),
+      new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Firebase: autenticação não confirmada em 15 segundos.')), timeoutMs); })]);
+    return { authenticated: true, at: new Date().toISOString() };
+  } catch (error) { throw new Error(`Firebase: autenticação falhou antes do VPN: ${error.message}`); }
+  finally { clearTimeout(timer); }
 }
 
 async function cdpReady() {
@@ -746,10 +764,15 @@ async function main() {
 
 module.exports = { readSelections, adaptTotalsAndHandicaps, assertTunnelBudget, recordTunnelUsage,
   tunnelCycleAffordable, monthKey, MONTHLY_TUNNEL_CAP_MB, MAX_MEASURED_CYCLE_MB,
-  ensureEdge, initialJson, freshJson, tunnel, database, physicalNetworkBytes, vpnNetworkBytes,
+  ensureEdge, initialJson, freshJson, tunnel, database, authenticate, physicalNetworkBytes, vpnNetworkBytes,
   networkProcessSnapshot, summarizeNetworkProcesses, updateFailure };
 if (require.main === module) {
   const run = process.argv.includes('--legacy') || process.argv.includes('--validate-football')
     ? main : require('./local_bookmaker_cycle_fast.cjs').main;
-  run().then(() => process.exit(0)).catch(error => { console.error(error.message); process.exit(1); });
+  const { acquire } = require('../scripts/local_bookmakers/resource_lock.cjs');
+  (async () => {
+    const release = await acquire(process.env.EDGE_DATA_ROOT || PROJECT);
+    if (!release) throw new Error('Ciclo pulado: trava ocupada após 5 minutos.');
+    try { await run(); } finally { release(); }
+  })().then(() => process.exit(0)).catch(error => { console.error(error.message); process.exit(1); });
 }

@@ -1,7 +1,7 @@
-const fs = require('node:fs');
+const fs = require('./safe_files.cjs');
 const path = require('node:path');
 
-const LOG_DIR = path.resolve(__dirname, '../../.local_logs/betano');
+const LOG_DIR = path.join(process.env.EDGE_DATA_ROOT || path.resolve(__dirname, '../..'), '.local_logs/betano');
 const NAMES = { betano: 'Betano', bwin: 'Bwin', lebull: 'LeBull', esc_online: 'ESC Online',
   goldenpark: 'GoldenPark', retabet: 'Retabet', betclic: 'Betclic' };
 const STATUSES = { complete: 'concluído', failed: 'falhou', paused: 'pausado',
@@ -21,7 +21,8 @@ function localDay(date) {
 function generateSummary() {
   const today = localDay(new Date());
   const logFile = path.join(LOG_DIR, 'hourly-cycles.jsonl');
-  const rows = fs.existsSync(logFile) ? fs.readFileSync(logFile, 'utf8').replace(/^\uFEFF/, '')
+  const inputs = [logFile, ...fs.readdirSync(LOG_DIR).filter(name => /^hourly-cycles\.jsonl\.alternate-/.test(name) && !name.endsWith('.notice.json')).map(name => path.join(LOG_DIR, name))].filter(name => fs.existsSync(name));
+  const rows = inputs.length ? inputs.map(name => fs.readFileSync(name, 'utf8')).join('\n').replace(/^\uFEFF/, '')
     .split(/\r?\n/).filter(Boolean).map(line => JSON.parse(line))
     .filter(row => localDay(new Date(row.at)) === today) : [];
   rows.sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
@@ -64,8 +65,7 @@ function generateSummary() {
     lines.push(`${NAMES[key] || key} | sucesso: ${count('success')} | vazia: ${count('empty')} | tempo esgotado: ${count('timeout')} | outras falhas: ${count('failed')} | média: ${number(mean)} MB/ciclo | motivos: ${reasons.join(' ; ') || 'nenhum registrado'}`);
   }
   const outputFile = path.join(LOG_DIR, `resumo-${today}.txt`);
-  fs.writeFileSync(outputFile, lines.join('\n') + '\n', 'utf8');
-  return outputFile;
+  return fs.writeFileSync(outputFile, lines.join('\n') + '\n', 'utf8') || outputFile;
 }
 
 module.exports = { failureReasons, generateSummary };

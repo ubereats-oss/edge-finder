@@ -41,7 +41,8 @@ function Minimize-TunnelBearWindow {
 function Save-TunnelBearUnexpectedWindow($Window = $null, [string]$Label = 'unexpected') {
   Add-Type -AssemblyName System.Windows.Forms
   Add-Type -AssemblyName System.Drawing
-  $directory = Join-Path $PSScriptRoot '..\..\.local_logs\betano'
+  $dataRoot = if ($env:EDGE_DATA_ROOT) { $env:EDGE_DATA_ROOT } else { Join-Path $PSScriptRoot '..\..' }
+  $directory = Join-Path $dataRoot '.local_logs\betano'
   $null = [System.IO.Directory]::CreateDirectory($directory)
   $file = Join-Path $directory ('tunnelbear-' + $Label + '-' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfff') + '.png')
   if (-not $Window) { $Window = Find-TunnelBearWindow }
@@ -125,6 +126,10 @@ function Test-TunnelBearSwitchAccessible($Window, $Overlay) {
 function Handle-TunnelBearKnownScreens($Window) {
   $overlay = Get-TunnelBearOverlay $Window
   if ($overlay.Exhausted) { Close-TunnelBearPromotion $Window; return }
+  $issue = if ($overlay.Text -match '(?i)log[ -]?in|sign[ -]?in|entrar na conta') { 'TUNNELBEAR_LOGIN_REQUIRED' }
+    elseif ($overlay.Text -match '(?i)mandatory|required update|update required|must update|update to continue|atualiza.{0,12}obrigat') { 'TUNNELBEAR_UPDATE_REQUIRED' }
+    elseif ($overlay.Text -match '(?i)subscription.{0,25}(expired|required)|assinatura.{0,25}(vencid|expir)') { 'TUNNELBEAR_SUBSCRIPTION_REQUIRED' }
+  if ($issue) { $capture = Save-TunnelBearUnexpectedWindow $Window 'action-required'; throw "$issue; captura=$capture" }
   if ($overlay.Unknown) {
     $capture = Save-TunnelBearUnexpectedWindow $Window 'unknown'
     throw "Janela desconhecida do TunnelBear; captura=$capture"
@@ -189,6 +194,7 @@ function Assert-TunnelBearWindow {
 
 function Prepare-TunnelBearWindow([switch]$ForDisconnect) {
   $initial = Get-VpnProof
+  Restart-UnresponsiveTunnelBear $initial
   if ($initial.Adapter -eq 'Up' -and -not $initial.Connected -and -not $ForDisconnect) {
     throw 'VPN com placa Up sem confirmação de IP de Portugal; nenhum clique autorizado.'
   }
