@@ -1,6 +1,6 @@
 ﻿param(
   [Parameter(Mandatory = $true)]
-  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state', 'prepare', 'minimize', 'library')]
+  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state', 'prepare', 'minimize', 'library', 'recover')]
   [string]$Action,
   [ValidateRange(5, 90)]
   [int]$StableSeconds = 90
@@ -8,6 +8,10 @@
 
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+if ($Action -notin @('state', 'library')) {
+  . (Join-Path $PSScriptRoot 'real_resource_lock.ps1')
+  Enter-LocalResourceLock $PSCommandPath @($Action, '-StableSeconds', "$StableSeconds")
+}
 if ($Action -eq 'state') {
   $vpnAdapter = [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() |
     Where-Object { $_.Description -eq 'TunnelBear Adapter V9' } | Select-Object -First 1
@@ -22,7 +26,10 @@ if (-not ('TunnelBearNativeWindow' -as [type])) {
   Add-Type 'using System; using System.Runtime.InteropServices; public class TunnelBearNativeWindow { [DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow); [DllImport("user32.dll")] public static extern bool IsIconic(IntPtr hWnd); }'
 }
 . (Join-Path $PSScriptRoot 'tunnelbear_lifecycle.ps1')
+. (Join-Path $PSScriptRoot 'tunnelbear_recovery.ps1')
+. (Join-Path $PSScriptRoot 'safe_log.ps1')
 $script:CycleOwnsVpn = $false
+$script:TunnelBearRestarted = $env:EDGE_TUNNEL_RESTARTED -eq '1'
 
 function Get-TunnelBearState {
   $window = Find-TunnelBearWindow
@@ -170,12 +177,15 @@ function Write-ConnectionAttempt([int]$Attempt, [string]$Status, [string]$Detail
     status = $Status
     detail = $Detail
   }
-  Add-Content -LiteralPath $env:EDGE_TUNNEL_ATTEMPT_LOG -Value ($record | ConvertTo-Json -Compress) -Encoding UTF8
+  Write-LocalSafeLog $env:EDGE_TUNNEL_ATTEMPT_LOG ($record | ConvertTo-Json -Compress)
 }
 
 if ($Action -eq 'library') { return }
 try {
-  if ($Action -eq 'prepare') {
+  if ($Action -eq 'recover') {
+    Restart-UnresponsiveTunnelBear @{ Adapter = 'Down' } -Forced
+    [pscustomobject]@{ action = 'recover'; adapter = (Get-VpnProof).Adapter } | ConvertTo-Json -Compress
+  } elseif ($Action -eq 'prepare') {
     $prepared = Prepare-TunnelBearWindow
     [pscustomobject]@{ action = 'prepare'; status = 'ready'; adapter = $prepared.Proof.Adapter;
       connected = $prepared.Proof.Connected; connectedByCycle = $prepared.ConnectedByCycle } | ConvertTo-Json -Compress

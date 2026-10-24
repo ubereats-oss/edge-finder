@@ -3,6 +3,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $Source 'tunnelbear.ps1') -Action library
 $script:actualStateReader = (Get-Item Function:Get-TunnelBearState).ScriptBlock
 $script:actualWindowStarter = (Get-Item Function:Start-TunnelBearWindow).ScriptBlock
+function Restart-UnresponsiveTunnelBear($Initial) {}
 function Close-TunnelBearPromotion($Window) {}
 function Handle-TunnelBearKnownScreens($Window) {}
 $script:passed = 0

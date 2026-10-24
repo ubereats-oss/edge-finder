@@ -1,5 +1,5 @@
 // Independent bounded reads; disconnect only cycle-owned VPN before Firestore.
-const fs = require('node:fs');
+const fs = require('../scripts/local_bookmakers/safe_files.cjs');
 const path = require('node:path');
 const { spawnSync, execFile } = require('node:child_process');
 const { performance } = require('node:perf_hooks');
@@ -13,7 +13,7 @@ const { flushCycleQueue } = require('../scripts/local_bookmakers/cloud_cycle_que
 const { matchingEvents, namesEqual } = require('../functions/placard_value.js');
 
 const ROOT = path.resolve(__dirname, '..');
-const LOG_DIR = path.join(ROOT, '.local_logs', 'betano');
+const LOG_DIR = path.join(process.env.EDGE_DATA_ROOT || ROOT, '.local_logs', 'betano');
 const WINDOW_SCRIPT = path.join(ROOT, 'scripts', 'local_bookmakers', 'edge_window.ps1');
 const TASK_NAME = 'EdgeFinder-Betano-Local';
 const HOUSE_NAMES = {
@@ -83,8 +83,8 @@ async function boundedRead(context, read, timeoutMs = 120000,
 
 function readCycleBudget(cycle) {
   const file = path.join(LOG_DIR, 'vpn-budget.json');
-  const budget = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8'))
-    : { limitMB: 2700, expiresAt: '2026-11-01T00:00:00-03:00', initialBalanceMB: null };
+  const budget = fs.readBudget(file, message => { cycle.budgetRecovery = message; console.error(message); })
+    || { limitMB: 2700, expiresAt: '2026-11-01T00:00:00-03:00', initialBalanceMB: null };
   cycle.balanceMB = null;
   cycle.balanceReadDurationMs = 0;
   if (!Number.isFinite(budget.carriedForwardMB)) {
@@ -108,7 +108,7 @@ function readCycleBudget(cycle) {
     cycle.previousBudgetError = budget.measurementError;
     delete budget.measurementError;
   }
-  fs.writeFileSync(file, JSON.stringify(budget, null, 2));
+  fs.saveBudget(file, budget);
   return daily.reason;
 }
 
@@ -135,7 +135,7 @@ function chargeCycleBudget(cycle, before, after) {
   }
   cycle.accumulatedMB = budget.carriedForwardMB + budget.measuredMB;
   cycle.dailyVpn = vpnBudgetForDay(budget, new Date(cycle.startedAt));
-  fs.writeFileSync(path.join(LOG_DIR, 'vpn-budget.json'), JSON.stringify(budget, null, 2));
+  fs.saveBudget(path.join(LOG_DIR, 'vpn-budget.json'), budget);
 }
 
 async function writeRead(db, key, data) {
@@ -162,7 +162,7 @@ async function awaitComparison(db, id, deadline) {
 }
 
 async function main() {
-  loadEnvFileIfPresent(path.join(ROOT, '.env'));
+  loadEnvFileIfPresent(process.env.EDGE_ENV_FILE || path.join(ROOT, '.env'));
   fs.mkdirSync(LOG_DIR, { recursive: true });
   const startedAt = new Date().toISOString();
   const start = performance.now();
@@ -191,6 +191,7 @@ async function main() {
     if (pauseReason) { cycle.status = 'ciclo pulado'; cycle.pauseReason = pauseReason; return; }
     await stage('preparation', async () => {
       db = core.database();
+      if (core.authenticate) cycle.firebaseAuthentication = await core.authenticate(db);
       const snapshot = await Promise.allSettled(PRIORITY.map(async ([key]) => {
         const doc = (await db.collection('_placard_pinnacle_latest').doc(key).get()).data() || {};
         const events = (doc.events || []).filter(event => {
@@ -435,6 +436,8 @@ async function main() {
       catch (error) { cycle.tunnelBearWindowError = error.message; }
     }
     cycle.finishedAt = new Date().toISOString();
+    cycle.runtimeSha = process.env.EDGE_RUNTIME_SHA || null;
+    cycle.dataRoot = process.env.EDGE_DATA_ROOT || ROOT;
     cycle.totalDurationMs = Math.round(performance.now() - start);
     cycle.targetMet = cycle.totalDurationMs <= 600000;
     cycle.vpnDurationMs ??= cycle.vpnConnectedAt ? Date.now() - vpnStartedAt : 0;

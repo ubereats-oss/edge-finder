@@ -8,7 +8,7 @@ const filename = path.resolve(__dirname, '../../pipeline/local_bookmaker_cycle_f
 
 // Run the production orchestration with every external boundary replaced: no
 // process, browser, database, VPN or collector is invoked by these tests.
-async function simulate({ owned = false, connectionError, readError = false } = {}) {
+async function simulate({ owned = false, connectionError, readError = false, authError = false } = {}) {
   const calls = [], written = new Map();
   let reads = 0;
   const reference = { set: async () => {}, get: async () => ({ data: () => ({
@@ -17,6 +17,7 @@ async function simulate({ owned = false, connectionError, readError = false } = 
   const database = { collection: () => ({ doc: () => reference }) };
   const core = {
     database: () => database,
+    authenticate: async () => { if (authError) throw Error('Firebase authentication rejected'); return { authenticated: true }; },
     ensureEdge: async () => ({ browser: { close: async () => {} }, context: {} }),
     physicalNetworkBytes: () => ({ receivedBytes: 100, sentBytes: 100 }),
     vpnNetworkBytes: () => ({ receivedBytes: 100, sentBytes: 100 }),
@@ -34,7 +35,9 @@ async function simulate({ owned = false, connectionError, readError = false } = 
     return { games: [{ teams: ['A', 'B'], apiSport: 'football', commenceTime: new Date().toISOString() }] };
   };
   const modules = {
-    'node:fs': { mkdirSync() {}, existsSync: () => false, writeFileSync: (file, value) => written.set(file, value), appendFileSync() {} },
+    '../scripts/local_bookmakers/safe_files.cjs': { mkdirSync() {}, existsSync: () => false,
+      readBudget: () => null, saveBudget: (file, value) => written.set(file, JSON.stringify(value)),
+      writeFileSync: (file, value) => written.set(file, value), appendFileSync() {} },
     'node:path': path, 'node:perf_hooks': { performance },
     'node:child_process': { spawnSync: () => ({ status: 0, stdout: '{"minimized":true}', stderr: '' }),
       execFile: (...args) => args.at(-1)(null, '[]') },
@@ -77,6 +80,11 @@ for (const readError of [false, true]) {
     assert.equal(Boolean(result.error), readError);
   });
 }
+test('Firebase sem autenticação: não liga VPN nem lê casas', async () => {
+  const result = await simulate({ authError: true });
+  assert.deepEqual(result.calls, []); assert.equal(result.reads, 0);
+  assert.match(result.cycle.error, /authentication rejected/);
+});
 for (const connectionError of ['TunnelBear não abriu', 'Janela inesperada do TunnelBear; captura=simulated.png']) {
   test(`${connectionError}: nenhuma leitura, nenhuma repetição, 0 MB`, async () => {
     const result = await simulate({ connectionError });
