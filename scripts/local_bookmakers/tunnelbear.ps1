@@ -1,6 +1,6 @@
 ﻿param(
   [Parameter(Mandatory = $true)]
-  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state')]
+  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state', 'prepare', 'minimize', 'library')]
   [string]$Action,
   [ValidateRange(5, 90)]
   [int]$StableSeconds = 90
@@ -18,22 +18,28 @@ if ($Action -eq 'state') {
 }
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+if (-not ('TunnelBearNativeWindow' -as [type])) {
+  Add-Type 'using System; using System.Runtime.InteropServices; public class TunnelBearNativeWindow { [DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow); [DllImport("user32.dll")] public static extern bool IsIconic(IntPtr hWnd); }'
+}
+. (Join-Path $PSScriptRoot 'tunnelbear_lifecycle.ps1')
+$script:CycleOwnsVpn = $false
 
 function Get-TunnelBearState {
-  $root = [System.Windows.Automation.AutomationElement]::RootElement
-  $windowCondition = New-Object System.Windows.Automation.PropertyCondition(
-    [System.Windows.Automation.AutomationElement]::NameProperty, 'TunnelBear')
-  $window = $root.FindFirst([System.Windows.Automation.TreeScope]::Children, $windowCondition)
+  $window = Find-TunnelBearWindow
   if (-not $window) { throw 'Janela principal do TunnelBear não encontrada.' }
+  if ($window.Current.Name -ne 'TunnelBear') { throw ('Aviso: ' + $window.Current.Name) }
 
   $popupCondition = New-Object System.Windows.Automation.PropertyCondition(
     [System.Windows.Automation.AutomationElement]::NameProperty, 'Close update popup')
   $updatePopupClose = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $popupCondition)
   if ($updatePopupClose) {
-    $invokePattern = $updatePopupClose.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
-    $invokePattern.Invoke()
-    Start-Sleep -Milliseconds 500
+    throw 'Aviso de atualização do TunnelBear.'
   }
+  $dialogs = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+    (New-Object System.Windows.Automation.PropertyCondition(
+      [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+      [System.Windows.Automation.ControlType]::Window)))
+  if ($dialogs.Count -gt 0) { throw 'Diálogo inesperado do TunnelBear.' }
 
   $idCondition = New-Object System.Windows.Automation.PropertyCondition(
     [System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'statusAccessibility')
@@ -126,7 +132,9 @@ function Wait-VpnProof([bool]$Expected, [int]$TimeoutSeconds) {
       connected = $proof.Connected; error = $proof.Error }
     $checks += $check
     if ($Expected) { Write-ConnectionAttempt 1 'check' ($check | ConvertTo-Json -Compress) }
-    if ($proof.Connected -eq $Expected) { $proof.Checks = $checks; return $proof }
+    if (($Expected -and $proof.Connected) -or (-not $Expected -and $proof.Adapter -eq 'Down')) {
+      $proof.Checks = $checks; return $proof
+    }
     $remaining = 5 - ([DateTime]::UtcNow - $at).TotalSeconds
     if ($remaining -gt 0) { Start-Sleep -Milliseconds ([int]($remaining * 1000)) }
   } while ([DateTime]::UtcNow -lt $deadline)
@@ -170,8 +178,16 @@ function Write-ConnectionAttempt([int]$Attempt, [string]$Status, [string]$Detail
   Add-Content -LiteralPath $env:EDGE_TUNNEL_ATTEMPT_LOG -Value ($record | ConvertTo-Json -Compress) -Encoding UTF8
 }
 
+if ($Action -eq 'library') { return }
 try {
-  if ($Action -eq 'meter-once') {
+  if ($Action -eq 'prepare') {
+    $prepared = Prepare-TunnelBearWindow
+    [pscustomobject]@{ action = 'prepare'; status = 'ready'; adapter = $prepared.Proof.Adapter;
+      connected = $prepared.Proof.Connected; connectedByCycle = $prepared.ConnectedByCycle } | ConvertTo-Json -Compress
+  } elseif ($Action -eq 'minimize') {
+    Minimize-TunnelBearWindow
+    [pscustomobject]@{ action = 'minimize'; status = 'minimized' } | ConvertTo-Json -Compress
+  } elseif ($Action -eq 'meter-once') {
     $root = [System.Windows.Automation.AutomationElement]::RootElement
     $condition = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::NameProperty, 'TunnelBear')
     $window = $root.FindFirst([System.Windows.Automation.TreeScope]::Children, $condition)
@@ -183,25 +199,29 @@ try {
   } elseif ($Action -eq 'connect') {
     Write-ConnectionAttempt 1 'started'
     $vpnStartedAt = Get-Date -Format o
-    $proof = Get-VpnProof
+    $prepared = Prepare-TunnelBearWindow
+    $proof = $prepared.Initial
     $initialCheck = [pscustomobject]@{ at = [DateTime]::UtcNow.ToString('o'); adapter = $proof.Adapter;
       country = $proof.Country; publicIp = $proof.PublicIp; service = $proof.Service;
       connected = $proof.Connected; error = $proof.Error }
     Write-ConnectionAttempt 1 'check' ($initialCheck | ConvertTo-Json -Compress)
     $checks = @($initialCheck)
-    if (-not $proof.Connected) {
-      $switch = Get-TunnelBearSwitch
-      if ($switch.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::Off) { $switch.Toggle() }
-      $proof = Wait-VpnProof $true 60
-      $checks += $proof.Checks
-    }
+    $connection = Connect-TunnelBearPrepared $prepared
+    $proof = $connection.Proof
+    $checks += $proof.Checks
     Write-ConnectionAttempt 1 'connected' "Adaptador=$($proof.Adapter), país=$($proof.Country)."
     [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT';
       publicIp = $proof.PublicIp; adapter = $proof.Adapter; attempt = 1;
-      vpnStartedAt = $vpnStartedAt; checks = $checks } | ConvertTo-Json -Depth 6 -Compress
+      vpnStartedAt = $vpnStartedAt; connectedByCycle = $connection.ConnectedByCycle;
+      checks = $checks } | ConvertTo-Json -Depth 6 -Compress
   } elseif ($Action -eq 'disconnect') {
-    $switch = Get-TunnelBearSwitch
-    if ($switch.Current.ToggleState -ne [System.Windows.Automation.ToggleState]::Off) { $switch.Toggle() }
+    $script:CycleOwnsVpn = $true
+    if ((Get-VpnProof).Adapter -ne 'Down') {
+      $null = Prepare-TunnelBearWindow -ForDisconnect
+      $script:CycleOwnsVpn = $true
+      $switch = (Assert-TunnelBearWindow).Switch
+      if ($switch.Current.ToggleState -ne [System.Windows.Automation.ToggleState]::Off) { $switch.Toggle() }
+    }
     $null = Wait-VpnProof $false 30
     [pscustomobject]@{ action = 'disconnect'; status = 'disconnected'; vpnDisconnectedAt = (Get-Date -Format o) } | ConvertTo-Json -Compress
   } else {
@@ -212,13 +232,14 @@ try {
   $message = $_.Exception.Message
   if ($Action -eq 'meter-once') { [Console]::Error.WriteLine($message); exit 1 }
   try {
-    $switch = Get-TunnelBearSwitch
+    if (-not $script:CycleOwnsVpn) { throw 'Conexão não pertence ao ciclo; nenhum clique de limpeza.' }
+    $switch = (Assert-TunnelBearWindow).Switch
     if ($switch.Current.ToggleState -ne [System.Windows.Automation.ToggleState]::Off) {
       $switch.Toggle()
       $null = Wait-VpnProof $false 30
     }
   } catch {
-    $message += "; falha ao garantir VPN desligado: $($_.Exception.Message)"
+    if ($script:CycleOwnsVpn) { $message += "; falha ao garantir VPN desligado: $($_.Exception.Message)" }
   }
   [Console]::Error.WriteLine($message)
   exit 1
