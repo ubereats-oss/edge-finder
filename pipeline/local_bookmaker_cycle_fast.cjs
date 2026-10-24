@@ -1,4 +1,4 @@
-// One scheduled VPN connection: independent bounded reads, disconnect, then Firestore.
+// Independent bounded reads; disconnect only cycle-owned VPN before Firestore.
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync, execFile } = require('node:child_process');
@@ -178,7 +178,7 @@ async function main() {
     catch (error) { record.error = error.message; throw error; }
     finally { record.finishedAt = new Date().toISOString(); record.durationMs = Math.round(performance.now() - at); }
   };
-  let browser, context, db, vpnConnected = false, vpnBytesBefore = null, vpnBytesAfter = null;
+  let browser, context, db, vpnConnected = false, vpnOwned = false, vpnBytesBefore = null, vpnBytesAfter = null;
   let networkBefore = null, networkAfter = null, beforeMB = null, afterMB = null;
   let networkTimer, usageRecorded = false, budgetCharged = false;
   const processSamples = [];
@@ -227,15 +227,12 @@ async function main() {
     }
     await stage('vpnConnect', async () => {
       vpnStartedAt = Date.now();
-      try { cycle.vpn = core.tunnel('connect', startedAt, 'production_cycle'); }
-      catch (error) {
-        cycle.vpnFirstFailure = error.message;
-        if (/adaptador=Up/i.test(error.message)) throw error;
-        await wait(120000);
-        cycle.vpn = core.tunnel('connect', startedAt, 'production_cycle');
-      }
+      cycle.vpn = core.tunnel('connect', startedAt, 'production_cycle');
       vpnStartedAt = Date.parse(cycle.vpn.vpnStartedAt) || vpnStartedAt;
       vpnConnected = true;
+      vpnOwned = cycle.vpn.connectedByCycle === true;
+      cycle.vpnConnectedByCycle = vpnOwned;
+      cycle.vpnPreservedForUser = !vpnOwned;
       cycle.vpnConnectedAt = new Date().toISOString();
       cycle.vpnProofChecks = cycle.vpn.checks || [];
       vpnBytesBefore = core.vpnNetworkBytes();
@@ -333,7 +330,7 @@ async function main() {
     try { cycle.edgeMinimizedAfterReads = edgeWindow('state').minimized; }
     catch (error) { cycle.edgeWindowCheckError = error.message; }
     vpnBytesAfter = core.vpnNetworkBytes();
-    await stage('vpnDisconnect', async () => {
+    if (vpnOwned) await stage('vpnDisconnect', async () => {
       cycle.disconnected = core.tunnel('disconnect');
       vpnConnected = false;
       cycle.vpnDisconnectedAt = new Date().toISOString();
@@ -346,7 +343,7 @@ async function main() {
     if (!Object.values(collected).some(data => data.games.length))
       throw new Error('Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso.');
     const readIds = await stage('send', async () => {
-      if (vpnConnected) throw new Error('Envio bloqueado: VPN ainda conectado.');
+      if (vpnConnected && vpnOwned) throw new Error('Envio bloqueado: VPN do ciclo ainda conectado.');
       const toSend = Object.entries(collected).filter(([, data]) => data.games.length);
       const entries = await Promise.allSettled(toSend.map(async ([key, data]) =>
         [key, await writeRead(db, key, data)]));
@@ -384,7 +381,7 @@ async function main() {
           lastReadId: read?.readId || null, selections: read?.selections || 0,
           comparedSelections: read?.comparison?.comparedSelections || 0,
           lastValidationStatus: read?.comparison?.status || 'not_compared',
-          ...(okay ? { lastSuccessAt: at, vpnDisconnected: true }
+          ...(okay ? { lastSuccessAt: at, vpnDisconnected: !vpnConnected }
             : { lastFailureAt: at, lastFailure: (read?.error || read?.comparison?.errors?.join('; ')
               || 'Nenhuma seleção Pinnacle processada neste ciclo.').slice(0, 500) }),
         };
@@ -398,7 +395,7 @@ async function main() {
     cycle.error = error.message;
   } finally {
     if (networkTimer) clearInterval(networkTimer);
-    if (vpnConnected) {
+    if (vpnConnected && vpnOwned) {
       try {
         vpnBytesAfter ||= core.vpnNetworkBytes();
         cycle.disconnected = await stage('vpnDisconnect', async () => core.tunnel('disconnect'));
@@ -407,11 +404,12 @@ async function main() {
         cycle.vpnDurationMs = (Date.parse(cycle.disconnected.vpnDisconnectedAt) || Date.now()) - vpnStartedAt;
       } catch (error) { cycle.disconnectError = error.message; }
     }
-    if (vpnStartedAt && !budgetCharged && !vpnConnected) {
+    if (vpnStartedAt && !budgetCharged && (!vpnConnected || !vpnOwned)) {
+      if (vpnConnected) vpnBytesAfter ||= core.vpnNetworkBytes();
       chargeCycleBudget(cycle, vpnBytesBefore, vpnBytesAfter);
       budgetCharged = true;
     }
-    if (networkBefore && !usageRecorded && !vpnConnected && cycle.vpnConnectedAt) {
+    if (networkBefore && !usageRecorded && (!vpnConnected || !vpnOwned) && cycle.vpnConnectedAt) {
       try {
         networkAfter ||= core.physicalNetworkBytes();
         const usage = core.recordTunnelUsage({ startedAt, beforeMB, afterMB,
@@ -432,6 +430,10 @@ async function main() {
       catch (error) { cycle.failureStatusError = error.message; }
     }
     if (browser) await browser.close().catch(() => {});
+    if (vpnStartedAt) {
+      try { cycle.tunnelBearWindow = core.tunnel('minimize'); }
+      catch (error) { cycle.tunnelBearWindowError = error.message; }
+    }
     cycle.finishedAt = new Date().toISOString();
     cycle.totalDurationMs = Math.round(performance.now() - start);
     cycle.targetMet = cycle.totalDurationMs <= 600000;
