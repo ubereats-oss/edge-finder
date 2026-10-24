@@ -1,5 +1,6 @@
 const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
 const { database, summarize: summarizeBudget, CLOSING_RESERVE } = require('./odds_api_monthly_budget');
+const integrity = require('../functions/market_integrity');
 const { createBrowser, scrapeCompetition } = require('./get_placard_odds');
 const { compare, compareBookmaker, references, matchingEvents, isNearValue, nearValueSelections, report, namesEqual, normalize,
   comparedSelectionCount, placardSelections, betClvReport } = require('./placard_value');
@@ -306,6 +307,7 @@ async function scan(db, scanRunId = `${process.env.GITHUB_RUN_ID || 'local'}-${p
             ? 'preco_conhecido_aguardando_gatilho' : result.reason;
           diagnostics.push({ competition: cfg.label, teams: game.teams, reason,
             comparedSelections, confirmedSelections: result.comparedSelections ?? 0,
+            marketIntegrity: result.marketIntegrity || [],
             blockedSelections: result.blockedSelections || [], alternateError });
           for (const row of result.rows) { await saveOpportunity(db, row); rows.push(row); }
         }
@@ -327,7 +329,9 @@ async function processBookmakerRead(db, readId) {
   const readSnap = await readRef.get();
   if (!readSnap.exists) throw new Error(`Leitura local ${readId} não encontrada.`);
   const read = readSnap.data();
-  const validationOnly = read.mode === 'validation';
+  const identityGate = String(read.bookmaker).toLowerCase() === 'retabet'
+    ? (await db.collection('_bookmaker_validation').doc('retabet_identity').get()).data() : null;
+  const validationOnly = read.mode === 'validation' || (String(read.bookmaker).toLowerCase() === 'retabet' && identityGate?.passed !== true);
   const soccerGate = (await db.collection('_bookmaker_validation').doc(`${String(read.bookmaker).toLowerCase()}_soccer`).get()).data();
   if (['processed', 'processed_with_errors'].includes(read.status)) return { rows: [], errors: read.errors || [], diagnostics: read.diagnostics || [], apiUsage: { creditsSpent: 0, calls: 0 } };
   if (!['dispatching', 'dispatched', 'ready'].includes(read.status)) throw new Error(`Leitura local ${readId} não está pronta (${read.status || 'sem_status'}).`);
@@ -403,11 +407,12 @@ async function processBookmakerRead(db, readId) {
       for (const row of comparison.rows) {
         row.sourceEventId = game.sourceEventId || null;
         row.sourceReadId = readId;
-        if (!validationOnly) await saveOpportunity(db, row);
+        if (!validationOnly && (String(read.bookmaker).toLowerCase() !== 'retabet' || game.sourceIdentityVerified === true)) await saveOpportunity(db, row);
         rows.push(row);
       }
       diagnostics.push({ apiSport: sport, teams: game.teams, comparedSelections: comparison.comparedSelections || 0,
         opportunities: comparison.rows.length, blockedSelections: comparison.blockedSelections || [],
+        marketIntegrity: comparison.marketIntegrity || [],
         reason: comparison.reason || null, alternateError });
     }, (game, error) => errors.push({ apiSport: sport, teams: game.teams, error: error.message }));
   }, (group, error) => { errors.push({ apiSport: group[0], error: error.message }); });
@@ -428,6 +433,7 @@ async function processBookmakerRead(db, readId) {
 }
 
 async function captureClosing(db, entries) {
+  entries = entries.filter(entry => !integrity.isAnnulled(entry));
   const now = Date.now();
   const pending = entries.filter(e => e.closingStatus === 'pendente');
   const due = new Map();
@@ -489,6 +495,8 @@ async function captureClosing(db, entries) {
 }
 
 async function publish(db, result, entries) {
+  const annulledIds = new Set(entries.filter(integrity.isAnnulled).map(row => row.id));
+  result = { ...result, rows: result.rows.filter(row => !integrity.isAnnulled(row) && !annulledIds.has(row.id)) };
   const generatedAt = new Date().toISOString();
   const runId = `r${generatedAt.replace(/[^0-9]/g, '')}`;
   const ref = db.collection('results').doc('placard_current');

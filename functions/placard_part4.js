@@ -1,5 +1,6 @@
 const budget = require('./odds_api_monthly_budget');
 const { references, placardSelections, matchingEvents } = require('./placard_value');
+const { isAnnulled } = require('./market_integrity');
 
 const TWO_MINUTES = 120000;
 const NEW_LOCAL_READERS_STARTED_AT = Date.parse('2026-10-23T22:08:00Z');
@@ -84,6 +85,11 @@ async function revalidate(db, rows, keys, fetchImpl = fetch, now = Date.now()) {
   const eventPromises = new Map();
   const output = [];
   for (const row of rows) {
+    if (isAnnulled(row)) {
+      output.push({ id: row.id, bookmaker: row.bookmaker || 'Placard', status: 'anulada',
+        reason: row.annulmentReason || 'possível jogo trocado' });
+      continue;
+    }
     if (row.bookmaker && row.bookmaker !== 'Placard') {
       output.push({ id: row.id, bookmaker: row.bookmaker, status: 'não reconferível agora',
         observedAt: row.lastObservedAt || row.placardObservedAt || null });

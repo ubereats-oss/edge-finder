@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const aliases = require('./placard_aliases.json');
 const { KELLY_FRACTION } = require('./risk_config');
+const integrity = require('../functions/market_integrity');
 const { competition: configuredCompetition } = require('../scripts/local_bookmakers/local_competitions.cjs');
 const transliterate = s => String(s).replace(/[łŁ]/g, 'l').replace(/[øØ]/g, 'o')
   .replace(/[đĐ]/g, 'd').replace(/ß/g, 'ss').replace(/[æÆ]/g, 'ae');
@@ -145,7 +146,7 @@ function comparedSelectionCount(game, event, now = Date.now()) {
     && r.line === s.line && r.selection === s.selection)).length;
 }
 function isNearValue(game, event, now = Date.now()) { return nearValueSelections(game, event, now).length > 0; }
-function compare(game, events, now = Date.now()) {
+function compare(game, events, now = Date.now(), { bookmaker = 'Placard' } = {}) {
   if (!game.commenceTime || now >= Date.parse(game.commenceTime) || Date.parse(game.commenceTime) > now + 12 * 3600000) return { rows: [], reason: 'fora_janela_12h', blockedSelections: blockedFromGame(game, 'fora_janela_12h') };
   const age = now - Date.parse(game.observedAt);
   if (!Number.isFinite(age) || age < 0 || age > 120000) return { rows: [], reason: 'placard_antigo', blockedSelections: blockedFromGame(game, 'placard_antigo') };
@@ -160,6 +161,7 @@ function compare(game, events, now = Date.now()) {
   const rows = [], blockedSelections = [];
   let comparedSelections = 0;
   const selections = placardSelections(game, event);
+  const marketIntegrity = integrity.assessGame(game, event, selections, refs, bookmaker);
   const mapped = new Set(selections.map(s => `${s.sourceMarketIndex}:${s.sourceSelectionIndex}`));
   for (const raw of blockedFromGame(game, 'mercado_ou_odd_invalida')) {
     if (!mapped.has(`${raw.marketIndex}:${raw.sourceSelectionIndex}`)) blockedSelections.push(raw);
@@ -176,7 +178,8 @@ function compare(game, events, now = Date.now()) {
       continue;
     }
     comparedSelections++;
-    if (Math.abs(s.placardOdds * ref.probability - 1) > 0.30) { blocked('diferenca_preco_acima_30'); continue; }
+    const assessment = marketIntegrity.get(`${s.sourceMarketIndex}:${s.sourceSelectionIndex}`);
+    if (!assessment?.approved) { blocked(integrity.REASON); continue; }
     if (s.placardOdds <= 1.01 / ref.probability) { blocked('sem_valor'); continue; }
     const edgePct = (s.placardOdds * ref.probability - 1) * 100;
     const id = crypto.createHash('sha256').update(JSON.stringify([game.apiSport, event.id, s.market, s.line, s.selection])).digest('hex');
@@ -184,10 +187,12 @@ function compare(game, events, now = Date.now()) {
       game: `${event.home_team} x ${event.away_team}`, competition: game.competition,
       commenceTime: game.commenceTime, apiCommenceTime: event.commence_time, placardObservedAt: game.observedAt,
       comparedAt: new Date(now).toISOString(), sourceUrl: game.sourceUrl,
+      marketIntegrity: assessment,
+      ...(typeof game.sourceIdentityVerified === 'boolean' ? { sourceIdentityVerified: game.sourceIdentityVerified } : {}),
       minValueOdds: 1.01 / ref.probability, edgePct,
       kellyPct: Math.max(0, edgePct / (s.placardOdds - 1) * KELLY_FRACTION) });
   }
-  return { rows, comparedSelections, blockedSelections,
+  return { rows, comparedSelections, blockedSelections, marketIntegrity: [...new Set(marketIntegrity.values())],
     reason: rows.length ? null : comparedSelections ? 'sem_valor' : 'sem_linha_equivalente_ou_preco_recente' };
 }
 function compareBookmaker(bookmaker, game, events, now = Date.now(), { startToleranceMs = 0 } = {}) {
@@ -216,7 +221,7 @@ function compareBookmaker(bookmaker, game, events, now = Date.now(), { startTole
     comparisonGame = { ...game, commenceTime: event.commence_time };
     comparisonEvents = [event];
   }
-  const result = compare(comparisonGame, comparisonEvents, now);
+  const result = compare(comparisonGame, comparisonEvents, now, { bookmaker });
   if (!result.rows.length) return result;
   return { ...result, rows: result.rows.map(row => ({ ...row,
     id: crypto.createHash('sha256').update(JSON.stringify([bookmaker, row.id])).digest('hex'),
@@ -226,6 +231,7 @@ function compareBookmaker(bookmaker, game, events, now = Date.now(), { startTole
   })) };
 }
 function betClvReport(entries, bets) {
+  entries = entries.filter(entry => !integrity.isAnnulled(entry));
   const byId = new Map(entries.map(entry => [entry.id, entry]));
   const rows = [];
   for (const bet of bets) {
@@ -253,6 +259,7 @@ function betClvReport(entries, bets) {
 }
 
 function report(entries) {
+  entries = entries.filter(entry => !integrity.isAnnulled(entry));
   const closed = entries.filter(e => Number.isFinite(e.clvPct));
   const captured = entries.filter(e => e.closingStatus === 'capturada').length;
   const missing = entries.filter(e => e.closingStatus === 'indisponivel').length;

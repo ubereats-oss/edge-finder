@@ -1,0 +1,11 @@
+[
+  {
+    "bookmaker": "Retabet",
+    "sourceEventId": "38617849",
+    "teams": ["Lincoln City", "Burnley"],
+    "actualListingTeams": ["Cardiff", "Birmingham"],
+    "sourceUrl": "https://www.retabet.pt/desportos/futebol/inglaterra/inglaterra-championship/cardiff-birmingham/38617849",
+    "reason": "possível jogo trocado",
+    "evidence": "Troca de jogo confirmada pelo Alex em 24/10; preços históricos preservados no Firestore."
+  }
+]

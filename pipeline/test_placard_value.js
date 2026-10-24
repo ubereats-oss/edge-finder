@@ -100,7 +100,7 @@ test('qualidade barra margem, preço extremo, nomes, liga e horário com motivo 
     .blockedSelections.every(row => row.reason === 'margem_fora_0_25'));
   const extreme = { ...game, markets: [{ type: 'MRES', selections: [
     { price: 3, line: null }, { price: 2.4, line: null }, { price: 3.5, line: null } ] }] };
-  assert.ok(check(extreme).blockedSelections.some(row => row.reason === 'diferenca_preco_acima_30'));
+  assert.ok(check(extreme).blockedSelections.some(row => row.reason === 'possível jogo trocado'));
   assert.equal(check({ ...game, teams: ['Porto', 'Outra Equipa'] }).blockedSelections[0].reason,
     'evento_sem_correspondencia');
   assert.equal(check({ ...game, competition: 'Premier League' }).blockedSelections[0].reason,

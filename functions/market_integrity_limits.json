@@ -1,0 +1,47 @@
+{
+  "version": "2026-10-24-p995-v1",
+  "percentile": 99.5,
+  "method": "nearest-rank",
+  "difference": "100 * abs(odd_casa * probabilidade_justa_pinnacle - 1)",
+  "names": "igualdade literal dos dois times, sem apelidos; ordem reversa permitida",
+  "inputSha256": "edfca900b1d8bb7d7c1edc2f03289fcb0bee2f44e3f18a6288bc9bf89e0df5fe",
+  "types": {
+    "2": {
+      "sampleSize": 1272,
+      "ownPercentilePct": 30.981629094422793,
+      "limitPct": 30.981629094422793,
+      "calibratedFrom": 2,
+      "fallback": false
+    },
+    "3": {
+      "sampleSize": 804,
+      "ownPercentilePct": 30.557606905027967,
+      "limitPct": 30.557606905027967,
+      "calibratedFrom": 3,
+      "fallback": false
+    }
+  },
+  "excluded": {
+    "missingIdentity": 4,
+    "nonLiteralNames": 2243,
+    "confirmedWrongGame": 5,
+    "incompleteMarket": 0
+  },
+  "confirmedInvalidSources": [
+    {
+      "bookmaker": "Retabet",
+      "sourceEventId": "38617849",
+      "teams": [
+        "Lincoln City",
+        "Burnley"
+      ],
+      "actualListingTeams": [
+        "Cardiff",
+        "Birmingham"
+      ],
+      "sourceUrl": "https://www.retabet.pt/desportos/futebol/inglaterra/inglaterra-championship/cardiff-birmingham/38617849",
+      "reason": "possível jogo trocado",
+      "evidence": "Troca de jogo confirmada pelo Alex em 24/10; preços históricos preservados no Firestore."
+    }
+  ]
+}

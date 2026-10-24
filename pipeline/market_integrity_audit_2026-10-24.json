@@ -1,0 +1,214 @@
+[
+  {
+    "id": "1b77351fef261b9449f32c734dfe306145c8d4cb1a607e9ec8f9952f3829dd60",
+    "game": "Bournemouth x AC Milan",
+    "bookmaker": "Placard",
+    "market": "h2h",
+    "line": null,
+    "selection": "Bournemouth",
+    "sourceOdds": 1.92,
+    "originalClosingStatus": "capturada",
+    "previouslySent": false,
+    "annulled": false,
+    "approved": true,
+    "reason": null,
+    "detail": null,
+    "type": 3,
+    "limitPct": 30.557606905027967,
+    "version": "2026-10-24-p995-v1",
+    "evidence": [
+      {
+        "selection": "Bournemouth",
+        "line": null,
+        "houseOdds": 1.92,
+        "pinnacleOdds": 1.81,
+        "fairOdds": 1.8481050271299317,
+        "differencePct": 3.8901995186777727
+      },
+      {
+        "selection": "Draw",
+        "line": null,
+        "houseOdds": 3.75,
+        "pinnacleOdds": 3.92,
+        "fairOdds": 4.112620105440698,
+        "differencePct": -8.817252655089092
+      },
+      {
+        "selection": "AC Milan",
+        "line": null,
+        "houseOdds": 3.3,
+        "pinnacleOdds": 4.4,
+        "fairOdds": 4.634968041611133,
+        "differencePct": -28.802098086249007
+      }
+    ]
+  },
+  {
+    "id": "31060f351b2dc28c6df95d4e273bf666245296f2841bb60780af36422e4c11c9",
+    "game": "Alverca x Arouca",
+    "bookmaker": "Betano",
+    "market": "h2h",
+    "line": null,
+    "selection": "Draw",
+    "sourceOdds": 3.35,
+    "originalClosingStatus": "pendente",
+    "previouslySent": true,
+    "annulled": false,
+    "approved": true,
+    "reason": null,
+    "detail": null,
+    "type": 3,
+    "limitPct": 30.557606905027967,
+    "version": "2026-10-24-p995-v1",
+    "evidence": [
+      {
+        "selection": "Alverca",
+        "line": null,
+        "houseOdds": 2.12,
+        "pinnacleOdds": 2.21,
+        "fairOdds": 2.2684569516788873,
+        "differencePct": -6.544402421611495
+      },
+      {
+        "selection": "Draw",
+        "line": null,
+        "houseOdds": 3.35,
+        "pinnacleOdds": 3.19,
+        "fairOdds": 3.3141850353571902,
+        "differencePct": 1.0806567605827544
+      },
+      {
+        "selection": "Arouca",
+        "line": null,
+        "houseOdds": 3.55,
+        "pinnacleOdds": 3.72,
+        "fairOdds": 3.8844243033492134,
+        "differencePct": -8.609365950595748
+      }
+    ]
+  },
+  {
+    "id": "5b8d48e0f824f3a0de8f36e44aee7e09daf7743bb4b96a46cc2e3e99ad5e815f",
+    "game": "Lincoln City x Burnley",
+    "bookmaker": "Retabet",
+    "market": "totals",
+    "line": 2.5,
+    "selection": "Under",
+    "sourceOdds": 2.25,
+    "originalClosingStatus": "pendente",
+    "previouslySent": true,
+    "annulled": true,
+    "approved": false,
+    "reason": "possível jogo trocado",
+    "detail": "troca de jogo confirmada na fonte histórica",
+    "type": 2,
+    "limitPct": 30.981629094422793,
+    "version": "2026-10-24-p995-v1",
+    "evidence": [
+      {
+        "selection": "Over",
+        "line": 2.5,
+        "houseOdds": 1.46,
+        "pinnacleOdds": 1.92,
+        "fairOdds": 1.9735629954505884,
+        "differencePct": -26.02212326814203
+      },
+      {
+        "selection": "Under",
+        "line": 2.5,
+        "houseOdds": 2.25,
+        "pinnacleOdds": 1.97,
+        "fairOdds": 2.0271548987306938,
+        "differencePct": 10.992998187205183
+      }
+    ]
+  },
+  {
+    "id": "e49080995d5c55b89f48058ecdc35fc2447512aa61914fd76fa9a8ffbc518253",
+    "game": "Dinamo Zagreb x NEC Nijmegen",
+    "bookmaker": "Placard",
+    "market": "h2h",
+    "line": null,
+    "selection": "NEC Nijmegen",
+    "sourceOdds": 7.1,
+    "originalClosingStatus": "capturada",
+    "previouslySent": false,
+    "annulled": false,
+    "approved": true,
+    "reason": null,
+    "detail": null,
+    "type": 3,
+    "limitPct": 30.557606905027967,
+    "version": "2026-10-24-p995-v1",
+    "evidence": [
+      {
+        "selection": "Dinamo Zagreb",
+        "line": null,
+        "houseOdds": 1.38,
+        "pinnacleOdds": 1.48,
+        "fairOdds": 1.5058607479452768,
+        "differencePct": -8.358060206895757
+      },
+      {
+        "selection": "Draw",
+        "line": null,
+        "houseOdds": 4.5,
+        "pinnacleOdds": 4.91,
+        "fairOdds": 5.267654323847053,
+        "differencePct": -14.572982140681201
+      },
+      {
+        "selection": "NEC Nijmegen",
+        "line": null,
+        "houseOdds": 7.1,
+        "pinnacleOdds": 6.31,
+        "fairOdds": 6.845088224236847,
+        "differencePct": 3.7240100844949
+      }
+    ]
+  },
+  {
+    "id": "f8b7d6ebe9c4d9c933ac48ced1cb3295792ad7be889b96b5bde4d1bf5a55af52",
+    "game": "Blackburn Rovers x Wrexham AFC",
+    "bookmaker": "Betano",
+    "market": "h2h",
+    "line": null,
+    "selection": "Wrexham AFC",
+    "sourceOdds": 2.6,
+    "originalClosingStatus": "pendente",
+    "previouslySent": true,
+    "annulled": false,
+    "approved": true,
+    "reason": null,
+    "detail": null,
+    "type": 3,
+    "limitPct": 30.557606905027967,
+    "version": "2026-10-24-p995-v1",
+    "evidence": [
+      {
+        "selection": "Blackburn Rovers",
+        "line": null,
+        "houseOdds": 2.7,
+        "pinnacleOdds": 3.04,
+        "fairOdds": 3.144362522557287,
+        "differencePct": -14.132038509220301
+      },
+      {
+        "selection": "Draw",
+        "line": null,
+        "houseOdds": 3.1,
+        "pinnacleOdds": 3.31,
+        "fairOdds": 3.432486831280929,
+        "differencePct": -9.686470702550432
+      },
+      {
+        "selection": "Wrexham AFC",
+        "line": null,
+        "houseOdds": 2.6,
+        "pinnacleOdds": 2.49,
+        "fairOdds": 2.5599243244004004,
+        "differencePct": 1.5655023555817937
+      }
+    ]
+  }
+]
