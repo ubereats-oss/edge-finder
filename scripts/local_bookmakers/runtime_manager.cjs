@@ -44,16 +44,21 @@ function update(runtimeRoot, log, execute = command) {
         for (const module of ['firebase-admin', 'playwright', 'cheerio']) require.resolve(module, { paths: [deps] });
         fs.writeFileSync(path.join(deps, '.ready'), signature);
       }
-      if (!fs.existsSync(path.join(release, 'node_modules'))) fs.symlinkSync(path.join(deps, 'node_modules'), path.join(release, 'node_modules'), 'junction');
+      // Load from the isolated dependency cache directly. No Windows junction:
+      // a junction can exist yet fail traversal in this host environment.
+      const dependencies = path.join(deps, 'node_modules');
+      execute(process.execPath, ['-e', 'require(process.argv[1]);', path.join(release, 'pipeline/local_betano_reader.js')],
+        { cwd: release, env: { ...process.env, NODE_PATH: dependencies } });
       execute(process.execPath, ['--check', path.join(release, 'pipeline', 'local_bookmaker_cycle_fast.cjs')]);
-      fs.writeFileSync(path.join(release, '.ready'), sha);
+      fs.writeFileSync(path.join(release, '.ready'), JSON.stringify({ sha, dependencies }));
     }
-    const active = { sha, release };
+    const ready = JSON.parse(fs.readFileSync(path.join(release, '.ready'), 'utf8'));
+    const active = { sha, release, dependencies: ready.dependencies };
     files.atomic(pointer, JSON.stringify(active)); log({ status: 'updated', ...active });
     return active;
   } catch (error) {
     log({ status: 'update_failed', error: error.message, fallback: prior?.sha || null });
-    if (!prior || !fs.existsSync(path.join(prior.release, '.ready'))) throw error;
+    if (!prior?.dependencies || !fs.existsSync(path.join(prior.release, '.ready'))) throw error;
     return prior;
   }
 }
@@ -81,6 +86,7 @@ async function main() {
     const active = update(runtimeRoot, log);
     if (args.includes('--prepare-only')) { console.log(JSON.stringify(active)); return; }
     process.env.EDGE_RUNTIME_SHA = active.sha;
+    process.env.NODE_PATH = active.dependencies;
     console.log(JSON.stringify({ runtime: active, dataRoot }));
     const code = await new Promise((resolve, reject) => {
       const child = spawn(process.execPath, [path.join(active.release, 'pipeline', 'local_betano_reader.js')],

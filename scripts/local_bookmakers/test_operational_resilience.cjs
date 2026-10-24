@@ -78,7 +78,7 @@ test('quatro avisos levam a ação específica no Telegram pela fila existente',
 });
 test('atualização falha preserva release anterior e registra; sem anterior bloqueia', () => {
   const root = directory(), release = path.join(root, 'previous'); fs.mkdirSync(release); fs.writeFileSync(path.join(release, '.ready'), 'ok');
-  fs.writeFileSync(path.join(root, 'current.json'), JSON.stringify({ sha: 'previous', release }));
+  fs.writeFileSync(path.join(root, 'current.json'), JSON.stringify({ sha: 'previous', release, dependencies: 'simulated-dependencies' }));
   const old = process.env.GITHUB_TOKEN; process.env.GITHUB_TOKEN = 'simulated';
   try {
     const events = []; const run = () => { throw Error('simulated fetch/install failed'); };
