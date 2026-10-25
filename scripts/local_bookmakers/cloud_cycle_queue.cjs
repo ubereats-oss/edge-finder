@@ -4,6 +4,8 @@ const path = require('node:path');
 
 function compactCycle(cycle) {
   return { startedAt: cycle.startedAt, finishedAt: cycle.finishedAt,
+    runtimeSha: cycle.runtimeSha || null, tunnelBearVersion: cycle.tunnelBearVersion || null,
+    tunnelBear: cycle.tunnelBear || null,
     status: cycle.status, reason: cycle.pauseReason || cycle.error || null,
     spentMB: Number(cycle.vpnAdapterMB ?? cycle.consumedMB ?? 0),
     estimated: Boolean(cycle.vpnEstimate),
@@ -35,6 +37,7 @@ async function flushCycleQueue(db, cycle, logDir) {
           observedAt: row.finishedAt || row.startedAt,
           ...(row.vpnProviderExhausted ? { providerExhausted: true } : {}),
           operatorIssue: row.vpnOperatorIssue || null,
+          tunnelBear: row.tunnelBear || null,
         } }, { merge: true });
       })(),
         new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('envio à nuvem excedeu 5 s')), 5000); })]);

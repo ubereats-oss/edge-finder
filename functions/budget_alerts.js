@@ -1,8 +1,9 @@
 const HOUR_MS = 3600000;
 const { actions } = require('./local_operator_alerts');
+const { tunnelBearAlerts } = require('./tunnelbear_alerts');
 
 function budgetAlerts(month, state = {}) {
-  const alerts = [];
+  const alerts = tunnelBearAlerts(state.vpn?.tunnelBear);
   if (state.vpn?.operatorIssue && state.vpn.operatorIssue !== 'data' && actions[state.vpn.operatorIssue])
     alerts.push({ id: `vpn-action-${month}-${state.vpn.operatorIssue}`, text: `Edge Finder: coleta local bloqueada. Alex: ${actions[state.vpn.operatorIssue]}` });
   if (state.vpn?.providerExhausted)

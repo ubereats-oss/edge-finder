@@ -11,6 +11,7 @@ const { PRIORITY } = require('../scripts/local_bookmakers/local_competitions.cjs
 const { vpnBudgetForDay, shouldRunForPinnacleWindow } = require('../scripts/local_bookmakers/daily_budget.cjs');
 const { flushCycleQueue } = require('../scripts/local_bookmakers/cloud_cycle_queue.cjs');
 const { matchingEvents, namesEqual } = require('../functions/placard_value.js');
+const { startMetadata, collectDiagnostic } = require('../scripts/local_bookmakers/tunnelbear_diagnostics.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const LOG_DIR = path.join(process.env.EDGE_DATA_ROOT || ROOT, '.local_logs', 'betano');
@@ -169,7 +170,7 @@ async function main() {
   const outputFile = path.join(LOG_DIR, `cycle-${startedAt.replace(/[:.]/g, '-')}.json`);
   const cycle = { startedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
     architecture: 'independent_own_listings_v2', stages: {}, reads: {}, feedAttempts: {},
-    leagueAudit: {}, pinnacleWindow: {} };
+    leagueAudit: {}, pinnacleWindow: {}, ...startMetadata(ROOT) };
   const stage = async (name, work) => {
     const at = performance.now();
     const record = { startedAt: new Date().toISOString() };
@@ -426,6 +427,22 @@ async function main() {
       cycle.vpnAdapterBytes = 0;
       cycle.vpnAdapterMB = 0;
     }
+    cycle.finishedAt = new Date().toISOString();
+    if (vpnStartedAt) {
+      const attemptFile = path.join(LOG_DIR, `tunnelbear_attempts_${startedAt.slice(0, 7)}.jsonl`);
+      cycle.tunnelBearEvents = fs.existsSync(attemptFile) ? fs.readFileSync(attemptFile, 'utf8').replace(/^\uFEFF/, '').split(/\r?\n/)
+        .flatMap(line => { try { const row = JSON.parse(line); return row.cycleId === startedAt &&
+          ['upgrade_closed', 'update_ignored', 'update_closed', 'data_exhausted'].includes(row.status) ? [row] : []; } catch { return []; } }) : [];
+    }
+    try {
+      cycle.tunnelBear = collectDiagnostic(cycle, LOG_DIR);
+      if (cycle.tunnelBear.failure) {
+        cycle.vpnAutomationError = cycle.error;
+        const { code, message } = cycle.tunnelBear.failure;
+        cycle.error = `TunnelBear ${code}: ${message}; automação: ${cycle.vpnAutomationError}`;
+        if (caught) caught.message = cycle.error;
+      }
+    } catch (error) { cycle.tunnelBearDiagnosticError = error.message; }
     if (caught && db) {
       try { await core.updateFailure(db, caught, !vpnConnected); }
       catch (error) { cycle.failureStatusError = error.message; }
@@ -436,17 +453,10 @@ async function main() {
       catch (error) { cycle.tunnelBearWindowError = error.message; }
     }
     cycle.finishedAt = new Date().toISOString();
-    cycle.runtimeSha = process.env.EDGE_RUNTIME_SHA || null;
     cycle.dataRoot = process.env.EDGE_DATA_ROOT || ROOT;
     cycle.totalDurationMs = Math.round(performance.now() - start);
     cycle.targetMet = cycle.totalDurationMs <= 600000;
     cycle.vpnDurationMs ??= cycle.vpnConnectedAt ? Date.now() - vpnStartedAt : 0;
-    if (vpnStartedAt) {
-      const attemptFile = path.join(LOG_DIR, `tunnelbear_attempts_${startedAt.slice(0, 7)}.jsonl`);
-      cycle.tunnelBearEvents = fs.existsSync(attemptFile) ? fs.readFileSync(attemptFile, 'utf8').replace(/^\uFEFF/, '').split(/\r?\n/)
-        .flatMap(line => { try { const row = JSON.parse(line); return row.cycleId === startedAt &&
-          ['upgrade_closed', 'update_ignored', 'update_closed', 'data_exhausted'].includes(row.status) ? [row] : []; } catch { return []; } }) : [];
-    }
     if (!cycle.vpnProofChecks && vpnStartedAt) {
       const attempts = path.join(LOG_DIR, `tunnelbear_attempts_${startedAt.slice(0, 7)}.jsonl`);
       cycle.vpnProofChecks = fs.existsSync(attempts) ? fs.readFileSync(attempts, 'utf8').split(/\r?\n/)
@@ -456,6 +466,8 @@ async function main() {
     }
     fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
     const logLine = { at: cycle.localDateTime, status: cycle.status, balanceMB: cycle.balanceMB,
+      runtimeSha: cycle.runtimeSha, tunnelBearVersion: cycle.tunnelBearVersion,
+      tunnelBear: cycle.tunnelBear || null,
       accumulatedMB: cycle.accumulatedMB, balanceReadDurationMs: cycle.balanceReadDurationMs,
       vpnAdapterBytes: cycle.vpnAdapterBytes ?? null, vpnAdapterMB: cycle.vpnAdapterMB ?? null,
       vpnEstimate: cycle.vpnEstimate || false, vpnProofChecks: cycle.vpnProofChecks || [],

@@ -54,6 +54,10 @@ async function simulate({ owned = false, connectionError, readError = false, aut
     },
     '../scripts/local_bookmakers/cloud_cycle_queue.cjs': { flushCycleQueue: async () => ({}) },
     '../functions/placard_value.js': { matchingEvents: () => [], namesEqual: (a, b) => a === b },
+    '../scripts/local_bookmakers/tunnelbear_diagnostics.cjs': {
+      startMetadata: () => ({ runtimeSha: 'a'.repeat(40), tunnelBearVersion: '4.17.4.0' }),
+      collectDiagnostic: () => ({ failure: null }),
+    },
   };
   const context = { require: name => {
     assert.ok(Object.hasOwn(modules, name), `Unmocked dependency: ${name}`);
@@ -84,6 +88,8 @@ test('Firebase sem autenticação: não liga VPN nem lê casas', async () => {
   const result = await simulate({ authError: true });
   assert.deepEqual(result.calls, []); assert.equal(result.reads, 0);
   assert.match(result.cycle.error, /authentication rejected/);
+  assert.equal(result.cycle.runtimeSha, 'a'.repeat(40));
+  assert.equal(result.cycle.tunnelBearVersion, '4.17.4.0');
 });
 for (const connectionError of ['TunnelBear não abriu', 'Janela inesperada do TunnelBear; captura=simulated.png']) {
   test(`${connectionError}: nenhuma leitura, nenhuma repetição, 0 MB`, async () => {
@@ -93,5 +99,7 @@ for (const connectionError of ['TunnelBear não abriu', 'Janela inesperada do Tu
     assert.equal(result.cycle.status, 'ciclo sem conexão');
     assert.equal(result.cycle.consumedMB, 0);
     assert.equal(result.cycle.vpnAdapterBytes, 0);
+    assert.equal(result.cycle.runtimeSha, 'a'.repeat(40));
+    assert.equal(result.cycle.tunnelBearVersion, '4.17.4.0');
   });
 }
