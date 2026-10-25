@@ -779,3 +779,69 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Aceite real da restauracao: tarefa EXISTENTE iniciou 08:03:26 pelo Agendador (evento 200); ciclo 08:03:27.766-08:04:41.753, 73,987 s, codigo c5a7313 (git diff confirmou somente este registro alterado). Resultado REPROVADO para volta da coleta: ciclo sem conexao, VPN sem confirmacao pela placa e IP portugues, adaptador Down durante 60 s; 0 MB, zero leituras. Processo terminou exit=1 as 08:04:42; LastTaskResult=1, evento 201 registra 2147942401 (0x80070001). Fila sent=1/pending=0 e documento _local_cycle_health/20261025110327766 consultado e confirmado no Firestore. Trava ausente depois; placa Ethernet 2 / TunnelBear Disconnected. Evidencia: .local_logs/betano/cycle-2026-10-25T11-03-27-766Z.json, task-output.log e tunnelbear_attempts_2026-10.jsonl.
 - A faixa de atualizacao apareceu novamente mas foi ignorada com switchAccessible=true (08:03:38.964, 08:03:39.590 e 08:04:40.788), sem erro de aviso inesperado. Captura tunnelbear-update-before-20261025T110440663.png inspecionada: Off/Disconnected, Portugal e 9725 MB. A falha atual e a ausencia de conexao apos Toggle, nao bloqueio pela faixa, janela ausente ou Wi-Fi inativo. Nao sei por que o Toggle nao produziu conexao; o registro nao captura o estado imediatamente apos a acao. Correcao apenas descritiva, sem implementar: verificar a transicao do interruptor/estado apos Toggle e distinguir falha de acionamento da UI de falha do servico antes de definir recuperacao. Nao houve nova tentativa/VPN nem alteracao de codigo.
 - Resultado final: causa da ausencia de ciclos comprovada na inicializacao da Action da copia, resolvida pelo retorno ao caminho original; a coleta de odds NAO esta comprovadamente restaurada por falha distinta de conexao VPN no aceite. Tarefa mantida na pasta original conforme pedido, Ready, proximo disparo 08:50; principal/settings/triggers preservados. Nenhuma mudanca de codigo foi implementada para a falha VPN nem ha parte de codigo reprovada a publicar/reverter. Somente LOG_ATIVIDADES.md sera publicado, commit desta entrada. Stash@{0}=8cb5e7f4c13d1af3fb1532d29da4ac72cf81443e preservado. Nenhuma automacao/agendamento novo, alteracao de energia ou dados apagados. Fim tecnico 08:05:43 Brasilia; seguem somente publicacao do registro e relogio final. Tarefa abaixo de 30 minutos; nenhum comando excedeu dez minutos.
+
+
+## 2026-10-25 — Levantamento somente leitura da falha de tunel
+
+- Inicio: 08:16:00 Brasilia. Pedido: seis itens de levantamento desde a restauracao a8f308e, sem conectar VPN nem alterar codigo, tarefa, TunnelBear, rede, trava ou firewall; publicar somente este registro. AGENTS.md e cinco ultimas entradas lidos primeiro. Base main a8f308e, arvore inicialmente limpa; stash@{0}=8cb5e7f4c13d1af3fb1532d29da4ac72cf81443e. Nao houve implementacao nem teste/ciclo acionado nesta tarefa. Limite total 20 minutos e por comando 3 minutos respeitados.
+- Item 1 — Existe somente um ciclo desde 25/10 08:03 ate a consulta 08:17:31: cycle-2026-10-25T11-03-27-766Z.json. Inicio 08:03:27.766, fim 08:04:41.753; resultado ciclo sem conexao, exit=1 no task-output as 08:04:42. Preparacao 08:03:28.455-08:03:36.661 concluida; parou em vpnConnect 08:03:36.663-08:04:40.977. Mensagem COMPLETA: VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=. Agendador confirma apenas esta execucao (eventos 100/200 e 201/102); LastTaskResult=1, proximo horario 08:50. Nao ha outros ciclos no intervalo; tentativas manuais no app nao sao ciclos da coleta.
+- Item 2 — Registros NATIVOS do servico: C:\Program Files (x86)\TunnelBear\trace_maintenance.1.log:1720: 2026-10-25 08:03:40,412 [23] INFO - status:Disconnected, responseResult:DataLimitReached, ignoreConnectionEvent:True, captchaHtml:, message:Data limit reached. Primeira ocorrencia desse tipo encontrada em todos os trace_maintenance*.log preservados. Segue consulta GET /user HTTP 200 as 08:03:40.411; o cancelamento VPN Connection canceled so aparece as 08:03:43.862. Isso confirma que a acao de conectar chegou ao servico, antes da criacao do tunel; nao sustenta a hipotese anterior de que Toggle nao foi recebido.
+- Repeticoes nativas em trace_maintenance.log:57 (08:10:22.947), :205 (08:11:07.478), :353 (08:12:22.781), :890 (08:13:06.573), todas responseResult:DataLimitReached, message:Data limit reached. Log UI trace.log registra Connecting Portugal as 08:03:39.695, 08:10:22.287, 08:11:06.909, Connecting Chile as 08:12:22.140, Portugal as 08:13:05.876. A mensagem generica de dificuldade informada pelo Alex e compativel com a falha, mas a causa registrada pelo servico e DataLimitReached. Esgotamento REAL da conta nao confirmado: diverge do saldo visivel no app e da informacao do Alex. Hipotese, nao confirmada: divergencia de cota/estado entre interface e validacao do servico/API; nao foi consultada API de conta nem iniciada conexao.
+- Item 3 — TunnelBear executaveis/registro 4.17.1.0; registro InstallDate=20260114, binarios LastWriteTime 10/12/2025. Logs UI VERSION:4.17.1.0 em 24/10 10:01:06, 10:10:49, 10:14:46, 12:00:23 e 25/10 08:12:51. new version:4.17.4.0 aparece como oferta desde 24/10 10:06 e novamente 25/10 08:12:59, nao como instalacao. Atualizacao instalada no periodo nao confirmada; nenhuma troca de versao evidenciada nem evento MsiInstaller TunnelBear encontrado.
+- Windows Update, eventos System/Microsoft-Windows-WindowsUpdateClient ID19: 24/10 15:17:20 KB2267602 inteligencia Defender 1.461.184.0; 25/10 03:38:11 KB2267602 inteligencia Defender 1.461.192.0. Get-HotFix tem atualizacoes de sistema mais recentes em 14/10 (KB5127694, KB5121794, KB5127648, KB5127647); nenhuma KB de sistema nova desde 24/10 08:00 encontrada. Nao ha evidencia de relacao causal da inteligencia Defender com a falha.
+- Servicos atuais: TunnelBearMaintenance Running/Auto/PID4776; TunnelBearWireguardService Stopped/Manual/PID0. Adaptador Ethernet 2 / TunnelBear Adapter V9 Disconnected, driver 9.0.0.9 (02/07/2012), Wi-Fi Intel Wireless-AC9462 Up, driver 24.40.0.4. Estado parado/desconectado com VPN Off nao comprova defeito do servico/driver.
+- Firewall/antivirus: produto registrado Windows Defender. Nenhum evento correspondente a TunnelBear/PolarSDK/openvpn nos canais acessiveis Defender/Operational e Firewall desde 24/10 08:00; nenhum evento 1116/1117/1121/1122/1125/1126 encontrado. LogBlocked=False nos tres perfis de firewall; Security sem permissao de leitura (exige elevacao), canais ConnectionSecurity tambem restritos. Portanto bloqueio por firewall/antivirus NAO CONFIRMADO, nao excluido. Nenhuma configuracao foi alterada.
+- Item 4 — Eventos de suspensao/retomada System Kernel-Power 506/507 (horarios locais):
+  - 24/10 10:30:27 ID506 O sistema está entrando em modo de espera moderno: Idle Timeout.
+  - 24/10 11:07:32 ID507 O sistema está saindo do motivo de em espera moderna: Lid.
+  - 24/10 13:27:38 ID506 O sistema está entrando em modo de espera moderno: Idle Timeout.
+  - 24/10 15:16:51 ID507 O sistema está saindo do motivo de em espera moderna: Lid.
+  - 24/10 15:17:22 ID506 O sistema está entrando em modo de espera moderno: Idle Timeout.
+  - 24/10 15:17:26 ID507 O sistema está saindo do motivo de em espera moderna: Input Touchpad.
+  - 24/10 15:17:57 ID506 O sistema está entrando em modo de espera moderno: Idle Timeout.
+  - 24/10 15:18:08 ID507 O sistema está saindo do motivo de em espera moderna: Input Mouse.
+  - 24/10 15:18:19 ID506 O sistema está entrando em modo de espera moderno: Screen Off Request.
+  - 24/10 16:43:20 ID507 O sistema está saindo do motivo de em espera moderna: Input Keyboard.
+  - 24/10 21:50:44 ID506 O sistema está entrando em modo de espera moderno: Idle Timeout.
+  - 24/10 23:06:32 ID507 O sistema está saindo do motivo de em espera moderna: AC/DC Display Burst Suppressed.
+  - 24/10 23:06:32 ID506 O sistema está entrando em modo de espera moderno: AC/DC Display Burst Suppressed.
+  - 24/10 23:06:35 ID507 O sistema está saindo do motivo de em espera moderna: AC/DC Display Burst.
+  - 24/10 23:06:41 ID506 O sistema está entrando em modo de espera moderno: AC/DC Display Burst.
+  - 24/10 23:16:37 ID507 O sistema está saindo do motivo de em espera moderna: Input Keyboard.
+  - 25/10 01:26:57 ID506 O sistema está entrando em modo de espera moderno: Idle Timeout.
+  - 25/10 07:45:53 ID507 O sistema está saindo do motivo de em espera moderna: Input Keyboard.
+- System registra Netwtw10/6062 (Wi-Fi Driver Info) as 10:17:13, 10:19:00, 11:05:04, 11:05:42, 11:28:27, 11:31:17, 11:31:35, 12:44:45 e diversos entre 13:16 e 13:22 em 24/10; DNS/1014 timeout chrome.cloudflare-dns.com as 10:19:11; WLAN/4003 conectividade limitada as 13:19:09; DNS/1012 erro lendo hosts as 24/10 12:37:50 e 25/10 08:03:43. Estes eventos nao estabelecem causa DataLimitReached. A cronologia precisa das desconexoes foi obtida no canal WLAN-AutoConfig/Operational, nao inferida de 6062.
+- WLAN-AutoConfig/Operational, quedas/retornos (ID8003=desconectou, ID8001=conectou, ID8002=falhou):
+  - 24/10 10:17:01 ID8003
+  - 24/10 10:17:06 ID8002
+  - 24/10 10:17:13 ID8001
+  - 24/10 10:17:43 ID8003
+  - 24/10 10:17:50 ID8002
+  - 24/10 10:18:58 ID8001
+  - 24/10 10:23:45 ID8003
+  - 24/10 10:23:50 ID8002
+  - 24/10 11:03:21 ID8002
+  - 24/10 11:03:38 ID8002
+  - 24/10 11:03:59 ID8002
+  - 24/10 11:05:01 ID8001
+  - 24/10 11:05:40 ID8003
+  - 24/10 11:05:42 ID8001
+  - 24/10 13:18:22 ID8003
+  - 24/10 13:18:35 ID8002
+  - 24/10 13:18:35 ID8001
+  - 24/10 13:19:09 ID8003
+  - 24/10 13:19:13 ID8001
+  - 24/10 13:20:18 ID8003
+  - 24/10 13:21:23 ID8001
+  - 24/10 13:22:04 ID8003
+  - 24/10 13:22:11 ID8002
+  - 24/10 13:22:16 ID8002
+  - 24/10 13:22:27 ID8002
+  - 24/10 13:22:42 ID8002
+  - 24/10 13:23:43 ID8002
+  - 24/10 15:16:11 ID8001
+- Cruzamento: falhas 08:50/09:50 registram janela indisponivel; nenhum evento de espera/queda Wi-Fi coincide, explicacao por energia/rede nao confirmada. As 10:50 o Wi-Fi estava sem conexao desde 10:23:45 (8003), com tentativas 8002 sem sucesso, retornando 11:05:01; espera moderna 10:30:27-11:07:32 sobrepoe o ciclo. Explica a mensagem Wi-Fi inativo e e consistente com timeout DNS/Firestore do ciclo; participacao exata da suspensao no timeout nao confirmada. As 11:50 o Wi-Fi ja tinha retornado e a espera terminado: log aponta bloqueio pelo aviso de atualizacao, nao ha evidencia de queda/espera nesse instante.
+- Item 5 — Action antiga (XML preservado task-before-restore-20261025.xml) executava powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Users\Alex Salles\AppData\Local\EdgeFinder\local-runtime\bootstrap\run_isolated_task.ps1" -DataRoot "C:\Users\Alex Salles\Apps - desenvolvimento\odds_app" -RuntimeRoot "C:\Users\Alex Salles\AppData\Local\EdgeFinder\local-runtime"; WorkingDirectory C:\Users\Alex Salles\AppData\Local\EdgeFinder\local-runtime\bootstrap. Diretorio existe hoje, Directory, criado em 24/10 12:32:12. Eventos historicos registraram 2147942667/0x8007010B, mas por que o contexto do Agendador recusou esse caminho NAO CONFIRMADO; existencia atual nao prova acessibilidade historica pelo Agendador. Nao foi reproduzido nem alterada a tarefa.
+- Item 6 — Nao, nem todo ciclo registra SHA: pipeline/local_bookmaker_cycle_fast.cjs:439 grava runtimeSha=EDGE_RUNTIME_SHA ou null; runtime_manager.cjs:88 preenche SHA na copia, mas run_betano_task.ps1 original nao define essa variavel. Quatro falhas de 24/10 08:50-11:50 nao tem SHA; aceite 12:36 tem 7d7f3009822f46ba897a2982ab441334984d0a51; ciclo 25/10 08:03 tem runtimeSha:null. Git HEAD/reflog nao substitui versao registrada do codigo executado num checkout editavel.
+- Conclusao: CONFIRMADO o servico recusa iniciar por DataLimitReached apos resposta HTTP200 de /user, antes do tunel; a cota real e a origem da divergencia sao NAO CONFIRMADAS. Em 24/10 houve tres causas observadas distintas: janela ausente (08:50/09:50), Wi-Fi desconectado com espera sobreposta (10:50) e aviso de atualizacao bloqueado pelo codigo daquele instante (11:50). Nao ha evidencia para atribuir todas a mesma falha de tunel.
+- Somente LOG_ATIVIDADES.md alterado; commit desta entrada, publicado na main sem force. Nenhuma acao em VPN/app/rede/firewall/trava/tarefa, sem automacoes ou agendamentos; stash preservado. Encerramento tecnico 08:17:31; seguem somente publicacao, verificacao Git e relogio final. Sem aceite funcional, pois esta tarefa e somente levantamento.
