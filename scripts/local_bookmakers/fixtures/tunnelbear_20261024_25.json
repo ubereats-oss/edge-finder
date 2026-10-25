@@ -1,0 +1,8 @@
+{
+  "failureSource": "C:/Program Files (x86)/TunnelBear/trace_maintenance.1.log:1720, lido em 25/10 08:17 antes da atualizacao manual",
+  "failure": "2026-10-25 08:03:40,412 [23] INFO  - status:Disconnected, responseResult:DataLimitReached, ignoreConnectionEvent:True, captchaHtml:, message:Data limit reached.",
+  "updateSource": "AppData/Roaming/TunnelBear/logs/trace.1.log:347, lido em 25/10 08:17",
+  "update": "2026-10-24 12:00:56,039 [1] INFO  - new version: 4.17.4.0",
+  "bannerSource": ".local_logs/betano/known-screens-acceptance-attempts-20261024.jsonl, evento update_ignored 12:02:16.952",
+  "banner": { "at": "2026-10-24T15:02:16.952Z", "status": "update_ignored" }
+}
