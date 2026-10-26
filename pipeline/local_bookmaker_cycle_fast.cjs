@@ -11,7 +11,7 @@ const { PRIORITY } = require('../scripts/local_bookmakers/local_competitions.cjs
 const { vpnBudgetForDay, shouldRunForPinnacleWindow } = require('../scripts/local_bookmakers/daily_budget.cjs');
 const { flushCycleQueue } = require('../scripts/local_bookmakers/cloud_cycle_queue.cjs');
 const { matchingEvents, namesEqual } = require('../functions/placard_value.js');
-const { startMetadata, collectDiagnostic } = require('../scripts/local_bookmakers/tunnelbear_diagnostics.cjs');
+const { startMetadata, collectDiagnostic, pruneLocalStateLines } = require('../scripts/local_bookmakers/tunnelbear_diagnostics.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const LOG_DIR = path.join(process.env.EDGE_DATA_ROOT || ROOT, '.local_logs', 'betano');
@@ -437,12 +437,20 @@ async function main() {
     try {
       cycle.tunnelBear = collectDiagnostic(cycle, LOG_DIR);
       if (cycle.tunnelBear.failure) {
-        cycle.vpnAutomationError = cycle.error;
-        const { code, message } = cycle.tunnelBear.failure;
-        cycle.error = `TunnelBear ${code}: ${message}; automação: ${cycle.vpnAutomationError}`;
+        const { category } = cycle.tunnelBear.failure;
+        cycle.error = `VPN não confirmado — ${category}`;
+        cycle.stages.vpnConnect.error = cycle.error;
         if (caught) caught.message = cycle.error;
       }
-    } catch (error) { cycle.tunnelBearDiagnosticError = error.message; }
+    } catch {
+      cycle.tunnelBearDiagnosticError = 'Diagnóstico TunnelBear indisponível';
+      if (cycle.stages.vpnConnect?.error) {
+        cycle.tunnelBear = { failure: { code: 'NoRecords', category: 'TunnelBear sem registro no intervalo' }, stateLines: [] };
+        cycle.error = 'VPN não confirmado — TunnelBear sem registro no intervalo';
+        cycle.stages.vpnConnect.error = cycle.error;
+        if (caught) caught.message = cycle.error;
+      }
+    }
     if (caught && db) {
       try { await core.updateFailure(db, caught, !vpnConnected); }
       catch (error) { cycle.failureStatusError = error.message; }
@@ -464,6 +472,12 @@ async function main() {
           return row.cycleId === startedAt && row.status === 'check' ? [JSON.parse(row.detail)] : [];
         } catch { return []; } }) : [];
     }
+    if (cycle.tunnelBear?.failure) {
+      delete cycle.vpnAutomationError;
+      cycle.vpnProofChecks = (cycle.vpnProofChecks || []).map(({ at, adapter, connected }) => ({ at, adapter, connected }));
+    }
+    try { pruneLocalStateLines?.(LOG_DIR); }
+    catch { cycle.tunnelBearRetentionError = 'Limpeza de estados antigos pendente'; }
     fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
     const logLine = { at: cycle.localDateTime, status: cycle.status, balanceMB: cycle.balanceMB,
       runtimeSha: cycle.runtimeSha, tunnelBearVersion: cycle.tunnelBearVersion,
