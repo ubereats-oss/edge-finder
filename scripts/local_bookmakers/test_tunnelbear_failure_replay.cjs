@@ -119,8 +119,11 @@ test('retenção local remove estados reais com mais de 30 dias e preserva recen
 
 test('retenção da nuvem remove somente linhas antigas de ciclos e avisos', async t => {
   const old = replay(t, real[0]).diagnostic, recent = replay(t, real[3]).diagnostic;
+  const mixed = { ...old, stateLines: [...old.stateLines, ...recent.stateLines] };
+  const mixedAlert = { ...tunnelBearAlerts(old)[0], text: [CATEGORIES.DataLimitReached, ...mixed.stateLines].join('\n') };
   const stores = { _local_cycle_health: [{ startedAt: real[0].startedAt, tunnelBear: old },
-    { startedAt: real[3].startedAt, tunnelBear: recent }], _edge_budget_alerts: [tunnelBearAlerts(old)[0], tunnelBearAlerts(recent)[0]] };
+    { startedAt: real[3].startedAt, tunnelBear: recent }, { startedAt: real[0].startedAt, tunnelBear: mixed }],
+    _edge_budget_alerts: [tunnelBearAlerts(old)[0], tunnelBearAlerts(recent)[0], mixedAlert] };
   const db = { collection: name => ({ where: (field, op, cutoff) => ({ orderBy() { return this; }, limit() { return this; },
     get: async () => ({ docs: (stores[name] || []).filter(row => row[field] < cutoff).map(row => ({ data: () => row,
       ref: { update: async patch => { for (const [key, value] of Object.entries(patch)) {
@@ -132,4 +135,6 @@ test('retenção da nuvem remove somente linhas antigas de ciclos e avisos', asy
   assert.deepEqual(recent.stateLines, recentLines);
   assert.equal(stores._edge_budget_alerts[0].text.includes('\n'), false);
   assert.equal(stores._edge_budget_alerts[1].text, recentText);
+  assert.deepEqual(mixed.stateLines, recentLines);
+  assert.deepEqual(mixedAlert.text.split('\n').slice(1), recentLines);
 });
