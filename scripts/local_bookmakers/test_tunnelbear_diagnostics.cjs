@@ -36,8 +36,8 @@ test('registro real DataLimitReached, origem e intervalo; cancelamento nao subst
     '2026-10-25 08:03:43,862 [23] INFO - status:Disconnected, responseResult:VpnConnectionFailed, message:VPN Connection canceled');
   const diagnostic = collectDiagnostic(cycle, dir, [dir]);
   assert.equal(diagnostic.failure.code, 'DataLimitReached');
-  assert.equal(diagnostic.failure.message, 'Data limit reached.');
-  assert.match(diagnostic.failure.source, /trace_maintenance/);
+  assert.equal(diagnostic.failure.category, 'franquia recusada pelo TunnelBear');
+  assert.ok(diagnostic.stateLines.some(line => line.includes('DataLimitReached')));
   assert.equal(parseNative(fixture.failure, new Date(failureTime + 1).toISOString(), cycle.finishedAt).failures.length, 0);
 });
 

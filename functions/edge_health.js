@@ -1,6 +1,8 @@
 const { summarize, monthlyUsed, brasilDay } = require('./odds_api_monthly_budget');
 const { report: clvReport } = require('./placard_value');
 const { isAnnulled } = require('./market_integrity');
+const { CATEGORIES } = require('./tunnelbear_states');
+const { pruneCloudStateLines } = require('./tunnelbear_retention');
 
 const DAY_MS = 24 * 3600000;
 const reportDay = (now = new Date()) => brasilDay(now);
@@ -56,7 +58,12 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   const latest = recent.slice().sort((a, b) => Date.parse(b.startedAt) - Date.parse(a.startedAt))[0];
   const usedCredits = monthlyUsed(budget);
   const remainingCredits = summarize(budget).totalRemaining;
-  const errors = [...priorErrors, ...recent.flatMap(row => [...(row.errors || []), row.syncError].filter(Boolean)),
+  const errors = [...priorErrors, ...recent.flatMap(row => {
+    const code = row.tunnelBear?.failure?.code;
+    const vpn = code ? `VPN não confirmado — ${CATEGORIES[code] || CATEGORIES.Unknown}` : null;
+    return [...(row.errors || []).map(error => vpn && /VPN|TunnelBear/.test(error) ? vpn :
+      /VPN sem confirmação pela placa/.test(error) ? `VPN não confirmado — ${CATEGORIES.Unknown}` : error), row.syncError].filter(Boolean);
+  }),
     ...workflowFailures.map(row => `Placard x Pinnacle ${row.id}: ${row.conclusion}`)];
   const lines = [`Saúde Edge Finder — ${brasilDay(new Date(now))}, últimas 24 horas`];
   if (brasilDay(new Date(now)) >= '2026-11-01') lines.push('Coleta local: aguardando orçamento de novembro. Placard x Pinnacle continua com os créditos renovados.');
@@ -86,6 +93,8 @@ async function loadHealth(db, token, now = Date.now(), fetchImpl = fetch) {
   const october = brasilDay(new Date(now)) === '2026-11-01';
   const dataSince = october ? OCT_START : since;
   const errors = [];
+  try { await pruneCloudStateLines(db, now); }
+  catch { errors.push('Retenção de estados TunnelBear pendente'); }
   const [cycles, opportunities, budget, reports, alerts, octoberBudget] = await Promise.all([
     db.collection('_local_cycle_health').where('startedAt', '>=', dataSince).get(),
     db.collection('_placard_opportunities').where('telegramSentAt', '>=', dataSince).get(),
