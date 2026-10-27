@@ -191,10 +191,10 @@ test('alerta local respeita a grade de Brasília e a tolerância de 45 minutos',
   assert.equal(isBetanoScheduledHeartbeatStale(previous, Date.parse('2026-10-21T14:46:00Z')), true);
   assert.equal(isBetanoScheduledHeartbeatStale('2026-10-21T14:15:00Z', Date.parse('2026-10-21T14:46:00Z')), false);
 });
-test('bloqueio conservador da franquia TunnelBear antes do ciclo seguinte', () => {
+test('consumo TunnelBear não bloqueia o ciclo seguinte', () => {
   assert.equal(MAX_MEASURED_CYCLE_MB, 18);
   assert.equal(tunnelCycleAffordable(3800), true);
-  assert.equal(tunnelCycleAffordable(3801), false);
+  assert.equal(tunnelCycleAffordable(3801), true);
   assert.equal(tunnelCycleAffordable(Number.NaN), false);
   assert.equal(monthKey(Date.parse('2026-11-01T01:30:00Z')), '2026-10');
   assert.equal(monthKey(Date.parse('2026-11-01T03:00:00Z')), '2026-11');

@@ -30,30 +30,31 @@ test('registro local sem internet fica na fila e é reenviado no ciclo seguinte'
   }
 });
 
-test('VPN sem cota diária preserva outubro e pausa em novembro Brasília', () => {
-  const budget = { month: '2026-10', carriedForwardMB: 150, measuredMB: 750,
-    adapterCycles: [{ startedAt: '2026-10-23T15:00:00Z', bytes: 30000000 }] };
+test('VPN informa consumo mensal sem bloquear outubro ou novembro', () => {
+  const budget = { month: '2026-10', carriedForwardMonth: '2026-10', carriedForwardMB: 150, measuredMB: 750,
+    adapterCycles: [{ startedAt: '2026-10-23T15:00:00Z', bytes: 750000000 }] };
   const october = vpnBudgetForDay(budget, new Date('2026-10-23T22:00:00Z'));
-  assert.equal(october.monthlyRemaining, 1800);
-  assert.equal(october.allowance, undefined);
-  assert.equal(october.remaining, 1800);
-  assert.equal(october.run, true);
-  const november = vpnBudgetForDay(budget, new Date('2026-11-01T12:00:00Z'));
-  assert.equal(november.reset, false);
-  assert.equal(november.limitMB, 2700);
-  assert.equal(november.run, false);
-  assert.equal(november.reason, 'aguardando orçamento de novembro');
-  assert.equal(november.spent, 900);
-  assert.equal(vpnBudgetForDay(budget, new Date('2026-11-01T02:59:59Z')).run, true);
-  assert.equal(vpnBudgetForDay(budget, new Date('2026-11-01T03:00:00Z')).run, false);
+  assert.equal(october.spent, 900);
+  assert.equal(october.remaining, undefined);
+  assert.equal(october.monthlyRemaining, undefined);
+  for (const at of ['2026-10-31T20:00:00Z', '2026-11-01T02:59:59Z', '2026-11-01T03:00:00Z', '2026-11-01T12:00:00Z']) {
+    const row = vpnBudgetForDay(budget, new Date(at));
+    assert.equal(row.run, true); assert.equal(row.reason, null); assert.equal(row.limitMB, undefined);
+  }
+  assert.equal(vpnBudgetForDay(budget, new Date('2026-11-01T12:00:00Z')).spent, 0);
+  assert.equal(budget.measuredMB, 750);
+  budget.month = '2026-11';
+  budget.adapterCycles.push({ startedAt: '2026-11-01T04:00:00Z', bytes: 25000000 });
+  assert.equal(vpnBudgetForDay(budget, new Date('2026-11-01T12:00:00Z')).spent, 25);
 });
-test('VPN para em 2700 MB e só inicia com pelo menos 60 MB', () => {
-  const at = new Date('2026-10-31T20:00:00Z');
-  for (const spent of [2640.001, 2699, 2700, 2750])
-    assert.equal(vpnBudgetForDay({ measuredMB: spent }, at).run, false);
-  assert.equal(vpnBudgetForDay({ measuredMB: 2640 }, at).run, true);
-  assert.equal(vpnBudgetForDay({ measuredMB: 2700 }, at).monthlyRemaining, 0);
+
+test('VPN não tem limite mensal nem piso de 60 MB', () => {
+  for (const spent of [2640, 2640.001, 2699, 2700, 2750, 10000]) {
+    const row = vpnBudgetForDay({ measuredMB: spent }, new Date('2026-10-31T20:00:00Z'));
+    assert.equal(row.run, true); assert.equal(row.spent, spent);
+  }
 });
+
 test('VPN usa apenas horários Pinnacle: três horas, cache vazio ou velho', () => {
   const now = Date.parse('2026-10-23T22:00:00Z');
   assert.equal(shouldRunForPinnacleWindow({}, now).run, true);

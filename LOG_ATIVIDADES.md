@@ -926,3 +926,18 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Retabet: proxy 241226626 bytes = 241.226626 MB, 65 registros, 11766 erros; VPN real atribuido NAO CONFIRMADO; 522 jogos lidos; 0 indicacoes validas e 1 anulada.
 - Betclic: browserBytes=0 em 58 registros, mas o leitor usa feed HTTP direto fora das paginas monitoradas e tem 675 jogos documentados. Esse ZERO e ausencia de instrumentacao desse trafego, NAO e zero MB VPN. Proxy mensal representativo e VPN por casa: NAO CONFIRMADOS; 0 indicacoes.
 - Aceite documental: cruzamento de fontes reais Firestore/ciclos/copia historica/codigo historico, sem executar coleta ou teste. Apenas LOG_ATIVIDADES.md alterado; stash@{0} preservado. Publicacao no commit documental desta entrada, na main sem force. Nenhum comando excedeu 3 minutos ou foi interrompido; tarefa dentro do limite de 15 minutos. Seguem revisao/publicacao e relogio final.
+
+
+## 27/10/2026 — Retirada dos bloqueios de VPN e suspensão por casa — premissas
+- Início Windows: 10:08:05 -03:00. Pedido: consumo informativo, sem limite mensal/piso de 60 MB/pausa de novembro; manter reserva e avisos da API.
+- Trava comum adquirida antes das Partes 1 e 2; será liberada antes do aceite real. Agendador e stash preservados.
+- Verificação prévia: pipeline/run_placard_value.js:326–436 compara cada leitura apenas com Pinnacle (params bookmakers=pinnacle; compareBookmaker(read.bookmaker,...)); a Betano não depende das outras seis casas. Suspensão individual reversível, mantendo todos os leitores.
+- Aceite: simular consumo real de hoje acrescido até superar 2.700 MB e 01/11, deduplicação da categoria DataLimitReached com Telegram simulado, ausência de leitura/erro das suspensas; depois ciclo pelo Agendador ou somente VPN se não houver jogo em 3 h. Sem alterar créditos da API, conexão ou tempos limite.
+
+### Partes 1 e 2 — aceite local em 27/10, 10:17 -03:00
+- Consumo real lido do registro: 2.238,002617 MB. Simulação em memória acrescentou 1.000 MB: 3.238,002617 MB; ciclo completo simulado em 27/10 e 01/11, uma leitura Betano em cada caso, zero leituras e zero novas falhas das seis suspensas. Histórico de bytes preservado; relatório separa meses em Brasília.
+- 79 testes aprovados (0 falhas), incluindo registro real DataLimitReached de 25/10, Telegram simulado e deduplicação por categoria; após ajuste preventivo da flag antiga de franquia, 23 testes pertinentes aprovados novamente. Reserva de 1.000 créditos (800 fechamentos + 200 margem) e avisos da API preservados e testados. Espelhos verificados.
+- Arquivos: daily_budget.cjs, cloud_cycle_queue.cjs, daily_summary.cjs, nova house_policy.cjs; local_bookmaker_cycle_fast.cjs; remoção do teto legado de 4 GB em local_betano_reader.js; budget_alerts.js e edge_health.js; testes correspondentes e este registro. Sem mudança de conexão, tempos limite, leitores individuais ou tarefa do Agendador.
+- Casas mantidas: apenas Betano; Bwin, LeBull, ESC Online, GoldenPark, Retabet e Betclic não conferem indicações Betano (a referência é Pinnacle) e ficam suspensas por booleano individual. Estados suspensos não recebem falha de leitura.
+- Banco existente confirmado: Firestore (default), STANDARD, southamerica-east1. Nenhum agendamento de pausa de novembro encontrado; a pausa estava na política do ciclo e na saúde, ambas removidas.
+- Publicação das Partes 1 e 2 e aceite real da Parte 3 seguem abaixo. Trava comum ainda mantida.
