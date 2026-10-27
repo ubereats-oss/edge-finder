@@ -61,7 +61,8 @@ test('01/11 inclui outubro inteiro, por casa, CLV e IC95 sem misturar novembro',
     '2700,00 MB usados', 'créditos usados: 4000,00', '1 rodados; 1 pulados; 1 com falha',
     'falha simulada', '9500,00 restantes']) assert.ok(report.text.includes(phrase), phrase);
   assert.ok(report.text.length < 4000);
-  assert.match(composeHealth({}, Date.parse('2026-11-02T11:00:00Z')).text, /aguardando orçamento de novembro/);
+  assert.doesNotMatch(composeHealth({}, Date.parse('2026-11-02T11:00:00Z')).text, /aguardando orçamento de novembro/);
+  assert.doesNotMatch(report.text, /VPN no mês:.*restantes/);
 });
 
 function fakeAlertDb() {
@@ -78,10 +79,11 @@ function fakeAlertDb() {
   };
   return { db, rows };
 }
-test('avisos de VPN e créditos enviados uma única vez por mês mesmo concorrentes', async () => {
+test('só créditos avisam por orçamento; consumo VPN não bloqueia nem avisa', async () => {
   const alerts = budgetAlerts('2026-10', { syncComplete: true, totalRemaining: 1000,
     vpn: { spentMB: 2700, remainingMB: 0 } });
-  assert.equal(alerts.length, 2);
+  assert.equal(alerts.length, 1);
+  assert.equal(alerts[0].id, 'credits-2026-10');
   assert.equal(budgetAlerts('2026-10', { syncComplete: true, totalRemaining: 1001,
     vpn: { remainingMB: 60 } }).length, 0);
   const { db } = fakeAlertDb();
@@ -90,7 +92,7 @@ test('avisos de VPN e créditos enviados uma única vez por mês mesmo concorren
     await Promise.all(Array.from({ length: 4 }, () => deliverOnce(db, alert, async () => ++sent, async () => {})));
     await deliverOnce(db, alert, async () => ++sent, async () => {});
   }
-  assert.equal(sent, 2);
+  assert.equal(sent, 1);
 });
 test('aviso falho persiste erro e só tenta de novo após uma hora, depois não repete', async () => {
   const { db, rows } = fakeAlertDb();

@@ -6,6 +6,7 @@ const { performance } = require('node:perf_hooks');
 const { loadEnvFileIfPresent } = require('./odds_api_client');
 const core = require('./local_betano_reader.js');
 const readers = require('../scripts/local_bookmakers/fast_readers.cjs');
+const { HOUSE_ENABLED } = require('../scripts/local_bookmakers/house_policy.cjs');
 const { failureReasons } = require('../scripts/local_bookmakers/daily_summary.cjs');
 const { PRIORITY } = require('../scripts/local_bookmakers/local_competitions.cjs');
 const { vpnBudgetForDay, shouldRunForPinnacleWindow } = require('../scripts/local_bookmakers/daily_budget.cjs');
@@ -85,7 +86,7 @@ async function boundedRead(context, read, timeoutMs = 120000,
 function readCycleBudget(cycle) {
   const file = path.join(LOG_DIR, 'vpn-budget.json');
   const budget = fs.readBudget(file, message => { cycle.budgetRecovery = message; console.error(message); })
-    || { limitMB: 2700, expiresAt: '2026-11-01T00:00:00-03:00', initialBalanceMB: null };
+    || { initialBalanceMB: null };
   cycle.balanceMB = null;
   cycle.balanceReadDurationMs = 0;
   if (!Number.isFinite(budget.carriedForwardMB)) {
@@ -98,11 +99,12 @@ function readCycleBudget(cycle) {
     budget.adapterCycles = [];
     budget.measurementSource = 'TunnelBear Adapter V9 / GetIPv4Statistics';
   }
-  cycle.accumulatedMB = budget.carriedForwardMB + budget.measuredMB;
+  budget.carriedForwardMonth ||= budget.month || cycle.startedAt.slice(0, 7);
   const daily = vpnBudgetForDay(budget, new Date(cycle.startedAt));
+  cycle.accumulatedMB = daily.spent;
   budget.month = daily.month;
-  budget.limitMB = daily.limitMB;
-  budget.expiresAt = '2026-11-01T00:00:00-03:00';
+  delete budget.limitMB;
+  delete budget.expiresAt;
   cycle.dailyVpn = daily;
   cycle.budget = budget;
   if (budget.measurementError) {
@@ -134,8 +136,8 @@ function chargeCycleBudget(cycle, before, after) {
       estimated: charge.estimated, before, after });
     budget.measuredMB = budget.adapterCycles.reduce((sum, entry) => sum + entry.bytes / 1000000, 0);
   }
-  cycle.accumulatedMB = budget.carriedForwardMB + budget.measuredMB;
   cycle.dailyVpn = vpnBudgetForDay(budget, new Date(cycle.startedAt));
+  cycle.accumulatedMB = cycle.dailyVpn.spent;
   fs.saveBudget(path.join(LOG_DIR, 'vpn-budget.json'), budget);
 }
 
@@ -170,6 +172,7 @@ async function main() {
   const outputFile = path.join(LOG_DIR, `cycle-${startedAt.replace(/[:.]/g, '-')}.json`);
   const cycle = { startedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
     architecture: 'independent_own_listings_v2', stages: {}, reads: {}, feedAttempts: {},
+    suspendedHouses: Object.keys(HOUSE_NAMES).filter(key => !HOUSE_ENABLED[key]),
     leagueAudit: {}, pinnacleWindow: {}, ...startMetadata(ROOT) };
   const stage = async (name, work) => {
     const at = performance.now();
@@ -298,7 +301,7 @@ async function main() {
     for (const [key, reader] of Object.entries({ betano: readers.betano, bwin: readers.bwin,
       lebull: readers.lebull, esc_online: readers.escOnline,
       goldenpark: readers.goldenpark, retabet: readers.retabet,
-      betclic: readers.betclic })) runHouse(key, reader);
+      betclic: readers.betclic })) if (HOUSE_ENABLED[key]) runHouse(key, reader);
     const keys = Object.keys(tasks);
     const results = await Promise.allSettled(keys.map(key => tasks[key]));
     const collected = {};
@@ -376,9 +379,11 @@ async function main() {
     await stage('heartbeat', async () => {
       const at = new Date().toISOString();
       await Promise.all(Object.entries(HOUSE_NAMES).map(async ([key]) => {
+        if (!HOUSE_ENABLED[key]) return db.collection('local_bookmaker_status').doc(key)
+          .set({ enabled: false, suspended: true, taskName: TASK_NAME }, { merge: true });
         const read = cycle.reads[key];
         const okay = read?.comparison?.status === 'processed' && read.comparison.comparedSelections > 0;
-        const values = { enabled: true, lastReadAt: at, taskName: TASK_NAME,
+        const values = { enabled: true, suspended: false, lastReadAt: at, taskName: TASK_NAME,
           computerName: process.env.COMPUTERNAME, lastTunnelBearMB: cycle.consumedMB,
           lastReadId: read?.readId || null, selections: read?.selections || 0,
           comparedSelections: read?.comparison?.comparedSelections || 0,

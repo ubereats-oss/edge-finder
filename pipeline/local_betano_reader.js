@@ -25,9 +25,7 @@ const SPORT = 'basketball_nba';
 const DATA_PATH = '/api/sports/BASK/hot/trending/leagues/441g/events?req=s,stnf,c,mb';
 const FOOTBALL_PATH = '/api/sports/FOOT/hot/trending/leagues/433g/events?req=s,stnf,c,mb';
 const TASK_NAME = 'EdgeFinder-Betano-Local';
-const MONTHLY_TUNNEL_CAP_MB = 4000;
 const MAX_MEASURED_CYCLE_MB = 18;
-const NEXT_CYCLE_RESERVE_MB = 200;
 const OUTPUT_DIR = path.join(process.env.EDGE_DATA_ROOT || PROJECT, '.local_logs', 'betano');
 const BWIN_VALIDATION_REQUEST = path.join(OUTPUT_DIR, 'bwin-validation-request.json');
 const BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font']);
@@ -263,19 +261,15 @@ function readMonthlyUsage(now = Date.now()) {
   const file = usageFile(now);
   if (!fs.existsSync(file)) return { month: monthKey(now), totalMB: 0, cycles: [] };
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
-  catch { throw new Error('Ledger mensal TunnelBear ilegível; ciclo bloqueado para proteger o limite de 4 GB.'); }
+  catch { throw new Error('Registro mensal TunnelBear ilegível; consumo não pôde ser recuperado.'); }
 }
 
 function tunnelCycleAffordable(usedMB) {
-  return Number.isFinite(usedMB) && usedMB + NEXT_CYCLE_RESERVE_MB <= MONTHLY_TUNNEL_CAP_MB;
+  return Number.isFinite(usedMB) && usedMB >= 0;
 }
 
 function assertTunnelBudget(now = Date.now()) {
-  const ledger = readMonthlyUsage(now);
-  if (!tunnelCycleAffordable(ledger.totalMB)) {
-    throw new Error(`Ciclo bloqueado: uso conservador TunnelBear ${ledger.totalMB} MB + reserva ${NEXT_CYCLE_RESERVE_MB} MB excederia ${MONTHLY_TUNNEL_CAP_MB} MB neste mês.`);
-  }
-  return ledger;
+  return readMonthlyUsage(now);
 }
 
 function recordTunnelUsage({ startedAt, beforeMB, afterMB, networkBytesBefore, networkBytesAfter,
@@ -763,7 +757,7 @@ async function main() {
 }
 
 module.exports = { readSelections, adaptTotalsAndHandicaps, assertTunnelBudget, recordTunnelUsage,
-  tunnelCycleAffordable, monthKey, MONTHLY_TUNNEL_CAP_MB, MAX_MEASURED_CYCLE_MB,
+  tunnelCycleAffordable, monthKey, MAX_MEASURED_CYCLE_MB,
   ensureEdge, initialJson, freshJson, tunnel, database, authenticate, physicalNetworkBytes, vpnNetworkBytes,
   networkProcessSnapshot, summarizeNetworkProcesses, updateFailure };
 if (require.main === module) {

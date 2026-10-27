@@ -66,7 +66,6 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   }),
     ...workflowFailures.map(row => `Placard x Pinnacle ${row.id}: ${row.conclusion}`)];
   const lines = [`Saúde Edge Finder — ${brasilDay(new Date(now))}, últimas 24 horas`];
-  if (brasilDay(new Date(now)) >= '2026-11-01') lines.push('Coleta local: aguardando orçamento de novembro. Placard x Pinnacle continua com os créditos renovados.');
   if (!recent.length) lines.push('⚠️ computador desligado ou coleta parada — nenhum registro de ciclo local chegou.');
   lines.push(`Ciclos locais: ${complete.length} rodados; ${skipped.length} pulados; ${failed.length} com falha; ${missing.length} ausentes.`);
   if (skipped.length) {
@@ -81,7 +80,10 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   lines.push(`Placard x Pinnacle: ${success} execuções com sucesso; ${workflowFailures.length} sem sucesso.`);
   lines.push(`Indicações enviadas: ${sent}.`);
   lines.push(`Créditos no mês: ${number(usedCredits)} usados; ${number(remainingCredits)} restantes.`);
-  lines.push(`VPN no mês: ${number(latest?.vpnMonthlySpentMB)} MB usados; ${number(latest?.vpnMonthlyRemainingMB)} MB restantes.`);
+  const month = brasilDay(new Date(now)).slice(0, 7);
+  const monthLatest = recent.filter(row => (row.vpnBudgetMonth || brasilDay(new Date(row.startedAt)).slice(0, 7)) === month)
+    .sort((a, b) => Date.parse(b.startedAt) - Date.parse(a.startedAt))[0];
+  lines.push(`VPN no mês: ${number(monthLatest?.vpnMonthlySpentMB ?? budget.vpn?.spentMB)} MB usados.`);
   if (brasilDay(new Date(now)) === '2026-11-01') lines.push(octoberReview(cycles, opportunities, octoberBudget));
   lines.push(`Erros: ${errors.length ? errors.slice(0, 5).map(error => String(error).slice(0, 160)).join(' | ') : 'nenhum registrado'}.`);
   return { text: lines.join('\n').slice(0, 4000), counts: { run: complete.length,

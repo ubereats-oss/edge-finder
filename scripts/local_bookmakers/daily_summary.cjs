@@ -1,5 +1,6 @@
 const fs = require('./safe_files.cjs');
 const path = require('node:path');
+const { HOUSE_ENABLED } = require('./house_policy.cjs');
 
 const LOG_DIR = path.join(process.env.EDGE_DATA_ROOT || path.resolve(__dirname, '../..'), '.local_logs/betano');
 const NAMES = { betano: 'Betano', bwin: 'Bwin', lebull: 'LeBull', esc_online: 'ESC Online',
@@ -48,7 +49,7 @@ function generateSummary() {
   const clean = text => text.replace(/\u001b\[[0-9;]*m/g, '').split(/\r?\nCall log:/)[0].replace(/\s+/g, ' ').trim();
   const lines = [`Resumo da coleta local — ${today}`, 'MB decimais do navegador; média por ciclo em que a casa foi executada.', '', 'Ciclos:'];
   const daily = rows.at(-1)?.dailyVpn;
-  if (daily) lines.push(`VPN outubro: gastos ${number(daily.spent)} MB; saldo mensal ${number(daily.monthlyRemaining)} MB.${daily.paused ? ' aguardando orçamento de novembro.' : ''}`);
+  if (daily) lines.push(`VPN ${daily.month || today.slice(0, 7)}: gastos ${number(daily.spent)} MB.`);
   for (const row of rows) {
     const at = new Date(row.at).toLocaleTimeString('pt-BR', { hour12: false });
     lines.push(`${at} | ${STATUSES[row.status] || row.status} | duração: ${duration(row.totalDurationMs)} | VPN: ${duration(row.vpnDurationMs)} | saldo: ${number(row.balanceMB)} MB | acumulado: ${number(row.accumulatedMB)} MB${row.reason ? ' | motivo: ' + clean(row.reason) : ''}${row.balanceError ? ' | falha no saldo: ' + clean(row.balanceError) : ''}`);
@@ -56,6 +57,7 @@ function generateSummary() {
   lines.push('', 'Casas:');
   const keys = new Set([...Object.keys(NAMES), ...rows.flatMap(row => Object.keys(row.houses || {}))]);
   for (const key of keys) {
+    if (HOUSE_ENABLED[key] === false) { lines.push(`${NAMES[key] || key} | leitura suspensa`); continue; }
     const reads = rows.flatMap(row => row.houses?.[key] ? [row.houses[key]] : []);
     const count = status => reads.filter(read => read.readingStatus === status).length;
     const measured = reads.filter(read => Number.isFinite(read.browserBytes));
