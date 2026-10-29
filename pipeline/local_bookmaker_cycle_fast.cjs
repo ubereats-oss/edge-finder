@@ -28,7 +28,7 @@ const PROCESS_SCRIPT = "$rows=Get-NetTCPConnection -State Established -ErrorActi
 
 function networkProcessSnapshotAsync() {
   return new Promise(resolve => execFile('powershell.exe', ['-NoProfile', '-Command', PROCESS_SCRIPT],
-    { encoding: 'utf8', timeout: 12000 }, (error, stdout) => {
+    { encoding: 'utf8', windowsHide: true, timeout: 12000 }, (error, stdout) => {
       if (error) return resolve([]);
       try { resolve([].concat(JSON.parse(stdout.trim() || '[]')).filter(Boolean)); }
       catch { resolve([]); }
@@ -37,7 +37,7 @@ function networkProcessSnapshotAsync() {
 
 function edgeWindow(action) {
   const result = spawnSync('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', WINDOW_SCRIPT, action],
-    { encoding: 'utf8', timeout: 15000 });
+    { encoding: 'utf8', windowsHide: true, timeout: 15000 });
   if (result.status !== 0) throw new Error((result.stderr || result.stdout || 'Estado Edge indisponível').trim());
   return JSON.parse(result.stdout.trim());
 }
@@ -198,7 +198,7 @@ async function main() {
   let vpnStartedAt = null;
   try {
     cycle.localDateTime = spawnSync('powershell.exe', ['-NoProfile', '-Command', 'Get-Date -Format o'],
-      { encoding: 'utf8', timeout: 4000 }).stdout.trim();
+      { encoding: 'utf8', windowsHide: true, timeout: 4000 }).stdout.trim();
     const pauseReason = readCycleBudget(cycle);
     if (pauseReason) { cycle.status = 'ciclo pulado'; cycle.pauseReason = pauseReason; return; }
     await stage('preparation', async () => {
