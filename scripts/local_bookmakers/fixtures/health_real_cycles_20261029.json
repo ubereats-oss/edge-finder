@@ -1,0 +1,2890 @@
+{
+  "observedAt": "2026-10-29T11:22:32.000Z",
+  "source": "Cópia sanitizada dos ciclos reais locais, capturada em 29/10/2026 antes de qualquer alteração operacional",
+  "acceptance": [
+    {
+      "startedAt": "2026-10-27T22:50:03.014Z",
+      "finishedAt": "2026-10-27T22:50:55.573Z",
+      "status": "failed",
+      "error": "Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso.",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-27T22:50:28.320Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-27T22:50:03.632Z",
+          "finishedAt": "2026-10-27T22:50:08.753Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-27T22:50:08.761Z",
+          "finishedAt": "2026-10-27T22:50:28.759Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-27T22:50:28.777Z",
+          "finishedAt": "2026-10-27T22:50:41.465Z",
+          "error": "Betano sem odds elegíveis nas próximas 12 horas: HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] H"
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-27T22:50:42.965Z",
+          "finishedAt": "2026-10-27T22:50:52.466Z",
+          "error": null
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 0,
+          "readingStatus": "failed",
+          "error": "Betano sem odds elegíveis nas próximas 12 horas: HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] H",
+          "comparison": null
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 11,
+            "events": [
+              {
+                "reason": "mercados ausentes no evento"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 10,
+            "events": [
+              {
+                "reason": "mercados sem seleções completas ou código não suportado"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 8,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 12,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-27T17:50:03.589Z",
+      "finishedAt": "2026-10-27T17:52:00.308Z",
+      "status": "failed",
+      "error": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: BR; ipapi.co: O nome remoto não pôde ser resolvido: 'ipapi.co'.",
+      "disconnectError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: BR; ipapi.co: O nome remoto não pôde ser resolvido: 'ipapi.co'.",
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-27T17:50:28.592Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-27T17:50:04.221Z",
+          "finishedAt": "2026-10-27T17:50:08.204Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-27T17:50:08.211Z",
+          "finishedAt": "2026-10-27T17:50:28.982Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-27T17:50:28.996Z",
+          "finishedAt": "2026-10-27T17:50:44.660Z",
+          "error": null
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-27T17:51:25.722Z",
+          "finishedAt": "2026-10-27T17:51:58.408Z",
+          "error": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: BR; ipapi.co: O nome remoto não pôde ser resolvido: 'ipapi.co'."
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 2,
+          "readingStatus": "success",
+          "error": null,
+          "comparison": null
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 5,
+            "events": [
+              {
+                "reason": "mercados ausentes no evento"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 10,
+            "events": [
+              {
+                "reason": "mercados sem seleções completas ou código não suportado"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 10,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 8,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 12,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-27T18:50:03.028Z",
+      "finishedAt": "2026-10-27T18:50:11.093Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-27T18:50:03.587Z",
+          "finishedAt": "2026-10-27T18:50:08.258Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-27T18:50:08.265Z",
+          "finishedAt": "2026-10-27T18:50:09.695Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T08:50:03.525Z",
+      "finishedAt": "2026-10-28T08:51:20.586Z",
+      "status": "complete",
+      "error": null,
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-28T08:50:23.920Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T08:50:04.198Z",
+          "finishedAt": "2026-10-28T08:50:10.105Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-28T08:50:10.114Z",
+          "finishedAt": "2026-10-28T08:50:24.359Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-28T08:50:24.378Z",
+          "finishedAt": "2026-10-28T08:50:37.324Z",
+          "error": null
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-28T08:50:38.963Z",
+          "finishedAt": "2026-10-28T08:50:48.784Z",
+          "error": null
+        },
+        "send": {
+          "startedAt": "2026-10-28T08:50:49.963Z",
+          "finishedAt": "2026-10-28T08:50:50.233Z",
+          "error": null
+        },
+        "comparison": {
+          "startedAt": "2026-10-28T08:50:50.233Z",
+          "finishedAt": "2026-10-28T08:51:18.820Z",
+          "error": null
+        },
+        "heartbeat": {
+          "startedAt": "2026-10-28T08:51:18.828Z",
+          "finishedAt": "2026-10-28T08:51:18.902Z",
+          "error": null
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 5,
+          "readingStatus": "success",
+          "error": null,
+          "comparison": {
+            "status": "processed",
+            "comparedSelections": 5
+          }
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 14,
+            "events": [
+              {
+                "reason": "mercados ausentes no evento"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 10,
+            "events": [
+              {
+                "reason": "mercados sem seleções completas ou código não suportado"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "aceito"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 8,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 12,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    }
+  ],
+  "originalPreserved": {
+    "startedAt": "2026-10-26T05:50:03.319Z",
+    "finishedAt": "2026-10-26T05:51:13.664Z",
+    "status": "ciclo sem conexão",
+    "error": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+    "disconnectError": null,
+    "usageError": null,
+    "pauseReason": null,
+    "vpnConnectedAt": null,
+    "stages": {
+      "preparation": {
+        "startedAt": "2026-10-26T05:50:03.853Z",
+        "finishedAt": "2026-10-26T05:50:08.379Z",
+        "error": null
+      },
+      "vpnConnect": {
+        "startedAt": "2026-10-26T05:50:08.382Z",
+        "finishedAt": "2026-10-26T05:51:12.836Z",
+        "error": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=."
+      }
+    },
+    "reads": {},
+    "leagueAudit": {
+      "betano": {}
+    },
+    "tunnelBear": {
+      "failure": null,
+      "stateLines": []
+    },
+    "healthSync": {
+      "sent": 1,
+      "pending": 0,
+      "error": null
+    }
+  },
+  "recent": [
+    {
+      "startedAt": "2026-10-28T11:50:02.701Z",
+      "finishedAt": "2026-10-28T11:50:04.677Z",
+      "status": "ciclo pulado",
+      "error": null,
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": "nenhum jogo Pinnacle começa nas próximas 3 horas",
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T11:50:03.294Z",
+          "finishedAt": "2026-10-28T11:50:04.165Z",
+          "error": null
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T12:50:03.790Z",
+      "finishedAt": "2026-10-28T12:50:06.661Z",
+      "status": "ciclo pulado",
+      "error": null,
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": "nenhum jogo Pinnacle começa nas próximas 3 horas",
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T12:50:04.475Z",
+          "finishedAt": "2026-10-28T12:50:05.827Z",
+          "error": null
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T13:50:02.715Z",
+      "finishedAt": "2026-10-28T13:50:04.822Z",
+      "status": "ciclo pulado",
+      "error": null,
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": "nenhum jogo Pinnacle começa nas próximas 3 horas",
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T13:50:03.464Z",
+          "finishedAt": "2026-10-28T13:50:04.292Z",
+          "error": null
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T14:50:03.485Z",
+      "finishedAt": "2026-10-28T14:51:42.360Z",
+      "status": "complete",
+      "error": null,
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-28T14:50:25.696Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T14:50:04.469Z",
+          "finishedAt": "2026-10-28T14:50:12.086Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-28T14:50:12.095Z",
+          "finishedAt": "2026-10-28T14:50:26.137Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-28T14:50:26.151Z",
+          "finishedAt": "2026-10-28T14:50:55.178Z",
+          "error": null
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-28T14:50:56.885Z",
+          "finishedAt": "2026-10-28T14:51:05.852Z",
+          "error": null
+        },
+        "send": {
+          "startedAt": "2026-10-28T14:51:07.552Z",
+          "finishedAt": "2026-10-28T14:51:07.814Z",
+          "error": null
+        },
+        "comparison": {
+          "startedAt": "2026-10-28T14:51:07.814Z",
+          "finishedAt": "2026-10-28T14:51:40.500Z",
+          "error": null
+        },
+        "heartbeat": {
+          "startedAt": "2026-10-28T14:51:40.503Z",
+          "finishedAt": "2026-10-28T14:51:40.582Z",
+          "error": null
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 5,
+          "readingStatus": "success",
+          "error": null,
+          "comparison": {
+            "status": "processed",
+            "comparedSelections": 5
+          }
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 14,
+            "events": [
+              {
+                "reason": "mercados ausentes no evento"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 10,
+            "events": [
+              {
+                "reason": "mercados sem seleções completas ou código não suportado"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "aceito"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 8,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 12,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T15:50:02.675Z",
+      "finishedAt": "2026-10-28T15:52:06.133Z",
+      "status": "failed",
+      "error": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: BR; ipapi.co: O nome remoto não pôde ser resolvido: 'ipapi.co'.",
+      "disconnectError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: BR; ipapi.co: O nome remoto não pôde ser resolvido: 'ipapi.co'.",
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-28T15:50:32.716Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T15:50:03.314Z",
+          "finishedAt": "2026-10-28T15:50:08.100Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-28T15:50:08.108Z",
+          "finishedAt": "2026-10-28T15:50:33.202Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-28T15:50:33.229Z",
+          "finishedAt": "2026-10-28T15:50:52.228Z",
+          "error": null
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-28T15:51:32.243Z",
+          "finishedAt": "2026-10-28T15:52:04.779Z",
+          "error": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: BR; ipapi.co: O nome remoto não pôde ser resolvido: 'ipapi.co'."
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 5,
+          "readingStatus": "success",
+          "error": null,
+          "comparison": null
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 14,
+            "events": [
+              {
+                "reason": "mercados ausentes no evento"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 10,
+            "events": [
+              {
+                "reason": "mercados sem seleções completas ou código não suportado"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "aceito"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 8,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 12,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T16:50:03.225Z",
+      "finishedAt": "2026-10-28T16:50:11.542Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T16:50:03.862Z",
+          "finishedAt": "2026-10-28T16:50:08.886Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-28T16:50:08.894Z",
+          "finishedAt": "2026-10-28T16:50:10.251Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T17:50:02.877Z",
+      "finishedAt": "2026-10-28T17:50:10.862Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T17:50:03.496Z",
+          "finishedAt": "2026-10-28T17:50:08.086Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-28T17:50:08.094Z",
+          "finishedAt": "2026-10-28T17:50:09.467Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T18:50:02.795Z",
+      "finishedAt": "2026-10-28T18:50:11.706Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T18:50:03.445Z",
+          "finishedAt": "2026-10-28T18:50:08.790Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-28T18:50:08.799Z",
+          "finishedAt": "2026-10-28T18:50:10.347Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T19:50:02.305Z",
+      "finishedAt": "2026-10-28T19:50:04.039Z",
+      "status": "ciclo pulado",
+      "error": null,
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": "nenhum jogo Pinnacle começa nas próximas 3 horas",
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T19:50:02.906Z",
+          "finishedAt": "2026-10-28T19:50:03.585Z",
+          "error": null
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T20:50:02.873Z",
+      "finishedAt": "2026-10-28T20:50:11.501Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T20:50:03.503Z",
+          "finishedAt": "2026-10-28T20:50:08.796Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-28T20:50:08.805Z",
+          "finishedAt": "2026-10-28T20:50:10.158Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T21:50:03.252Z",
+      "finishedAt": "2026-10-28T21:50:13.845Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T21:50:04.286Z",
+          "finishedAt": "2026-10-28T21:50:10.959Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-28T21:50:10.968Z",
+          "finishedAt": "2026-10-28T21:50:12.284Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T22:50:03.248Z",
+      "finishedAt": "2026-10-28T22:50:11.503Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T22:50:03.871Z",
+          "finishedAt": "2026-10-28T22:50:08.734Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-28T22:50:08.748Z",
+          "finishedAt": "2026-10-28T22:50:10.088Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-28T23:50:02.748Z",
+      "finishedAt": "2026-10-28T23:50:11.403Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-28T23:50:03.390Z",
+          "finishedAt": "2026-10-28T23:50:08.709Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-28T23:50:08.717Z",
+          "finishedAt": "2026-10-28T23:50:10.092Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-29T00:50:02.997Z",
+      "finishedAt": "2026-10-29T00:50:13.174Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-29T00:50:03.718Z",
+          "finishedAt": "2026-10-29T00:50:10.580Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-29T00:50:10.588Z",
+          "finishedAt": "2026-10-29T00:50:11.935Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-29T01:50:02.736Z",
+      "finishedAt": "2026-10-29T01:50:10.610Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-29T01:50:03.343Z",
+          "finishedAt": "2026-10-29T01:50:07.973Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-29T01:50:07.983Z",
+          "finishedAt": "2026-10-29T01:50:09.327Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-29T02:50:02.887Z",
+      "finishedAt": "2026-10-29T02:50:11.528Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-29T02:50:03.488Z",
+          "finishedAt": "2026-10-29T02:50:08.755Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-29T02:50:08.764Z",
+          "finishedAt": "2026-10-29T02:50:10.122Z",
+          "error": "VPN não confirmado — TunnelBear sem registro no intervalo"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "NoRecords",
+          "category": "TunnelBear sem registro no intervalo",
+          "message": "TunnelBear sem registro no intervalo",
+          "originalError": null
+        },
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-29T04:50:05.650Z",
+      "finishedAt": "2026-10-29T04:50:32.851Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — estado não reconhecido",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": null,
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-29T04:50:08.539Z",
+          "finishedAt": "2026-10-29T04:50:17.648Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-29T04:50:17.656Z",
+          "finishedAt": "2026-10-29T04:50:30.465Z",
+          "error": "VPN não confirmado — estado não reconhecido"
+        }
+      },
+      "reads": {},
+      "leagueAudit": {
+        "betano": {}
+      },
+      "tunnelBear": {
+        "failure": {
+          "code": "Unknown",
+          "category": "estado não reconhecido",
+          "message": "estado não reconhecido",
+          "originalError": null
+        },
+        "stateLines": [
+          "2026-10-29T04:50:27.355Z status:estado não reconhecido",
+          "2026-10-29T04:50:27.593Z status:estado não reconhecido",
+          "2026-10-29T04:50:27.742Z status:estado não reconhecido",
+          "2026-10-29T04:50:27.914Z status:estado não reconhecido",
+          "2026-10-29T04:50:28.210Z status:estado não reconhecido",
+          "2026-10-29T04:50:28.359Z status:estado não reconhecido",
+          "2026-10-29T04:50:29.177Z status:estado não reconhecido"
+        ]
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-29T05:50:03.455Z",
+      "finishedAt": "2026-10-29T05:51:37.442Z",
+      "status": "complete",
+      "error": null,
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-29T05:50:30.160Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-29T05:50:05.623Z",
+          "finishedAt": "2026-10-29T05:50:11.719Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-29T05:50:11.732Z",
+          "finishedAt": "2026-10-29T05:50:31.408Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-29T05:50:31.431Z",
+          "finishedAt": "2026-10-29T05:50:45.390Z",
+          "error": null
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-29T05:50:48.526Z",
+          "finishedAt": "2026-10-29T05:50:59.391Z",
+          "error": null
+        },
+        "send": {
+          "startedAt": "2026-10-29T05:51:02.027Z",
+          "finishedAt": "2026-10-29T05:51:02.263Z",
+          "error": null
+        },
+        "comparison": {
+          "startedAt": "2026-10-29T05:51:02.263Z",
+          "finishedAt": "2026-10-29T05:51:34.899Z",
+          "error": null
+        },
+        "heartbeat": {
+          "startedAt": "2026-10-29T05:51:34.958Z",
+          "finishedAt": "2026-10-29T05:51:35.032Z",
+          "error": null
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 1,
+          "readingStatus": "success",
+          "error": null,
+          "comparison": {
+            "status": "processed",
+            "comparedSelections": 0
+          }
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 6,
+            "events": [
+              {
+                "reason": "mercados ausentes no evento"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 10,
+            "events": [
+              {
+                "reason": "mercados sem seleções completas ou código não suportado"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 5,
+            "events": [
+              {
+                "reason": "aceito"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 8,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 12,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-29T06:50:03.509Z",
+      "finishedAt": "2026-10-29T06:51:39.140Z",
+      "status": "complete",
+      "error": null,
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-29T06:50:24.672Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-29T06:50:05.744Z",
+          "finishedAt": "2026-10-29T06:50:11.890Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-29T06:50:11.899Z",
+          "finishedAt": "2026-10-29T06:50:25.890Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-29T06:50:25.902Z",
+          "finishedAt": "2026-10-29T06:50:52.190Z",
+          "error": null
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-29T06:50:55.198Z",
+          "finishedAt": "2026-10-29T06:51:01.109Z",
+          "error": null
+        },
+        "send": {
+          "startedAt": "2026-10-29T06:51:03.979Z",
+          "finishedAt": "2026-10-29T06:51:04.213Z",
+          "error": null
+        },
+        "comparison": {
+          "startedAt": "2026-10-29T06:51:04.213Z",
+          "finishedAt": "2026-10-29T06:51:36.828Z",
+          "error": null
+        },
+        "heartbeat": {
+          "startedAt": "2026-10-29T06:51:36.834Z",
+          "finishedAt": "2026-10-29T06:51:36.913Z",
+          "error": null
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 1,
+          "readingStatus": "success",
+          "error": null,
+          "comparison": {
+            "status": "processed",
+            "comparedSelections": 0
+          }
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 6,
+            "events": [
+              {
+                "reason": "mercados ausentes no evento"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 10,
+            "events": [
+              {
+                "reason": "mercados sem seleções completas ou código não suportado"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 5,
+            "events": [
+              {
+                "reason": "aceito"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 8,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 12,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-29T07:50:03.781Z",
+      "finishedAt": "2026-10-29T07:51:11.024Z",
+      "status": "failed",
+      "error": "Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso.",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-29T07:50:34.533Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-29T07:50:06.093Z",
+          "finishedAt": "2026-10-29T07:50:12.179Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-29T07:50:12.189Z",
+          "finishedAt": "2026-10-29T07:50:35.687Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-29T07:50:35.702Z",
+          "finishedAt": "2026-10-29T07:50:51.357Z",
+          "error": "Betano sem odds elegíveis nas próximas 12 horas: HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] H"
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-29T07:50:54.427Z",
+          "finishedAt": "2026-10-29T07:51:05.546Z",
+          "error": null
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 0,
+          "readingStatus": "failed",
+          "error": "Betano sem odds elegíveis nas próximas 12 horas: HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] H",
+          "comparison": null
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-29T08:50:03.427Z",
+      "finishedAt": "2026-10-29T08:51:01.918Z",
+      "status": "failed",
+      "error": "Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso.",
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-29T08:50:25.194Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-29T08:50:05.623Z",
+          "finishedAt": "2026-10-29T08:50:11.807Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-29T08:50:11.815Z",
+          "finishedAt": "2026-10-29T08:50:26.559Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-29T08:50:26.573Z",
+          "finishedAt": "2026-10-29T08:50:43.571Z",
+          "error": "Betano sem odds elegíveis nas próximas 12 horas: HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] H"
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-29T08:50:46.836Z",
+          "finishedAt": "2026-10-29T08:50:57.241Z",
+          "error": null
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 0,
+          "readingStatus": "failed",
+          "error": "Betano sem odds elegíveis nas próximas 12 horas: HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] H",
+          "comparison": null
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 0,
+            "events": [],
+            "requests": [
+              {
+                "httpStatus": 403
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-29T09:50:04.453Z",
+      "finishedAt": "2026-10-29T09:51:41.452Z",
+      "status": "complete",
+      "error": null,
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-29T09:50:32.755Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-29T09:50:06.973Z",
+          "finishedAt": "2026-10-29T09:50:15.891Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-29T09:50:15.900Z",
+          "finishedAt": "2026-10-29T09:50:33.919Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-29T09:50:33.930Z",
+          "finishedAt": "2026-10-29T09:50:49.628Z",
+          "error": null
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-29T09:50:52.851Z",
+          "finishedAt": "2026-10-29T09:51:03.828Z",
+          "error": null
+        },
+        "send": {
+          "startedAt": "2026-10-29T09:51:06.069Z",
+          "finishedAt": "2026-10-29T09:51:06.327Z",
+          "error": null
+        },
+        "comparison": {
+          "startedAt": "2026-10-29T09:51:06.327Z",
+          "finishedAt": "2026-10-29T09:51:38.973Z",
+          "error": null
+        },
+        "heartbeat": {
+          "startedAt": "2026-10-29T09:51:39.030Z",
+          "finishedAt": "2026-10-29T09:51:39.111Z",
+          "error": null
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 2,
+          "readingStatus": "success",
+          "error": null,
+          "comparison": {
+            "status": "processed",
+            "comparedSelections": 0
+          }
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 5,
+            "events": [
+              {
+                "reason": "mercados ausentes no evento"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 10,
+            "events": [
+              {
+                "reason": "mercados sem seleções completas ou código não suportado"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 5,
+            "events": [
+              {
+                "reason": "aceito"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 8,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 12,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    },
+    {
+      "startedAt": "2026-10-29T10:50:04.188Z",
+      "finishedAt": "2026-10-29T10:51:36.528Z",
+      "status": "complete",
+      "error": null,
+      "disconnectError": null,
+      "usageError": null,
+      "pauseReason": null,
+      "vpnConnectedAt": "2026-10-29T10:50:27.013Z",
+      "stages": {
+        "preparation": {
+          "startedAt": "2026-10-29T10:50:06.365Z",
+          "finishedAt": "2026-10-29T10:50:13.125Z",
+          "error": null
+        },
+        "vpnConnect": {
+          "startedAt": "2026-10-29T10:50:13.134Z",
+          "finishedAt": "2026-10-29T10:50:28.285Z",
+          "error": null
+        },
+        "read.betano": {
+          "startedAt": "2026-10-29T10:50:28.298Z",
+          "finishedAt": "2026-10-29T10:50:49.151Z",
+          "error": null
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-10-29T10:50:52.260Z",
+          "finishedAt": "2026-10-29T10:51:02.714Z",
+          "error": null
+        },
+        "send": {
+          "startedAt": "2026-10-29T10:51:05.323Z",
+          "finishedAt": "2026-10-29T10:51:05.556Z",
+          "error": null
+        },
+        "comparison": {
+          "startedAt": "2026-10-29T10:51:05.556Z",
+          "finishedAt": "2026-10-29T10:51:34.103Z",
+          "error": null
+        },
+        "heartbeat": {
+          "startedAt": "2026-10-29T10:51:34.131Z",
+          "finishedAt": "2026-10-29T10:51:34.206Z",
+          "error": null
+        }
+      },
+      "reads": {
+        "betano": {
+          "games": 2,
+          "readingStatus": "success",
+          "error": null,
+          "comparison": {
+            "status": "processed",
+            "comparedSelections": 0
+          }
+        }
+      },
+      "leagueAudit": {
+        "betano": {
+          "basketball_nba": {
+            "seen": 4,
+            "events": [
+              {
+                "reason": "mercados ausentes no evento"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_europa_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_uefa_champs_league": {
+            "seen": 18,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_portugal_primeira_liga": {
+            "seen": 7,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_epl": {
+            "seen": 10,
+            "events": [
+              {
+                "reason": "mercados sem seleções completas ou código não suportado"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_spain_la_liga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_italy_serie_a": {
+            "seen": 5,
+            "events": [
+              {
+                "reason": "aceito"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_germany_bundesliga": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_france_ligue_one": {
+            "seen": 8,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_netherlands_eredivisie": {
+            "seen": 9,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          },
+          "soccer_efl_champ": {
+            "seen": 12,
+            "events": [
+              {
+                "reason": "fora da janela de 12 horas"
+              }
+            ],
+            "requests": [
+              {
+                "httpStatus": 200
+              }
+            ]
+          }
+        }
+      },
+      "tunnelBear": {
+        "failure": null,
+        "stateLines": []
+      },
+      "healthSync": {
+        "sent": 1,
+        "pending": 0,
+        "error": null
+      }
+    }
+  ],
+  "authenticationFailure": {
+    "startedAt": "2026-10-28T04:50:06.750Z",
+    "finishedAt": "2026-10-28T05:00:29.693Z",
+    "status": "failed",
+    "error": "Firebase: autenticação falhou antes do VPN: Firebase: autenticação não confirmada em 15 segundos.",
+    "disconnectError": null,
+    "usageError": null,
+    "pauseReason": null,
+    "vpnConnectedAt": null,
+    "stages": {
+      "preparation": {
+        "startedAt": "2026-10-28T04:50:09.185Z",
+        "finishedAt": "2026-10-28T04:50:24.639Z",
+        "error": "Firebase: autenticação falhou antes do VPN: Firebase: autenticação não confirmada em 15 segundos."
+      }
+    },
+    "reads": {},
+    "leagueAudit": {
+      "betano": {}
+    },
+    "tunnelBear": {
+      "failure": null,
+      "stateLines": []
+    },
+    "healthSync": {
+      "sent": 0,
+      "pending": 1,
+      "error": "envio à nuvem excedeu 5 s"
+    }
+  },
+  "leagueEvidence": {
+    "leagues": [
+      "basketball_nba",
+      "soccer_efl_champ",
+      "soccer_france_ligue_one",
+      "soccer_germany_bundesliga",
+      "soccer_italy_serie_a",
+      "soccer_netherlands_eredivisie",
+      "soccer_portugal_primeira_liga",
+      "soccer_spain_la_liga",
+      "soccer_uefa_europa_league"
+    ],
+    "earlyNBA": [
+      {
+        "startedAt": "2026-10-21T22:21:59.329Z",
+        "games": 11,
+        "comparedSelections": 38,
+        "matchedSelections": 38
+      },
+      {
+        "startedAt": "2026-10-21T22:24:56.188Z",
+        "games": 11,
+        "comparedSelections": 36,
+        "matchedSelections": 36
+      },
+      {
+        "startedAt": "2026-10-21T22:27:14.462Z",
+        "games": 11,
+        "comparedSelections": 36,
+        "matchedSelections": 36
+      }
+    ]
+  }
+}

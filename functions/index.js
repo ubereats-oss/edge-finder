@@ -859,11 +859,11 @@ exports.dailyEdgeFinderHealth = onSchedule({
   const report = await edgeHealth.loadHealth(db, GH_DISPATCH_TOKEN.value());
   const ref = db.collection('_edge_health_reports').doc(edgeHealth.reportDay());
   const generatedAt = new Date().toISOString();
-  await ref.set({ generatedAt, text: report.text, counts: report.counts, status: 'sending' });
+  await ref.set({ generatedAt, text: report.text, messages: report.messages, counts: report.counts,
+    nextMessageIndex: 0, messageIds: [], status: 'sending' });
   try {
-    const messageId = await placardPart4.sendTelegramText(report.text,
-      TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value());
-    await ref.set({ status: 'sent', messageId, sentAt: new Date().toISOString() }, { merge: true });
+    await edgeHealth.sendHealthReport(ref, report, text => placardPart4.sendTelegramText(text,
+      TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value()));
   } catch (error) {
     await ref.set({ status: 'send_failed', error: error.message }, { merge: true });
     await getFunctions().taskQueue('retryDailyEdgeFinderHealth').enqueue({ reportDay: edgeHealth.reportDay() },
@@ -886,9 +886,9 @@ exports.retryDailyEdgeFinderHealth = onTaskDispatched({
   const report = (await ref.get()).data();
   if (!report || report.status === 'sent') return;
   try {
-    const messageId = await placardPart4.sendTelegramText(report.text,
-      TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value());
-    await ref.set({ status: 'sent', messageId, sentAt: new Date().toISOString(), retried: true }, { merge: true });
+    await edgeHealth.sendHealthReport(ref, report, text => placardPart4.sendTelegramText(text,
+      TELEGRAM_BOT_TOKEN.value(), TELEGRAM_CHAT_ID.value()));
+    await ref.set({ retried: true }, { merge: true });
   } catch (error) { await ref.set({ status: 'send_failed', error: error.message,
     retryFailedAt: new Date().toISOString() }, { merge: true });
     await getFunctions().taskQueue('retryDailyEdgeFinderHealth').enqueue({ reportDay: request.data.reportDay },
