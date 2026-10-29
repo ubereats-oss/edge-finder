@@ -30,8 +30,9 @@ $trigger.Repetition.Interval = 'PT1H'
 $trigger.Repetition.Duration = 'P1D'
 $trigger.Enabled = $true
 $action = $task.Actions.Create(0)
-$action.Path = 'powershell.exe'
-$action.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$reader`""
+$action.Path = Join-Path $env:WINDIR 'System32\wscript.exe'
+$launcher = Join-Path $project 'scripts\local_bookmakers\run_hidden.vbs'
+$action.Arguments = "`"$launcher`" `"$reader`""
 $action.WorkingDirectory = $project
 $folder.RegisterTaskDefinition($taskName, $task, 6, $task.Principal.UserId, $null, 3) | Out-Null
 Write-Output "Tarefa $taskName registrada. Um agendamento diário com repetição a cada hora, sempre aos 50 minutos; wake-to-run: ativo."

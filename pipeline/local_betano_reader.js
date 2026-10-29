@@ -37,7 +37,7 @@ function tunnel(action, cycleId = '', purpose = '') {
     const args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', TUNNEL, operation];
     if (operation === 'meter') args.push('-StableSeconds', '15');
     return require('node:child_process').spawnSync('powershell.exe', args,
-      { encoding: 'utf8', timeout: operation === 'recover' ? 90000 : 240000, env: { ...process.env,
+      { encoding: 'utf8', windowsHide: true, timeout: operation === 'recover' ? 90000 : 240000, env: { ...process.env,
         EDGE_TUNNEL_ATTEMPT_LOG: attemptFile, EDGE_TUNNEL_CYCLE_ID: cycleId, EDGE_TUNNEL_PURPOSE: purpose,
         EDGE_TUNNEL_RESTARTED: restarted ? '1' : '0' } });
   };
@@ -52,7 +52,7 @@ function physicalNetworkBytes() {
   const args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(PROJECT, 'scripts/local_bookmakers/network_adapter.ps1')];
   if (physicalNetworkBytes.interfaceIndex) args.push('-InterfaceIndex', String(physicalNetworkBytes.interfaceIndex));
   const result = require('node:child_process').spawnSync('powershell.exe', args,
-    { encoding: 'utf8', timeout: 20000 });
+    { encoding: 'utf8', windowsHide: true, timeout: 20000 });
   if (result.status !== 0) throw new Error((result.stderr || result.stdout || 'Falha ao ler bytes da rede física.').trim());
   const bytes = JSON.parse(result.stdout.trim());
   physicalNetworkBytes.interfaceIndex = bytes.interfaceIndex;
@@ -65,7 +65,7 @@ function physicalNetworkBytes() {
 function vpnNetworkBytes() {
   const script = "$adapter = [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() | Where-Object { $_.Description -eq 'TunnelBear Adapter V9' } | Select-Object -First 1; if (-not $adapter) { throw 'Adaptador TunnelBear não encontrado.' }; $stats = $adapter.GetIPv4Statistics(); [pscustomobject]@{ receivedBytes = [double]$stats.BytesReceived; sentBytes = [double]$stats.BytesSent } | ConvertTo-Json -Compress";
   const result = require('node:child_process').spawnSync('powershell.exe', ['-NoProfile', '-Command', script],
-    { encoding: 'utf8', timeout: 20000 });
+    { encoding: 'utf8', windowsHide: true, timeout: 20000 });
   if (result.status !== 0) return null;
   const bytes = JSON.parse(result.stdout.trim());
   if (![bytes.receivedBytes, bytes.sentBytes].every(value => Number.isFinite(value) && value >= 0)) {
@@ -77,7 +77,7 @@ function vpnNetworkBytes() {
 function networkProcessSnapshot() {
   const script = "$rows=Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue | Where-Object { $_.RemoteAddress -notin @('127.0.0.1','::1') } | Group-Object OwningProcess | ForEach-Object { $pidValue=[int]$_.Name; $process=Get-Process -Id $pidValue -ErrorAction SilentlyContinue; if ($process) { [pscustomobject]@{ pid=$pidValue; name=$process.ProcessName; connections=$_.Count } } }; @($rows) | ConvertTo-Json -Compress";
   const result = require('node:child_process').spawnSync('powershell.exe', ['-NoProfile', '-Command', script],
-    { encoding: 'utf8', timeout: 12000 });
+    { encoding: 'utf8', windowsHide: true, timeout: 12000 });
   if (result.status !== 0) return [];
   try { return [].concat(JSON.parse(result.stdout.trim() || '[]')).filter(Boolean); }
   catch { return []; }
