@@ -1,5 +1,11 @@
 ﻿function Find-TunnelBearWindow {
   $ids = @(Get-Process -Name 'TunnelBear', 'TunnelBear.UI' -ErrorAction SilentlyContinue | ForEach-Object { $_.Id })
+  if ($env:EDGE_COLLECTION_DESKTOP) {
+    if (-not ('EdgeBackgroundDesktop' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'background_desktop.cs') }
+    $owned = @([EdgeBackgroundDesktop]::Windows($env:EDGE_COLLECTION_DESKTOP, [int[]]$ids, $true) |
+      ForEach-Object { [System.Windows.Automation.AutomationElement]::FromHandle($_) })
+    return $owned | Sort-Object @{ Expression = { $_.Current.Name -eq 'TunnelBear' } } | Select-Object -First 1
+  }
   $windows = [System.Windows.Automation.AutomationElement]::RootElement.FindAll(
     [System.Windows.Automation.TreeScope]::Children, [System.Windows.Automation.Condition]::TrueCondition)
   $owned = @($windows | Where-Object { $_.Current.ProcessId -in $ids })
@@ -8,6 +14,19 @@
 }
 
 function Start-TunnelBearWindow {
+  if ($env:EDGE_COLLECTION_DESKTOP) {
+    if (-not ('EdgeBackgroundDesktop' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'background_desktop.cs') }
+    $existing = @(Get-Process 'TunnelBear.UI' -ErrorAction SilentlyContinue)
+    if ($existing.Count -and @([EdgeBackgroundDesktop]::Windows($env:EDGE_COLLECTION_DESKTOP, [int[]]@($existing.Id), $false)).Count -eq 0) {
+      throw 'TunnelBear está aberto fora do desktop da coleta; interface do Alex preservada.'
+    }
+    $ui = @((Join-Path ([Environment]::GetFolderPath([System.Environment+SpecialFolder]::ProgramFiles)) 'TunnelBear\TunnelBear.exe'),
+      (Join-Path ([Environment]::GetFolderPath([System.Environment+SpecialFolder]::ProgramFilesX86)) 'TunnelBear\TunnelBear.exe')) |
+      Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+    if (-not $ui) { throw 'TunnelBear não abriu: executável da interface não encontrado.' }
+    $null = [EdgeBackgroundDesktop]::StartApplication($ui, $env:EDGE_COLLECTION_DESKTOP)
+    return
+  }
   $exe = @("${env:ProgramFiles(x86)}\TunnelBear\TunnelBear.exe", "$env:ProgramFiles\TunnelBear\TunnelBear.exe") |
     Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
   if (-not $exe) { throw 'TunnelBear não abriu: executável não encontrado.' }
@@ -200,13 +219,23 @@ function Prepare-TunnelBearWindow([switch]$ForDisconnect) {
   }
   $deadline = [DateTime]::UtcNow.AddSeconds(30)
   $window = Find-TunnelBearWindow
-  if (-not $window) { Start-TunnelBearWindow }
+  $openedHere = -not $window
+  if ($openedHere) { Start-TunnelBearWindow }
   while (-not $window) {
     if ([DateTime]::UtcNow -ge $deadline) { throw 'TunnelBear não abriu' }
     Start-Sleep -Milliseconds 250
     $window = Find-TunnelBearWindow
   }
   Restore-TunnelBearWindow $window
+  if ($openedHere -and $env:EDGE_COLLECTION_DESKTOP) {
+    # Auto-login can briefly expose the login label during a cold start. Use
+    # the existing preparation deadline; genuine login still fails below.
+    do {
+      $startupOverlay = Get-TunnelBearOverlay $window
+      if ($startupOverlay.Text -notmatch '(?i)log[ -]?in|sign[ -]?in|entrar na conta') { break }
+      Start-Sleep -Milliseconds 250
+    } while ([DateTime]::UtcNow -lt $deadline)
+  }
   # A freshly opened WPF window can exist before its controls are initialized.
   do {
     try { $state = Get-TunnelBearState; break }
