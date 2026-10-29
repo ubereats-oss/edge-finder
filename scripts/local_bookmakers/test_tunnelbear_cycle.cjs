@@ -56,6 +56,7 @@ async function simulate({ owned = false, connectionError, readError = false, aut
     },
     '../scripts/local_bookmakers/cloud_cycle_queue.cjs': { flushCycleQueue: async () => ({}) },
     '../functions/placard_value.js': { matchingEvents: () => [], namesEqual: (a, b) => a === b },
+    '../functions/local_cycle_health.js': require('../../functions/local_cycle_health.js'),
     '../scripts/local_bookmakers/tunnelbear_diagnostics.cjs': {
       startMetadata: () => ({ runtimeSha: 'a'.repeat(40), tunnelBearVersion: '4.17.4.0' }),
       collectDiagnostic: () => ({ failure: null }),

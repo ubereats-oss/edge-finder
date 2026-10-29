@@ -1,12 +1,16 @@
 const fs = require('./safe_files.cjs');
 const { operatorIssue } = require('../../functions/local_operator_alerts.js');
 const path = require('node:path');
+const { classifyCycle, sanitizeReason } = require('../../functions/local_cycle_health.js');
 
 function compactCycle(cycle) {
   return { startedAt: cycle.startedAt, finishedAt: cycle.finishedAt,
     runtimeSha: cycle.runtimeSha || null, tunnelBearVersion: cycle.tunnelBearVersion || null,
     tunnelBear: cycle.tunnelBear || null,
-    status: cycle.status, reason: cycle.pauseReason || cycle.error || null,
+    healthCause: classifyCycle(cycle),
+    vpnFailures: (cycle.vpnFailures || []).map(row => ({ stage: row.stage, category: row.category,
+      originalError: sanitizeReason(row.originalError), originalErrorUnavailable: !row.originalError })),
+    status: cycle.status, reason: sanitizeReason(cycle.pauseReason || cycle.error),
     spentMB: Number(cycle.vpnAdapterMB ?? cycle.consumedMB ?? 0),
     estimated: Boolean(cycle.vpnEstimate),
     vpnBudgetMonth: cycle.dailyVpn?.month || cycle.budget?.month || cycle.startedAt?.slice(0, 7),
@@ -17,7 +21,7 @@ function compactCycle(cycle) {
     gamesByHouse: Object.fromEntries(Object.entries(cycle.reads || {})
       .map(([house, read]) => [house, Number(read.games || 0)])),
     errors: [cycle.error, cycle.disconnectError, cycle.usageError]
-      .filter(Boolean).map(String).slice(0, 5) };
+      .filter(Boolean).map(value => sanitizeReason(value)) };
 }
 async function flushCycleQueue(db, cycle, logDir) {
   const queueFile = path.join(logDir, 'cloud-cycle-pending.json');

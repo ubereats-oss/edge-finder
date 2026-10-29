@@ -12,6 +12,7 @@ const { PRIORITY } = require('../scripts/local_bookmakers/local_competitions.cjs
 const { vpnBudgetForDay, shouldRunForPinnacleWindow } = require('../scripts/local_bookmakers/daily_budget.cjs');
 const { flushCycleQueue } = require('../scripts/local_bookmakers/cloud_cycle_queue.cjs');
 const { matchingEvents, namesEqual } = require('../functions/placard_value.js');
+const { captureVpnFailure, sanitizeReason, classifyCycle } = require('../functions/local_cycle_health.js');
 const { startMetadata, collectDiagnostic, pruneLocalStateLines } = require('../scripts/local_bookmakers/tunnelbear_diagnostics.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -179,7 +180,14 @@ async function main() {
     const record = { startedAt: new Date().toISOString() };
     cycle.stages[name] = record;
     try { return await work(); }
-    catch (error) { record.error = error.message; throw error; }
+    catch (error) {
+      record.error = sanitizeReason(error.message);
+      if (name === 'vpnConnect' || name === 'vpnDisconnect') {
+        const failure = captureVpnFailure(cycle, name, error);
+        record.originalError = failure.originalError;
+      }
+      throw error;
+    }
     finally { record.finishedAt = new Date().toISOString(); record.durationMs = Math.round(performance.now() - at); }
   };
   let browser, context, db, vpnConnected = false, vpnOwned = false, vpnBytesBefore = null, vpnBytesAfter = null;
@@ -399,7 +407,7 @@ async function main() {
   } catch (error) {
     caught = error;
     cycle.status = cycle.stages.vpnConnect?.error ? 'ciclo sem conexão' : 'failed';
-    cycle.error = error.message;
+    cycle.error = sanitizeReason(error.message);
   } finally {
     if (networkTimer) clearInterval(networkTimer);
     if (vpnConnected && vpnOwned) {
@@ -409,7 +417,7 @@ async function main() {
         vpnConnected = false;
         cycle.vpnDisconnectedAt = new Date().toISOString();
         cycle.vpnDurationMs = (Date.parse(cycle.disconnected.vpnDisconnectedAt) || Date.now()) - vpnStartedAt;
-      } catch (error) { cycle.disconnectError = error.message; }
+      } catch (error) { cycle.disconnectError = sanitizeReason(error.message); }
     }
     if (vpnStartedAt && !budgetCharged && (!vpnConnected || !vpnOwned)) {
       if (vpnConnected) vpnBytesAfter ||= core.vpnNetworkBytes();
@@ -443,6 +451,7 @@ async function main() {
       cycle.tunnelBear = collectDiagnostic(cycle, LOG_DIR);
       if (cycle.tunnelBear.failure) {
         const { category } = cycle.tunnelBear.failure;
+        for (const failure of cycle.vpnFailures || []) if (failure.stage === 'vpnConnect') failure.category = category;
         cycle.error = `VPN não confirmado — ${category}`;
         cycle.stages.vpnConnect.error = cycle.error;
         if (caught) caught.message = cycle.error;
@@ -450,13 +459,17 @@ async function main() {
     } catch {
       cycle.tunnelBearDiagnosticError = 'Diagnóstico TunnelBear indisponível';
       if (cycle.stages.vpnConnect?.error) {
-        cycle.tunnelBear = { failure: { code: 'NoRecords', category: 'TunnelBear sem registro no intervalo' }, stateLines: [] };
+        const originalError = cycle.vpnFailures?.find(row => row.stage === 'vpnConnect')?.originalError || null;
+        cycle.tunnelBear = { failure: { code: 'NoRecords', category: 'TunnelBear sem registro no intervalo',
+          originalError, originalErrorUnavailable: !originalError }, stateLines: [] };
+        for (const failure of cycle.vpnFailures || []) if (failure.stage === 'vpnConnect') failure.category = cycle.tunnelBear.failure.category;
         cycle.error = 'VPN não confirmado — TunnelBear sem registro no intervalo';
         cycle.stages.vpnConnect.error = cycle.error;
         if (caught) caught.message = cycle.error;
       }
     }
     if (caught && db) {
+      caught.message = sanitizeReason(caught.message) || 'Falha sem mensagem original disponível';
       try { await core.updateFailure(db, caught, !vpnConnected); }
       catch (error) { cycle.failureStatusError = error.message; }
     }
@@ -477,16 +490,22 @@ async function main() {
           return row.cycleId === startedAt && row.status === 'check' ? [JSON.parse(row.detail)] : [];
         } catch { return []; } }) : [];
     }
-    if (cycle.tunnelBear?.failure) {
+    if (cycle.tunnelBear?.failure || cycle.vpnFailures?.length) {
       delete cycle.vpnAutomationError;
       cycle.vpnProofChecks = (cycle.vpnProofChecks || []).map(({ at, adapter, connected }) => ({ at, adapter, connected }));
+      if (cycle.vpn) {
+        delete cycle.vpn.publicIp;
+        cycle.vpn.checks = (cycle.vpn.checks || []).map(({ at, adapter, connected }) => ({ at, adapter, connected }));
+      }
     }
     try { pruneLocalStateLines?.(LOG_DIR); }
     catch { cycle.tunnelBearRetentionError = 'Limpeza de estados antigos pendente'; }
+    cycle.healthCause = classifyCycle(cycle);
     fs.writeFileSync(outputFile, JSON.stringify(cycle, null, 2));
     const logLine = { at: cycle.localDateTime, status: cycle.status, balanceMB: cycle.balanceMB,
       runtimeSha: cycle.runtimeSha, tunnelBearVersion: cycle.tunnelBearVersion,
       tunnelBear: cycle.tunnelBear || null,
+      healthCause: cycle.healthCause, vpnFailures: cycle.vpnFailures || [],
       accumulatedMB: cycle.accumulatedMB, balanceReadDurationMs: cycle.balanceReadDurationMs,
       vpnAdapterBytes: cycle.vpnAdapterBytes ?? null, vpnAdapterMB: cycle.vpnAdapterMB ?? null,
       vpnEstimate: cycle.vpnEstimate || false, vpnProofChecks: cycle.vpnProofChecks || [],

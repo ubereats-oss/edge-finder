@@ -1027,3 +1027,61 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Conclusão confirmada: desafio Cloudflare no corpo histórico; 403 direto persistente inclusive em 35 leituras boas, com fallback Edge 200; os seis fracassos recentes são descartes de horários/mercados nos dados recebidos. Saídas iguais aparecem em sucessos e falhas. VPN tem erros distintos: parser antigo, chamadas rápidas sem transição registrada e janela restrita à conexão que não explica desconexão posterior. Hipóteses não confirmadas: política antiautomação recente baseada em cliente/sessão, bloqueio por saída específica, e guarda de VPN preexistente como causa dos seis retornos rápidos. Bloqueio por região ou excesso de acessos não demonstrado pelos corpos preservados.
 - Aceite documental somente leitura; nenhuma chamada à Betano, ciclo, conexão VPN, teste, build ou deploy; nenhum dado de nuvem alterado. Único arquivo alterado LOG_ATIVIDADES.md, a publicar na main sem force em commit documental desta entrada. Nenhum comando ultrapassou 3 minutos nem precisou ser interrompido; consultas remotas limitadas a 60 s. Seguem somente conferência/publicação e hora final Windows.
 - Fim do levantamento Windows: 2026-10-28 10:43:17 -03:00. Seguem publicação documental e conferência final; total inferior a 15 minutos.
+
+
+## 2026-10-29 — Causas dos ciclos, motivos VPN e saúde — premissas e Parte 1
+- Início Windows 08:22:32 -03:00. Parte 1 executada somente leitura, sem trava, alteração ou coleta. AGENTS.md e cinco últimas entradas lidos; árvore inicialmente limpa. Janela fixa de 24 h: 28/10 08:22:32–29/10 08:22:32 Brasília; janela de 72 h usa o mesmo fim. Firestore existente STANDARD/default, mesmo projeto; consultadas somente leituras Betano já salvas.
+- Classificação individual das 24 h:
+- 2026-10-28 08:50:02 — pulado
+- 2026-10-28 09:50:03 — pulado
+- 2026-10-28 10:50:02 — pulado
+- 2026-10-28 11:50:03 — lido com jogos
+- 2026-10-28 12:50:02 — erro só na desconexão
+- 2026-10-28 13:50:03 — VPN não conectou
+- 2026-10-28 14:50:02 — VPN não conectou
+- 2026-10-28 15:50:02 — VPN não conectou
+- 2026-10-28 16:50:02 — pulado
+- 2026-10-28 17:50:02 — VPN não conectou
+- 2026-10-28 18:50:03 — VPN não conectou
+- 2026-10-28 19:50:03 — VPN não conectou
+- 2026-10-28 20:50:02 — VPN não conectou
+- 2026-10-28 21:50:02 — VPN não conectou
+- 2026-10-28 22:50:02 — VPN não conectou
+- 2026-10-28 23:50:02 — VPN não conectou
+- 2026-10-29 01:50:05 — VPN não conectou
+- 2026-10-29 02:50:03 — lido com jogos
+- 2026-10-29 03:50:03 — lido com jogos
+- 2026-10-29 04:50:03 — outra falha
+- 2026-10-29 05:50:03 — outra falha
+- 2026-10-29 06:50:04 — lido com jogos
+- 2026-10-29 07:50:04 — lido com jogos
+- 29/10 00:50 — ausente. Totais: 5 lidos com jogos; 0 sem jogo elegível comprovado; 1 erro só na desconexão; 11 VPN não conectou; 2 outras falhas; 4 pulados; 1 ausente. As duas outras falhas (29/10 04:50 e 05:50) não tiveram payload válido: feeds diretos 403 e fallback com erro, sem eventos; não confundir falha de acesso com lista válida sem elegíveis.
+- Parte 1 b: ciclos das 72 h com listagem válida sem jogo elegível e ligas Pinnacle em até 3 h:
+- 2026-10-26 16:50:02 — soccer_spain_la_liga
+- 2026-10-26 17:50:03 — basketball_nba
+- 2026-10-26 18:50:03 — basketball_nba
+- 2026-10-26 19:50:03 — basketball_nba
+- 2026-10-26 20:50:03 — basketball_nba
+- 2026-10-26 21:50:02 — basketball_nba
+- 2026-10-26 22:50:03 — basketball_nba
+- 2026-10-26 23:50:03 — cache vazio; início conservador atual, sem liga disparadora registrada
+- 2026-10-27 00:50:02 — cache vazio; início conservador atual, sem liga disparadora registrada
+- 2026-10-27 01:50:03 — cache vazio; início conservador atual, sem liga disparadora registrada
+- 2026-10-27 19:50:03 — basketball_nba
+- 2026-10-27 20:50:03 — basketball_nba
+- 2026-10-27 21:50:02 — basketball_nba
+- 2026-10-27 22:50:03 — basketball_nba
+- 2026-10-27 23:50:02 — basketball_nba
+- 2026-10-28 00:50:02 — cache vazio; início conservador atual, sem liga disparadora registrada
+- Parte 1 c: ligas comprovadas: basketball_nba, soccer_efl_champ, soccer_france_ligue_one, soccer_germany_bundesliga, soccer_italy_serie_a, soccer_netherlands_eredivisie, soccer_portugal_primeira_liga, soccer_spain_la_liga, soccer_uefa_europa_league. Oito ligas de futebol têm jogos e comparedSelections positivos nos diagnósticos das leituras Betano na nuvem. NBA é comprovada nos três arquivos locais de 21/10 19:21:59, 19:24:56 e 19:27:14: endpoint NBA, 11 jogos cada e 38/36/36 seleções comparadas, somas iguais às validações por jogo. Não excluir esses registros só por não terem documento _bookmaker_reads.
+- Parte 1 d: NÃO CONFIRMADA. Todos os ciclos com cache não vazio dispararam por La Liga ou NBA, ambas na lista completa; quatro ciclos usaram cache vazio. A lista apenas da nuvem omitiria NBA indevidamente. Conforme instrução, Parte 3 NÃO será implementada; nenhuma mudança da regra de início ou cache.
+- Parte 2: trava comum adquirida em seguida, sem disputa; manter até o encerramento. Premissas: preservar motivo antes de substituir por categoria; sanitizar e limitar motivos a 300 caracteres; classificar separadamente ausência real de elegíveis, falha de acesso e desconexão; agrupar todos os erros, sem corte de categorias. Se necessário dividir a mensagem Telegram para respeitar o limite por mensagem, mantendo continuação/retry sem reenviar páginas já confirmadas. Testes somente com cópias sanitizadas dos registros reais e sender simulado; nenhum acesso Betano/VPN. Publicar função de saúde correspondente ou reverter código; sem automação nova.
+
+### Parte 2 — aceite offline com registros reais
+- 52 testes aprovados, zero falhas, nesta máquina. Casos 27/10 19:50 (sem elegíveis, linha própria, zero falha), 27/10 14:50 (rodado com aviso) e 28/10 05:50 (rodado com jogos sem aviso) aprovados também após compactar para o formato da nuvem. Categoria inexistente vira outra falha e mantém motivo real. Sanitização remove e-mail, credenciais, identificadores e endereços, antes do limite de 300 caracteres. Teste de preservação usa a mensagem realmente preservada de 26/10 02:50 e linhas nativas reais: captura antes de substituir a mensagem por categoria, original conservado no diagnóstico e na projeção da nuvem.
+- Exceção prevista pelo Alex: o motivo original de 27/10 15:50 já não está preservado; categoria e indicador originalErrorUnavailable foram confirmados, sem reconstruir o texto. Mesma limitação histórica nestes 17 ciclos: 2026-10-27 02:50:03; 2026-10-27 03:50:02; 2026-10-27 04:50:02; 2026-10-27 15:50:03; 2026-10-27 17:50:02; 2026-10-27 18:50:03; 2026-10-28 13:50:03; 2026-10-28 14:50:02; 2026-10-28 15:50:02; 2026-10-28 17:50:02; 2026-10-28 18:50:03; 2026-10-28 19:50:03; 2026-10-28 20:50:02; 2026-10-28 21:50:02; 2026-10-28 22:50:02; 2026-10-28 23:50:02; 2026-10-29 01:50:05. A nova captura passa a preservar o motivo nas próximas falhas; nenhum histórico original foi reescrito.
+- Saúde montada das últimas 24 h reais: 6 rodados (5 sem aviso + 1 desconexão), 0 sem elegíveis comprovados, 13 falhos (11 VPN + 2 acesso/leitura), 4 pulados e 1 ausente. Grupos: 10 TunnelBear sem registro no intervalo; 1 estado não reconhecido; 2 erro na leitura da Betano; aviso 1 erro na desconexão. Todas as categorias e contagens visíveis; exemplos dos originais já perdidos são explicitamente indisponíveis.
+- Agregação de oito categorias a partir de registros nativos/históricos reais aprovada, sem corte em cinco. Texto real repetido somente para teste de transporte acima do limite Telegram: paginação preserva o conteúdo integral e retry não reenvia página já confirmada. Todos os envios simulados. Retenção de estados, avisos de franquia/créditos e orçamentos existentes aprovados por regressão; espelhos e diff verificados.
+- Cópia sanitizada de aceite em fixtures/health_real_cycles_20261029.json: inclui casos exigidos, snapshot das 24 h e prova das três validações NBA antigas. Produção usa o mesmo classificador na projeção local/nuvem e na saúde. Documentos antigos compactos não são regravados: quando faltam detalhes históricos individuais, não se inventa motivo; falhas sem prova de lista válida permanecem outras falhas.
+- Arquivos: novo functions/local_cycle_health.js; edge_health.js e integração de paginação em daily/retry existentes de functions/index.js; captura antes da substituição em local_bookmaker_cycle_fast.cjs/tunnelbear_diagnostics.cjs; projeção cloud_cycle_queue.cjs; testes e fixture. Sem alteração de conexão, tempos limite, leitura, orçamento, filtro de início ou tarefa do Agendador. Banco STANDARD confirmado hoje. Publicação direcionada de dailyEdgeFinderHealth e retryDailyEdgeFinderHealth antes de publicar o commit remoto, mantendo a trava.
+- Parte 3 não aplicável: hipótese d não confirmada após incluir as validações locais NBA de 21/10. Nenhuma lista/filtro novo e nenhum teste contrafactual fictício de liga excluída.
