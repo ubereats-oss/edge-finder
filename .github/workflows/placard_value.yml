@@ -7,7 +7,7 @@ on:
         type: boolean
         default: false
       force_scan:
-        description: 'Forçar leitura usando o saldo real e preservando 800 créditos para fechamentos'
+        description: 'Forçar leitura usando o saldo real e preservando a reserva variável de fechamentos'
         type: boolean
         default: false
       closing_only:

@@ -113,6 +113,8 @@ function verifyRiskConfig() {
 }
 
 verifyClosingOddsRules();
+if (read('pipeline/odds_api_monthly_budget.js') !== read('functions/odds_api_monthly_budget.js'))
+  fail('odds_api_monthly_budget divergiu entre pipeline e functions');
 verifyRiskConfig();
 
 if (!process.exitCode) {
