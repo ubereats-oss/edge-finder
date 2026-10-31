@@ -1,0 +1,251 @@
+{
+  "observedAt": "2026-10-31T20:30:33.941Z",
+  "balanceObservedAt": "2026-10-31T20:05:44.663Z",
+  "balances": [
+    {
+      "remaining": 53,
+      "used": 447
+    },
+    {
+      "remaining": 51,
+      "used": 449
+    },
+    {
+      "remaining": 53,
+      "used": 447
+    },
+    {
+      "remaining": 51,
+      "used": 449
+    },
+    {
+      "remaining": 52,
+      "used": 448
+    },
+    {
+      "remaining": 52,
+      "used": 448
+    },
+    {
+      "remaining": 53,
+      "used": 447
+    },
+    {
+      "remaining": 53,
+      "used": 447
+    },
+    {
+      "remaining": 53,
+      "used": 447
+    },
+    {
+      "remaining": 54,
+      "used": 446
+    },
+    {
+      "remaining": 54,
+      "used": 446
+    },
+    {
+      "remaining": 52,
+      "used": 448
+    },
+    {
+      "remaining": 54,
+      "used": 446
+    },
+    {
+      "remaining": 52,
+      "used": 448
+    },
+    {
+      "remaining": 52,
+      "used": 448
+    },
+    {
+      "remaining": 52,
+      "used": 448
+    },
+    {
+      "remaining": 52,
+      "used": 448
+    },
+    {
+      "remaining": 52,
+      "used": 448
+    },
+    {
+      "remaining": 52,
+      "used": 448
+    }
+  ],
+  "opportunities": [
+    {
+      "closingCapturedAt": "2026-10-22T18:59:31.142Z",
+      "closingStatus": "capturada"
+    },
+    {
+      "closingCapturedAt": "2026-10-26T18:44:20.923Z",
+      "closingStatus": "capturada",
+      "telegramSentAt": "2026-10-26T12:52:48.050Z"
+    },
+    {
+      "closingCapturedAt": "2026-10-24T16:59:28.246Z",
+      "closingStatus": "capturada",
+      "telegramSentAt": "2026-10-24T08:52:09.817Z"
+    },
+    {
+      "annulled": true,
+      "closingStatus": "anulada",
+      "telegramSentAt": "2026-10-24T04:53:00.428Z",
+      "status": "anulada"
+    },
+    {
+      "closingCapturedAt": "2026-10-24T19:28:20.766Z",
+      "closingStatus": "capturada",
+      "telegramSentAt": "2026-10-24T15:38:32.750Z"
+    },
+    {
+      "closingCapturedAt": "2026-10-25T19:59:21.780Z",
+      "closingStatus": "capturada",
+      "telegramSentAt": "2026-10-25T13:52:38.494Z"
+    },
+    {
+      "closingCapturedAt": "2026-10-30T20:14:25.924Z",
+      "closingStatus": "capturada",
+      "telegramSentAt": "2026-10-30T09:51:25.434Z"
+    },
+    {
+      "closingCapturedAt": "2026-10-30T17:58:24.705Z",
+      "closingStatus": "capturada",
+      "telegramSentAt": "2026-10-30T16:51:54.994Z"
+    },
+    {
+      "closingCapturedAt": "2026-10-22T16:44:33.286Z",
+      "closingStatus": "capturada"
+    },
+    {
+      "closingCapturedAt": "2026-10-24T13:59:19.560Z",
+      "closingStatus": "capturada",
+      "telegramSentAt": "2026-10-24T08:52:35.753Z"
+    }
+  ],
+  "closingCosts": [
+    {
+      "at": "2026-10-22T16:40:21.978Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-22T16:42:23.497Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-22T16:44:33.893Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-22T18:55:31.598Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-22T18:57:27.059Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-22T18:58:27.057Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-22T18:59:31.776Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-24T13:55:23.256Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-24T13:56:21.598Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-24T13:58:37.152Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-24T13:59:20.199Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-24T16:55:26.315Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-24T16:57:20.847Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-24T16:59:29.032Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-24T19:25:27.291Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-24T19:27:18.732Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-24T19:28:21.211Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-25T19:55:24.526Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-25T19:57:29.386Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-25T19:59:22.485Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-26T18:40:24.519Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-26T18:42:26.695Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-26T18:44:21.524Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-30T17:55:25.399Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-30T17:57:20.944Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-30T17:58:25.328Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-30T20:10:24.871Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-30T20:12:25.249Z",
+      "cost": 1
+    },
+    {
+      "at": "2026-10-30T20:14:26.626Z",
+      "cost": 1
+    }
+  ]
+}
