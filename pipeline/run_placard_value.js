@@ -1,5 +1,5 @@
 const { createOddsApiClient, loadEnvFileIfPresent } = require('./odds_api_client');
-const { database, summarize: summarizeBudget, CLOSING_RESERVE } = require('./odds_api_monthly_budget');
+const { database, summarize: summarizeBudget } = require('./odds_api_monthly_budget');
 const integrity = require('../functions/market_integrity');
 const { createBrowser, scrapeCompetition } = require('./get_placard_odds');
 const { compare, compareBookmaker, references, matchingEvents, isNearValue, nearValueSelections, report, namesEqual, normalize,
@@ -510,7 +510,8 @@ async function publish(db, result, entries) {
   const betReport = betClvReport(entries, bets.docs.map(doc => ({ id: doc.id, ...doc.data() })));
   const payload = { generatedAt, runId, pageCount, report: report(entries), betReport, errors: result.errors,
     budget: { totalRemaining: budgetSummary.totalRemaining, available: budgetSummary.available,
-      readingAvailable: budgetSummary.readingAvailable, closingReserve: CLOSING_RESERVE,
+      readingAvailable: budgetSummary.readingAvailable, closingReserve: budgetSummary.closingReserve,
+      dynamicReserve: budgetSummary.dynamicReserve,
       keyCount: budgetSummary.keyCount, keyStatuses: budgetSummary.keyStatuses,
       lastSyncedAt: budgetSummary.lastSyncedAt,
       syncComplete: budgetSummary.syncComplete,

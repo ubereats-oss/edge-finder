@@ -1,6 +1,5 @@
-// Usa os saldos reais por chave retornados pela The Odds API. Mantém 800
-// créditos de fechamento e 200 de margem indisponíveis para leituras; fechamentos
-// podem consumir essa reserva.
+// Saldo real por chave; reserva variável para indicações já enviadas.
+// Sem evidência de custo/indicações, preserva a reserva antiga de 1.000.
 const crypto = require('crypto');
 const axios = require('axios');
 
@@ -11,6 +10,49 @@ const MONTHLY_READ_CAP = MONTHLY_SPEND_CAP - CLOSING_RESERVE;
 const SCHEMA_VERSION = 3;
 const PENDING_TTL_MS = 2 * 60 * 1000;
 const API_ROOT = 'https://api.the-odds-api.com/v4';
+
+function closingReserve(evidence) {
+  if (evidence?.mode === 'variable' && Number.isSafeInteger(evidence.openCount) && evidence.openCount >= 0
+      && Number.isFinite(evidence.maxClosingCost) && evidence.maxClosingCost > 0
+      && Number.isSafeInteger((evidence.openCount + 1) * evidence.maxClosingCost * 2)) {
+    return { ...evidence, amount: (evidence.openCount + 1) * evidence.maxClosingCost * 2, reason: null };
+  }
+  return { mode: 'fallback', amount: CLOSING_RESERVE + READING_MARGIN,
+    reason: evidence?.reason || 'Custo real dos fechamentos ou indicações abertas indisponível.' };
+}
+
+function stateReserve(state) {
+  return closingReserve(state.syncComplete === false
+    ? { reason: 'Saldo real indisponível; limites anteriores preservados.' } : state.dynamicReserve);
+}
+
+function reserveFromRecords(opportunities, closingCosts, observedAt = new Date().toISOString()) {
+  if (!Array.isArray(opportunities) || !Array.isArray(closingCosts))
+    return closingReserve({ reason: 'Indicações abertas ou custos de fechamento não puderam ser obtidos.' });
+  const costs = closingCosts.filter(cost => Number.isFinite(cost) && cost > 0);
+  if (!costs.length) return closingReserve({ reason: 'Nenhum custo real positivo de captura de fechamento registrado.' });
+  const openCount = opportunities.filter(row => (row.telegramSentAt || row.telegramMessageId)
+    && row.annulled !== true && row.status !== 'anulada' && row.closingStatus !== 'anulada'
+    && row.closingStatus !== 'capturada' && !row.closingCapturedAt).length;
+  return closingReserve({ mode: 'variable', openCount, maxClosingCost: Math.max(...costs), observedAt,
+    costSource: 'results/placard_current/runs:budget.lastClosingCredits' });
+}
+
+async function readReserveEvidence(db, reader = { get: query => query.get() }, prior = {}) {
+  try {
+    const opportunities = await reader.get(db.collection('_placard_opportunities')
+      .select('telegramSentAt', 'telegramMessageId', 'annulled', 'status', 'closingStatus', 'closingCapturedAt'));
+    const captures = await reader.get(db.collection('results').doc('placard_current').collection('runs')
+      .where('budget.lastClosingCredits', '>', 0).orderBy('budget.lastClosingCredits', 'desc').limit(1));
+    const costs = captures.docs.map(doc => doc.data().budget?.lastClosingCredits);
+    // Também protege custos maiores observados antes da publicação do resumo.
+    if (Number.isFinite(prior.maxClosingRequestCost) && prior.maxClosingRequestCost > 0)
+      costs.push(prior.maxClosingRequestCost);
+    return reserveFromRecords(opportunities.docs.map(doc => doc.data()), costs);
+  } catch (error) {
+    return closingReserve({ reason: `Consulta de indicações/custos indisponível: ${safeError(error)}.` });
+  }
+}
 
 function database() {
   const admin = require('firebase-admin');
@@ -79,7 +121,7 @@ function dailyReadBudget(state, now = new Date(), availableOverride = null) {
   const pendingReading = pendingToday.filter(row => !/closing/i.test(row.label))
     .reduce((sum, row) => sum + Number(row.cost || 0), 0);
   const available = availableOverride ?? summarize(state).available;
-  const allowance = Math.max(0, available - CLOSING_RESERVE - READING_MARGIN);
+  const allowance = Math.max(0, available - stateReserve(state).amount);
   return { day, daysRemaining: daysRemaining(day), allowance,
     spent: readingSpent + pendingReading,
     remaining: allowance };
@@ -113,8 +155,9 @@ function summarize(state = {}) {
     totalRemaining,
     pendingCredits,
     available,
-    closingReserve: CLOSING_RESERVE,
-    readingAvailable: Math.max(0, available - CLOSING_RESERVE - READING_MARGIN),
+    closingReserve: stateReserve(state).amount,
+    dynamicReserve: stateReserve(state),
+    readingAvailable: Math.max(0, available - stateReserve(state).amount),
     lastSyncedAt: state.lastSyncedAt || null,
     keyCount: balances.length,
     syncComplete: state.syncComplete === true,
@@ -174,9 +217,9 @@ function planReservation(state, keys, cost, label, excludedIndexes = new Set()) 
   const available = Math.max(0, summarize({ ...state, pendingRequests }).totalRemaining - pendingCost);
   const closing = /closing/i.test(label);
   if (realBalancesAvailable) {
-    const requiredFloor = closing ? 0 : CLOSING_RESERVE + READING_MARGIN;
+    const requiredFloor = closing ? 0 : closingReserve(state.dynamicReserve).amount;
     if (available - cost < requiredFloor || !candidates.length) {
-      throw new Error(`Saldo real insuficiente: total=${available}, reserva_fechamentos=${CLOSING_RESERVE}, disponível_leituras=${Math.max(0, available - requiredFloor)}, custo=${cost} (${label}).`);
+      throw new Error(`Saldo real insuficiente: total=${available}, reserva_fechamentos=${requiredFloor}, disponível_leituras=${Math.max(0, available - requiredFloor)}, custo=${cost} (${label}).`);
     }
   } else {
     const spent = monthlyUsed(state) + pendingCost;
@@ -216,6 +259,7 @@ async function refreshBalances(keys, { httpGet = axios.get, db = database(), now
   const ref = monthRef(db, monthId(new Date(now)));
   const observedAt = new Date(now).toISOString();
   const fingerprints = keys.map(keyFingerprint);
+  const dynamicReserve = await readReserveEvidence(db, { get: query => query.get() });
   await db.runTransaction(async tx => {
     const snap = await tx.get(ref);
     const prior = snap.data() || {};
@@ -239,7 +283,9 @@ async function refreshBalances(keys, { httpGet = axios.get, db = database(), now
       schemaVersion: SCHEMA_VERSION,
       ...(prior.vpn ? { vpn: prior.vpn } : {}),
       month: monthId(new Date(now)),
-      closingReserve: CLOSING_RESERVE,
+      closingReserve: dynamicReserve.amount,
+      dynamicReserve,
+      maxClosingRequestCost: Number(prior.maxClosingRequestCost || 0),
       keyFingerprints: fingerprints,
       keyBalances,
       pendingRequests,
@@ -260,22 +306,36 @@ async function refreshBalances(keys, { httpGet = axios.get, db = database(), now
   return summarize((await ref.get()).data() || {});
 }
 
-async function reserve(url, params, label, keys, excludedIndexes = new Set()) {
+async function reserve(url, params, label, keys, excludedIndexes = new Set(), options = {}) {
   const cost = estimateCost(url, params);
   if (!cost) return null;
-  const db = database();
+  const db = options.db || database();
   const ref = monthRef(db);
   const reservationId = crypto.randomUUID();
   let selected;
+  let rejected;
+  let evidence;
 
   await db.runTransaction(async tx => {
+    rejected = null;
     const snap = await tx.get(ref);
     const state = snap.data() || {};
+    evidence = await readReserveEvidence(db, tx, state);
     const pendingRequests = removeExpiredPending(state.pendingRequests, Date.now());
-    selected = planReservation({ ...state, pendingRequests }, keys, cost, label, excludedIndexes);
+    try { selected = planReservation({ ...state, dynamicReserve: evidence, pendingRequests }, keys, cost, label, excludedIndexes); }
+    catch (error) {
+      rejected = error;
+      tx.set(ref, { dynamicReserve: evidence, closingReserve: evidence.amount,
+        updatedAt: new Date().toISOString() }, { merge: true });
+      return;
+    }
     pendingRequests[reservationId] = { keyFingerprint: selected.fingerprint, cost, label, createdAt: new Date().toISOString() };
-    tx.set(ref, { pendingRequests, updatedAt: new Date().toISOString() }, { merge: true });
+    tx.set(ref, { pendingRequests, dynamicReserve: evidence, closingReserve: evidence.amount,
+      updatedAt: new Date().toISOString() }, { merge: true });
   });
+
+  console.log(`[reserva-fechamentos] reserva=${evidence.amount}; modo=${evidence.mode}; abertas=${evidence.openCount ?? 'indisponível'}; custo_max=${evidence.maxClosingCost ?? 'indisponível'}; motivo=${evidence.reason || 'calculada'}; saldo_apos=${selected?.availableAfter ?? 'indisponível'}`);
+  if (rejected) throw rejected;
 
   return { ref, cost, id: reservationId, keyIndex: selected.index,
     keyFingerprint: selected.fingerprint, label };
@@ -310,9 +370,11 @@ async function reconcile(reservation, headers) {
     entry.otherRead += /closing/i.test(reservation.label) || reservation.label === 'placard-scan' ? 0 : actualCost;
     entry.requests += 1;
     dailyUsage[day] = entry;
-    const doc = { ...state, keyBalances, pendingRequests, dailyUsage, updatedAt: observedAt };
+    const maxClosingRequestCost = /closing/i.test(reservation.label)
+      ? Math.max(Number(state.maxClosingRequestCost || 0), actualCost) : Number(state.maxClosingRequestCost || 0);
+    const doc = { ...state, keyBalances, pendingRequests, dailyUsage, maxClosingRequestCost, updatedAt: observedAt };
     result = summarize(doc);
-    tx.set(reservation.ref, { keyBalances, pendingRequests, dailyUsage,
+    tx.set(reservation.ref, { keyBalances, pendingRequests, dailyUsage, maxClosingRequestCost,
       totalRemaining: result.totalRemaining, available: result.available,
       readingAvailable: result.readingAvailable, lastResponseAt: observedAt,
       lastResponseKeyIndex: reservation.keyIndex, lastResponseRemaining: observation.remaining,
@@ -366,4 +428,5 @@ module.exports = {
   recordUnreservedResponse, summarize, planReservation, keyFingerprint, parseHeaders,
   database, CLOSING_RESERVE, READING_MARGIN, SCHEMA_VERSION,
   MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, monthlyUsed, trackUsage, brasilDay, daysRemaining, dailyReadBudget,
+  closingReserve, reserveFromRecords, readReserveEvidence,
 };

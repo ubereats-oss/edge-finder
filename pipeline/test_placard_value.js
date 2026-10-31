@@ -11,6 +11,94 @@ const { readSelections, adaptTotalsAndHandicaps, tunnelCycleAffordable, monthKey
 const { parseMarkets, matchLink, eventTimeMatches } = require('../scripts/local_bookmakers/retabet_reader.cjs');
 const { isBetanoHeartbeatStale, isBetanoScheduledHeartbeatStale } = require('./check_closing_odds_staleness');
 const now = Date.parse('2026-10-20T12:00:00Z');
+
+const reserveReal = require('./fixtures/closing_reserve_real_20261031.json');
+const budgetModule = require('./odds_api_monthly_budget');
+function realBudgetState(balance = null) {
+  const keys = reserveReal.balances.map((_, index) => `test-key-${index}`);
+  const balances = balance === null ? reserveReal.balances : [{ remaining: balance, used: 0 }];
+  const selected = balance === null ? keys : keys.slice(0, 1);
+  return { keys: selected, state: { schemaVersion: SCHEMA_VERSION, syncComplete: true,
+    keyFingerprints: selected.map(keyFingerprint), pendingRequests: {},
+    keyBalances: Object.fromEntries(selected.map((key, index) => [keyFingerprint(key), balances[index]])),
+    dynamicReserve: budgetModule.reserveFromRecords(reserveReal.opportunities,
+      reserveReal.closingCosts.map(row => row.cost), reserveReal.observedAt) } };
+}
+
+test('reserva com dados reais de 31/10: saldo 997, zero abertas, custo máximo 1, reserva 2', () => {
+  const { keys, state } = realBudgetState();
+  assert.equal(summarize(state).totalRemaining, 997);
+  assert.equal(state.dynamicReserve.openCount, 0);
+  assert.equal(state.dynamicReserve.maxClosingCost, 1);
+  assert.equal(summarize(state).closingReserve, 2);
+  assert.equal(summarize(state).readingAvailable, 995);
+  assert.equal(planReservation(state, keys, 3, 'placard-scan').availableAfter, 994);
+  assert.equal(planReservation(state, keys, 3, 'placard-revalidate').availableAfter, 994);
+  assert.deepEqual(require('../functions/odds_api_monthly_budget').summarize(state), summarize(state));
+});
+
+test('saldo igual ou abaixo da reserva bloqueia leitura e permite fechamento até zero', () => {
+  for (const balance of [2, 1]) {
+    const { keys, state } = realBudgetState(balance);
+    for (const label of ['placard-scan', 'placard-revalidate'])
+      assert.throws(() => planReservation(state, keys, 1, label), /Saldo real insuficiente/);
+    assert.equal(planReservation(state, keys, 1, 'placard-closing').availableAfter, balance - 1);
+  }
+  const { keys, state } = realBudgetState(0);
+  assert.throws(() => planReservation(state, keys, 1, 'placard-closing'), /Saldo real insuficiente/);
+});
+
+test('chamadas concorrentes preservam a reserva ao descontar requisições pendentes', () => {
+  const { keys, state } = realBudgetState(997);
+  state.pendingRequests.previous = { keyFingerprint: keyFingerprint(keys[0]), cost: 995,
+    label: 'placard-scan', createdAt: new Date().toISOString() };
+  assert.throws(() => planReservation(state, keys, 1, 'placard-revalidate'), /Saldo real insuficiente/);
+  assert.equal(planReservation(state, keys, 1, 'placard-closing').availableAfter, 1);
+});
+
+test('evidência indisponível mantém 1000 com motivo; saldo real indisponível mantém limite antigo', () => {
+  for (const evidence of [budgetModule.reserveFromRecords(null, [1]),
+    budgetModule.reserveFromRecords(reserveReal.opportunities, [])]) {
+    assert.equal(evidence.amount, 1000);
+    assert.ok(evidence.reason);
+    const { keys, state } = realBudgetState(997);
+    state.dynamicReserve = evidence;
+    assert.throws(() => planReservation(state, keys, 1, 'placard-scan'), /Saldo real insuficiente/);
+    assert.equal(planReservation(state, keys, 1, 'placard-closing').availableAfter, 996);
+  }
+  const { keys, state } = realBudgetState(997);
+  state.syncComplete = false;
+  state.keyBalances[keyFingerprint(keys[0])].used = MONTHLY_READ_CAP;
+  assert.throws(() => planReservation(state, keys, 1, 'placard-scan'), /Teto mensal de leituras/);
+  assert.equal(summarize(state).closingReserve, 1000);
+});
+
+test('reserva transacional consulta evidência real e persiste motivo mesmo quando bloqueada', async () => {
+  for (const unavailable of [false, true]) {
+    const { keys, state } = realBudgetState(997);
+    const writes = [];
+    const query = (name = '') => ({ name, doc: id => query(`${name}/${id}`),
+      collection: id => query(`${name}/${id}`), select() { return this; },
+      where() { return this; }, orderBy() { return this; }, limit() { return this; } });
+    const db = { collection: query, runTransaction: async fn => fn({
+      get: async ref => {
+        if (ref.name.startsWith('_odds_api_budget')) return { data: () => state };
+        if (unavailable) throw Object.assign(new Error('consulta indisponível'), { code: 'UNAVAILABLE' });
+        return { docs: (ref.name === '_placard_opportunities' ? reserveReal.opportunities
+          : [{ budget: { lastClosingCredits: Math.max(...reserveReal.closingCosts.map(row => row.cost)) } }])
+          .map(row => ({ data: () => row })) };
+      }, set: (_ref, value) => writes.push(value),
+    }) };
+    const action = () => budgetModule.reserve('https://api.the-odds-api.com/v4/sports/soccer/odds',
+      { bookmakers: 'pinnacle', markets: 'h2h' }, 'placard-revalidate', keys, new Set(), { db });
+    if (unavailable) await assert.rejects(action, /Saldo real insuficiente/);
+    else assert.equal((await action()).cost, 1);
+    const evidence = writes.at(-1).dynamicReserve;
+    assert.equal(evidence.amount, unavailable ? 1000 : 2);
+    if (unavailable) assert.match(evidence.reason, /indisponível/);
+  }
+});
+
 function fixture() {
   const game = { teams: ['FC Porto', 'SL Benfica'], apiSport: 'soccer_portugal_primeira_liga',
     competition: 'Portugal - Primeira Liga', commenceTime: '2026-10-20T14:00:00Z',
@@ -314,7 +402,7 @@ test('saldo real dispensa teto fixo; falha de leitura recorre ao limite antigo',
   assert.throws(() => planReservation(floorState, ['key-a'], 1, 'placard-scan'), /Saldo real insuficiente/);
   assert.equal(planReservation(floorState, ['key-a'], 1, 'placard-closing').balanceMode, 'real');
 });
-test('créditos sem cota diária e com reserva total de 1000 em outubro e novembro', () => {
+test('fallback sem evidência mantém reserva total de 1000 em outubro e novembro, sem cota diária', () => {
   const oct = new Date('2026-10-23T22:00:00Z');
   assert.equal(daysRemaining('2026-10-23'), 9);
   const state = { dailyUsage: { '2026-10-23': { total: 90, closing: 10 } }, pendingRequests: {} };
@@ -325,7 +413,7 @@ test('créditos sem cota diária e com reserva total de 1000 em outubro e novemb
   assert.equal(dailyReadBudget({ dailyUsage: {} }, new Date('2026-11-01T12:00:00Z'), 3900).allowance, 2900);
   assert.equal(dailyReadBudget({ dailyUsage: {} }, oct, 700).remaining, 0);
 });
-test('gasto diário não bloqueia leitura; saldo 1000 só permite fechamentos', () => {
+test('gasto diário não bloqueia leitura; no fallback saldo 1000 só permite fechamentos', () => {
   const fingerprint = keyFingerprint('key-daily');
   const state = { schemaVersion: SCHEMA_VERSION, syncComplete: true,
     keyFingerprints: [fingerprint], keyBalances: { [fingerprint]: { remaining: 1200, used: 1000 } },
