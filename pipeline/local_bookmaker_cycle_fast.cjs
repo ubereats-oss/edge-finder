@@ -172,6 +172,7 @@ async function main() {
   const start = performance.now();
   const outputFile = path.join(LOG_DIR, `cycle-${startedAt.replace(/[:.]/g, '-')}.json`);
   const cycle = { startedAt, taskName: TASK_NAME, computerName: process.env.COMPUTERNAME,
+    executionOrigin: process.env.EDGE_CYCLE_ORIGIN || 'manual', triggeredAt: process.env.EDGE_CYCLE_TRIGGERED_AT || null,
     architecture: 'independent_own_listings_v2', stages: {}, reads: {}, feedAttempts: {},
     suspendedHouses: Object.keys(HOUSE_NAMES).filter(key => !HOUSE_ENABLED[key]),
     leagueAudit: {}, pinnacleWindow: {}, ...startMetadata(ROOT) };
@@ -492,10 +493,12 @@ async function main() {
     }
     if (cycle.tunnelBear?.failure || cycle.vpnFailures?.length) {
       delete cycle.vpnAutomationError;
-      cycle.vpnProofChecks = (cycle.vpnProofChecks || []).map(({ at, adapter, connected }) => ({ at, adapter, connected }));
+      const safeProof = ({ at, adapter, connected, elapsedMs, windowMs, attempts }) => ({ at, adapter, connected,
+        elapsedMs, windowMs, attempts: attempts?.map(({ service, elapsedMs, connected }) => ({ service, elapsedMs, connected })) });
+      cycle.vpnProofChecks = (cycle.vpnProofChecks || []).map(safeProof);
       if (cycle.vpn) {
         delete cycle.vpn.publicIp;
-        cycle.vpn.checks = (cycle.vpn.checks || []).map(({ at, adapter, connected }) => ({ at, adapter, connected }));
+        cycle.vpn.checks = (cycle.vpn.checks || []).map(safeProof);
       }
     }
     try { pruneLocalStateLines?.(LOG_DIR); }

@@ -38,10 +38,13 @@ function startMetadata(root) {
     if (!result.runtimeSha) result.versionError = 'SHA indisponível no Git e no runtime.';
   } catch (error) { result.versionError = error.message; }
   try {
-    const command = "$p=Join-Path ${env:ProgramFiles(x86)} 'TunnelBear\\TunnelBear.exe'; (Get-Item -LiteralPath $p).VersionInfo.FileVersion";
+    const library = path.join(root, 'scripts/local_bookmakers/tunnelbear_installation.ps1').replace(/'/g, "''");
+    const command = `. '${library}'; Get-TunnelBearInstallation | ConvertTo-Json -Compress`;
     const version = spawnSync('powershell.exe', ['-NoProfile', '-Command', command],
       { encoding: 'utf8', timeout: 6000, windowsHide: true });
-    result.tunnelBearVersion = version.stdout?.trim() || null;
+    const installed = version.status === 0 ? JSON.parse(version.stdout.trim()) : null;
+    result.tunnelBearVersion = installed?.Version || null;
+    result.tunnelBearExecutable = installed?.Path || null;
     if (!result.tunnelBearVersion) result.tunnelBearVersionError = 'Versão do executável TunnelBear indisponível.';
   } catch (error) { result.tunnelBearVersionError = error.message; }
   return result;
@@ -51,7 +54,8 @@ function collectDiagnostic(cycle, logDir, roots) {
   const diagnostic = { version: cycle.tunnelBearVersion, failure: null, nativeFailures: [], stateLines: [],
     requestedUpdateVersion: null, updateObserved: (cycle.tunnelBearEvents || [])
       .some(event => ['update_ignored', 'update_closed'].includes(event.status)), sources: [], errors: [] };
-  const directories = roots || [path.join(process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)', 'TunnelBear'),
+  const directories = roots || [path.dirname(cycle.tunnelBearExecutable || 'C:\\Program Files\\TunnelBear\\TunnelBear.exe'),
+    path.join(process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)', 'TunnelBear'),
     path.join(process.env.APPDATA || '', 'TunnelBear', 'logs')];
   const updates = [];
   for (const directory of directories) {
@@ -77,9 +81,10 @@ function collectDiagnostic(cycle, logDir, roots) {
   diagnostic.nativeFailures.sort((a, b) => a.at.localeCompare(b.at));
   diagnostic.stateLines = [...new Set(diagnostic.stateLines)].sort();
   if (cycle.stages?.vpnConnect?.error) {
-    const code = categoryFor(diagnostic.stateLines);
     const originalError = originalReason(cycle.vpnFailures?.find(row => row.stage === 'vpnConnect')?.originalError
       || cycle.stages.vpnConnect.originalError || cycle.stages.vpnConnect.error);
+    const code = /executável instalado do TunnelBear não encontrado/i.test(originalError || '')
+      ? 'ExecutableNotFound' : categoryFor(diagnostic.stateLines);
     diagnostic.failure = { code, category: CATEGORIES[code], message: CATEGORIES[code],
       originalError, originalErrorUnavailable: !originalError };
     diagnostic.stateLines = diagnostic.stateLines.slice(-20);

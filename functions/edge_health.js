@@ -3,6 +3,7 @@ const { report: clvReport } = require('./placard_value');
 const { isAnnulled } = require('./market_integrity');
 const { pruneCloudStateLines } = require('./tunnelbear_retention');
 const { classifyCycle, groupedIssues, sanitizeReason } = require('./local_cycle_health');
+const { cycleOrigin } = require('./local_cycle_origin');
 
 const DAY_MS = 24 * 3600000;
 const reportDay = (now = new Date()) => brasilDay(now);
@@ -44,7 +45,10 @@ function octoberReview(cycles, opportunities, budget) {
 }
 function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}, priorErrors = [], octoberBudget = {} }, now = Date.now()) {
   const start = now - DAY_MS;
-  const recent = cycles.filter(row => Date.parse(row.startedAt) >= start && Date.parse(row.startedAt) < now);
+  const allRecent = cycles.filter(row => Date.parse(row.startedAt) >= start && Date.parse(row.startedAt) < now);
+  const recent = allRecent.filter(row => cycleOrigin(row) === 'scheduler');
+  const manual = allRecent.filter(row => ['manual', 'test'].includes(cycleOrigin(row)));
+  const unknown = allRecent.filter(row => cycleOrigin(row) === 'unknown');
   const complete = recent.filter(row => ['read_with_games', 'disconnect_warning'].includes(classifyCycle(row).kind));
   const skipped = recent.filter(row => classifyCycle(row).kind === 'skipped');
   const empty = recent.filter(row => classifyCycle(row).kind === 'no_eligible');
@@ -66,13 +70,26 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
       : /GitHub/i.test(error) ? 'GitHub' : /Retenção/i.test(error) ? 'retenção de estados' : 'erro externo', originalError: error })),
     ...workflowFailures.map(row => ({ category: 'Placard x Pinnacle', originalError: row.conclusion })),
   ]);
-  const describe = row => `${row.count}× ${row.category} — ${row.example || 'motivo original não preservado'}`;
+  const describe = row => row.examples.length <= 1
+    ? `${row.count}× ${row.category} — ${row.example || 'motivo original não preservado'}`
+    : `${row.count}× ${row.category}\n${row.examples.map(item => `  ${item.count}× ${item.reason}`).join('\n')}`;
   const errors = issues.filter(row => !row.warning).map(describe);
   const warnings = issues.filter(row => row.warning).map(describe);
   const lines = [`Saúde Edge Finder — ${brasilDay(new Date(now))}, últimas 24 horas`];
   if (!recent.length) lines.push('⚠️ computador desligado ou coleta parada — nenhum registro de ciclo local chegou.');
   lines.push(`Ciclos locais: ${complete.length} rodados; ${skipped.length} pulados; ${failed.length} com falha; ${missing.length} ausentes.`);
   lines.push(`Sem jogo elegível na Betano: ${empty.length}.`);
+  lines.push(`Ciclos manuais: ${manual.filter(row => cycleOrigin(row) === 'manual').length}; testes: ${manual.filter(row => cycleOrigin(row) === 'test').length}; origem não comprovada: ${unknown.length}.`);
+  if (manual.length || unknown.length) {
+    lines.push('Fora da contagem do Agendador:');
+    for (const cycle of [...manual, ...unknown]) {
+      const label = { manual: 'manual', test: 'manual/teste', unknown: 'origem não comprovada' }[cycleOrigin(cycle)];
+      const at = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo',
+        day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(cycle.startedAt));
+      const cause = classifyCycle(cycle);
+      lines.push(`${label} ${at}: ${cause.category}${cause.originalError ? ` — ${cause.originalError}` : ''}`);
+    }
+  }
   if (skipped.length) {
     const reasons = new Map();
     for (const row of skipped) {
@@ -86,7 +103,7 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   lines.push(`Indicações enviadas: ${sent}.`);
   lines.push(`Créditos no mês: ${number(usedCredits)} usados; ${number(remainingCredits)} restantes.`);
   const month = brasilDay(new Date(now)).slice(0, 7);
-  const monthLatest = recent.filter(row => (row.vpnBudgetMonth || brasilDay(new Date(row.startedAt)).slice(0, 7)) === month)
+  const monthLatest = allRecent.filter(row => (row.vpnBudgetMonth || brasilDay(new Date(row.startedAt)).slice(0, 7)) === month)
     .sort((a, b) => Date.parse(b.startedAt) - Date.parse(a.startedAt))[0];
   lines.push(`VPN no mês: ${number(monthLatest?.vpnMonthlySpentMB ?? budget.vpn?.spentMB)} MB usados.`);
   if (brasilDay(new Date(now)) === '2026-11-01') lines.push(octoberReview(cycles, opportunities, octoberBudget));
@@ -96,7 +113,10 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   return { text, messages: splitHealthMessages(text), issues, warnings, counts: { run: complete.length,
     noEligible: empty.length, disconnectWarnings: recent.filter(row => classifyCycle(row).kind === 'disconnect_warning').length,
     skipped: skipped.length, failed: failed.length, missing: missing.length,
-    workflowSuccess: success, workflowFailed: workflowFailures.length, sent }, errors };
+    manual: manual.filter(row => cycleOrigin(row) === 'manual').length,
+    tests: manual.filter(row => cycleOrigin(row) === 'test').length, unknown: unknown.length,
+    workflowSuccess: success, workflowFailed: workflowFailures.length, sent }, errors,
+    missingSlots: missing.map(at => new Date(at).toISOString()) };
 }
 function splitHealthMessages(text, limit = 3900) {
   const messages = []; let current = '';
