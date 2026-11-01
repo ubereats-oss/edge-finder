@@ -97,7 +97,6 @@ foreach ($kind in @('login', 'update', 'warning')) {
   $script:passed++
 }
 Set-Item Function:Start-TunnelBearWindow $script:actualWindowStarter
-function Test-Path { param($LiteralPath) return $true }
 function Start-Process {
   param($FilePath, $WorkingDirectory, $WindowStyle)
   $script:startArguments = @{ FilePath = $FilePath; WorkingDirectory = $WorkingDirectory; WindowStyle = $WindowStyle }

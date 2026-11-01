@@ -5,6 +5,7 @@ const CATEGORIES = Object.freeze({
   Interrupted: 'conexão interrompida',
   Unknown: 'estado não reconhecido',
   NoRecords: 'TunnelBear sem registro no intervalo',
+  ExecutableNotFound: 'executável do TunnelBear não encontrado',
 });
 const knownStates = new Set(['Error', 'Disconnected', 'Connected', 'Connecting', 'Disconnecting', 'Success']);
 const knownResults = new Set(['DataLimitReached', 'VpnConnectionFailed', 'Success', 'None']);

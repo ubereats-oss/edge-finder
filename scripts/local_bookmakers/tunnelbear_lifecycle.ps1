@@ -1,4 +1,9 @@
 ﻿function Find-TunnelBearWindow {
+  $installation = Get-TunnelBearInstallation
+  $folder = Split-Path -Parent $installation.Path
+  $old = @(Get-Process -Name 'TunnelBear.UI' -ErrorAction SilentlyContinue |
+    Where-Object { $_.Path -and (Split-Path -Parent $_.Path) -ne $folder })
+  if ($old.Count) { throw 'Interface de uma instalação antiga do TunnelBear aberta; versão antiga não será acionada.' }
   $ids = @(Get-Process -Name 'TunnelBear', 'TunnelBear.UI' -ErrorAction SilentlyContinue | ForEach-Object { $_.Id })
   if ($env:EDGE_COLLECTION_DESKTOP) {
     if (-not ('EdgeBackgroundDesktop' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'background_desktop.cs') }
@@ -14,22 +19,17 @@
 }
 
 function Start-TunnelBearWindow {
+  $installation = Get-TunnelBearInstallation
   if ($env:EDGE_COLLECTION_DESKTOP) {
     if (-not ('EdgeBackgroundDesktop' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'background_desktop.cs') }
     $existing = @(Get-Process 'TunnelBear.UI' -ErrorAction SilentlyContinue)
     if ($existing.Count -and @([EdgeBackgroundDesktop]::Windows($env:EDGE_COLLECTION_DESKTOP, [int[]]@($existing.Id), $false)).Count -eq 0) {
       throw 'TunnelBear está aberto fora do desktop da coleta; interface do Alex preservada.'
     }
-    $ui = @((Join-Path ([Environment]::GetFolderPath([System.Environment+SpecialFolder]::ProgramFiles)) 'TunnelBear\TunnelBear.exe'),
-      (Join-Path ([Environment]::GetFolderPath([System.Environment+SpecialFolder]::ProgramFilesX86)) 'TunnelBear\TunnelBear.exe')) |
-      Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
-    if (-not $ui) { throw 'TunnelBear não abriu: executável da interface não encontrado.' }
-    $null = [EdgeBackgroundDesktop]::StartApplication($ui, $env:EDGE_COLLECTION_DESKTOP)
+    $null = [EdgeBackgroundDesktop]::StartApplication($installation.Path, $env:EDGE_COLLECTION_DESKTOP)
     return
   }
-  $exe = @("${env:ProgramFiles(x86)}\TunnelBear\TunnelBear.exe", "$env:ProgramFiles\TunnelBear\TunnelBear.exe") |
-    Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
-  if (-not $exe) { throw 'TunnelBear não abriu: executável não encontrado.' }
+  $exe = $installation.Path
   # Opening the visible app is explicitly required by the collector's preparation.
   Start-Process -FilePath $exe -WorkingDirectory (Split-Path -Parent $exe) -WindowStyle Normal | Out-Null
 }

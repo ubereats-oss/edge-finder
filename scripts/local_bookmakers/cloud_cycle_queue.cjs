@@ -2,9 +2,11 @@ const fs = require('./safe_files.cjs');
 const { operatorIssue } = require('../../functions/local_operator_alerts.js');
 const path = require('node:path');
 const { classifyCycle, sanitizeReason } = require('../../functions/local_cycle_health.js');
+const { cycleOrigin } = require('../../functions/local_cycle_origin.js');
 
 function compactCycle(cycle) {
   return { startedAt: cycle.startedAt, finishedAt: cycle.finishedAt,
+    executionOrigin: cycleOrigin(cycle), triggeredAt: cycle.triggeredAt || null,
     runtimeSha: cycle.runtimeSha || null, tunnelBearVersion: cycle.tunnelBearVersion || null,
     tunnelBear: cycle.tunnelBear || null,
     healthCause: classifyCycle(cycle),

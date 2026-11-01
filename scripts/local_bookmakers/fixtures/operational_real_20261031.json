@@ -1,0 +1,210 @@
+{
+  "source": "Ciclos reais locais, auditoria 80e7442 e metadado real 25/10",
+  "cycles": [
+    {
+      "startedAt": "2026-10-29T16:39:08.741Z",
+      "finishedAt": "2026-10-29T16:40:45.893Z",
+      "executionOrigin": "test",
+      "triggeredAt": null,
+      "runtimeSha": "9bbd4cbd66c0bab81dc6fe84a3704ce432f243ec",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [],
+        "errors": [
+          "Diretório de registros TunnelBear indisponível"
+        ],
+        "lastSuccessfulConnectionAt": "2026-10-29T16:39:43.437Z"
+      },
+      "healthCause": {
+        "kind": "other_failed",
+        "category": "outra falha",
+        "originalError": "Value for argument \"data\" is not a valid Firestore document. Cannot use \"undefined\" as a Firestore value (found in field \"computerName\"). If you want to ignore undefined values, enable `[dado removido]`.",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [],
+      "status": "failed",
+      "reason": "Value for argument \"data\" is not a valid Firestore document. Cannot use \"undefined\" as a Firestore value (found in field \"computerName\"). If you want to ignore undefined values, enable `[dado removido]`.",
+      "spentMB": 5.18434,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2368.583757000001,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 2
+      },
+      "errors": [
+        "Value for argument \"data\" is not a valid Firestore document. Cannot use \"undefined\" as a Firestore value (found in field \"computerName\"). If you want to ignore undefined values, enable `[dado removido]`."
+      ]
+    },
+    {
+      "startedAt": "2026-10-29T17:32:47.050Z",
+      "finishedAt": "2026-10-29T17:34:12.092Z",
+      "executionOrigin": "manual",
+      "triggeredAt": null,
+      "runtimeSha": "2d5c1c808a5d6c39b805a185bacd5b57a1b2102d",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": {
+          "code": "Interrupted",
+          "category": "conexão interrompida",
+          "message": "conexão interrompida",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: O tempo limite da operação foi atingido.; ipapi.co: O tempo limite da operação foi atingido..",
+          "originalErrorUnavailable": false
+        },
+        "nativeFailures": [],
+        "stateLines": [
+          "2026-10-29T17:33:01.566Z IsOn:True",
+          "2026-10-29T17:33:02.834Z IsOn:True",
+          "2026-10-29T17:33:02.834Z status:Connecting",
+          "2026-10-29T17:33:09.203Z status:Connected",
+          "2026-10-29T17:33:09.260Z IsOn:True",
+          "2026-10-29T17:34:04.852Z IsOn:False",
+          "2026-10-29T17:34:05.199Z IsOn:False",
+          "2026-10-29T17:34:05.199Z status:Disconnected",
+          "2026-10-29T17:34:05.201Z status:Disconnected",
+          "2026-10-29T17:34:05.203Z IsOn:False",
+          "2026-10-29T17:34:05.205Z IsOn:False",
+          "2026-10-29T17:34:05.205Z status:Disconnected",
+          "2026-10-29T17:34:05.297Z IsOn:False",
+          "2026-10-29T17:34:05.297Z status:Disconnected",
+          "2026-10-29T17:34:05.412Z IsOn:False",
+          "2026-10-29T17:34:05.412Z status:Disconnected"
+        ],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-29T17:27:02.576Z"
+      },
+      "healthCause": {
+        "kind": "vpn_failed",
+        "category": "conexão interrompida",
+        "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: O tempo limite da operação foi atingido.; ipapi.co: O tempo limite da operação foi atingido..",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [
+        {
+          "stage": "vpnConnect",
+          "category": "conexão interrompida",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: O tempo limite da operação foi atingido.; ipapi.co: O tempo limite da operação foi atingido..",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "status": "ciclo sem conexão",
+      "reason": "VPN não confirmado — conexão interrompida",
+      "spentMB": 0,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2379.8886470000007,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {},
+      "errors": [
+        "VPN não confirmado — conexão interrompida"
+      ]
+    },
+    {
+      "startedAt": "2026-10-29T18:50:09.849Z",
+      "finishedAt": "2026-10-29T18:51:26.623Z",
+      "executionOrigin": "scheduler",
+      "triggeredAt": null,
+      "runtimeSha": "1453c6d36f476d77a44233ac8c689d2ced04a166",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": {
+          "code": "Interrupted",
+          "category": "conexão interrompida",
+          "message": "conexão interrompida",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+          "originalErrorUnavailable": false
+        },
+        "nativeFailures": [],
+        "stateLines": [
+          "2026-10-29T18:50:23.866Z IsOn:True",
+          "2026-10-29T18:50:24.926Z IsOn:True",
+          "2026-10-29T18:50:24.926Z status:Connecting",
+          "2026-10-29T18:50:49.316Z IsOn:True",
+          "2026-10-29T18:50:49.316Z status:Error",
+          "2026-10-29T18:50:49.318Z status:Disconnected",
+          "2026-10-29T18:50:49.321Z IsOn:True",
+          "2026-10-29T18:50:49.322Z IsOn:False"
+        ],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-29T17:50:37.865Z"
+      },
+      "healthCause": {
+        "kind": "vpn_failed",
+        "category": "conexão interrompida",
+        "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [
+        {
+          "stage": "vpnConnect",
+          "category": "conexão interrompida",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "status": "ciclo sem conexão",
+      "reason": "VPN não confirmado — conexão interrompida",
+      "spentMB": 0,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2394.786114000001,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {},
+      "errors": [
+        "VPN não confirmado — conexão interrompida"
+      ]
+    }
+  ],
+  "oldVersion": "4.17.4.0"
+}

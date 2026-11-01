@@ -85,9 +85,12 @@ function groupedIssues(cycles, external = []) {
   const groups = new Map();
   const add = (category, original, warning = false) => {
     const key = `${warning}|${category}`;
-    if (!groups.has(key)) groups.set(key, { category, count: 0, example: sanitizeReason(original), warning });
+    if (!groups.has(key)) groups.set(key, { category, count: 0, example: sanitizeReason(original), examples: [], warning });
     const row = groups.get(key); row.count++;
     row.example ||= sanitizeReason(original);
+    const reason = sanitizeReason(original) || 'motivo original não preservado';
+    const found = row.examples.find(item => item.reason === reason);
+    if (found) found.count++; else row.examples.push({ reason, count: 1 });
   };
   for (const cycle of cycles) {
     const cause = classifyCycle(cycle);

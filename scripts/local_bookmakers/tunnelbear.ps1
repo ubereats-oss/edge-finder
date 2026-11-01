@@ -25,6 +25,7 @@ Add-Type -AssemblyName UIAutomationTypes
 if (-not ('TunnelBearNativeWindow' -as [type])) {
   Add-Type 'using System; using System.Runtime.InteropServices; public class TunnelBearNativeWindow { [DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow); [DllImport("user32.dll")] public static extern bool IsIconic(IntPtr hWnd); }'
 }
+. (Join-Path $PSScriptRoot 'tunnelbear_installation.ps1')
 . (Join-Path $PSScriptRoot 'tunnelbear_lifecycle.ps1')
 . (Join-Path $PSScriptRoot 'tunnelbear_recovery.ps1')
 . (Join-Path $PSScriptRoot 'safe_log.ps1')
@@ -85,30 +86,7 @@ function Get-VpnAdapter {
     Select-Object -First 1
 }
 
-function Get-VpnProof {
-  $adapter = Get-VpnAdapter
-  if (-not $adapter) { return @{ Connected = $false; Adapter = 'NotFound'; Country = $null;
-      Error = 'Adaptador TunnelBear Adapter V9 não encontrado.' } }
-  if ($adapter.OperationalStatus -ne [System.Net.NetworkInformation.OperationalStatus]::Up) {
-    return @{ Connected = $false; Adapter = $adapter.OperationalStatus.ToString(); Country = $null }
-  }
-  $errors = @()
-  try {
-    $ip = Invoke-RestMethod -Uri 'https://ipwho.is/' -TimeoutSec 3
-    if ($ip.success -eq $true -and $ip.country_code -eq 'PT') {
-      return @{ Connected = $true; Adapter = 'Up'; Country = 'PT'; PublicIp = $ip.ip; Service = 'ipwho.is' }
-    }
-    $errors += "ipwho.is: $($ip.country_code)"
-  } catch { $errors += "ipwho.is: $($_.Exception.Message)" }
-  try {
-    $ip = Invoke-RestMethod -Uri 'https://ipapi.co/json/' -TimeoutSec 3
-    return @{ Connected = ($ip.country_code -eq 'PT'); Adapter = 'Up'; Country = $ip.country_code;
-      PublicIp = $ip.ip; Service = 'ipapi.co'; Error = ($errors -join '; ') }
-  } catch {
-    $errors += "ipapi.co: $($_.Exception.Message)"
-    return @{ Connected = $false; Adapter = 'Up'; Country = $null; Error = ($errors -join '; ') }
-  }
-}
+. (Join-Path $PSScriptRoot 'vpn_proof.ps1')
 
 function Get-TunnelBearSwitch {
   $root = [System.Windows.Automation.AutomationElement]::RootElement
@@ -131,12 +109,14 @@ function Wait-VpnProof([bool]$Expected, [int]$TimeoutSeconds) {
     $proof = Get-VpnProof
     $check = [pscustomobject]@{ at = $at.ToString('o'); adapter = $proof.Adapter;
       country = $proof.Country; publicIp = $proof.PublicIp; service = $proof.Service;
-      connected = $proof.Connected; error = $proof.Error }
+      connected = $proof.Connected; error = $proof.Error; elapsedMs = $proof.ElapsedMs;
+      attempts = $proof.Attempts; windowMs = $proof.WindowMs }
     $checks += $check
-    if ($Expected) { Write-ConnectionAttempt 1 'check' ($check | ConvertTo-Json -Compress) }
+    if ($Expected) { Write-ConnectionAttempt 1 'check' ($check | ConvertTo-Json -Depth 6 -Compress) }
     if (($Expected -and $proof.Connected) -or (-not $Expected -and $proof.Adapter -eq 'Down')) {
       $proof.Checks = $checks; return $proof
     }
+    if ($Expected -and $proof.ProofWindowExhausted) { break }
     $remaining = 5 - ([DateTime]::UtcNow - $at).TotalSeconds
     if ($remaining -gt 0) { Start-Sleep -Milliseconds ([int]($remaining * 1000)) }
   } while ([DateTime]::UtcNow -lt $deadline)
@@ -208,8 +188,9 @@ try {
     $proof = $prepared.Initial
     $initialCheck = [pscustomobject]@{ at = [DateTime]::UtcNow.ToString('o'); adapter = $proof.Adapter;
       country = $proof.Country; publicIp = $proof.PublicIp; service = $proof.Service;
-      connected = $proof.Connected; error = $proof.Error }
-    Write-ConnectionAttempt 1 'check' ($initialCheck | ConvertTo-Json -Compress)
+      connected = $proof.Connected; error = $proof.Error; elapsedMs = $proof.ElapsedMs;
+      attempts = $proof.Attempts; windowMs = $proof.WindowMs }
+    Write-ConnectionAttempt 1 'check' ($initialCheck | ConvertTo-Json -Depth 6 -Compress)
     $checks = @($initialCheck)
     $connection = Connect-TunnelBearPrepared $prepared
     $proof = $connection.Proof

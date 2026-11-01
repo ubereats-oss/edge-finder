@@ -1,6 +1,8 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { composeHealth, scheduledSlots, loadHealth } = require('./edge_health');
+const { composeHealth: actualComposeHealth, scheduledSlots, loadHealth } = require('./edge_health');
+const composeHealth = (input = {}, now) => actualComposeHealth({ ...input,
+  cycles: input.cycles?.map(row => ({ executionOrigin: 'scheduler', ...row })) }, now);
 const { budgetAlerts, deliverOnce } = require('./budget_alerts');
 
 const now = Date.parse('2026-10-24T11:00:00Z');

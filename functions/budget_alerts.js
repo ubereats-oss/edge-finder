@@ -1,6 +1,7 @@
 const HOUR_MS = 3600000;
 const { actions } = require('./local_operator_alerts');
 const { tunnelBearAlerts } = require('./tunnelbear_alerts');
+const { closingReserve } = require('./odds_api_monthly_budget');
 
 function budgetAlerts(month, state = {}) {
   const alerts = tunnelBearAlerts(state.vpn?.tunnelBear);
@@ -9,7 +10,7 @@ function budgetAlerts(month, state = {}) {
   if (state.vpn?.providerExhausted && !state.vpn?.tunnelBear)
     alerts.push({ id: `vpn-provider-${month}`, text: `Edge Finder: TunnelBear informou que a franquia de dados acabou. ${actions.data}` });
   if (state.syncComplete && Number.isFinite(state.totalRemaining) && state.totalRemaining <= 1000)
-    alerts.push({ id: `credits-${month}`, text: `Edge Finder: créditos da The Odds API chegaram à reserva de 1.000 (800 para fechamentos + 200 de margem). Saldo: ${state.totalRemaining}. Somente fechamentos.` });
+    alerts.push({ id: `credits-${month}`, text: `Edge Finder: saldo The Odds API: ${state.totalRemaining}. Reserva variável atual para fechamentos: ${closingReserve(state.dynamicReserve).amount} créditos. Leituras preservam essa reserva; fechamentos podem consumi-la.${closingReserve(state.dynamicReserve).mode === 'fallback' ? ` Reserva de segurança: ${closingReserve(state.dynamicReserve).reason}` : ''}` });
   return alerts;
 }
 
