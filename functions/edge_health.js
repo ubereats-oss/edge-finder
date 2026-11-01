@@ -77,8 +77,8 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   const warnings = issues.filter(row => row.warning).map(describe);
   const lines = [`Saúde Edge Finder — ${brasilDay(new Date(now))}, últimas 24 horas`];
   if (!recent.length) lines.push('⚠️ computador desligado ou coleta parada — nenhum registro de ciclo local chegou.');
-  lines.push(`Ciclos locais: ${complete.length} rodados; ${skipped.length} pulados; ${failed.length} com falha; ${missing.length} ausentes.`);
-  lines.push(`Sem jogo elegível na Betano: ${empty.length}.`);
+  lines.push(`Ciclos locais: ${complete.length + empty.length} rodados; ${skipped.length} pulados; ${failed.length} com falha; ${missing.length} ausentes.`);
+  lines.push(`Sem jogo elegível na Betano: ${empty.length} (incluídos nos rodados).`);
   lines.push(`Ciclos manuais: ${manual.filter(row => cycleOrigin(row) === 'manual').length}; testes: ${manual.filter(row => cycleOrigin(row) === 'test').length}; origem não comprovada: ${unknown.length}.`);
   if (manual.length || unknown.length) {
     lines.push('Fora da contagem do Agendador:');
@@ -110,7 +110,7 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   if (warnings.length) lines.push('Avisos:', ...warnings);
   lines.push('Erros por categoria:', ...(errors.length ? errors : ['nenhum registrado']));
   const text = lines.join('\n');
-  return { text, messages: splitHealthMessages(text), issues, warnings, counts: { run: complete.length,
+  return { text, messages: splitHealthMessages(text), issues, warnings, counts: { run: complete.length + empty.length,
     noEligible: empty.length, disconnectWarnings: recent.filter(row => classifyCycle(row).kind === 'disconnect_warning').length,
     skipped: skipped.length, failed: failed.length, missing: missing.length,
     manual: manual.filter(row => cycleOrigin(row) === 'manual').length,

@@ -50,3 +50,44 @@ test('aviso com reserva real variável, envio simulado e deduplicação mensal p
   await deliverOnce(db, alert, async () => { sent++; }, async () => {});
   assert.equal(sent, 1);
 });
+
+const originDay = require('./fixtures/origin_real_20261101.json');
+test('11 ciclos reais desde 31/10 21:50 são Agendador mesmo com marca unknown antiga', () => {
+  const cycles = originDay.cycles.filter(row => row.startedAt >= '2026-11-01T00:50:00Z');
+  assert.equal(cycles.length, 11);
+  assert.ok(cycles.every(row => cycleOrigin(row) === 'scheduler'));
+  const report = composeHealth({ cycles }, Date.parse(originDay.observedAt));
+  for (let at = Date.parse('2026-11-01T00:50:00Z'); at <= Date.parse('2026-11-01T10:50:00Z'); at += 3600000)
+    assert.ok(!report.missingSlots.includes(new Date(at).toISOString()));
+  for (const cycle of cycles) {
+    const unmarked = { ...cycle }; delete unmarked.executionOrigin;
+    assert.equal(cycleOrigin(unmarked), 'scheduler');
+  }
+});
+
+test('31/10 21:23 real continua manual; origens históricas de teste continuam separadas', () => {
+  const cycle = originDay.cycles.find(row => row.startedAt === '2026-11-01T00:23:17.550Z');
+  assert.equal(cycleOrigin(cycle), 'manual');
+  assert.equal(cycleOrigin({ startedAt: real.cycles[0].startedAt }), 'test');
+});
+
+test('saúde real de 01/11 fecha 24 horários e inclui os originais das duas falhas', async () => {
+  const report = composeHealth({ cycles: originDay.cycles, ...(originDay.healthData || {}) }, Date.parse(originDay.observedAt));
+  assert.equal(report.counts.run, 19);
+  assert.equal(report.counts.noEligible, 3);
+  assert.equal(report.counts.skipped, 3);
+  assert.equal(report.counts.failed, 2);
+  assert.equal(report.counts.missing, 0);
+  assert.equal(report.counts.manual, 1);
+  assert.equal(report.counts.run + report.counts.skipped + report.counts.failed + report.counts.missing, 24);
+  for (const at of ['2026-11-01T04:50:06.777Z', '2026-11-01T10:50:05.606Z']) {
+    const row = originDay.cycles.find(cycle => cycle.startedAt === at);
+    assert.equal(cycleOrigin(row), 'scheduler');
+    assert.ok(report.errors.some(error => error.includes(row.vpnFailures[0].category)
+      && error.includes(row.vpnFailures[0].originalError || 'motivo original não preservado')));
+  }
+  const sent = [];
+  await require('../../functions/edge_health').sendHealthReport({ set: async () => {} }, report,
+    async text => { sent.push(text); return sent.length; });
+  assert.equal(sent.join('\n'), report.text);
+});
