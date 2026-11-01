@@ -7,14 +7,13 @@
 //      NENHUMA tentativa de captura registrada (closingOddsLastAttemptAt
 //      ausente e nunca capturada) — sinal direto de que o mecanismo não
 //      rodou quando devia, não de falta de dado.
-//   3) O workflow "Capturar Odd de Fechamento" está desabilitado no GitHub
-//      (ver nota abaixo — a causa real dos 13 dias sem captura em
-//      setembro/outubro).
+// O aviso de workflow legado desabilitado foi desativado em 01/11.
+// O fluxo Placard usa placard_value.yml; os demais avisos continuam ativos.
 //
 // No máximo 1 e-mail por dia (marcador salvo na branch data).
 //
-// Precisa de GH_TOKEN (leitura do estado do workflow) e das variáveis de
-// SMTP (ALERT_SMTP_HOST/PORT/USER/PASS, ALERT_EMAIL_TO) no ambiente — ver
+// SMTP: ALERT_SMTP_HOST/PORT/USER/PASS e ALERT_EMAIL_TO. GH_TOKEN só é
+// necessário se a verificação legada for reativada — ver
 // .github/workflows/alert_closing_odds_stale.yml.
 //
 // Uso: node pipeline/check_closing_odds_staleness.js
@@ -28,6 +27,13 @@ const MARKER_FILE = path.join(__dirname, '..', '_closing_odds_alert_marker.json'
 const GH_OWNER = 'ubereats-oss';
 const GH_REPO = 'edge-finder';
 const GH_WORKFLOW_FILE = 'capture_closing_odds.yml';
+const LEGACY_CAPTURE_ALERT_ENABLED = false;
+function legacyWorkflowDisabled(state) {
+  return LEGACY_CAPTURE_ALERT_ENABLED && state !== 'active' && state !== 'desconhecido';
+}
+function shouldAlert({ semTentativa = [], estadoWorkflow = 'desconhecido', betanoStale = false }) {
+  return legacyWorkflowDisabled(estadoWorkflow) || semTentativa.length > 0 || Boolean(betanoStale);
+}
 
 const SPORT_MARKET_KEYS = {
   'basketball/nba': ['h2h', 'points', 'rebounds', 'assists', 'steals', 'threes'],
@@ -137,7 +143,7 @@ function transporter() {
 }
 
 async function enviarEmail({ semTentativa, estadoWorkflow, betanoStatus, betanoReadError }) {
-  const desabilitado = estadoWorkflow !== 'active' && estadoWorkflow !== 'desconhecido';
+  const desabilitado = legacyWorkflowDisabled(estadoWorkflow);
   const partes = [];
   const localAtrasada = betanoReadError || isBetanoScheduledHeartbeatStale(betanoStatus.lastSuccessAt);
   if (localAtrasada) {
@@ -193,11 +199,11 @@ async function main() {
 
   const token = process.env.GH_TOKEN;
   let estadoWorkflow = 'desconhecido';
-  if (token) {
+  if (token && LEGACY_CAPTURE_ALERT_ENABLED) {
     estadoWorkflow = await workflowState(token);
     console.log(`[alerta] estado do workflow no GitHub: ${estadoWorkflow}.`);
   } else {
-    console.log('[alerta] GH_TOKEN ausente — não dá pra checar o estado do workflow.');
+    console.log('[alerta] aviso de workflow legado desabilitado inativo; demais verificações mantidas.');
   }
 
   let betanoStatus = {};
@@ -210,9 +216,8 @@ async function main() {
   const betanoStale = betanoReadError || isBetanoScheduledHeartbeatStale(betanoStatus.lastSuccessAt);
   console.log(`[alerta] heartbeat Betano ${betanoStale ? 'ausente/atrasado' : 'atual'}: ${betanoStatus.lastSuccessAt || 'sem registro'}.`);
 
-  const desabilitado = estadoWorkflow !== 'active' && estadoWorkflow !== 'desconhecido';
-  if (!desabilitado && semTentativa.length === 0 && !betanoStale) {
-    console.log('[alerta] workflow ativo e nenhum jogo sem tentativa — nada a fazer.');
+  if (!shouldAlert({ semTentativa, estadoWorkflow, betanoStale })) {
+    console.log('[alerta] nenhuma falha nas verificações ativas — nada a fazer.');
     return;
   }
 
@@ -233,4 +238,4 @@ async function main() {
 }
 
 if (require.main === module) main().catch(e => { console.error('ERRO FATAL:', e.message); process.exit(1); });
-module.exports = { isBetanoHeartbeatStale, isBetanoScheduledHeartbeatStale };
+module.exports = { isBetanoHeartbeatStale, isBetanoScheduledHeartbeatStale, legacyWorkflowDisabled, shouldAlert };
