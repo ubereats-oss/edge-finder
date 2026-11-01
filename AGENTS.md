@@ -22,6 +22,7 @@
 ## Trava da coleta local e testes reais
 - Ciclos e testes reais que usam TunnelBear, Edge, VPN ou arquivos de dados devem adquirir a mesma trava em `.local_logs/local-cycle.lock` da pasta de dados. Nunca apagar trava com processo dono vivo. Scripts TunnelBear/Edge adquirem automaticamente; outros testes reais devem executar pelo wrapper `node scripts/local_bookmakers/resource_lock.cjs -- comando argumentos`, com EDGE_DATA_ROOT apontando para a pasta original. Espera máxima de cinco minutos; ocupada, não executar o teste/ciclo. Simulações puras usam cópias temporárias e não disputam recursos reais.
 - Código da coleta executa por releases publicados da main na cópia isolada. EDGE_DATA_ROOT mantém orçamento/logs/resumo na pasta original; EDGE_ENV_FILE mantém a origem da credencial. Não executar coleta de um checkout em edição.
+- Toda execução manual ou de teste deve ser marcada explicitamente com EDGE_CYCLE_ORIGIN=manual ou EDGE_CYCLE_ORIGIN=test no executor; ao chamar run_betano_task.ps1 diretamente, usar -ExecutionOrigin manual/test. A consulta ao log do Windows não substitui essa obrigação. Ciclos recebidos sem marca válida de origem contam como Agendador; marcas manual/test e evidências históricas dessas origens devem ser preservadas.
 
 ## Escopo congelado
 - O escopo do Edge Finder está congelado em 23/10/2026. Mudanças só são permitidas para corrigir falhas apontadas pela mensagem diária de saúde ou por pedido explícito do Alex.

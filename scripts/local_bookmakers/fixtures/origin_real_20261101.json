@@ -1,0 +1,2145 @@
+{
+  "source": "_local_cycle_health e saúde real de 01/11",
+  "observedAt": "2026-11-01T11:00:05.658Z",
+  "cycles": [
+    {
+      "startedAt": "2026-10-31T11:50:11.303Z",
+      "finishedAt": "2026-10-31T11:51:32.389Z",
+      "runtimeSha": "80e7442262b659aadbb864c7d68276b7f50eb780",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T11:50:39.067Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 4.885438,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2592.449609,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 32
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-10-31T12:50:05.800Z",
+      "finishedAt": "2026-10-31T12:51:38.856Z",
+      "runtimeSha": "80e7442262b659aadbb864c7d68276b7f50eb780",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T12:50:31.230Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 6.72611,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2599.175719,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 28
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-10-31T13:50:07.886Z",
+      "finishedAt": "2026-10-31T13:51:45.979Z",
+      "runtimeSha": "80e7442262b659aadbb864c7d68276b7f50eb780",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T13:50:34.494Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 4.575389,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2603.751108,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 27
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-10-31T14:50:11.504Z",
+      "finishedAt": "2026-10-31T14:51:44.102Z",
+      "runtimeSha": "80e7442262b659aadbb864c7d68276b7f50eb780",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T14:50:39.677Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 5.702558,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2609.453666,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 14
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-10-31T15:50:05.696Z",
+      "finishedAt": "2026-10-31T15:51:25.599Z",
+      "runtimeSha": "80e7442262b659aadbb864c7d68276b7f50eb780",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T15:50:29.597Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 5.316292,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2614.769958,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 11
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-10-31T16:50:05.705Z",
+      "finishedAt": "2026-10-31T16:51:35.965Z",
+      "runtimeSha": "80e7442262b659aadbb864c7d68276b7f50eb780",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T16:50:26.497Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 8.185248,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2622.9552059999996,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 10
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-10-31T17:50:05.510Z",
+      "finishedAt": "2026-10-31T17:51:24.519Z",
+      "runtimeSha": "80e7442262b659aadbb864c7d68276b7f50eb780",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T17:50:28.771Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 5.835889,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2628.7910949999996,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 6
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-10-31T18:50:06.125Z",
+      "finishedAt": "2026-10-31T18:51:40.373Z",
+      "runtimeSha": "80e7442262b659aadbb864c7d68276b7f50eb780",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T18:50:28.934Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 7.388168,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2636.1792629999995,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 6
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-10-31T19:50:11.431Z",
+      "finishedAt": "2026-10-31T19:51:23.334Z",
+      "runtimeSha": "80e7442262b659aadbb864c7d68276b7f50eb780",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T19:50:36.569Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 6.771425,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2642.9506879999994,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 1
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-10-31T20:50:15.577Z",
+      "finishedAt": "2026-10-31T20:51:21.015Z",
+      "runtimeSha": "10ecec927c2e87a20a98e8e7e75a2ef268a00f19",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T20:50:48.167Z"
+      },
+      "healthCause": {
+        "kind": "no_eligible",
+        "category": "sem jogo elegível na Betano",
+        "originalError": "Betano sem odds elegíveis nas próximas 12 horas: HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] H",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [],
+      "status": "failed",
+      "reason": "Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso.",
+      "spentMB": 5.735812,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2648.6864999999993,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 0
+      },
+      "errors": [
+        "Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso."
+      ]
+    },
+    {
+      "startedAt": "2026-10-31T21:50:08.334Z",
+      "finishedAt": "2026-10-31T21:51:09.513Z",
+      "runtimeSha": "10ecec927c2e87a20a98e8e7e75a2ef268a00f19",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T21:50:35.824Z"
+      },
+      "healthCause": {
+        "kind": "no_eligible",
+        "category": "sem jogo elegível na Betano",
+        "originalError": "Betano sem odds elegíveis nas próximas 12 horas: HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] H",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [],
+      "status": "failed",
+      "reason": "Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso.",
+      "spentMB": 7.54483,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2656.231329999999,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 0
+      },
+      "errors": [
+        "Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso."
+      ]
+    },
+    {
+      "startedAt": "2026-10-31T22:50:06.773Z",
+      "finishedAt": "2026-10-31T22:51:05.107Z",
+      "runtimeSha": "10ecec927c2e87a20a98e8e7e75a2ef268a00f19",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T22:50:30.091Z"
+      },
+      "healthCause": {
+        "kind": "no_eligible",
+        "category": "sem jogo elegível na Betano",
+        "originalError": "Betano sem odds elegíveis nas próximas 12 horas: HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] HTTP 403: [URL removida] H",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [],
+      "status": "failed",
+      "reason": "Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso.",
+      "spentMB": 7.248293,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2663.4796229999993,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 0
+      },
+      "errors": [
+        "Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso."
+      ]
+    },
+    {
+      "startedAt": "2026-10-31T23:50:09.913Z",
+      "finishedAt": "2026-10-31T23:51:41.720Z",
+      "runtimeSha": "10ecec927c2e87a20a98e8e7e75a2ef268a00f19",
+      "tunnelBearVersion": null,
+      "tunnelBear": {
+        "version": null,
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-10-31T23:50:40.431Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 5.496881,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2668.9765039999993,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 2
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T00:23:17.550Z",
+      "finishedAt": "2026-11-01T00:25:04.269Z",
+      "executionOrigin": "manual",
+      "triggeredAt": "2026-11-01T00:23:11.5324371Z",
+      "runtimeSha": "b0f8b754a88bdd828e36bc00ebd3c5b04f128ef4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.2.log",
+          "trace_maintenance.3.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T00:23:41.766Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 5.482777,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2674.4592809999995,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 2
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T00:50:06.542Z",
+      "finishedAt": "2026-11-01T00:52:02.058Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.2.log",
+          "trace_maintenance.3.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T00:50:30.209Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 7.212279,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2681.6715599999993,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 2
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T01:50:05.832Z",
+      "finishedAt": "2026-11-01T01:52:01.548Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.2.log",
+          "trace_maintenance.3.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T01:50:35.423Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 5.421741,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2687.0933009999994,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 5
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T02:50:05.794Z",
+      "finishedAt": "2026-11-01T02:52:01.376Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.2.log",
+          "trace_maintenance.3.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T02:50:35.540Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 5.098641,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-10",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 2692.1919419999995,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 9
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T03:50:09.845Z",
+      "finishedAt": "2026-11-01T03:52:13.657Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.1.log",
+          "trace_maintenance.3.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T03:50:38.517Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 4.813965,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-11",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 4.813965,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 12
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T04:50:06.777Z",
+      "finishedAt": "2026-11-01T04:51:20.000Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": {
+          "code": "VpnConnectionFailed",
+          "category": "adaptador não subiu",
+          "message": "adaptador não subiu",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+          "originalErrorUnavailable": false
+        },
+        "nativeFailures": [],
+        "stateLines": [
+          "2026-11-01T04:50:35.142Z TUN/TAP: aguardando interface",
+          "2026-11-01T04:50:36.221Z TUN/TAP: aguardando interface",
+          "2026-11-01T04:50:37.301Z TUN/TAP: aguardando interface",
+          "2026-11-01T04:50:38.380Z TUN/TAP: aguardando interface",
+          "2026-11-01T04:50:39.527Z TUN/TAP: aguardando interface",
+          "2026-11-01T04:50:40.673Z TUN/TAP: aguardando interface",
+          "2026-11-01T04:50:42.517Z status:Error, responseResult:VpnConnectionFailed",
+          "2026-11-01T04:50:42.518Z status:estado não reconhecido",
+          "2026-11-01T04:50:42.519Z status:Disconnected",
+          "2026-11-01T04:50:42.519Z status:Error",
+          "2026-11-01T04:50:42.522Z status:Error",
+          "2026-11-01T04:50:42.522Z status:Error, responseResult:VpnConnectionFailed",
+          "2026-11-01T04:50:42.523Z IsOn:True",
+          "2026-11-01T04:50:42.523Z status:Error",
+          "2026-11-01T04:50:42.525Z status:Disconnected",
+          "2026-11-01T04:50:42.526Z status:Disconnected",
+          "2026-11-01T04:50:42.529Z IsOn:True",
+          "2026-11-01T04:50:42.530Z status:Disconnected",
+          "2026-11-01T04:50:42.531Z IsOn:False",
+          "2026-11-01T04:50:42.848Z status:Disconnected, responseResult:VpnConnectionFailed"
+        ],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.1.log",
+          "trace_maintenance.3.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T03:50:38.517Z"
+      },
+      "healthCause": {
+        "kind": "vpn_failed",
+        "category": "adaptador não subiu",
+        "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [
+        {
+          "stage": "vpnConnect",
+          "category": "adaptador não subiu",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "status": "ciclo sem conexão",
+      "reason": "VPN não confirmado — adaptador não subiu",
+      "spentMB": 0,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-11",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 4.813965,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {},
+      "errors": [
+        "VPN não confirmado — adaptador não subiu"
+      ]
+    },
+    {
+      "startedAt": "2026-11-01T05:50:05.035Z",
+      "finishedAt": "2026-11-01T05:50:07.614Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.1.log",
+          "trace_maintenance.3.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T03:50:38.517Z"
+      },
+      "healthCause": {
+        "kind": "skipped",
+        "category": "pulado",
+        "originalError": "nenhum jogo Pinnacle começa nas próximas 3 horas",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [],
+      "status": "ciclo pulado",
+      "reason": "nenhum jogo Pinnacle começa nas próximas 3 horas",
+      "spentMB": 0,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-11",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 4.813965,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {},
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T06:50:06.106Z",
+      "finishedAt": "2026-11-01T06:50:09.418Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.1.log",
+          "trace_maintenance.3.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T03:50:38.517Z"
+      },
+      "healthCause": {
+        "kind": "skipped",
+        "category": "pulado",
+        "originalError": "nenhum jogo Pinnacle começa nas próximas 3 horas",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [],
+      "status": "ciclo pulado",
+      "reason": "nenhum jogo Pinnacle começa nas próximas 3 horas",
+      "spentMB": 0,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-11",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 4.813965,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {},
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T07:50:06.612Z",
+      "finishedAt": "2026-11-01T07:50:08.914Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.1.log",
+          "trace_maintenance.3.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T03:50:38.517Z"
+      },
+      "healthCause": {
+        "kind": "skipped",
+        "category": "pulado",
+        "originalError": "nenhum jogo Pinnacle começa nas próximas 3 horas",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [],
+      "status": "ciclo pulado",
+      "reason": "nenhum jogo Pinnacle começa nas próximas 3 horas",
+      "spentMB": 0,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-11",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 4.813965,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {},
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T08:50:09.266Z",
+      "finishedAt": "2026-11-01T08:52:12.841Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.1.log",
+          "trace_maintenance.2.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T08:50:38.908Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 5.085929,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-11",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 9.899894,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 23
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T09:50:06.183Z",
+      "finishedAt": "2026-11-01T09:52:20.821Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": null,
+        "nativeFailures": [],
+        "stateLines": [],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.1.log",
+          "trace_maintenance.2.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T09:50:32.128Z"
+      },
+      "healthCause": {
+        "kind": "read_with_games",
+        "category": "lido com jogos",
+        "originalError": null,
+        "originalErrorUnavailable": true
+      },
+      "vpnFailures": [],
+      "status": "complete",
+      "reason": null,
+      "spentMB": 6.132647,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-11",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 16.032541000000002,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {
+        "betano": 23
+      },
+      "errors": []
+    },
+    {
+      "startedAt": "2026-11-01T10:50:05.606Z",
+      "finishedAt": "2026-11-01T10:51:19.444Z",
+      "executionOrigin": "unknown",
+      "triggeredAt": null,
+      "runtimeSha": "b2c6cb85259a5287455cae884c81f3d7503d6dd4",
+      "tunnelBearVersion": "4.21.0.0",
+      "tunnelBear": {
+        "version": "4.21.0.0",
+        "failure": {
+          "code": "VpnConnectionFailed",
+          "category": "adaptador não subiu",
+          "message": "adaptador não subiu",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+          "originalErrorUnavailable": false
+        },
+        "nativeFailures": [],
+        "stateLines": [
+          "2026-11-01T10:50:34.767Z TUN/TAP: aguardando interface",
+          "2026-11-01T10:50:36.031Z TUN/TAP: aguardando interface",
+          "2026-11-01T10:50:37.308Z TUN/TAP: aguardando interface",
+          "2026-11-01T10:50:38.351Z TUN/TAP: aguardando interface",
+          "2026-11-01T10:50:39.392Z TUN/TAP: aguardando interface",
+          "2026-11-01T10:50:40.544Z TUN/TAP: aguardando interface",
+          "2026-11-01T10:50:41.706Z status:Error, responseResult:VpnConnectionFailed",
+          "2026-11-01T10:50:41.706Z status:estado não reconhecido",
+          "2026-11-01T10:50:41.707Z status:Disconnected",
+          "2026-11-01T10:50:41.707Z status:Error",
+          "2026-11-01T10:50:41.711Z status:Error",
+          "2026-11-01T10:50:41.711Z status:Error, responseResult:VpnConnectionFailed",
+          "2026-11-01T10:50:41.712Z IsOn:True",
+          "2026-11-01T10:50:41.712Z status:Error",
+          "2026-11-01T10:50:41.713Z status:Disconnected",
+          "2026-11-01T10:50:41.714Z status:Disconnected",
+          "2026-11-01T10:50:41.717Z IsOn:True",
+          "2026-11-01T10:50:41.717Z status:Disconnected",
+          "2026-11-01T10:50:41.718Z IsOn:False",
+          "2026-11-01T10:50:41.948Z status:Disconnected, responseResult:VpnConnectionFailed"
+        ],
+        "requestedUpdateVersion": null,
+        "updateObserved": false,
+        "sources": [
+          "trace_maintenance.1.log",
+          "trace_maintenance.2.log",
+          "trace_maintenance.log",
+          "trace.1.log",
+          "trace.2.log",
+          "trace.3.log",
+          "trace.log"
+        ],
+        "errors": [],
+        "lastSuccessfulConnectionAt": "2026-11-01T09:50:32.128Z"
+      },
+      "healthCause": {
+        "kind": "vpn_failed",
+        "category": "adaptador não subiu",
+        "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+        "originalErrorUnavailable": false
+      },
+      "vpnFailures": [
+        {
+          "stage": "vpnConnect",
+          "category": "adaptador não subiu",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "status": "ciclo sem conexão",
+      "reason": "VPN não confirmado — adaptador não subiu",
+      "spentMB": 0,
+      "estimated": false,
+      "vpnBudgetMonth": "2026-11",
+      "vpnProviderExhausted": false,
+      "vpnOperatorIssue": null,
+      "vpnMonthlySpentMB": 16.032541000000002,
+      "suspendedHouses": [
+        "retabet",
+        "bwin",
+        "lebull",
+        "esc_online",
+        "goldenpark",
+        "betclic"
+      ],
+      "gamesByHouse": {},
+      "errors": [
+        "VPN não confirmado — adaptador não subiu"
+      ]
+    }
+  ],
+  "healthData": {
+    "budget": {
+      "syncComplete": true,
+      "dynamicReserve": {
+        "mode": "variable",
+        "openCount": 0,
+        "maxClosingCost": 1,
+        "costSource": "results/placard_current/runs:budget.lastClosingCredits",
+        "amount": 2,
+        "reason": null,
+        "observedAt": "2026-11-01T10:58:42.106Z"
+      },
+      "keyBalances": {
+        "key-0": {
+          "remaining": 491,
+          "used": 9
+        },
+        "key-1": {
+          "remaining": 491,
+          "used": 9
+        },
+        "key-2": {
+          "remaining": 491,
+          "used": 9
+        },
+        "key-3": {
+          "remaining": 491,
+          "used": 9
+        },
+        "key-4": {
+          "remaining": 491,
+          "used": 9
+        },
+        "key-5": {
+          "remaining": 491,
+          "used": 9
+        },
+        "key-6": {
+          "remaining": 468,
+          "used": 32
+        },
+        "key-7": {
+          "remaining": 490,
+          "used": 10
+        },
+        "key-8": {
+          "remaining": 490,
+          "used": 10
+        },
+        "key-9": {
+          "remaining": 489,
+          "used": 11
+        },
+        "key-10": {
+          "remaining": 489,
+          "used": 11
+        },
+        "key-11": {
+          "remaining": 489,
+          "used": 11
+        },
+        "key-12": {
+          "remaining": 489,
+          "used": 11
+        },
+        "key-13": {
+          "remaining": 489,
+          "used": 11
+        },
+        "key-14": {
+          "remaining": 491,
+          "used": 9
+        },
+        "key-15": {
+          "remaining": 489,
+          "used": 11
+        },
+        "key-16": {
+          "remaining": 491,
+          "used": 9
+        },
+        "key-17": {
+          "remaining": 491,
+          "used": 9
+        },
+        "key-18": {
+          "remaining": 491,
+          "used": 9
+        }
+      }
+    },
+    "octoberBudget": {
+      "syncComplete": true,
+      "dynamicReserve": {
+        "mode": "variable",
+        "openCount": 0,
+        "maxClosingCost": 1,
+        "costSource": "results/placard_current/runs:budget.lastClosingCredits",
+        "amount": 2,
+        "reason": null,
+        "observedAt": "2026-11-01T02:51:56.616Z"
+      },
+      "keyBalances": {
+        "key-0": {
+          "remaining": 50,
+          "used": 450
+        },
+        "key-1": {
+          "remaining": 51,
+          "used": 449
+        },
+        "key-2": {
+          "remaining": 50,
+          "used": 450
+        },
+        "key-3": {
+          "remaining": 51,
+          "used": 449
+        },
+        "key-4": {
+          "remaining": 50,
+          "used": 450
+        },
+        "key-5": {
+          "remaining": 50,
+          "used": 450
+        },
+        "key-6": {
+          "remaining": 50,
+          "used": 450
+        },
+        "key-7": {
+          "remaining": 50,
+          "used": 450
+        },
+        "key-8": {
+          "remaining": 50,
+          "used": 450
+        },
+        "key-9": {
+          "remaining": 51,
+          "used": 449
+        },
+        "key-10": {
+          "remaining": 51,
+          "used": 449
+        },
+        "key-11": {
+          "remaining": 51,
+          "used": 449
+        },
+        "key-12": {
+          "remaining": 52,
+          "used": 448
+        },
+        "key-13": {
+          "remaining": 52,
+          "used": 448
+        },
+        "key-14": {
+          "remaining": 52,
+          "used": 448
+        },
+        "key-15": {
+          "remaining": 52,
+          "used": 448
+        },
+        "key-16": {
+          "remaining": 52,
+          "used": 448
+        },
+        "key-17": {
+          "remaining": 52,
+          "used": 448
+        },
+        "key-18": {
+          "remaining": 52,
+          "used": 448
+        }
+      }
+    },
+    "opportunities": [
+      {
+        "telegramSentAt": null,
+        "bookmaker": "Placard",
+        "annulled": false,
+        "status": null,
+        "closingStatus": "capturada",
+        "clvPct": 3.306119089509507,
+        "apiSport": "soccer_uefa_europa_league",
+        "eventId": "event-1"
+      },
+      {
+        "telegramSentAt": "2026-10-26T12:52:48.050Z",
+        "bookmaker": "Betano",
+        "annulled": false,
+        "status": null,
+        "closingStatus": "capturada",
+        "clvPct": -1.4555265733411593,
+        "apiSport": "soccer_portugal_primeira_liga",
+        "eventId": "event-2"
+      },
+      {
+        "telegramSentAt": "2026-10-24T08:52:09.817Z",
+        "bookmaker": "Betano",
+        "annulled": false,
+        "status": null,
+        "closingStatus": "capturada",
+        "clvPct": -0.21351431375539187,
+        "apiSport": "soccer_portugal_primeira_liga",
+        "eventId": "event-3"
+      },
+      {
+        "telegramSentAt": "2026-10-24T04:53:00.428Z",
+        "bookmaker": "Retabet",
+        "annulled": true,
+        "status": "anulada",
+        "closingStatus": "anulada",
+        "clvPct": null,
+        "apiSport": "soccer_efl_champ",
+        "eventId": "event-4"
+      },
+      {
+        "telegramSentAt": "2026-10-24T15:38:32.750Z",
+        "bookmaker": "Betano",
+        "annulled": false,
+        "status": null,
+        "closingStatus": "capturada",
+        "clvPct": 0.4451636584493768,
+        "apiSport": "soccer_portugal_primeira_liga",
+        "eventId": "event-5"
+      },
+      {
+        "telegramSentAt": "2026-10-25T13:52:38.494Z",
+        "bookmaker": "Betano",
+        "annulled": false,
+        "status": null,
+        "closingStatus": "capturada",
+        "clvPct": 0.4723897871296012,
+        "apiSport": "soccer_spain_la_liga",
+        "eventId": "event-6"
+      },
+      {
+        "telegramSentAt": "2026-10-30T09:51:25.434Z",
+        "bookmaker": "Betano",
+        "annulled": false,
+        "status": null,
+        "closingStatus": "capturada",
+        "clvPct": -2.751148346328891,
+        "apiSport": "soccer_portugal_primeira_liga",
+        "eventId": "event-7"
+      },
+      {
+        "telegramSentAt": "2026-10-30T16:51:54.994Z",
+        "bookmaker": "Betano",
+        "annulled": false,
+        "status": null,
+        "closingStatus": "capturada",
+        "clvPct": 2.837824814534784,
+        "apiSport": "soccer_france_ligue_one",
+        "eventId": "event-8"
+      },
+      {
+        "telegramSentAt": null,
+        "bookmaker": "Placard",
+        "annulled": false,
+        "status": null,
+        "closingStatus": "capturada",
+        "clvPct": 21.930857465703866,
+        "apiSport": "soccer_uefa_europa_league",
+        "eventId": "event-9"
+      },
+      {
+        "telegramSentAt": "2026-10-24T08:52:35.753Z",
+        "bookmaker": "Betano",
+        "annulled": false,
+        "status": null,
+        "closingStatus": "capturada",
+        "clvPct": 5.51074700558023,
+        "apiSport": "soccer_efl_champ",
+        "eventId": "event-10"
+      }
+    ],
+    "runs": [
+      {
+        "created_at": "2026-11-01T10:56:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T10:25:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T09:54:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T09:51:33Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T09:23:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T09:52:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T09:51:33Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T09:21:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T07:50:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T07:19:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T06:49:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T06:18:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T05:47:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T05:17:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T04:46:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T04:16:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T03:51:29Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T03:46:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T03:15:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T02:51:25Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T02:45:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T02:15:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T01:51:26Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T01:44:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T01:13:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T00:51:26Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T00:42:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T00:24:32Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T00:22:31Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-11-01T00:11:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T23:51:15Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T23:40:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T23:09:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T22:38:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T22:07:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T21:36:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T21:06:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T20:36:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T20:35:20Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T20:34:15Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T20:05:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T19:51:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T19:34:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T19:03:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T18:51:09Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T18:32:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T18:01:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T17:50:57Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T17:30:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T16:59:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T16:51:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T16:29:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T15:59:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T15:51:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T15:28:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T14:58:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T14:51:18Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T14:27:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T13:56:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T13:51:24Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T13:25:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T12:55:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T12:51:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T12:24:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T11:54:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T11:51:10Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T11:23:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T10:53:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T10:50:58Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T10:23:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T09:52:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T09:51:07Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T09:21:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T08:51:11Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T08:51:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T08:20:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T07:51:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T07:50:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T07:20:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T06:51:09Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T06:49:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T06:19:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T05:51:09Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T05:48:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T05:18:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T04:51:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T04:47:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T04:16:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T03:51:15Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T03:46:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T03:16:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T02:51:07Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T02:45:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T02:14:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T01:51:00Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T01:43:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T01:12:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T00:51:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T00:42:02Z",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "created_at": "2026-10-31T00:11:03Z",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
+}
