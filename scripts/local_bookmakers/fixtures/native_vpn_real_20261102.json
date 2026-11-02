@@ -1,0 +1,2030 @@
+{
+  "source": "Registros reais locais e TunnelBear 4.21, 01–02/11; somente campos de estado e país. Horários dos ciclos UTC, linhas nativas Windows -03:00.",
+  "cycles": [
+    {
+      "startedAt": "2026-11-01T04:50:06.777Z",
+      "finishedAt": "2026-11-01T04:51:20.000Z",
+      "status": "ciclo sem conexão",
+      "healthCause": {
+        "kind": "vpn_failed",
+        "category": "adaptador não subiu",
+        "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+        "originalErrorUnavailable": false
+      },
+      "stages": {
+        "vpnConnect": {
+          "startedAt": "2026-11-01T04:50:11.948Z",
+          "error": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+          "finishedAt": "2026-11-01T04:51:17.452Z",
+          "durationMs": 65502
+        }
+      },
+      "checks": [
+        {
+          "at": "2026-11-01T04:50:13.9848050Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 21
+        },
+        {
+          "at": "2026-11-01T04:50:16.5695492Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 9
+        },
+        {
+          "at": "2026-11-01T04:50:21.6057830Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 14
+        },
+        {
+          "at": "2026-11-01T04:50:26.6202693Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 59
+        },
+        {
+          "at": "2026-11-01T04:50:31.6430109Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 20
+        },
+        {
+          "at": "2026-11-01T04:50:36.6584096Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 10
+        },
+        {
+          "at": "2026-11-01T04:50:41.6709244Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 16
+        },
+        {
+          "at": "2026-11-01T04:50:46.6791963Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 20
+        },
+        {
+          "at": "2026-11-01T04:50:51.6812681Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 20
+        },
+        {
+          "at": "2026-11-01T04:50:56.6938577Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 21
+        },
+        {
+          "at": "2026-11-01T04:51:01.7048917Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 31
+        },
+        {
+          "at": "2026-11-01T04:51:06.7070885Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 20
+        },
+        {
+          "at": "2026-11-01T04:51:11.7145409Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 21
+        }
+      ],
+      "original": [
+        {
+          "stage": "vpnConnect",
+          "category": "adaptador não subiu",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Down, país=, erro=.",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "hadConnected": false,
+      "lines": [
+        {
+          "at": "2026-11-01T04:50:16.542Z",
+          "source": "trace.2.log",
+          "line": 354,
+          "text": "2026-11-01 01:50:16,542 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T04:50:16.545Z",
+          "source": "trace.2.log",
+          "line": 356,
+          "text": "2026-11-01 01:50:16,545 Connecting Portugal..."
+        },
+        {
+          "at": "2026-11-01T04:50:17.633Z",
+          "source": "trace.2.log",
+          "line": 373,
+          "text": "2026-11-01 01:50:17,633 status:Connecting"
+        },
+        {
+          "at": "2026-11-01T04:50:17.633Z",
+          "source": "trace.2.log",
+          "line": 374,
+          "text": "2026-11-01 01:50:17,633 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T04:50:42.523Z",
+          "source": "trace.2.log",
+          "line": 482,
+          "text": "2026-11-01 01:50:42,523 status:Error"
+        },
+        {
+          "at": "2026-11-01T04:50:42.523Z",
+          "source": "trace.2.log",
+          "line": 483,
+          "text": "2026-11-01 01:50:42,523 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T04:50:42.526Z",
+          "source": "trace.2.log",
+          "line": 486,
+          "text": "2026-11-01 01:50:42,526 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T04:50:42.529Z",
+          "source": "trace.2.log",
+          "line": 487,
+          "text": "2026-11-01 01:50:42,529 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T04:50:42.531Z",
+          "source": "trace.2.log",
+          "line": 488,
+          "text": "2026-11-01 01:50:42,531 IsOn:False"
+        }
+      ],
+      "before": [
+        {
+          "at": "2026-11-01T02:51:00.723Z",
+          "source": "trace.2.log",
+          "line": 187,
+          "text": "2026-10-31 23:51:00,723 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T02:51:01.143Z",
+          "source": "trace.2.log",
+          "line": 188,
+          "text": "2026-10-31 23:51:01,143 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T02:51:01.143Z",
+          "source": "trace.2.log",
+          "line": 189,
+          "text": "2026-10-31 23:51:01,143 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T03:50:20.179Z",
+          "source": "trace.2.log",
+          "line": 221,
+          "text": "2026-11-01 00:50:20,179 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T03:50:20.184Z",
+          "source": "trace.2.log",
+          "line": 223,
+          "text": "2026-11-01 00:50:20,184 Connecting Portugal..."
+        },
+        {
+          "at": "2026-11-01T03:50:21.263Z",
+          "source": "trace.2.log",
+          "line": 237,
+          "text": "2026-11-01 00:50:21,263 status:Connecting"
+        },
+        {
+          "at": "2026-11-01T03:50:21.264Z",
+          "source": "trace.2.log",
+          "line": 238,
+          "text": "2026-11-01 00:50:21,264 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T03:50:25.774Z",
+          "source": "trace.2.log",
+          "line": 250,
+          "text": "2026-11-01 00:50:25,774 status:Connected"
+        },
+        {
+          "at": "2026-11-01T03:50:26.083Z",
+          "source": "trace.2.log",
+          "line": 253,
+          "text": "2026-11-01 00:50:26,083 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T03:51:04.119Z",
+          "source": "trace.2.log",
+          "line": 299,
+          "text": "2026-11-01 00:51:04,119 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T03:51:04.419Z",
+          "source": "trace.2.log",
+          "line": 305,
+          "text": "2026-11-01 00:51:04,419 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T03:51:04.419Z",
+          "source": "trace.2.log",
+          "line": 306,
+          "text": "2026-11-01 00:51:04,419 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T03:51:04.420Z",
+          "source": "trace.2.log",
+          "line": 308,
+          "text": "2026-11-01 00:51:04,420 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T03:51:04.425Z",
+          "source": "trace.2.log",
+          "line": 309,
+          "text": "2026-11-01 00:51:04,425 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T03:51:04.640Z",
+          "source": "trace.2.log",
+          "line": 310,
+          "text": "2026-11-01 00:51:04,640 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T03:51:04.645Z",
+          "source": "trace.2.log",
+          "line": 311,
+          "text": "2026-11-01 00:51:04,645 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T03:51:04.645Z",
+          "source": "trace.2.log",
+          "line": 312,
+          "text": "2026-11-01 00:51:04,645 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T03:51:04.646Z",
+          "source": "trace.2.log",
+          "line": 313,
+          "text": "2026-11-01 00:51:04,646 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T03:51:04.650Z",
+          "source": "trace.2.log",
+          "line": 314,
+          "text": "2026-11-01 00:51:04,650 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T03:51:04.650Z",
+          "source": "trace.2.log",
+          "line": 315,
+          "text": "2026-11-01 00:51:04,650 IsOn:False"
+        }
+      ],
+      "proofAt": "2026-11-01T04:51:20.000Z",
+      "snapshot": {
+        "Status": "Disconnected",
+        "Country": null,
+        "At": "2026-11-01T04:50:42.526Z",
+        "Source": "trace.2.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-01T18:50:09.042Z",
+      "finishedAt": "2026-11-01T18:51:22.351Z",
+      "status": "ciclo sem conexão",
+      "healthCause": {
+        "kind": "vpn_failed",
+        "category": "conexão interrompida",
+        "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido; ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido.",
+        "originalErrorUnavailable": false
+      },
+      "stages": {
+        "vpnConnect": {
+          "startedAt": "2026-11-01T18:50:14.511Z",
+          "error": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido; ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido.",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido; ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido.",
+          "finishedAt": "2026-11-01T18:51:18.451Z",
+          "durationMs": 63940
+        }
+      },
+      "checks": [
+        {
+          "at": "2026-11-01T18:50:17.6945793Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 20
+        },
+        {
+          "at": "2026-11-01T18:50:20.2831844Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 15
+        },
+        {
+          "at": "2026-11-01T18:50:25.3153350Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 24
+        },
+        {
+          "at": "2026-11-01T18:50:30.3186541Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 22
+        },
+        {
+          "at": "2026-11-01T18:50:35.3439649Z",
+          "adapter": "Up",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 20008
+        }
+      ],
+      "original": [
+        {
+          "stage": "vpnConnect",
+          "category": "conexão interrompida",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido; ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido.",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "hadConnected": true,
+      "lines": [
+        {
+          "at": "2026-11-01T18:50:20.250Z",
+          "source": "trace.1.log",
+          "line": 169,
+          "text": "2026-11-01 15:50:20,250 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T18:50:20.252Z",
+          "source": "trace.1.log",
+          "line": 171,
+          "text": "2026-11-01 15:50:20,252 Connecting Portugal..."
+        },
+        {
+          "at": "2026-11-01T18:50:21.387Z",
+          "source": "trace.1.log",
+          "line": 182,
+          "text": "2026-11-01 15:50:21,387 status:Connecting"
+        },
+        {
+          "at": "2026-11-01T18:50:21.387Z",
+          "source": "trace.1.log",
+          "line": 183,
+          "text": "2026-11-01 15:50:21,387 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T18:50:34.269Z",
+          "source": "trace.1.log",
+          "line": 190,
+          "text": "2026-11-01 15:50:34,269 status:Connected"
+        },
+        {
+          "at": "2026-11-01T18:50:34.575Z",
+          "source": "trace.1.log",
+          "line": 192,
+          "text": "2026-11-01 15:50:34,575 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T18:50:58.310Z",
+          "source": "trace.1.log",
+          "line": 224,
+          "text": "2026-11-01 15:50:58,310 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T18:50:59.010Z",
+          "source": "trace.1.log",
+          "line": 230,
+          "text": "2026-11-01 15:50:59,010 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T18:50:59.024Z",
+          "source": "trace.1.log",
+          "line": 231,
+          "text": "2026-11-01 15:50:59,024 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T18:50:59.024Z",
+          "source": "trace.1.log",
+          "line": 232,
+          "text": "2026-11-01 15:50:59,024 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T18:50:59.024Z",
+          "source": "trace.1.log",
+          "line": 234,
+          "text": "2026-11-01 15:50:59,024 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T18:50:59.293Z",
+          "source": "trace.1.log",
+          "line": 235,
+          "text": "2026-11-01 15:50:59,293 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T18:50:59.293Z",
+          "source": "trace.1.log",
+          "line": 236,
+          "text": "2026-11-01 15:50:59,293 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T18:50:59.294Z",
+          "source": "trace.1.log",
+          "line": 237,
+          "text": "2026-11-01 15:50:59,294 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T18:50:59.294Z",
+          "source": "trace.1.log",
+          "line": 238,
+          "text": "2026-11-01 15:50:59,294 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T18:50:59.294Z",
+          "source": "trace.1.log",
+          "line": 239,
+          "text": "2026-11-01 15:50:59,294 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T18:50:59.294Z",
+          "source": "trace.1.log",
+          "line": 240,
+          "text": "2026-11-01 15:50:59,294 IsOn:False"
+        }
+      ],
+      "before": [
+        {
+          "at": "2026-11-01T16:51:00.741Z",
+          "source": "trace.2.log",
+          "line": 1637,
+          "text": "2026-11-01 13:51:00,741 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T16:51:00.741Z",
+          "source": "trace.2.log",
+          "line": 1638,
+          "text": "2026-11-01 13:51:00,741 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T16:51:00.760Z",
+          "source": "trace.1.log",
+          "line": 2,
+          "text": "2026-11-01 13:51:00,760 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T17:50:16.736Z",
+          "source": "trace.1.log",
+          "line": 34,
+          "text": "2026-11-01 14:50:16,736 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T17:50:16.737Z",
+          "source": "trace.1.log",
+          "line": 36,
+          "text": "2026-11-01 14:50:16,737 Connecting Portugal..."
+        },
+        {
+          "at": "2026-11-01T17:50:17.822Z",
+          "source": "trace.1.log",
+          "line": 49,
+          "text": "2026-11-01 14:50:17,822 status:Connecting"
+        },
+        {
+          "at": "2026-11-01T17:50:17.823Z",
+          "source": "trace.1.log",
+          "line": 50,
+          "text": "2026-11-01 14:50:17,823 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T17:50:24.321Z",
+          "source": "trace.1.log",
+          "line": 75,
+          "text": "2026-11-01 14:50:24,321 status:Connected"
+        },
+        {
+          "at": "2026-11-01T17:50:24.487Z",
+          "source": "trace.1.log",
+          "line": 77,
+          "text": "2026-11-01 14:50:24,487 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T17:51:00.191Z",
+          "source": "trace.1.log",
+          "line": 121,
+          "text": "2026-11-01 14:51:00,191 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T17:51:00.550Z",
+          "source": "trace.1.log",
+          "line": 127,
+          "text": "2026-11-01 14:51:00,550 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T17:51:00.551Z",
+          "source": "trace.1.log",
+          "line": 128,
+          "text": "2026-11-01 14:51:00,551 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T17:51:00.787Z",
+          "source": "trace.1.log",
+          "line": 130,
+          "text": "2026-11-01 14:51:00,787 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T17:51:00.789Z",
+          "source": "trace.1.log",
+          "line": 131,
+          "text": "2026-11-01 14:51:00,789 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T17:51:00.790Z",
+          "source": "trace.1.log",
+          "line": 132,
+          "text": "2026-11-01 14:51:00,790 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T17:51:00.791Z",
+          "source": "trace.1.log",
+          "line": 133,
+          "text": "2026-11-01 14:51:00,791 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T17:51:00.791Z",
+          "source": "trace.1.log",
+          "line": 134,
+          "text": "2026-11-01 14:51:00,791 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T17:51:00.793Z",
+          "source": "trace.1.log",
+          "line": 135,
+          "text": "2026-11-01 14:51:00,793 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T17:51:00.793Z",
+          "source": "trace.1.log",
+          "line": 136,
+          "text": "2026-11-01 14:51:00,793 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T17:51:00.793Z",
+          "source": "trace.1.log",
+          "line": 137,
+          "text": "2026-11-01 14:51:00,793 IsOn:False"
+        }
+      ],
+      "proofAt": "2026-11-01T18:50:35.3439649Z",
+      "snapshot": {
+        "Status": "Connected",
+        "Country": "PT",
+        "At": "2026-11-01T18:50:34.269Z",
+        "Source": "trace.1.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-01T22:50:12.166Z",
+      "finishedAt": "2026-11-01T22:51:22.846Z",
+      "status": "ciclo sem conexão",
+      "healthCause": {
+        "kind": "vpn_failed",
+        "category": "conexão interrompida",
+        "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido; ipwho.is: tempo limite atingido; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mais erros.\"; ipwho.is: tempo limite atingido.",
+        "originalErrorUnavailable": false
+      },
+      "stages": {
+        "vpnConnect": {
+          "startedAt": "2026-11-01T22:50:21.888Z",
+          "error": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido; ipwho.is: tempo limite atingido; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mais erros.\"; ipwho.is: tempo limite atingido.",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido; ipwho.is: tempo limite atingido; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mais erros.\"; ipwho.is: tempo limite atingido.",
+          "finishedAt": "2026-11-01T22:51:20.200Z",
+          "durationMs": 58310
+        }
+      },
+      "checks": [
+        {
+          "at": "2026-11-01T22:50:24.6157308Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 24
+        },
+        {
+          "at": "2026-11-01T22:50:27.1943523Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 8
+        },
+        {
+          "at": "2026-11-01T22:50:32.2595240Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 9
+        },
+        {
+          "at": "2026-11-01T22:50:37.2704120Z",
+          "adapter": "Up",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 20025
+        }
+      ],
+      "original": [
+        {
+          "stage": "vpnConnect",
+          "category": "conexão interrompida",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido; ipwho.is: tempo limite atingido; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mais erros.\"; ipwho.is: tempo limite atingido.",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "hadConnected": true,
+      "lines": [
+        {
+          "at": "2026-11-01T22:50:27.093Z",
+          "source": "trace.1.log",
+          "line": 627,
+          "text": "2026-11-01 19:50:27,093 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T22:50:27.097Z",
+          "source": "trace.1.log",
+          "line": 629,
+          "text": "2026-11-01 19:50:27,097 Connecting Portugal..."
+        },
+        {
+          "at": "2026-11-01T22:50:28.187Z",
+          "source": "trace_maintenance.3.log",
+          "line": 341,
+          "text": "2026-11-01 19:50:28,187 status:Connecting"
+        },
+        {
+          "at": "2026-11-01T22:50:28.190Z",
+          "source": "trace.1.log",
+          "line": 639,
+          "text": "2026-11-01 19:50:28,190 status:Connecting"
+        },
+        {
+          "at": "2026-11-01T22:50:28.206Z",
+          "source": "trace.1.log",
+          "line": 640,
+          "text": "2026-11-01 19:50:28,206 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T22:50:28.769Z",
+          "source": "trace_maintenance.3.log",
+          "line": 406,
+          "text": "2026-11-01 19:50:28,769 status:estado não reconhecido"
+        },
+        {
+          "at": "2026-11-01T22:50:28.769Z",
+          "source": "trace_maintenance.3.log",
+          "line": 407,
+          "text": "2026-11-01 19:50:28,769 status:Connecting"
+        },
+        {
+          "at": "2026-11-01T22:50:28.985Z",
+          "source": "trace_maintenance.3.log",
+          "line": 411,
+          "text": "2026-11-01 19:50:28,985 status:estado não reconhecido"
+        },
+        {
+          "at": "2026-11-01T22:50:28.987Z",
+          "source": "trace_maintenance.3.log",
+          "line": 413,
+          "text": "2026-11-01 19:50:28,987 status:Connecting"
+        },
+        {
+          "at": "2026-11-01T22:50:31.840Z",
+          "source": "trace_maintenance.3.log",
+          "line": 428,
+          "text": "2026-11-01 19:50:31,840 status:estado não reconhecido"
+        },
+        {
+          "at": "2026-11-01T22:50:31.842Z",
+          "source": "trace_maintenance.3.log",
+          "line": 430,
+          "text": "2026-11-01 19:50:31,842 status:Connecting"
+        },
+        {
+          "at": "2026-11-01T22:50:32.969Z",
+          "source": "trace_maintenance.3.log",
+          "line": 488,
+          "text": "2026-11-01 19:50:32,969 status:Connected"
+        },
+        {
+          "at": "2026-11-01T22:50:32.987Z",
+          "source": "trace_maintenance.3.log",
+          "line": 499,
+          "text": "2026-11-01 19:50:32,987 status:Connected"
+        },
+        {
+          "at": "2026-11-01T22:50:32.988Z",
+          "source": "trace_maintenance.3.log",
+          "line": 500,
+          "text": "2026-11-01 19:50:32,988 status:Connected, responseResult:Success, countryCode:PT"
+        },
+        {
+          "at": "2026-11-01T22:50:32.999Z",
+          "source": "trace_maintenance.3.log",
+          "line": 502,
+          "text": "2026-11-01 19:50:32,999 status:Connected, responseResult:Success, countryCode:PT"
+        },
+        {
+          "at": "2026-11-01T22:50:33.010Z",
+          "source": "trace_maintenance.3.log",
+          "line": 506,
+          "text": "2026-11-01 19:50:33,010 status:Connected"
+        },
+        {
+          "at": "2026-11-01T22:50:33.011Z",
+          "source": "trace.1.log",
+          "line": 645,
+          "text": "2026-11-01 19:50:33,011 status:Connected"
+        },
+        {
+          "at": "2026-11-01T22:50:33.338Z",
+          "source": "trace.1.log",
+          "line": 648,
+          "text": "2026-11-01 19:50:33,338 IsOn:True"
+        },
+        {
+          "at": "2026-11-01T22:50:37.847Z",
+          "source": "trace_maintenance.3.log",
+          "line": 522,
+          "text": "2026-11-01 19:50:37,847 status:Success"
+        },
+        {
+          "at": "2026-11-01T22:51:00.058Z",
+          "source": "trace.1.log",
+          "line": 684,
+          "text": "2026-11-01 19:51:00,058 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T22:51:00.392Z",
+          "source": "trace_maintenance.3.log",
+          "line": 552,
+          "text": "2026-11-01 19:51:00,392 status:Disconnected, responseResult:Success"
+        },
+        {
+          "at": "2026-11-01T22:51:00.429Z",
+          "source": "trace_maintenance.3.log",
+          "line": 576,
+          "text": "2026-11-01 19:51:00,429 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.455Z",
+          "source": "trace_maintenance.3.log",
+          "line": 579,
+          "text": "2026-11-01 19:51:00,455 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.457Z",
+          "source": "trace_maintenance.3.log",
+          "line": 582,
+          "text": "2026-11-01 19:51:00,457 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.458Z",
+          "source": "trace_maintenance.3.log",
+          "line": 585,
+          "text": "2026-11-01 19:51:00,458 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.463Z",
+          "source": "trace.1.log",
+          "line": 690,
+          "text": "2026-11-01 19:51:00,463 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.463Z",
+          "source": "trace.1.log",
+          "line": 691,
+          "text": "2026-11-01 19:51:00,463 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.463Z",
+          "source": "trace.1.log",
+          "line": 692,
+          "text": "2026-11-01 19:51:00,463 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.463Z",
+          "source": "trace.1.log",
+          "line": 693,
+          "text": "2026-11-01 19:51:00,463 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T22:51:00.463Z",
+          "source": "trace.1.log",
+          "line": 695,
+          "text": "2026-11-01 19:51:00,463 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T22:51:00.463Z",
+          "source": "trace.1.log",
+          "line": 696,
+          "text": "2026-11-01 19:51:00,463 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T22:51:00.465Z",
+          "source": "trace_maintenance.3.log",
+          "line": 588,
+          "text": "2026-11-01 19:51:00,465 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.527Z",
+          "source": "trace_maintenance.3.log",
+          "line": 592,
+          "text": "2026-11-01 19:51:00,527 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.614Z",
+          "source": "trace_maintenance.3.log",
+          "line": 598,
+          "text": "2026-11-01 19:51:00,614 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.719Z",
+          "source": "trace.1.log",
+          "line": 697,
+          "text": "2026-11-01 19:51:00,719 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.719Z",
+          "source": "trace.1.log",
+          "line": 698,
+          "text": "2026-11-01 19:51:00,719 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T22:51:00.719Z",
+          "source": "trace.1.log",
+          "line": 699,
+          "text": "2026-11-01 19:51:00,719 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T22:51:00.720Z",
+          "source": "trace.1.log",
+          "line": 700,
+          "text": "2026-11-01 19:51:00,720 IsOn:False"
+        }
+      ],
+      "before": [
+        {
+          "at": "2026-11-01T21:50:23.592Z",
+          "source": "trace_maintenance.3.log",
+          "line": 121,
+          "text": "2026-11-01 18:50:23,592 status:Success"
+        },
+        {
+          "at": "2026-11-01T21:50:56.729Z",
+          "source": "trace.1.log",
+          "line": 579,
+          "text": "2026-11-01 18:50:56,729 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T21:50:57.145Z",
+          "source": "trace_maintenance.3.log",
+          "line": 157,
+          "text": "2026-11-01 18:50:57,145 status:Disconnected, responseResult:Success"
+        },
+        {
+          "at": "2026-11-01T21:50:57.189Z",
+          "source": "trace_maintenance.3.log",
+          "line": 178,
+          "text": "2026-11-01 18:50:57,189 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.204Z",
+          "source": "trace_maintenance.3.log",
+          "line": 180,
+          "text": "2026-11-01 18:50:57,204 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.213Z",
+          "source": "trace_maintenance.3.log",
+          "line": 188,
+          "text": "2026-11-01 18:50:57,213 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.249Z",
+          "source": "trace_maintenance.3.log",
+          "line": 193,
+          "text": "2026-11-01 18:50:57,249 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.257Z",
+          "source": "trace_maintenance.3.log",
+          "line": 196,
+          "text": "2026-11-01 18:50:57,257 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.260Z",
+          "source": "trace_maintenance.3.log",
+          "line": 201,
+          "text": "2026-11-01 18:50:57,260 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.413Z",
+          "source": "trace_maintenance.3.log",
+          "line": 205,
+          "text": "2026-11-01 18:50:57,413 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.506Z",
+          "source": "trace.1.log",
+          "line": 585,
+          "text": "2026-11-01 18:50:57,506 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.507Z",
+          "source": "trace.1.log",
+          "line": 586,
+          "text": "2026-11-01 18:50:57,507 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.507Z",
+          "source": "trace.1.log",
+          "line": 587,
+          "text": "2026-11-01 18:50:57,507 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.508Z",
+          "source": "trace.1.log",
+          "line": 588,
+          "text": "2026-11-01 18:50:57,508 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.508Z",
+          "source": "trace.1.log",
+          "line": 589,
+          "text": "2026-11-01 18:50:57,508 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T21:50:57.508Z",
+          "source": "trace.1.log",
+          "line": 590,
+          "text": "2026-11-01 18:50:57,508 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T21:50:57.509Z",
+          "source": "trace.1.log",
+          "line": 592,
+          "text": "2026-11-01 18:50:57,509 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T21:50:57.509Z",
+          "source": "trace.1.log",
+          "line": 593,
+          "text": "2026-11-01 18:50:57,509 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T21:50:57.509Z",
+          "source": "trace.1.log",
+          "line": 594,
+          "text": "2026-11-01 18:50:57,509 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T21:50:57.509Z",
+          "source": "trace.1.log",
+          "line": 595,
+          "text": "2026-11-01 18:50:57,509 IsOn:False"
+        }
+      ],
+      "proofAt": "2026-11-01T22:50:37.2704120Z",
+      "snapshot": {
+        "Status": "Connected",
+        "Country": "PT",
+        "At": "2026-11-01T22:50:33.011Z",
+        "Source": "trace.1.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-02T00:50:59.331Z",
+      "finishedAt": "2026-11-02T00:53:05.788Z",
+      "status": "ciclo sem conexão",
+      "healthCause": {
+        "kind": "vpn_failed",
+        "category": "conexão interrompida",
+        "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido.",
+        "originalErrorUnavailable": false
+      },
+      "stages": {
+        "vpnConnect": {
+          "startedAt": "2026-11-02T00:51:39.275Z",
+          "error": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido.",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido.",
+          "finishedAt": "2026-11-02T00:53:01.863Z",
+          "durationMs": 82588
+        }
+      },
+      "checks": [
+        {
+          "at": "2026-11-02T00:51:48.1957944Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 39
+        },
+        {
+          "at": "2026-11-02T00:52:11.2132910Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 32
+        },
+        {
+          "at": "2026-11-02T00:52:16.3174941Z",
+          "adapter": "Up",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 20341
+        }
+      ],
+      "original": [
+        {
+          "stage": "vpnConnect",
+          "category": "conexão interrompida",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: tempo limite atingido; ipapi.co: tempo limite atingido.",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "hadConnected": true,
+      "lines": [
+        {
+          "at": "2026-11-02T00:51:57.327Z",
+          "source": "trace.1.log",
+          "line": 893,
+          "text": "2026-11-01 21:51:57,327 IsOn:True"
+        },
+        {
+          "at": "2026-11-02T00:51:57.895Z",
+          "source": "trace.1.log",
+          "line": 895,
+          "text": "2026-11-01 21:51:57,895 Connecting Portugal..."
+        },
+        {
+          "at": "2026-11-02T00:52:05.228Z",
+          "source": "trace_maintenance.3.log",
+          "line": 1136,
+          "text": "2026-11-01 21:52:05,228 status:Connecting"
+        },
+        {
+          "at": "2026-11-02T00:52:06.526Z",
+          "source": "trace.1.log",
+          "line": 905,
+          "text": "2026-11-01 21:52:06,526 status:Connecting"
+        },
+        {
+          "at": "2026-11-02T00:52:08.254Z",
+          "source": "trace_maintenance.3.log",
+          "line": 1201,
+          "text": "2026-11-01 21:52:08,254 status:estado não reconhecido"
+        },
+        {
+          "at": "2026-11-02T00:52:08.254Z",
+          "source": "trace_maintenance.3.log",
+          "line": 1202,
+          "text": "2026-11-01 21:52:08,254 status:Connecting"
+        },
+        {
+          "at": "2026-11-02T00:52:08.484Z",
+          "source": "trace_maintenance.3.log",
+          "line": 1206,
+          "text": "2026-11-01 21:52:08,484 status:estado não reconhecido"
+        },
+        {
+          "at": "2026-11-02T00:52:08.485Z",
+          "source": "trace_maintenance.3.log",
+          "line": 1208,
+          "text": "2026-11-01 21:52:08,485 status:Connecting"
+        },
+        {
+          "at": "2026-11-02T00:52:09.107Z",
+          "source": "trace.1.log",
+          "line": 906,
+          "text": "2026-11-01 21:52:09,107 IsOn:True"
+        },
+        {
+          "at": "2026-11-02T00:52:11.235Z",
+          "source": "trace_maintenance.3.log",
+          "line": 1223,
+          "text": "2026-11-01 21:52:11,235 status:estado não reconhecido"
+        },
+        {
+          "at": "2026-11-02T00:52:11.235Z",
+          "source": "trace_maintenance.3.log",
+          "line": 1224,
+          "text": "2026-11-01 21:52:11,235 status:Connecting"
+        },
+        {
+          "at": "2026-11-02T00:52:13.337Z",
+          "source": "trace_maintenance.2.log",
+          "line": 28,
+          "text": "2026-11-01 21:52:13,337 status:Connected"
+        },
+        {
+          "at": "2026-11-02T00:52:13.448Z",
+          "source": "trace_maintenance.2.log",
+          "line": 39,
+          "text": "2026-11-01 21:52:13,448 status:Connected"
+        },
+        {
+          "at": "2026-11-02T00:52:13.448Z",
+          "source": "trace_maintenance.2.log",
+          "line": 40,
+          "text": "2026-11-01 21:52:13,448 status:Connected, responseResult:Success, countryCode:PT"
+        },
+        {
+          "at": "2026-11-02T00:52:13.512Z",
+          "source": "trace_maintenance.2.log",
+          "line": 46,
+          "text": "2026-11-01 21:52:13,512 status:Connected, responseResult:Success, countryCode:PT"
+        },
+        {
+          "at": "2026-11-02T00:52:13.549Z",
+          "source": "trace_maintenance.2.log",
+          "line": 50,
+          "text": "2026-11-01 21:52:13,549 status:Connected"
+        },
+        {
+          "at": "2026-11-02T00:52:13.579Z",
+          "source": "trace.1.log",
+          "line": 908,
+          "text": "2026-11-01 21:52:13,579 status:Connected"
+        },
+        {
+          "at": "2026-11-02T00:52:13.579Z",
+          "source": "trace.1.log",
+          "line": 909,
+          "text": "2026-11-01 21:52:13,579 IsOn:True"
+        },
+        {
+          "at": "2026-11-02T00:52:14.436Z",
+          "source": "trace_maintenance.2.log",
+          "line": 60,
+          "text": "2026-11-01 21:52:14,436 status:Success"
+        },
+        {
+          "at": "2026-11-02T00:52:41.734Z",
+          "source": "trace.1.log",
+          "line": 983,
+          "text": "2026-11-01 21:52:41,734 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T00:52:42.044Z",
+          "source": "trace_maintenance.2.log",
+          "line": 93,
+          "text": "2026-11-01 21:52:42,044 status:Disconnected, responseResult:Success"
+        },
+        {
+          "at": "2026-11-02T00:52:42.063Z",
+          "source": "trace_maintenance.2.log",
+          "line": 114,
+          "text": "2026-11-01 21:52:42,063 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.064Z",
+          "source": "trace_maintenance.2.log",
+          "line": 116,
+          "text": "2026-11-01 21:52:42,064 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.085Z",
+          "source": "trace_maintenance.2.log",
+          "line": 120,
+          "text": "2026-11-01 21:52:42,085 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.085Z",
+          "source": "trace.1.log",
+          "line": 991,
+          "text": "2026-11-01 21:52:42,085 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.085Z",
+          "source": "trace.1.log",
+          "line": 992,
+          "text": "2026-11-01 21:52:42,085 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.085Z",
+          "source": "trace.1.log",
+          "line": 993,
+          "text": "2026-11-01 21:52:42,085 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T00:52:42.085Z",
+          "source": "trace.1.log",
+          "line": 995,
+          "text": "2026-11-01 21:52:42,085 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T00:52:42.087Z",
+          "source": "trace_maintenance.2.log",
+          "line": 123,
+          "text": "2026-11-01 21:52:42,087 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.125Z",
+          "source": "trace_maintenance.2.log",
+          "line": 131,
+          "text": "2026-11-01 21:52:42,125 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.127Z",
+          "source": "trace_maintenance.2.log",
+          "line": 135,
+          "text": "2026-11-01 21:52:42,127 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.352Z",
+          "source": "trace_maintenance.2.log",
+          "line": 139,
+          "text": "2026-11-01 21:52:42,352 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.447Z",
+          "source": "trace.1.log",
+          "line": 996,
+          "text": "2026-11-01 21:52:42,447 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.448Z",
+          "source": "trace.1.log",
+          "line": 997,
+          "text": "2026-11-01 21:52:42,448 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.449Z",
+          "source": "trace.1.log",
+          "line": 998,
+          "text": "2026-11-01 21:52:42,449 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T00:52:42.507Z",
+          "source": "trace.1.log",
+          "line": 999,
+          "text": "2026-11-01 21:52:42,507 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T00:52:42.507Z",
+          "source": "trace.1.log",
+          "line": 1000,
+          "text": "2026-11-01 21:52:42,507 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T00:52:42.508Z",
+          "source": "trace.1.log",
+          "line": 1001,
+          "text": "2026-11-01 21:52:42,508 IsOn:False"
+        }
+      ],
+      "before": [
+        {
+          "at": "2026-11-01T23:50:44.402Z",
+          "source": "trace_maintenance.3.log",
+          "line": 920,
+          "text": "2026-11-01 20:50:44,402 status:Success"
+        },
+        {
+          "at": "2026-11-01T23:51:11.995Z",
+          "source": "trace.1.log",
+          "line": 799,
+          "text": "2026-11-01 20:51:11,995 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T23:51:12.482Z",
+          "source": "trace_maintenance.3.log",
+          "line": 953,
+          "text": "2026-11-01 20:51:12,482 status:Disconnected, responseResult:Success"
+        },
+        {
+          "at": "2026-11-01T23:51:12.525Z",
+          "source": "trace_maintenance.3.log",
+          "line": 977,
+          "text": "2026-11-01 20:51:12,525 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.543Z",
+          "source": "trace_maintenance.3.log",
+          "line": 983,
+          "text": "2026-11-01 20:51:12,543 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.553Z",
+          "source": "trace_maintenance.3.log",
+          "line": 989,
+          "text": "2026-11-01 20:51:12,553 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.554Z",
+          "source": "trace_maintenance.3.log",
+          "line": 991,
+          "text": "2026-11-01 20:51:12,554 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.555Z",
+          "source": "trace_maintenance.3.log",
+          "line": 993,
+          "text": "2026-11-01 20:51:12,555 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.556Z",
+          "source": "trace_maintenance.3.log",
+          "line": 995,
+          "text": "2026-11-01 20:51:12,556 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.775Z",
+          "source": "trace_maintenance.3.log",
+          "line": 1004,
+          "text": "2026-11-01 20:51:12,775 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.776Z",
+          "source": "trace.1.log",
+          "line": 805,
+          "text": "2026-11-01 20:51:12,776 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.776Z",
+          "source": "trace.1.log",
+          "line": 806,
+          "text": "2026-11-01 20:51:12,776 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T23:51:12.777Z",
+          "source": "trace.1.log",
+          "line": 808,
+          "text": "2026-11-01 20:51:12,777 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.777Z",
+          "source": "trace.1.log",
+          "line": 809,
+          "text": "2026-11-01 20:51:12,777 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.777Z",
+          "source": "trace.1.log",
+          "line": 810,
+          "text": "2026-11-01 20:51:12,777 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.778Z",
+          "source": "trace.1.log",
+          "line": 811,
+          "text": "2026-11-01 20:51:12,778 status:Disconnected"
+        },
+        {
+          "at": "2026-11-01T23:51:12.782Z",
+          "source": "trace.1.log",
+          "line": 812,
+          "text": "2026-11-01 20:51:12,782 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T23:51:12.782Z",
+          "source": "trace.1.log",
+          "line": 813,
+          "text": "2026-11-01 20:51:12,782 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T23:51:12.782Z",
+          "source": "trace.1.log",
+          "line": 814,
+          "text": "2026-11-01 20:51:12,782 IsOn:False"
+        },
+        {
+          "at": "2026-11-01T23:51:12.782Z",
+          "source": "trace.1.log",
+          "line": 815,
+          "text": "2026-11-01 20:51:12,782 IsOn:False"
+        }
+      ],
+      "proofAt": "2026-11-02T00:52:16.3174941Z",
+      "snapshot": {
+        "Status": "Connected",
+        "Country": "PT",
+        "At": "2026-11-02T00:52:13.579Z",
+        "Source": "trace.1.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-02T08:50:11.217Z",
+      "finishedAt": "2026-11-02T08:53:33.077Z",
+      "status": "failed",
+      "healthCause": {
+        "kind": "disconnect_warning",
+        "category": "erro na desconexão",
+        "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: país português não confirmado; ipapi.co: tempo limite atingido; ipwho.is: país português não confirmado; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mais erros.\"; ipwho.is: país português não confi",
+        "originalErrorUnavailable": false
+      },
+      "stages": {
+        "vpnConnect": {
+          "startedAt": "2026-11-02T08:50:16.706Z",
+          "finishedAt": "2026-11-02T08:50:43.791Z",
+          "durationMs": 27085,
+          "error": null
+        },
+        "vpnDisconnect": {
+          "startedAt": "2026-11-02T08:51:46.840Z",
+          "error": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: país português não confirmado; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mais erros.\"; ipwho.is: país português não confirmado; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mai",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: país português não confirmado; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mais erros.\"; ipwho.is: país português não confirmado; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mai",
+          "finishedAt": "2026-11-02T08:53:30.560Z",
+          "durationMs": 103721
+        }
+      },
+      "checks": [
+        {
+          "at": "2026-11-02T08:50:19.6359472Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 21
+        },
+        {
+          "at": "2026-11-02T08:50:22.0815171Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 17
+        },
+        {
+          "at": "2026-11-02T08:50:27.0976318Z",
+          "adapter": "Down",
+          "connected": false,
+          "error": null,
+          "elapsedMs": 363
+        },
+        {
+          "at": "2026-11-02T08:50:32.1031608Z",
+          "adapter": "Up",
+          "connected": true,
+          "error": null,
+          "elapsedMs": 11290
+        }
+      ],
+      "original": [
+        {
+          "stage": "vpnDisconnect",
+          "category": "erro na desconexão",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: país português não confirmado; ipapi.co: tempo limite atingido; ipwho.is: país português não confirmado; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mais erros.\"; ipwho.is: país português não confi",
+          "originalErrorUnavailable": false
+        },
+        {
+          "stage": "vpnDisconnect",
+          "category": "erro na desconexão",
+          "originalError": "VPN sem confirmação pela placa e IP português: adaptador=Up, país=, erro=ipwho.is: país português não confirmado; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mais erros.\"; ipwho.is: país português não confirmado; ipapi.co: Exceção ao chamar \"Wait\" com \"1\" argumento(s): \"Um ou mai",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "hadConnected": true,
+      "lines": [
+        {
+          "at": "2026-11-02T08:50:22.066Z",
+          "source": "trace.log",
+          "line": 297,
+          "text": "2026-11-02 05:50:22,066 IsOn:True"
+        },
+        {
+          "at": "2026-11-02T08:50:22.067Z",
+          "source": "trace.log",
+          "line": 299,
+          "text": "2026-11-02 05:50:22,067 Connecting Portugal..."
+        },
+        {
+          "at": "2026-11-02T08:50:23.016Z",
+          "source": "trace_maintenance.log",
+          "line": 309,
+          "text": "2026-11-02 05:50:23,016 status:Connecting"
+        },
+        {
+          "at": "2026-11-02T08:50:23.018Z",
+          "source": "trace.log",
+          "line": 314,
+          "text": "2026-11-02 05:50:23,018 status:Connecting"
+        },
+        {
+          "at": "2026-11-02T08:50:23.019Z",
+          "source": "trace.log",
+          "line": 315,
+          "text": "2026-11-02 05:50:23,019 IsOn:True"
+        },
+        {
+          "at": "2026-11-02T08:50:23.544Z",
+          "source": "trace_maintenance.log",
+          "line": 374,
+          "text": "2026-11-02 05:50:23,544 status:estado não reconhecido"
+        },
+        {
+          "at": "2026-11-02T08:50:23.545Z",
+          "source": "trace_maintenance.log",
+          "line": 375,
+          "text": "2026-11-02 05:50:23,545 status:Connecting"
+        },
+        {
+          "at": "2026-11-02T08:50:23.763Z",
+          "source": "trace_maintenance.log",
+          "line": 379,
+          "text": "2026-11-02 05:50:23,763 status:estado não reconhecido"
+        },
+        {
+          "at": "2026-11-02T08:50:23.765Z",
+          "source": "trace_maintenance.log",
+          "line": 381,
+          "text": "2026-11-02 05:50:23,765 status:Connecting"
+        },
+        {
+          "at": "2026-11-02T08:50:26.592Z",
+          "source": "trace_maintenance.log",
+          "line": 396,
+          "text": "2026-11-02 05:50:26,592 status:estado não reconhecido"
+        },
+        {
+          "at": "2026-11-02T08:50:26.593Z",
+          "source": "trace_maintenance.log",
+          "line": 397,
+          "text": "2026-11-02 05:50:26,593 status:Connecting"
+        },
+        {
+          "at": "2026-11-02T08:50:27.570Z",
+          "source": "trace_maintenance.log",
+          "line": 458,
+          "text": "2026-11-02 05:50:27,570 status:Connected"
+        },
+        {
+          "at": "2026-11-02T08:50:27.583Z",
+          "source": "trace_maintenance.log",
+          "line": 469,
+          "text": "2026-11-02 05:50:27,583 status:Connected"
+        },
+        {
+          "at": "2026-11-02T08:50:27.584Z",
+          "source": "trace_maintenance.log",
+          "line": 470,
+          "text": "2026-11-02 05:50:27,584 status:Connected, responseResult:Success, countryCode:PT"
+        },
+        {
+          "at": "2026-11-02T08:50:27.594Z",
+          "source": "trace_maintenance.log",
+          "line": 472,
+          "text": "2026-11-02 05:50:27,594 status:Connected, responseResult:Success, countryCode:PT"
+        },
+        {
+          "at": "2026-11-02T08:50:27.605Z",
+          "source": "trace_maintenance.log",
+          "line": 476,
+          "text": "2026-11-02 05:50:27,605 status:Connected"
+        },
+        {
+          "at": "2026-11-02T08:50:27.609Z",
+          "source": "trace.log",
+          "line": 330,
+          "text": "2026-11-02 05:50:27,609 status:Connected"
+        },
+        {
+          "at": "2026-11-02T08:50:27.678Z",
+          "source": "trace.log",
+          "line": 332,
+          "text": "2026-11-02 05:50:27,678 IsOn:True"
+        },
+        {
+          "at": "2026-11-02T08:50:32.355Z",
+          "source": "trace_maintenance.log",
+          "line": 491,
+          "text": "2026-11-02 05:50:32,355 status:Success"
+        },
+        {
+          "at": "2026-11-02T08:51:05.710Z",
+          "source": "trace.log",
+          "line": 413,
+          "text": "2026-11-02 05:51:05,710 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T08:51:06.029Z",
+          "source": "trace_maintenance.log",
+          "line": 527,
+          "text": "2026-11-02 05:51:06,029 status:Disconnected, responseResult:Success"
+        },
+        {
+          "at": "2026-11-02T08:51:06.086Z",
+          "source": "trace_maintenance.log",
+          "line": 546,
+          "text": "2026-11-02 05:51:06,086 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.097Z",
+          "source": "trace_maintenance.log",
+          "line": 550,
+          "text": "2026-11-02 05:51:06,097 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.097Z",
+          "source": "trace.log",
+          "line": 419,
+          "text": "2026-11-02 05:51:06,097 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.097Z",
+          "source": "trace.log",
+          "line": 420,
+          "text": "2026-11-02 05:51:06,097 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T08:51:06.098Z",
+          "source": "trace.log",
+          "line": 422,
+          "text": "2026-11-02 05:51:06,098 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.101Z",
+          "source": "trace_maintenance.log",
+          "line": 556,
+          "text": "2026-11-02 05:51:06,101 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.101Z",
+          "source": "trace_maintenance.log",
+          "line": 557,
+          "text": "2026-11-02 05:51:06,101 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.102Z",
+          "source": "trace.log",
+          "line": 423,
+          "text": "2026-11-02 05:51:06,102 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T08:51:06.102Z",
+          "source": "trace.log",
+          "line": 424,
+          "text": "2026-11-02 05:51:06,102 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.102Z",
+          "source": "trace.log",
+          "line": 425,
+          "text": "2026-11-02 05:51:06,102 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T08:51:06.131Z",
+          "source": "trace_maintenance.log",
+          "line": 564,
+          "text": "2026-11-02 05:51:06,131 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.132Z",
+          "source": "trace_maintenance.log",
+          "line": 568,
+          "text": "2026-11-02 05:51:06,132 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.273Z",
+          "source": "trace_maintenance.log",
+          "line": 573,
+          "text": "2026-11-02 05:51:06,273 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.392Z",
+          "source": "trace.log",
+          "line": 426,
+          "text": "2026-11-02 05:51:06,392 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.393Z",
+          "source": "trace.log",
+          "line": 427,
+          "text": "2026-11-02 05:51:06,393 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T08:51:06.393Z",
+          "source": "trace.log",
+          "line": 428,
+          "text": "2026-11-02 05:51:06,393 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.396Z",
+          "source": "trace.log",
+          "line": 429,
+          "text": "2026-11-02 05:51:06,396 IsOn:False"
+        }
+      ],
+      "before": [
+        {
+          "at": "2026-11-02T07:50:22.627Z",
+          "source": "trace_maintenance.log",
+          "line": 89,
+          "text": "2026-11-02 04:50:22,627 status:Success"
+        },
+        {
+          "at": "2026-11-02T07:50:58.671Z",
+          "source": "trace.log",
+          "line": 247,
+          "text": "2026-11-02 04:50:58,671 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T07:50:58.970Z",
+          "source": "trace_maintenance.log",
+          "line": 126,
+          "text": "2026-11-02 04:50:58,970 status:Disconnected, responseResult:Success"
+        },
+        {
+          "at": "2026-11-02T07:50:58.994Z",
+          "source": "trace_maintenance.log",
+          "line": 145,
+          "text": "2026-11-02 04:50:58,994 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:58.995Z",
+          "source": "trace_maintenance.log",
+          "line": 147,
+          "text": "2026-11-02 04:50:58,995 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.004Z",
+          "source": "trace.log",
+          "line": 253,
+          "text": "2026-11-02 04:50:59,004 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.005Z",
+          "source": "trace.log",
+          "line": 254,
+          "text": "2026-11-02 04:50:59,005 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T07:50:59.005Z",
+          "source": "trace.log",
+          "line": 256,
+          "text": "2026-11-02 04:50:59,005 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.009Z",
+          "source": "trace_maintenance.log",
+          "line": 156,
+          "text": "2026-11-02 04:50:59,009 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.009Z",
+          "source": "trace.log",
+          "line": 259,
+          "text": "2026-11-02 04:50:59,009 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T07:50:59.010Z",
+          "source": "trace_maintenance.log",
+          "line": 158,
+          "text": "2026-11-02 04:50:59,010 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.041Z",
+          "source": "trace.log",
+          "line": 260,
+          "text": "2026-11-02 04:50:59,041 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.045Z",
+          "source": "trace.log",
+          "line": 261,
+          "text": "2026-11-02 04:50:59,045 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T07:50:59.048Z",
+          "source": "trace_maintenance.log",
+          "line": 165,
+          "text": "2026-11-02 04:50:59,048 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.049Z",
+          "source": "trace_maintenance.log",
+          "line": 169,
+          "text": "2026-11-02 04:50:59,049 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.180Z",
+          "source": "trace.log",
+          "line": 262,
+          "text": "2026-11-02 04:50:59,180 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.185Z",
+          "source": "trace.log",
+          "line": 263,
+          "text": "2026-11-02 04:50:59,185 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T07:50:59.194Z",
+          "source": "trace_maintenance.log",
+          "line": 173,
+          "text": "2026-11-02 04:50:59,194 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.213Z",
+          "source": "trace.log",
+          "line": 264,
+          "text": "2026-11-02 04:50:59,213 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T07:50:59.214Z",
+          "source": "trace.log",
+          "line": 265,
+          "text": "2026-11-02 04:50:59,214 IsOn:False"
+        }
+      ],
+      "proofAt": "2026-11-02T08:50:32.1031608Z",
+      "snapshot": {
+        "Status": "Connected",
+        "Country": "PT",
+        "At": "2026-11-02T08:50:27.609Z",
+        "Source": "trace.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-02T09:50:05.868Z",
+      "finishedAt": "2026-11-02T09:50:34.361Z",
+      "status": "ciclo sem conexão",
+      "healthCause": {
+        "kind": "vpn_failed",
+        "category": "TunnelBear sem registro no intervalo",
+        "originalError": "VPN com placa Up sem confirmação de IP de Portugal; nenhum clique autorizado.",
+        "originalErrorUnavailable": false
+      },
+      "stages": {
+        "vpnConnect": {
+          "startedAt": "2026-11-02T09:50:10.755Z",
+          "error": "VPN com placa Up sem confirmação de IP de Portugal; nenhum clique autorizado.",
+          "originalError": "VPN com placa Up sem confirmação de IP de Portugal; nenhum clique autorizado.",
+          "finishedAt": "2026-11-02T09:50:31.706Z",
+          "durationMs": 20951
+        }
+      },
+      "checks": [],
+      "original": [
+        {
+          "stage": "vpnConnect",
+          "category": "TunnelBear sem registro no intervalo",
+          "originalError": "VPN com placa Up sem confirmação de IP de Portugal; nenhum clique autorizado.",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "hadConnected": false,
+      "lines": [],
+      "before": [
+        {
+          "at": "2026-11-02T08:50:32.355Z",
+          "source": "trace_maintenance.log",
+          "line": 491,
+          "text": "2026-11-02 05:50:32,355 status:Success"
+        },
+        {
+          "at": "2026-11-02T08:51:05.710Z",
+          "source": "trace.log",
+          "line": 413,
+          "text": "2026-11-02 05:51:05,710 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T08:51:06.029Z",
+          "source": "trace_maintenance.log",
+          "line": 527,
+          "text": "2026-11-02 05:51:06,029 status:Disconnected, responseResult:Success"
+        },
+        {
+          "at": "2026-11-02T08:51:06.086Z",
+          "source": "trace_maintenance.log",
+          "line": 546,
+          "text": "2026-11-02 05:51:06,086 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.097Z",
+          "source": "trace_maintenance.log",
+          "line": 550,
+          "text": "2026-11-02 05:51:06,097 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.097Z",
+          "source": "trace.log",
+          "line": 419,
+          "text": "2026-11-02 05:51:06,097 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.097Z",
+          "source": "trace.log",
+          "line": 420,
+          "text": "2026-11-02 05:51:06,097 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T08:51:06.098Z",
+          "source": "trace.log",
+          "line": 422,
+          "text": "2026-11-02 05:51:06,098 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.101Z",
+          "source": "trace_maintenance.log",
+          "line": 556,
+          "text": "2026-11-02 05:51:06,101 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.101Z",
+          "source": "trace_maintenance.log",
+          "line": 557,
+          "text": "2026-11-02 05:51:06,101 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.102Z",
+          "source": "trace.log",
+          "line": 423,
+          "text": "2026-11-02 05:51:06,102 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T08:51:06.102Z",
+          "source": "trace.log",
+          "line": 424,
+          "text": "2026-11-02 05:51:06,102 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.102Z",
+          "source": "trace.log",
+          "line": 425,
+          "text": "2026-11-02 05:51:06,102 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T08:51:06.131Z",
+          "source": "trace_maintenance.log",
+          "line": 564,
+          "text": "2026-11-02 05:51:06,131 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.132Z",
+          "source": "trace_maintenance.log",
+          "line": 568,
+          "text": "2026-11-02 05:51:06,132 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.273Z",
+          "source": "trace_maintenance.log",
+          "line": 573,
+          "text": "2026-11-02 05:51:06,273 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.392Z",
+          "source": "trace.log",
+          "line": 426,
+          "text": "2026-11-02 05:51:06,392 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.393Z",
+          "source": "trace.log",
+          "line": 427,
+          "text": "2026-11-02 05:51:06,393 IsOn:False"
+        },
+        {
+          "at": "2026-11-02T08:51:06.393Z",
+          "source": "trace.log",
+          "line": 428,
+          "text": "2026-11-02 05:51:06,393 status:Disconnected"
+        },
+        {
+          "at": "2026-11-02T08:51:06.396Z",
+          "source": "trace.log",
+          "line": 429,
+          "text": "2026-11-02 05:51:06,396 IsOn:False"
+        }
+      ],
+      "proofAt": "2026-11-02T09:50:34.361Z",
+      "snapshot": {
+        "Status": "Unavailable",
+        "Country": null,
+        "At": null,
+        "Source": null
+      }
+    }
+  ]
+}

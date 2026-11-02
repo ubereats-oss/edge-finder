@@ -19,7 +19,7 @@ function Restart-UnresponsiveTunnelBear($Initial, [switch]$Forced) {
   } while ([DateTime]::UtcNow -lt $deadline)
   if (-not $window -or @(Get-TunnelBearHungProcesses).Count) { throw 'TunnelBear não respondeu após reabrir uma vez.' }
   # Opening can auto-connect; this connection belongs to this recovery, never Alex.
-  if ((Get-VpnProof).Adapter -ne 'Down') {
+  if ((Get-VpnAdapter).OperationalStatus.ToString() -ne 'Down') {
     $script:CycleOwnsVpn = $true
     $state = Assert-TunnelBearWindow
     if ($state.Switch.Current.ToggleState -ne [System.Windows.Automation.ToggleState]::Off) { $state.Switch.Toggle() }

@@ -6,6 +6,9 @@ const CATEGORIES = Object.freeze({
   Unknown: 'estado não reconhecido',
   NoRecords: 'TunnelBear sem registro no intervalo',
   ExecutableNotFound: 'executável do TunnelBear não encontrado',
+  CountryUnproven: 'país do VPN sem comprovação',
+  OtherCountry: 'VPN preexistente em outro país',
+  ExternalConfirmation: 'falha na verificação externa de IP',
 });
 const knownStates = new Set(['Error', 'Disconnected', 'Connected', 'Connecting', 'Disconnecting', 'Success']);
 const knownResults = new Set(['DataLimitReached', 'VpnConnectionFailed', 'Success', 'None']);
@@ -44,9 +47,24 @@ function safeStateLines(lines = []) {
     return stamp && payload ? [`${stamp[1]} ${payload}`] : [];
   }).slice(-20);
 }
+function failureCodeFor(lines = [], reason = '', recordedCode) {
+  const native = categoryFor(lines);
+  // Explicit refusal always outranks adapter inference or a generic old category.
+  for (const code of ['DataLimitReached', 'VpnConnectionFailed'])
+    if (native === code || recordedCode === code) return code;
+  if (/executável instalado do TunnelBear não encontrado/i.test(reason)) return 'ExecutableNotFound';
+  if (/outro país/.test(reason)) return 'OtherCountry';
+  if (/VPN_COUNTRY_UNPROVEN|VPN preexistente não comprovada/.test(reason)) return 'CountryUnproven';
+  const connected = lines.some(line => /status:Connected\b/.test(line));
+  if (connected && /adaptador=Up/.test(reason) && /ipwho\.is|ipapi\.co/.test(reason)) return 'ExternalConfirmation';
+  // IsOn records the switch, not establishment of a network connection.
+  if (!connected && /adaptador=Down/.test(reason) && (recordedCode === 'Interrupted' || native === 'Interrupted'))
+    return 'VpnConnectionFailed';
+  return recordedCode || native;
+}
 function expireStateLines(diagnostic, now = Date.now()) {
   if (!diagnostic || !Array.isArray(diagnostic.stateLines)) return diagnostic;
   return { ...diagnostic, stateLines: (diagnostic.stateLines || []).filter(line =>
     Date.parse(line.slice(0, 24)) >= now - RETENTION_MS) };
 }
-module.exports = { CATEGORIES, RETENTION_MS, statePayload, categoryFor, safeStateLines, expireStateLines };
+module.exports = { CATEGORIES, RETENTION_MS, statePayload, categoryFor, failureCodeFor, safeStateLines, expireStateLines };

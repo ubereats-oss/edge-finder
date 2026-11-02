@@ -212,10 +212,10 @@ function Assert-TunnelBearWindow {
 }
 
 function Prepare-TunnelBearWindow([switch]$ForDisconnect) {
-  $initial = Get-VpnProof
+  $initial = Get-VpnProof -ForDisconnect:$ForDisconnect
   Restart-UnresponsiveTunnelBear $initial
   if ($initial.Adapter -eq 'Up' -and -not $initial.Connected -and -not $ForDisconnect) {
-    throw 'VPN com placa Up sem confirmação de IP de Portugal; nenhum clique autorizado.'
+    throw "VPN preexistente não comprovada em Portugal; placa Up; $($initial.Error); nenhum clique autorizado."
   }
   $deadline = [DateTime]::UtcNow.AddSeconds(30)
   $window = Find-TunnelBearWindow
@@ -246,8 +246,8 @@ function Prepare-TunnelBearWindow([switch]$ForDisconnect) {
     }
   } while ([DateTime]::UtcNow -lt $deadline)
   if (-not $state) { $null = Assert-TunnelBearWindow }
-  $proof = Get-VpnProof
-  $script:CycleOwnsVpn = -not $initial.Connected -and ($proof.Adapter -eq 'Up' -or
+  $proof = Get-VpnProof -ForDisconnect:$ForDisconnect
+  $script:CycleOwnsVpn = $initial.Adapter -eq 'Down' -and ($proof.Adapter -eq 'Up' -or
     $state.Switch.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::On)
   return @{ Initial = $initial; Proof = $proof; State = $state; ConnectedByCycle = $script:CycleOwnsVpn }
 }
@@ -266,6 +266,7 @@ function Connect-TunnelBearPrepared($Prepared) {
         throw 'Interruptor não está desligado; nenhum clique autorizado.'
       }
       $script:CycleOwnsVpn = $true
+      $script:VpnAttemptSince = [DateTimeOffset]::UtcNow
       $state.Switch.Toggle()
     }
     $proof = Wait-VpnProof $true 60

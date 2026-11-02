@@ -106,21 +106,22 @@ function Wait-VpnProof([bool]$Expected, [int]$TimeoutSeconds) {
   $checks = @()
   do {
     $at = [DateTime]::UtcNow
-    $proof = Get-VpnProof
+    $proof = Get-VpnProof -ForDisconnect:(-not $Expected)
     $check = [pscustomobject]@{ at = $at.ToString('o'); adapter = $proof.Adapter;
-      country = $proof.Country; publicIp = $proof.PublicIp; service = $proof.Service;
+      country = $proof.Country; service = $proof.Service; nativeStatus = $proof.NativeStatus; nativeAt = $proof.NativeAt;
       connected = $proof.Connected; error = $proof.Error; elapsedMs = $proof.ElapsedMs;
       attempts = $proof.Attempts; windowMs = $proof.WindowMs }
     $checks += $check
     if ($Expected) { Write-ConnectionAttempt 1 'check' ($check | ConvertTo-Json -Depth 6 -Compress) }
-    if (($Expected -and $proof.Connected) -or (-not $Expected -and $proof.Adapter -eq 'Down')) {
+    if (($Expected -and $proof.Connected) -or (-not $Expected -and $proof.Disconnected)) {
       $proof.Checks = $checks; return $proof
     }
     if ($Expected -and $proof.ProofWindowExhausted) { break }
     $remaining = 5 - ([DateTime]::UtcNow - $at).TotalSeconds
     if ($remaining -gt 0) { Start-Sleep -Milliseconds ([int]($remaining * 1000)) }
   } while ([DateTime]::UtcNow -lt $deadline)
-  throw "VPN sem confirmação pela placa e IP português: adaptador=$($proof.Adapter), país=$($proof.Country), erro=$($proof.Error)."
+  if (-not $Expected) { throw $proof.Error }
+  throw "VPN sem confirmação: adaptador=$($proof.Adapter), TunnelBear=$($proof.NativeStatus), motivo=$($proof.Error)."
 }
 
 function Get-MeterReading([int]$StableSeconds = 90) {
@@ -187,7 +188,7 @@ try {
     $prepared = Prepare-TunnelBearWindow
     $proof = $prepared.Initial
     $initialCheck = [pscustomobject]@{ at = [DateTime]::UtcNow.ToString('o'); adapter = $proof.Adapter;
-      country = $proof.Country; publicIp = $proof.PublicIp; service = $proof.Service;
+      country = $proof.Country; service = $proof.Service; nativeStatus = $proof.NativeStatus; nativeAt = $proof.NativeAt;
       connected = $proof.Connected; error = $proof.Error; elapsedMs = $proof.ElapsedMs;
       attempts = $proof.Attempts; windowMs = $proof.WindowMs }
     Write-ConnectionAttempt 1 'check' ($initialCheck | ConvertTo-Json -Depth 6 -Compress)
@@ -197,12 +198,12 @@ try {
     $checks += $proof.Checks
     Write-ConnectionAttempt 1 'connected' "Adaptador=$($proof.Adapter), país=$($proof.Country)."
     [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT';
-      publicIp = $proof.PublicIp; adapter = $proof.Adapter; attempt = 1;
+      adapter = $proof.Adapter; source = $proof.Service; nativeStatus = $proof.NativeStatus; attempt = 1;
       vpnStartedAt = $vpnStartedAt; connectedByCycle = $connection.ConnectedByCycle;
       checks = $checks } | ConvertTo-Json -Depth 6 -Compress
   } elseif ($Action -eq 'disconnect') {
     $script:CycleOwnsVpn = $true
-    if ((Get-VpnProof).Adapter -ne 'Down') {
+    if ((Get-VpnAdapter).OperationalStatus.ToString() -ne 'Down') {
       $null = Prepare-TunnelBearWindow -ForDisconnect
       $script:CycleOwnsVpn = $true
       $switch = (Assert-TunnelBearWindow).Switch
@@ -227,6 +228,6 @@ try {
   } catch {
     if ($script:CycleOwnsVpn) { $message += "; falha ao garantir VPN desligado: $($_.Exception.Message)" }
   }
-  [Console]::Error.WriteLine($message)
+  [Console]::Error.WriteLine((Protect-VpnReason $message))
   exit 1
 }

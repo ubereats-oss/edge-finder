@@ -18,12 +18,14 @@ test('29/10 13:39 real: manual/teste não preenche a ausência das 13:50', () =>
   assert.match(report.text, /manual\/teste 29\/10.*13:39/);
 });
 
-test('29/10 14:32 e 15:50 reais: mesma categoria conserva os dois motivos distintos', () => {
+test('29/10 14:32 e 15:50 reais: verificação externa e adaptador Down separados', () => {
   const cycles = real.cycles.slice(1);
-  const issue = groupedIssues(cycles).find(row => row.category === 'conexão interrompida');
-  assert.equal(issue.count, 2);
-  assert.equal(issue.examples.length, 2);
-  assert.ok(issue.examples.some(row => /adaptador=Up.*tempo limite/.test(row.reason)));
+  const issue = groupedIssues(cycles).find(row => row.category === 'adaptador não subiu');
+  assert.equal(issue.count, 1);
+  assert.equal(issue.examples.length, 1);
+  const external = groupedIssues(cycles).find(row => row.category === 'falha na verificação externa de IP');
+  assert.equal(external.count, 1);
+  assert.ok(external.examples.some(row => /adaptador=Up.*tempo limite/.test(row.reason)));
   assert.ok(issue.examples.some(row => /adaptador=Down/.test(row.reason)));
   const report = composeHealth({ cycles }, Date.parse('2026-10-29T19:00:00Z'));
   assert.match(report.text, /adaptador=Down/);

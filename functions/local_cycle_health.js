@@ -1,5 +1,5 @@
 const { isIP } = require('node:net');
-const { CATEGORIES } = require('./tunnelbear_states');
+const { CATEGORIES, failureCodeFor } = require('./tunnelbear_states');
 
 function sanitizeReason(value, limit = 300) {
   return String(value || '').split(/\r?\n/).find(line => line.trim())?.trim()
@@ -41,6 +41,12 @@ function result(kind, category, reason) {
   return { kind, category, originalError, originalErrorUnavailable: !originalError };
 }
 function classifyCycle(cycle) {
+  const savedCode = cycle.tunnelBear?.failure?.code;
+  const vpnReason = cycle.vpnFailures?.find(row => row.stage === 'vpnConnect')?.originalError
+    || cycle.tunnelBear?.failure?.originalError || cycle.stages?.vpnConnect?.originalError || '';
+  const actualCode = failureCodeFor(cycle.tunnelBear?.stateLines || [], vpnReason, savedCode);
+  if (actualCode !== savedCode && ['ExternalConfirmation', 'VpnConnectionFailed'].includes(actualCode))
+    return result(actualCode === 'ExternalConfirmation' ? 'other_failed' : 'vpn_failed', CATEGORIES[actualCode], vpnReason);
   if (cycle.healthCause) {
     const value = cycle.healthCause;
     const known = KINDS.has(value.kind) && CATEGORIES_ALLOWED.has(value.category);
@@ -57,7 +63,7 @@ function classifyCycle(cycle) {
     const code = failure?.code;
     const original = vpn.find(row => row.stage === 'vpnConnect')?.originalError
       || failure?.originalError || stages.vpnConnect?.originalError || stages.vpnConnect?.error || fallback;
-    return result(code && !Object.hasOwn(CATEGORIES, code) ? 'other_failed' : 'vpn_failed',
+    return result(code === 'ExternalConfirmation' || code && !Object.hasOwn(CATEGORIES, code) ? 'other_failed' : 'vpn_failed',
       code ? CATEGORIES[code] || 'outra falha' : CATEGORIES.Unknown, original);
   }
   const read = cycle.reads?.betano;

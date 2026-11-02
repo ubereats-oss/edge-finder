@@ -3,7 +3,7 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const safe = require('./safe_files.cjs');
 const { originalReason } = require('../../functions/local_cycle_health.js');
-const { CATEGORIES, statePayload, categoryFor, expireStateLines, RETENTION_MS } = require('../../functions/tunnelbear_states');
+const { CATEGORIES, statePayload, failureCodeFor, expireStateLines, RETENTION_MS } = require('../../functions/tunnelbear_states');
 
 function parseNative(text, since, until) {
   const failures = [], updates = [], stateLines = [];
@@ -83,8 +83,7 @@ function collectDiagnostic(cycle, logDir, roots) {
   if (cycle.stages?.vpnConnect?.error) {
     const originalError = originalReason(cycle.vpnFailures?.find(row => row.stage === 'vpnConnect')?.originalError
       || cycle.stages.vpnConnect.originalError || cycle.stages.vpnConnect.error);
-    const code = /executável instalado do TunnelBear não encontrado/i.test(originalError || '')
-      ? 'ExecutableNotFound' : categoryFor(diagnostic.stateLines);
+    const code = failureCodeFor(diagnostic.stateLines, originalError || '');
     diagnostic.failure = { code, category: CATEGORIES[code], message: CATEGORIES[code],
       originalError, originalErrorUnavailable: !originalError };
     diagnostic.stateLines = diagnostic.stateLines.slice(-20);
