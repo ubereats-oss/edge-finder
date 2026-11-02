@@ -54,7 +54,7 @@ function failureCodeFor(lines = [], reason = '', recordedCode) {
     if (native === code || recordedCode === code) return code;
   if (/executável instalado do TunnelBear não encontrado/i.test(reason)) return 'ExecutableNotFound';
   if (/outro país/.test(reason)) return 'OtherCountry';
-  if (/VPN_COUNTRY_UNPROVEN|VPN preexistente não comprovada/.test(reason)) return 'CountryUnproven';
+  if (/VPN_COUNTRY_UNPROVEN|VPN preexistente não comprovada|VPN com placa Up sem confirmação de IP de Portugal/.test(reason)) return 'CountryUnproven';
   const connected = lines.some(line => /status:Connected\b/.test(line));
   if (connected && /adaptador=Up/.test(reason) && /ipwho\.is|ipapi\.co/.test(reason)) return 'ExternalConfirmation';
   // IsOn records the switch, not establishment of a network connection.

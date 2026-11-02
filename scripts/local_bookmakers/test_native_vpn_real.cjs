@@ -47,3 +47,8 @@ test('arquivo nativo só retorna estado/país, nunca dados privados', t => {
   assert.equal(readConnection([path.join(dir, 'missing')]).Status, 'Unavailable');
   assert.doesNotMatch(JSON.stringify({ real, parsed: parsed(cycle) }), /\b(?:\d{1,3}\.){3}\d{1,3}\b|[\w.+-]+@[\w.-]+|token[=:]|publicIp/i);
 });
+test('recusa preexistente real de 02/11 06:50 tem causa pais sem prova, nao ausencia de log', () => {
+  const cycle = real.cycles.find(row => row.startedAt.startsWith('2026-11-02T09:50'));
+  assert.equal(classifyCycle(cycle).category, 'país do VPN sem comprovação');
+  assert.equal(classifyCycle(cycle).originalError, cycle.original[0].originalError);
+});
