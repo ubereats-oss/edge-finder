@@ -12,6 +12,8 @@ try { & { function Test-Path { param($LiteralPath,$PathType) return $false }; Ge
 catch { $missing = $_.Exception.Message -match 'TUNNELBEAR_EXECUTABLE_NOT_FOUND' }
 if (-not $missing) { throw 'Ausência de executável sem motivo próprio' }
 function Get-VpnAdapter { return @{ OperationalStatus = [System.Net.NetworkInformation.OperationalStatus]::Up } }
+function Get-TunnelBearNativeConnection { return @{ Status = 'Unavailable'; Country = $null } }
+function Get-TunnelBearSelectedCountry { return $null }
 $script:calls = @()
 $script:scenario = 'slow-success'
 function Invoke-PortugalProbe($Uri, $TimeoutMs) {

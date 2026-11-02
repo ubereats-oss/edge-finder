@@ -41,7 +41,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Testes sem rede
-        run: node --test pipeline/test_legacy_capture_alert.cjs pipeline/test_placard_value.js pipeline/test_market_integrity.cjs scripts/local_bookmakers/test_independent_readers.cjs scripts/local_bookmakers/test_operational_real.cjs functions/test_placard_part4.js functions/test_edge_health.js
+        run: node --test pipeline/test_legacy_capture_alert.cjs pipeline/test_placard_value.js pipeline/test_market_integrity.cjs scripts/local_bookmakers/test_independent_readers.cjs scripts/local_bookmakers/test_operational_real.cjs scripts/local_bookmakers/test_native_vpn_real.cjs scripts/local_bookmakers/test_health_real_cycles.cjs scripts/local_bookmakers/test_tunnelbear_failure_replay.cjs functions/test_placard_part4.js functions/test_edge_health.js
       - name: Verificar trabalho pendente sem consumir Odds API
         if: inputs.test_only != true
         id: plan
