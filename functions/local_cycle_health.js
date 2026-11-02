@@ -45,7 +45,7 @@ function classifyCycle(cycle) {
   const vpnReason = cycle.vpnFailures?.find(row => row.stage === 'vpnConnect')?.originalError
     || cycle.tunnelBear?.failure?.originalError || cycle.stages?.vpnConnect?.originalError || '';
   const actualCode = failureCodeFor(cycle.tunnelBear?.stateLines || [], vpnReason, savedCode);
-  if (actualCode !== savedCode && ['ExternalConfirmation', 'VpnConnectionFailed'].includes(actualCode))
+  if (actualCode !== savedCode && ['ExternalConfirmation', 'VpnConnectionFailed', 'CountryUnproven', 'OtherCountry'].includes(actualCode))
     return result(actualCode === 'ExternalConfirmation' ? 'other_failed' : 'vpn_failed', CATEGORIES[actualCode], vpnReason);
   if (cycle.healthCause) {
     const value = cycle.healthCause;
