@@ -16,7 +16,15 @@ if ($Action -eq 'state') {
   $vpnAdapter = [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() |
     Where-Object { $_.Description -eq 'TunnelBear Adapter V9' } | Select-Object -First 1
   if (-not $vpnAdapter) { [Console]::Error.WriteLine('Adaptador VPN não encontrado.'); exit 1 }
+  . (Join-Path $PSScriptRoot 'tunnelbear_installation.ps1')
+  $native = $null
+  try {
+    $nativeFolder = Split-Path -Parent (Get-TunnelBearInstallation).Path
+    $nativeJson = & 'C:\Program Files\nodejs\node.exe' (Join-Path $PSScriptRoot 'tunnelbear_native.cjs') $nativeFolder
+    if ($LASTEXITCODE -eq 0) { $native = $nativeJson | ConvertFrom-Json }
+  } catch {}
   [pscustomobject]@{ action = 'state'; status = $vpnAdapter.OperationalStatus.ToString();
+    nativeStatus = $native.Status; nativeCountry = $native.Country;
     description = 'Estado da conexão VPN; consulta sem alteração' } | ConvertTo-Json -Compress
   exit 0
 }
@@ -164,7 +172,7 @@ function Write-ConnectionAttempt([int]$Attempt, [string]$Status, [string]$Detail
 if ($Action -eq 'library') { return }
 try {
   if ($Action -eq 'recover') {
-    Restart-UnresponsiveTunnelBear @{ Adapter = 'Down' } -Forced
+    Restart-UnresponsiveTunnelBear (Get-VpnProof -ForDisconnect) -Forced
     [pscustomobject]@{ action = 'recover'; adapter = (Get-VpnProof).Adapter } | ConvertTo-Json -Compress
   } elseif ($Action -eq 'prepare') {
     $prepared = Prepare-TunnelBearWindow
@@ -203,7 +211,7 @@ try {
       checks = $checks } | ConvertTo-Json -Depth 6 -Compress
   } elseif ($Action -eq 'disconnect') {
     $script:CycleOwnsVpn = $true
-    if ((Get-VpnAdapter).OperationalStatus.ToString() -ne 'Down') {
+    if ((Get-TunnelBearNativeConnection).Status -ne 'Disconnected') {
       $null = Prepare-TunnelBearWindow -ForDisconnect
       $script:CycleOwnsVpn = $true
       $switch = (Assert-TunnelBearWindow).Switch

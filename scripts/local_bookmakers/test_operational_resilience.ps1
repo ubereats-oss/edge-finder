@@ -9,6 +9,7 @@ function Start-TunnelBearWindow { $script:starts++; $script:hung = $false }
 function Find-TunnelBearWindow { return @{ Current = @{ Name = 'TunnelBear' } } }
 function Get-VpnProof { return @{ Adapter = 'Down'; Connected = $false } }
 function Get-VpnAdapter { return @{ OperationalStatus = [System.Net.NetworkInformation.OperationalStatus]::Down } }
+function Get-TunnelBearNativeConnection { return @{ Status = 'Disconnected' } }
 function Wait-VpnProof($Expected, $TimeoutSeconds) { $script:verified = -not $Expected; return Get-VpnProof }
 function Write-ConnectionAttempt {}
 $script:hung = $true; $script:stops = 0; $script:starts = 0; $script:TunnelBearRestarted = $false
