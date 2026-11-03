@@ -60,12 +60,15 @@ function Get-VpnProof([int]$BudgetMs = 20000, [switch]$ForDisconnect) {
   $adapter = Get-VpnAdapter
   $status = if ($adapter) { $adapter.OperationalStatus.ToString() } else { 'NotFound' }
   $native = Get-TunnelBearNativeConnection
-  $proof = @{ Connected = $false; Disconnected = ($status -eq 'Down' -and $native.Status -eq 'Disconnected');
-    Adapter = $status; Country = $null; NativeStatus = $native.Status; NativeAt = $native.At;
+  $proof = @{ Connected = $false; Disconnected = ($native.Status -eq 'Disconnected');
+    Adapter = $status; Country = $native.Country; NativeStatus = $native.Status; NativeAt = $native.At;
     Service = 'TunnelBear'; ElapsedMs = $clock.ElapsedMilliseconds; Attempts = @(); WindowMs = $BudgetMs }
   if ($ForDisconnect) {
     $proof.Error = if ($proof.Disconnected) { $null } else { "Desconexão não confirmada: adaptador=$status; TunnelBear=$($native.Status)" }
     return $proof
+  }
+  if ($native.Status -eq 'Connected' -and $native.Country -and $native.Country -ne 'PT') {
+    $proof.Error = 'TunnelBear conectado em outro país; conexão preservada'; return $proof
   }
   if ($status -ne 'Up') { $proof.Error = "Adaptador VPN não ligado: $status"; return $proof }
   if ($native.Status -notin @('Connected', 'Unavailable')) {

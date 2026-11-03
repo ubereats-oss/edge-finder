@@ -1,0 +1,101 @@
+{
+  "source": "Oito ciclos locais e estado nativo no inicio da etapa VPN; sem enderecos/identificadores de conta",
+  "cycles": [
+    {
+      "startedAt": "2026-11-03T00:50:11.006Z",
+      "finishedAt": "2026-11-03T00:50:28.233Z",
+      "originalError": "VPN preexistente não comprovada em Portugal; placa Up; TunnelBear não conectado: Disconnected; nenhum clique autorizado.",
+      "adapter": "Up",
+      "native": {
+        "Status": "Disconnected",
+        "Country": null,
+        "At": "2026-11-02T23:51:03.336Z",
+        "Source": "trace_maintenance.1.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-03T01:50:16.100Z",
+      "finishedAt": "2026-11-03T01:50:25.672Z",
+      "originalError": "VPN preexistente não comprovada em Portugal; placa Up; TunnelBear não conectado: Disconnected; nenhum clique autorizado.",
+      "adapter": "Up",
+      "native": {
+        "Status": "Disconnected",
+        "Country": null,
+        "At": "2026-11-02T23:51:03.336Z",
+        "Source": "trace_maintenance.1.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-03T02:50:06.810Z",
+      "finishedAt": "2026-11-03T02:50:17.978Z",
+      "originalError": "VPN preexistente não comprovada em Portugal; placa Up; TunnelBear não conectado: Disconnected; nenhum clique autorizado.",
+      "adapter": "Up",
+      "native": {
+        "Status": "Disconnected",
+        "Country": null,
+        "At": "2026-11-02T23:51:03.336Z",
+        "Source": "trace_maintenance.1.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-03T03:50:06.467Z",
+      "finishedAt": "2026-11-03T03:50:16.090Z",
+      "originalError": "VPN preexistente não comprovada em Portugal; placa Up; TunnelBear não conectado: Disconnected; nenhum clique autorizado.",
+      "adapter": "Up",
+      "native": {
+        "Status": "Disconnected",
+        "Country": null,
+        "At": "2026-11-02T23:51:03.336Z",
+        "Source": "trace_maintenance.1.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-03T04:50:06.506Z",
+      "finishedAt": "2026-11-03T04:50:16.768Z",
+      "originalError": "VPN preexistente não comprovada em Portugal; placa Up; TunnelBear não conectado: Disconnected; nenhum clique autorizado.",
+      "adapter": "Up",
+      "native": {
+        "Status": "Disconnected",
+        "Country": null,
+        "At": "2026-11-02T23:51:03.336Z",
+        "Source": "trace_maintenance.1.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-03T05:50:07.092Z",
+      "finishedAt": "2026-11-03T05:50:17.267Z",
+      "originalError": "VPN preexistente não comprovada em Portugal; placa Up; TunnelBear não conectado: Disconnected; nenhum clique autorizado.",
+      "adapter": "Up",
+      "native": {
+        "Status": "Disconnected",
+        "Country": null,
+        "At": "2026-11-02T23:51:03.336Z",
+        "Source": "trace_maintenance.1.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-03T06:50:06.225Z",
+      "finishedAt": "2026-11-03T06:50:16.113Z",
+      "originalError": "VPN preexistente não comprovada em Portugal; placa Up; TunnelBear não conectado: Disconnected; nenhum clique autorizado.",
+      "adapter": "Up",
+      "native": {
+        "Status": "Disconnected",
+        "Country": null,
+        "At": "2026-11-02T23:51:03.336Z",
+        "Source": "trace_maintenance.1.log"
+      }
+    },
+    {
+      "startedAt": "2026-11-03T07:50:06.665Z",
+      "finishedAt": "2026-11-03T07:50:16.827Z",
+      "originalError": "VPN preexistente não comprovada em Portugal; placa Up; TunnelBear não conectado: Disconnected; nenhum clique autorizado.",
+      "adapter": "Up",
+      "native": {
+        "Status": "Disconnected",
+        "Country": null,
+        "At": "2026-11-02T23:51:03.336Z",
+        "Source": "trace_maintenance.1.log"
+      }
+    }
+  ]
+}

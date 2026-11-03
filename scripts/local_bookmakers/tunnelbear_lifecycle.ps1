@@ -214,8 +214,13 @@ function Assert-TunnelBearWindow {
 function Prepare-TunnelBearWindow([switch]$ForDisconnect) {
   $initial = Get-VpnProof -ForDisconnect:$ForDisconnect
   Restart-UnresponsiveTunnelBear $initial
-  if ($initial.Adapter -eq 'Up' -and -not $initial.Connected -and -not $ForDisconnect) {
-    throw "VPN preexistente não comprovada em Portugal; placa Up; $($initial.Error); nenhum clique autorizado."
+  if (-not $ForDisconnect) {
+    if ($initial.NativeStatus -eq 'Connected' -and $initial.Country -and $initial.Country -ne 'PT') {
+      throw 'TunnelBear conectado em outro país; conexão preservada; nenhum clique autorizado.'
+    }
+    if ($initial.Adapter -eq 'Up' -and -not $initial.Connected -and $initial.NativeStatus -ne 'Disconnected') {
+      throw "Estado do TunnelBear sem comprovação; placa Up; $($initial.Error); nenhum clique autorizado."
+    }
   }
   $deadline = [DateTime]::UtcNow.AddSeconds(30)
   $window = Find-TunnelBearWindow
@@ -247,7 +252,9 @@ function Prepare-TunnelBearWindow([switch]$ForDisconnect) {
   } while ([DateTime]::UtcNow -lt $deadline)
   if (-not $state) { $null = Assert-TunnelBearWindow }
   $proof = Get-VpnProof -ForDisconnect:$ForDisconnect
-  $script:CycleOwnsVpn = $initial.Adapter -eq 'Down' -and ($proof.Adapter -eq 'Up' -or
+  $initiallyDisconnected = $initial.NativeStatus -eq 'Disconnected' -or
+    ($initial.Adapter -eq 'Down' -and $initial.NativeStatus -ne 'Connected')
+  $script:CycleOwnsVpn = $initiallyDisconnected -and ($proof.Connected -or
     $state.Switch.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::On)
   return @{ Initial = $initial; Proof = $proof; State = $state; ConnectedByCycle = $script:CycleOwnsVpn }
 }
@@ -255,13 +262,21 @@ function Prepare-TunnelBearWindow([switch]$ForDisconnect) {
 function Connect-TunnelBearPrepared($Prepared) {
   $proof = Get-VpnProof
   if (-not $proof.Connected) {
+    if ($proof.NativeStatus -eq 'Connected') {
+      if ($proof.Country -and $proof.Country -ne 'PT') { throw 'TunnelBear conectado em outro país; conexão preservada.' }
+      if ($proof.Country -ne 'PT') { throw 'TunnelBear conectado sem país comprovado; nenhum clique autorizado.' }
+      # An existing PT connection whose adapter is lagging is awaited, never toggled.
+      return @{ Proof = (Wait-VpnProof $true 60); ConnectedByCycle = $script:CycleOwnsVpn }
+    }
     $state = Assert-TunnelBearWindow
     if ($state.Countries -notcontains 'Portugal') { throw 'País selecionado no TunnelBear não é Portugal.' }
     if (-not $Prepared.Initial.Connected -and
         $state.Switch.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::On) {
       $script:CycleOwnsVpn = $true
     } else {
-      if ($proof.Adapter -ne 'Down') { throw "VPN não comprovadamente desligada: adaptador=$($proof.Adapter)." }
+      if ($proof.NativeStatus -ne 'Disconnected' -and $proof.Adapter -ne 'Down') {
+        throw "VPN não comprovadamente desligada: TunnelBear=$($proof.NativeStatus); adaptador=$($proof.Adapter)."
+      }
       if ($state.Switch.Current.ToggleState -ne [System.Windows.Automation.ToggleState]::Off) {
         throw 'Interruptor não está desligado; nenhum clique autorizado.'
       }
