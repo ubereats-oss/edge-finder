@@ -38,10 +38,11 @@ function assessMarket(rows, expectedCount, policy = limits) {
     new Set(rows.map(row => row.selection)).size === type &&
     rows.every(row => Number(row.placardOdds ?? row.sourceOdds) > 1 && row.probability > 0 && row.probability < 1)
     && Math.abs(rows.reduce((sum, row) => sum + row.probability, 0) - 1) < 1e-8;
-  const approved = complete && Number.isFinite(limitPct) && evidence.every(row => Math.abs(row.differencePct) <= limitPct);
+  const approved = complete && Number.isFinite(limitPct) && evidence.every(row => row.differencePct <= limitPct);
   return { approved, reason: approved ? null : REASON,
     detail: !complete ? 'evidência do mercado inteiro incompleta' : !approved ? 'diferença acima do limite calibrado' : null,
-    type, limitPct: limitPct ?? null, version: policy.version, evidence };
+    type, limitPct: limitPct ?? null, version: policy.version, vetoDirection: 'positive',
+    negativeLimitExceeded: evidence.some(row => row.differencePct < -limitPct), evidence };
 }
 function assessGame(game, event, selections, refs, bookmaker = 'Placard', policy = limits) {
   const groups = new Map();
