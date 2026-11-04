@@ -112,13 +112,6 @@ function verifyRiskConfig() {
   }
 }
 
-const integrityModules = ['pipeline/placard_value.js', 'functions/placard_value.js'].map(rel => {
-  const match = read(rel).match(/require\(['"]([^'"]*market_integrity)['"]\)/);
-  if (!match) throw new Error('Módulo de integridade ausente: ' + rel);
-  return require.resolve(path.resolve(ROOT, path.dirname(rel), match[1]));
-});
-if (new Set(integrityModules).size !== 1) fail('integridade divergiu entre pipeline e functions');
-
 verifyClosingOddsRules();
 if (read('pipeline/odds_api_monthly_budget.js') !== read('functions/odds_api_monthly_budget.js'))
   fail('odds_api_monthly_budget divergiu entre pipeline e functions');

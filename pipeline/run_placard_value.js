@@ -508,7 +508,7 @@ async function publish(db, result, entries) {
   const today = generatedAt.slice(0, 10);
   const bets = await db.collection('bets').get();
   const betReport = betClvReport(entries, bets.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-  const payload = { generatedAt, runId, pageCount, integrityRuleVersion: integrity.limits.version, report: report(entries), betReport, errors: result.errors,
+  const payload = { generatedAt, runId, pageCount, report: report(entries), betReport, errors: result.errors,
     budget: { totalRemaining: budgetSummary.totalRemaining, available: budgetSummary.available,
       readingAvailable: budgetSummary.readingAvailable, closingReserve: budgetSummary.closingReserve,
       dynamicReserve: budgetSummary.dynamicReserve,
