@@ -50,25 +50,24 @@ test('calibração publicada contém as amostras completas das casas locais e Pl
   assert.equal(integrity.limits.types[3].fallback, false);
 });
 
-test('desvio negativo é registrado sem vetar mercado completo', () => {
+test('mercado inteiro barra indicação mesmo se só a seleção oposta excede o limite', () => {
   const rows = [{ selection: 'Over', placardOdds: 1.35, probability: 0.5 },
     { selection: 'Under', placardOdds: 2.1, probability: 0.5 }];
   const result = integrity.assessMarket(rows, 2);
-  assert.equal(result.approved, true);
-  assert.equal(result.reason, null);
-  assert.equal(result.negativeLimitExceeded, true);
+  assert.equal(result.approved, false);
+  assert.equal(result.reason, 'possível jogo trocado');
   assert.ok(result.evidence[1].differencePct > 0 && result.evidence[1].differencePct < result.limitPct);
   assert.equal(integrity.assessMarket(rows.slice(1), 2).approved, false);
 });
 
-test('desvio positivo veta o mercado nos dois módulos e em todas as casas', () => {
+test('filtro de mercado atua nos dois módulos e em todas as casas', () => {
   for (const model of [pipeline, cloud]) for (const bookmaker of ['Placard', 'Betano', 'Bwin', 'LeBull', 'ESC Online', 'GoldenPark', 'Retabet', 'Betclic']) {
     const event = { id: 'event', sport_key: 'soccer_efl_champ', home_team: 'A', away_team: 'B',
       commence_time: '2026-10-24T14:00:00Z', bookmakers: [{ key: 'pinnacle', last_update: new Date(at).toISOString(),
         markets: [{ key: 'totals', outcomes: [{ name: 'Over', point: 2.5, price: 1.95 }, { name: 'Under', point: 2.5, price: 1.95 }] }] }] };
     const game = { teams: ['A', 'B'], apiSport: event.sport_key, competition: 'Championship',
       commenceTime: event.commence_time, observedAt: new Date(at).toISOString(),
-      markets: [{ type: 'HCTG', selections: [{ price: 2.7, line: 2.5 }, { price: 1.35, line: 2.5 }] }] };
+      markets: [{ type: 'HCTG', selections: [{ price: 1.35, line: 2.5 }, { price: 2.1, line: 2.5 }] }] };
     const result = model.compareBookmaker(bookmaker, game, [event], at);
     assert.equal(result.rows.length, 0, bookmaker);
     assert.equal(result.blockedSelections.filter(row => row.reason === integrity.REASON).length, 2);
@@ -260,14 +259,11 @@ test('identidade Retabet aceita os nomes e o ID do HTML real preservado de GD Ch
   assert.deepEqual(result.teams, ['GD Chaves', 'FC Vizela']);
 });
 
-test('mercado de três resultados permite negativos e veta positivo acima do limite', () => {
+test('mercado de três resultados exige todos os lados dentro do limite', () => {
   const rows = [{ selection: 'A', placardOdds: 3.2, probability: 1 / 3 },
     { selection: 'Draw', placardOdds: 2.9, probability: 1 / 3 },
     { selection: 'B', placardOdds: 1.8, probability: 1 / 3 }];
-  assert.equal(integrity.assessMarket(rows, 3).approved, true);
-  rows[0].placardOdds = 4;
   assert.equal(integrity.assessMarket(rows, 3).approved, false);
-  rows[0].placardOdds = 3.2;
   rows[2].placardOdds = 2.9;
   assert.equal(integrity.assessMarket(rows, 3).approved, true);
 });
@@ -295,73 +291,4 @@ test('lista da auditoria preserva todas as cinco indicações e odds de cada lad
   const lincoln = audit.find(row => row.game === 'Lincoln City x Burnley');
   assert.equal(lincoln.annulled, true);
   assert.deepEqual(lincoln.evidence.map(row => [row.houseOdds, row.pinnacleOdds]), [[1.46, 1.92], [2.25, 1.97]]);
-});
-
-const positiveOnlyReal = require('./fixtures/integrity_positive_only_real_20261104.json');
-const realRows = evidence => evidence.map(side => ({ selection: side.selection, line: side.line,
-  placardOdds: Number(side.houseOdds), pinnacleOdds: side.pinnacleOdds, probability: 1 / side.fairOdds }));
-
-test('108 bloqueios reais passam na integridade; mínimo e teto decidem cada seleção', () => {
-  assert.equal(positiveOnlyReal.replay108.length, 108);
-  let eligible = 0;
-  for (const saved of positiveOnlyReal.replay108) {
-    const assessment = integrity.assessMarket(realRows(saved.evidence), saved.expectedCount);
-    assert.equal(assessment.approved, true, saved.source);
-    assert.equal(assessment.version, '2026-11-04-positive-only-v2');
-    assert.equal(assessment.vetoDirection, 'positive');
-    const side = saved.evidence.find(e => e.selection === saved.selection && e.line === saved.line);
-    assert.ok(side, saved.source);
-    const edge = 100 * (side.houseOdds / side.fairOdds - 1);
-    const ceiling = integrity.assessPositiveEdge(side.houseOdds, 1 / side.fairOdds);
-    if (edge > 1 && ceiling.approved) {
-      eligible++;
-      assert.equal(integrity.notificationAllowed({ bookmaker: saved.house,
-        marketIntegrity: assessment, integrityRuleVersion: assessment.version,
-        placardOdds: side.houseOdds, probability: 1 / side.fairOdds }), true);
-    }
-  }
-  assert.equal(eligible, 5);
-});
-
-test('Benfica real vira indicação versionada nos dois módulos e passa no notificador', () => {
-  const saved = positiveOnlyReal.benfica;
-  const assessments = [];
-  for (const model of [pipeline, cloud]) {
-    const result = model.compareBookmaker('Betano', saved.game, [saved.event], saved.now);
-    const row = result.rows.find(row => row.selection === 'Benfica');
-    assert.ok(row);
-    assert.ok(Math.abs(row.edgePct - 1.7027258444292315) < 1e-9);
-    assert.equal(row.integrityRuleVersion, integrity.limits.version);
-    assert.equal(row.marketIntegrity.negativeLimitExceeded, true);
-    assert.equal(integrity.notificationAllowed(row), true);
-    assert.equal(integrity.notificationAllowed({ ...row, marketIntegrity: { ...row.marketIntegrity, version: '2026-10-24-p995-v1' } }), false);
-    assessments.push(row.marketIntegrity);
-  }
-  assert.deepEqual(assessments[0], assessments[1]);
-});
-
-test('Lincoln real no comparedAt original é barrado por identidade, sem outra regra', () => {
-  const saved = positiveOnlyReal.lincoln;
-  assert.equal(saved.originalComparedAt, '2026-10-24T04:52:55.655Z');
-  assert.equal(saved.now - Date.parse(saved.game.observedAt), 116836);
-  for (const model of [pipeline, cloud]) {
-    const result = model.compareBookmaker('Retabet', saved.game, [saved.event], saved.now);
-    assert.equal(result.rows.length, 0);
-    assert.equal(result.comparedSelections, 5);
-    assert.equal(result.blockedSelections.length, 5);
-    assert.ok(result.blockedSelections.every(row => row.reason === integrity.REASON));
-    assert.ok(result.marketIntegrity.every(m => m.detail === 'troca de jogo confirmada na fonte histórica'));
-  }
-});
-
-test('contrafactual explícito do mercado real Benfica: desvio positivo veta mercado e aviso', () => {
-  const saved = positiveOnlyReal.replay108.find(row => row.game === 'SL Benfica x Alverca');
-  const rows = realRows(saved.evidence);
-  rows[2].placardOdds = 1.4 / rows[2].probability;
-  const assessment = integrity.assessMarket(rows, saved.expectedCount);
-  assert.equal(assessment.approved, false);
-  assert.ok(assessment.evidence[2].differencePct > assessment.limitPct);
-  const side = rows[0];
-  assert.equal(integrity.notificationAllowed({ bookmaker: 'Betano', marketIntegrity: assessment,
-    placardOdds: side.placardOdds, probability: side.probability }), false);
 });

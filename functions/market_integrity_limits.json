@@ -1,5 +1,5 @@
 {
-  "version": "2026-11-04-positive-only-v2",
+  "version": "2026-10-24-p995-v1",
   "percentile": 99.5,
   "method": "nearest-rank",
   "difference": "100 * abs(odd_casa * probabilidade_justa_pinnacle - 1)",
@@ -43,6 +43,5 @@
       "reason": "possível jogo trocado",
       "evidence": "Troca de jogo confirmada pelo Alex em 24/10; preços históricos preservados no Firestore."
     }
-  ],
-  "vetoDirection": "positive"
+  ]
 }

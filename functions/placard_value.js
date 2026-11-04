@@ -166,7 +166,7 @@ function compare(game, events, now = Date.now(), { bookmaker = 'Placard' } = {})
       game: `${event.home_team} x ${event.away_team}`, competition: game.competition,
       commenceTime: game.commenceTime, apiCommenceTime: event.commence_time, placardObservedAt: game.observedAt,
       comparedAt: new Date(now).toISOString(), sourceUrl: game.sourceUrl,
-      marketIntegrity: assessment, integrityRuleVersion: integrity.limits.version,
+      marketIntegrity: assessment,
       positiveEdgeAssessment,
       ...(typeof game.sourceIdentityVerified === 'boolean' ? { sourceIdentityVerified: game.sourceIdentityVerified } : {}),
       minValueOdds: 1.01 / ref.probability, edgePct,
