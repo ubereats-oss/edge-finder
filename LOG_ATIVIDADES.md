@@ -1358,3 +1358,85 @@ As entradas são acrescentadas somente ao final. Não registrar tokens, chaves o
 - Critérios: oito registros reais liberam a tentativa de conexão e atribuem propriedade só ao acionar/conectar; PT inicial real é reutilizado e preservado; outro país é rejeitado sem clique/restauração, por variação contrafactual explicitamente identificada, pois nenhum registro nativo de outro país está disponível; casos anteriores Connected/PT com timeout, VpnConnectionFailed, conexão de 156 ms e Down mantêm seus resultados. Disconnect com native Disconnected/placa Up é aceito. Aceite real completo sem falha/foco aprovado. Nenhum registro de outro país foi inventado como histórico nem foi feita conexão adicional só para gerar esse dado.
 - Verificação operacional 08:18:35 -03:00: adaptador Down, TunnelBear.UI aberto/respondendo, trava ausente, observador encerrado/removido, LastTaskResult=0 e próxima execução 08:50; XML integral da tarefa idêntico. Leitores, regra de início, orçamentos, tempos das casas e desktop oculto não alterados. Nenhum stash aplicado/apagado, nenhuma automação nova. Causa de driver/Windows do Up com Disconnected permanece não confirmada; foi removida sua capacidade de travar a coleta.
 - Início 08:01:49 -03:00; fim técnico 08:18:35 -03:00, seguem somente commit/push documental e relógio final. Nenhum comando excedeu cinco minutos ou foi interrompido; observador limitado a 280 s e espera de conclusão a 210 s. Soma exata da duração dos comandos não foi instrumentada. Sem critério reprovado ou pendência de publicação.
+
+
+## 2026-11-04 — Auditoria documental de ausência de indicações Betano/Placard
+- Início Windows: 08:58:44 -03:00. Pedido: levantamento de 24/10 a 04/11, sem coleta, conexão VPN, alteração funcional ou automação; somente acrescentar este registro e publicar na main sem força. AGENTS.md e cinco últimas entradas consultados. Main inicialmente limpa; stash@{0} pre-edge-finder-scheduled-sync-20261023-1616 consultado e preservado.
+- Premissas do registro: distinguir leitura, comparação efetiva, vantagem matemática positiva (>0%), mínimo de indicação (>1%) e indicação única gravada. Não transformar falha de orçamento em ausência de vantagem; não contar republicação de diagnóstico como nova leitura. Nenhuma mudança de código/dados, teste, analyze, build, deploy, ciclo, VPN ou tarefa executada. A tarefa existente foi apenas consultada (Ready).
+- Fontes produtivas somente leitura: Firestore odds-app-edge/(default), STANDARD/FIRESTORE_NATIVE/southamerica-east1; consulta iniciada com corte inferior 2026-10-24T03:00:00Z; referência superior 2026-11-04T11:59:51.993Z. Retornaram 264 documentos _bookmaker_reads (118 Betano, 96 processed e 22 processed_with_errors), 1.968 _placard_reads, 10 oportunidades totais e 824 results/placard_current/runs. Relógios/datas em Brasília. Consultas não usaram Odds API, Telegram nem rotinas com efeito colateral.
+- Critério de contagem: Betano usa observedAt, gameCount, comparedSelections, validations e diagnostics do documento processado; validations têm exatamente a mesma contagem de comparedSelections em TODAS as 118 leituras. Placard usa observedAt do documento por competição para leituras/jogos e confirmedSelections dos diagnósticos para comparações efetivas; comparedSelections de _placard_reads é preço conhecido, não confirmação efetiva. Jogos e seleções são ocorrências por leitura, não eventos distintos; inclui origens manuais/teste históricas preservadas.
+- Exclusão comprovada de duplicações: run_placard_value.js republica state.result em closing_only e quando scan não é due. _placard_reads agrupadas em 479 workflowRunId; 478 grupos associados a 478 runs distintos, escolhendo o primeiro generatedAt após o último observedAt do grupo e antes do início do próximo. Em TODOS os 478, número de jogos do diagnóstico coincide exatamente com os jogos das leituras. Números abaixo excluem as republicações.
+- Lacunas: grupo Placard 40356951172-1, documento LkFFmHdEcVPIJLhQ5XoG, Santa Clara x SL Benfica, 26/10 13:25:50, tem cinco preços conhecidos, mas nenhum run correspondente recuperado: comparações efetivas, positivos e bloqueios dessa leitura NÃO CONFIRMADOS. Em 24/10, 508 comparações Placard não guardaram marketIntegrity.evidence: total de positivos NÃO CONFIRMADO (há pelo menos um confirmado). Dados de 04/11 são parciais, com tarefa até 08:50.
+
+### 1. Totais diários — leituras/jogos/comparações efetivas/positivos/indicações únicas
+| Dia | Betano L/J/C/+/ind | Placard L/J/C/+/ind |
+|---|---|---|
+| 2026-10-24 | 4/90/215/3/3 | 316/997/1525/1/0 |
+| 2026-10-25 | 10/135/295/6/1 | 252/873/1433/0/0 |
+| 2026-10-26 | 8/21/61/4/1 | 103/260/70/1/0 |
+| 2026-10-27 | 6/18/60/0/0 | 110/319/193/0/0 |
+| 2026-10-28 | 4/20/20/0/0 | 111/526/298/0/0 |
+| 2026-10-29 | 13/21/0/0/0 | 80/188/98/0/0 |
+| 2026-10-30 | 14/76/188/10/2 | 195/589/265/0/0 |
+| 2026-10-31 | 22/373/30/0/0 | 293/1097/0/0/0 |
+| 2026-11-01 | 11/151/370/2/0 | 249/697/815/0/0 |
+| 2026-11-02 | 11/47/160/4/0 | 159/636/381/1/0 |
+| 2026-11-03 | 10/176/680/5/0 | 52/423/570/0/0 |
+| 2026-11-04 | 5/37/155/1/0 | 48/134/55/0/0 |
+- Ressalvas da tabela: Placard 24/10 positivos >=1, total não confirmado; Placard 26/10 C>=70, positivos>=1, totais não confirmados pela leitura sem run. Indicações únicas válidas Betano: 3+1+1+0+0+0+2=7; as 11 ocorrências aprovadas nas leituras (3/3/2/0/0/0/3) incluem reobservação das mesmas indicações, não perda de gravação. Placard zero novas indicações no período.
+
+### Bloqueios por motivo original, sem republicações
+- 2026-10-24: Betano {"evento_sem_correspondencia":235,"sem_valor":212}; Placard {"evento_sem_correspondencia":3609,"liga_divergente_nome_variado":16,"sem_valor":1494,"diferenca_preco_acima_30":1,"possível jogo trocado":30,"mercado_ou_odd_invalida":16}.
+- 2026-10-25: Betano {"sem_valor":286,"evento_sem_correspondencia":315,"placard_antigo":65,"possível jogo trocado":6}; Placard {"evento_sem_correspondencia":3059,"liga_divergente_nome_variado":24,"sem_valor":1433}.
+- 2026-10-26: Betano {"mercado_ou_preco_ausente":9,"sem_valor":59,"evento_sem_correspondencia":35}; Placard {"evento_sem_correspondencia":1428,"sem_valor":58,"possível jogo trocado":12}.
+- 2026-10-27: Betano {"sem_valor":60,"evento_sem_correspondencia":30}; Placard {"evento_sem_correspondencia":1642,"sem_valor":191,"possível jogo trocado":2,"mercado_ou_odd_invalida":12}.
+- 2026-10-28: Betano {"evento_sem_correspondencia":80,"sem_valor":20}; Placard {"evento_sem_correspondencia":2648,"sem_valor":298,"liga_divergente_nome_variado":84,"mercado_ou_odd_invalida":8}.
+- 2026-10-29: Betano {"evento_sem_correspondencia":105}; Placard {"evento_sem_correspondencia":906,"sem_valor":98,"liga_divergente_nome_variado":60}.
+- 2026-10-30: Betano {"sem_valor":185,"evento_sem_correspondencia":75,"linha_divergente":2}; Placard {"evento_sem_correspondencia":2999,"sem_valor":262,"possível jogo trocado":3,"mercado_ou_odd_invalida":10}.
+- 2026-10-31: Betano {"evento_sem_correspondencia":70,"sem_valor":30}; Placard {"evento_sem_correspondencia":5585}.
+- 2026-11-01: Betano {"evento_sem_correspondencia":325,"sem_valor":370,"mercado_ou_preco_ausente":60}; Placard {"evento_sem_correspondencia":2609,"sem_valor":803,"possível jogo trocado":12,"mercado_ou_preco_ausente":80}.
+- 2026-11-02: Betano {"sem_valor":145,"evento_sem_correspondencia":75,"possível jogo trocado":15}; Placard {"evento_sem_correspondencia":3007,"sem_valor":357,"mercado_ou_odd_invalida":8,"mercado_ou_preco_ausente":8,"possível jogo trocado":24}.
+- 2026-11-03: Betano {"sem_valor":680,"evento_sem_correspondencia":200}; Placard {"evento_sem_correspondencia":1545,"sem_valor":570}.
+- 2026-11-04: Betano {"sem_valor":155,"evento_sem_correspondencia":30}; Placard {"evento_sem_correspondencia":624,"sem_valor":52,"possível jogo trocado":3}.
+- Categorias: possível jogo trocado = integridade de mercado; diferenca_preco_acima_30 = filtro de discrepância anterior (uma ocorrência Placard 24/10); suspeita de erro de dado = teto positivo atual (zero ocorrências). Nenhum diagnóstico guardado atribui falha explícita de identidade da página; evento_sem_correspondencia e liga_divergente_nome_variado são falhas de correspondência jogo/liga, não comprovação de identidade errada. Demais motivos preservados literalmente. Sem_valor inclui vantagem positiva <=1%, zero e negativa. Bloqueios de 26/10 Placard são limites inferiores pela lacuna indicada.
+- Orçamento fora das contagens de seleções diagnosticadas: Betano 30/10 cinco leituras/13 erros por liga; 31/10 17 leituras/102 erros por liga. Todos os erros dessas 22 leituras são Saldo real insuficiente; disponível_leituras=0 e total=1000/997 nos originais. Exemplo 31/10: local-betano-1793418670654-700, 26 jogos, zero comparações e seis recusas por liga. Número exato de seleções impedidas ANTES do diagnóstico por falta de saldo NÃO CONFIRMADO; não somar chamadas recusadas como se fossem seleções.
+
+### 2. Três maiores vantagens por dia, conjunto das duas casas, seleções distintas
+- Máximo por casa/jogo/mercado/linha/lado no dia; três maiores do conjunto Betano+Placard. h2h = vencedor/empate do jogo. Valores negativos mantidos quando não houve três positivos. sem_valor = não superou o mínimo de 1%; possível jogo trocado = integridade do mercado inteiro.
+| Dia | Ordem | Casa | Jogo | Mercado/lado/linha | Vantagem | Bloqueio original | Documento de evidência |
+|---|---|---|---|---|---|---|---|
+| 2026-10-31 | 1 | Betano | Lazio x Cagliari | h2h/Lazio/sem linha | -3.599802% | sem_valor | local-betano-1793501481783-203 |
+| 2026-10-31 | 2 | Betano | SC Telstar x FC Utrecht | h2h/FC Utrecht/sem linha | -4.122569% | sem_valor | local-betano-1793501481783-203 |
+| 2026-10-31 | 3 | Betano | Getafe x Sevilha | h2h/Sevilla/sem linha | -5.131745% | sem_valor | local-betano-1793497882152-279 |
+| 2026-11-01 | 1 | Betano | Lazio x Cagliari | h2h/Lazio/sem linha | 0.537416% | sem_valor | local-betano-1793523089517-257 |
+| 2026-11-01 | 2 | Betano | SC Braga x FC Famalicão | h2h/Draw/sem linha | 0.106325% | sem_valor | local-betano-1793562690050-479 |
+| 2026-11-01 | 3 | Betano | Athletic Bilbao x Real Sociedad | h2h/Athletic Bilbao/sem linha | -0.232737% | sem_valor | local-betano-1793533894693-219 |
+| 2026-11-02 | 1 | Betano | SL Benfica x Alverca | h2h/Benfica/sem linha | 1.702726% | possível jogo trocado | local-betano-1793616667401-859 |
+| 2026-11-02 | 2 | Placard | Lorient x Brest | h2h/Lorient/sem linha | 0.178555% | sem_valor | r20261102163409147 |
+| 2026-11-02 | 3 | Betano | Gil Vicente FC x Vitória S.C. | h2h/Vitória SC/sem linha | -2.533392% | sem_valor | local-betano-1793649079186-164 |
+| 2026-11-03 | 1 | Betano | FK Bodo/Glimt x Lille | h2h/Bodø/Glimt/sem linha | 0.222904% | sem_valor | local-betano-1793717467182-21 |
+| 2026-11-03 | 2 | Betano | Villarreal x Paris Saint-Germain | h2h/Paris Saint Germain/sem linha | 0.176830% | sem_valor | local-betano-1793717467182-21 |
+| 2026-11-03 | 3 | Betano | Barcelona x Aston Villa | h2h/Barcelona/sem linha | 0.155183% | sem_valor | local-betano-1793731890028-448 |
+| 2026-11-04 | 1 | Betano | SK Slavia Praga x Arsenal | h2h/Arsenal/sem linha | 0.303473% | sem_valor | local-betano-1793785870210-80 |
+| 2026-11-04 | 2 | Betano | AEK Atenas x Real Madrid | h2h/Real Madrid/sem linha | -0.246434% | sem_valor | local-betano-1793785870210-80 |
+| 2026-11-04 | 3 | Placard | AEK Atenas x Real Madrid | h2h/Real Madrid/sem linha | -0.277308% | possível jogo trocado | r20261104115528288 |
+- Desde 31/10: 12 ocorrências positivas Betano e uma Placard; quatro Betano (Benfica–Alverca) barradas pela integridade; outras nove positivas não superaram 1%. Nenhum veto pelo teto positivo nesse intervalo. O Benfica–Alverca foi vetado pelo mercado inteiro: uma cotação de outro lado ultrapassou a diferença calibrada; não inferir erro comprovado no jogo somente pelo rótulo.
+
+### 3. Geração, gravação e envio
+- Desde 31/10, TODOS os 59 documentos Betano desse intervalo têm opportunities=0; nenhuma oportunidade Betano/Placard gravada nesse período. Não há indicação gerada confirmada e não enviada ou gravada com erro. Falha anterior à gravação sem registro: NÃO CONFIRMADA. Nas sete Betano únicas de 24–30/10, todas têm telegramSentAt e fechamento capturado; duas Placard sem Telegram são de 22/10, fora do período.
+
+### 4. Histórico de commits desde 30/10, incluindo a main remota
+- GitHub API confirmou 16 commits e main remota f31b940 antes deste registro, coincidente com a local. git log com início explícito 2026-10-30T00:00:00-03:00 não mostra alteração em pipeline/placard_value.js, functions/placard_value.js, functions/market_integrity.js, seus limites JSON, functions/index.js ou functions/placard_part4.js. Comparação, filtros de oportunidade, persistência e envio Telegram não tiveram alteração direta nesses arquivos.
+- 87d222d (31/10): alterou disponibilidade de orçamento para comparação — reserva fixa 1000 substituída por reserva variável conforme indicações abertas/custo de fechamento; fallback1000 preservado. Evidência: functions/odds_api_monthly_budget.js, pipeline/odds_api_monthly_budget.js e diff de pipeline/run_placard_value.js (publicação de métricas da reserva). Não altera fórmula, mínimo1%, teto ou Telegram.
+- b0f8b75 (31/10), 5ab33de (02/11), 7e06f3f (03/11): conexão/prova/recuperação VPN, afetando se há coleta; diff do ciclo em b0f8b75 acrescenta origem e sanitização de prova, sem mudar send/comparison. 78cc79d: origem/contagem da saúde; fa82737: classificação histórica da saúde; 4f7fb06: desativa apenas email obsoleto de workflow legado, preserva atraso e indicação sem tentativa, sem mudar Telegram de oportunidades.
+- Demais nove commits são documentação/fixture: 80e7442, c3bf5cb, 10ecec9, b2c6cb8, d3a0c1f, e72d274, c7dbdf9, d393d6c, f31b940. Nenhum deploy ou alteração de código foi feito nesta auditoria.
+
+### 5. Conclusão confirmada e hipótese
+- Confirmado: não é correto explicar TODO o período como mesmo volume e mera variação normal. Em 31/10 houve redução efetiva por orçamento (Betano somente30 comparações; Placard zero, 5585 seleções sem correspondência), e os ciclos locais preservam recusas VPN; não usar status complete como sinônimo de comparações feitas. Oito vetos locais Up/Disconnected de 02/11 21:50 a 03/11 04:50 já estão documentados e preservados; não reproduzidos nesta auditoria.
+- Confirmado: volume Betano recuperado em 01/11=370 e 03/11=680; nesses dias maiores vantagens +0,5374% e +0,2229%, abaixo do mínimo. Em 02/11 a única seleção distinta positiva Betano elegível pelo mínimo foi barrada pela integridade. Zero indicações perdidas comprovadas; a perda de comparações por orçamento e VPN é comprovada.
+- Hipótese: a ausência após a retomada das comparações é compatível com preços sem vantagem suficiente e filtros existentes. Normalidade estatística, defeito atual de comparação, motivo real de cada evento_sem_correspondencia e oportunidades que poderiam existir nas leituras não comparadas: NÃO CONFIRMADOS.
+
+### Encerramento e aceite documental
+- Aceite nesta máquina e nos dados produtivos: 118 leituras Betano conferidas contra ciclos locais (contagens de comparações diárias coincidem); 478/478 grupos Placard com correspondência de jogos exata, uma lacuna explicitada; sete indicações Betano válidas enviadas, zero novas desde31/10; histórico remoto consultado. Nenhum código funcional alterado; único arquivo alterado LOG_ATIVIDADES.md. Commit: o commit documental que contém esta entrada (publicação autorizada na main, sem força).
+- Problemas operacionais desta auditoria: tentativa inicial require dotenv falhou por módulo ausente antes de qualquer consulta/mutação; usado parser somente leitura do .env sem exibir valores. Algumas consultas rg com glob em caminho foram recusadas pelo Windows, substituídas por leitura direta. Nada foi instalado. Nenhum comando ultrapassou três minutos ou precisou ser interrompido; consulta paralela Firestore mediu45,856s. Soma cumulativa exata dos comandos NÃO CONFIRMADA, pois não havia instrumentação integral desde a primeira chamada.
+- Conferência documental final 2026-11-04 09:08:04 -03:00: diff contém somente acréscimo ao LOG, prefixo anterior preservado byte a byte; diff --check sem erro. Fim técnico 2026-11-04 09:08:04 -03:00; seguem somente commit/push e leitura final do relógio Windows. Stash intacto, nenhuma automação criada e nenhuma configuração da tarefa alterada. Duração máxima de consulta medida45,856s; nenhum comando excedeu180s.
