@@ -16,6 +16,20 @@ public static class EdgeBackgroundDesktop {
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint pid);
   [DllImport("user32.dll", CharSet=CharSet.Unicode)] static extern int GetWindowText(IntPtr window, StringBuilder value, int size);
   [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr window);
+  [DllImport("user32.dll")] static extern bool IsIconic(IntPtr window);
+  [DllImport("user32.dll")] static extern IntPtr GetThreadDesktop(uint thread);
+  public static bool Visible(IntPtr window) {
+    var title = new StringBuilder(512); GetWindowText(window, title, title.Capacity);
+    return IsWindowVisible(window) && !IsIconic(window) && title.Length > 0;
+  }
+  public static bool ProcessOnDesktop(int pid, string name) {
+    foreach (System.Diagnostics.ProcessThread thread in System.Diagnostics.Process.GetProcessById(pid).Threads) {
+      var value = new StringBuilder(256); int required;
+      if (GetUserObjectInformation(GetThreadDesktop((uint)thread.Id), 2, value, 512, out required)
+          && String.Equals(value.ToString(), name, StringComparison.OrdinalIgnoreCase)) return true;
+    }
+    return false;
+  }
   [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)] struct Startup {
     public int cb; public string reserved, desktop, title;
     public int x,y,cx,cy,xChars,yChars,fill,flags; public short show,reservedBytes;

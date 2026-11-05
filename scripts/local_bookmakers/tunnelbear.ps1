@@ -1,6 +1,6 @@
 ﻿param(
   [Parameter(Mandatory = $true)]
-  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state', 'prepare', 'minimize', 'library', 'recover')]
+  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state', 'prepare', 'minimize', 'library', 'recover', 'program-check', 'program-close')]
   [string]$Action,
   [ValidateRange(5, 90)]
   [int]$StableSeconds = 90
@@ -35,6 +35,7 @@ if (-not ('TunnelBearNativeWindow' -as [type])) {
 }
 . (Join-Path $PSScriptRoot 'tunnelbear_installation.ps1')
 . (Join-Path $PSScriptRoot 'tunnelbear_lifecycle.ps1')
+. (Join-Path $PSScriptRoot 'tunnelbear_program.ps1')
 . (Join-Path $PSScriptRoot 'tunnelbear_recovery.ps1')
 . (Join-Path $PSScriptRoot 'safe_log.ps1')
 $script:CycleOwnsVpn = $false
@@ -171,7 +172,13 @@ function Write-ConnectionAttempt([int]$Attempt, [string]$Status, [string]$Detail
 
 if ($Action -eq 'library') { return }
 try {
-  if ($Action -eq 'recover') {
+  if ($Action -eq 'program-check') {
+    $decision = Get-TunnelBearProgramDecision (Get-TunnelBearProgram) (Get-TunnelBearNativeConnection)
+    [pscustomobject]@{ action = $Action; decision = $decision;
+      reason = $(if ($decision -eq 'in_use') { 'TunnelBear em uso pelo Alex' } else { $null }) } | ConvertTo-Json -Compress
+  } elseif ($Action -eq 'program-close') {
+    Stop-TunnelBearProgram 'EdgeFinderCollection' | ConvertTo-Json -Compress
+  } elseif ($Action -eq 'recover') {
     Restart-UnresponsiveTunnelBear (Get-VpnProof -ForDisconnect) -Forced
     [pscustomobject]@{ action = 'recover'; adapter = (Get-VpnProof).Adapter } | ConvertTo-Json -Compress
   } elseif ($Action -eq 'prepare') {
@@ -191,6 +198,17 @@ try {
     if (-not $reading) { throw 'Saldo TunnelBear indisponível.' }
     [pscustomobject]@{ action = $Action; remainingMB = [int]($reading -replace '\D', '') } | ConvertTo-Json -Compress
   } elseif ($Action -eq 'connect') {
+    $programDecision = Assert-TunnelBearProgramAvailable
+    if ($programDecision -eq 'preserve') {
+      $proof = Get-VpnProof
+      if (-not $proof.Connected) { throw 'Conexão portuguesa preexistente sem confirmação; interface preservada.' }
+      [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT'; adapter = $proof.Adapter;
+        nativeStatus = $proof.NativeStatus; connectedByCycle = $false; vpnStartedAt = (Get-Date -Format o);
+        programPreserved = $true; checks = @() } | ConvertTo-Json -Compress
+      exit 0
+    }
+    try { $programClosed = Stop-TunnelBearProgram 'Default' }
+    catch { throw ('TUNNELBEAR_PROGRAM_CLOSE_FAILED: ' + $_.Exception.Message) }
     Write-ConnectionAttempt 1 'started'
     $vpnStartedAt = Get-Date -Format o
     $prepared = Prepare-TunnelBearWindow
@@ -208,7 +226,7 @@ try {
     [pscustomobject]@{ action = 'connect'; status = 'connected'; country = 'PT';
       adapter = $proof.Adapter; source = $proof.Service; nativeStatus = $proof.NativeStatus; attempt = 1;
       vpnStartedAt = $vpnStartedAt; connectedByCycle = $connection.ConnectedByCycle;
-      checks = $checks } | ConvertTo-Json -Depth 6 -Compress
+      programClosedBefore = $programClosed; checks = $checks } | ConvertTo-Json -Depth 6 -Compress
   } elseif ($Action -eq 'disconnect') {
     $script:CycleOwnsVpn = $true
     if ((Get-TunnelBearNativeConnection).Status -ne 'Disconnected') {

@@ -182,7 +182,12 @@ async function main() {
     cycle.stages[name] = record;
     try { return await work(); }
     catch (error) {
+      if (error.message.includes('TunnelBear em uso pelo Alex')) {
+        record.skipReason = 'TunnelBear em uso pelo Alex';
+        throw error;
+      }
       record.error = sanitizeReason(error.message);
+      if (error.message.includes('TUNNELBEAR_PROGRAM_CLOSE_FAILED')) cycle.tunnelBearProgramCloseError = record.error;
       if (name === 'vpnConnect' || name === 'vpnDisconnect') {
         const failure = captureVpnFailure(cycle, name, error);
         record.originalError = failure.originalError;
@@ -202,6 +207,10 @@ async function main() {
       { encoding: 'utf8', windowsHide: true, timeout: 4000 }).stdout.trim();
     const pauseReason = readCycleBudget(cycle);
     if (pauseReason) { cycle.status = 'ciclo pulado'; cycle.pauseReason = pauseReason; return; }
+    cycle.tunnelBearProgram = core.tunnel('program-check');
+    if (cycle.tunnelBearProgram.decision === 'in_use') {
+      cycle.status = 'ciclo pulado'; cycle.pauseReason = 'TunnelBear em uso pelo Alex'; return;
+    }
     await stage('preparation', async () => {
       db = core.database();
       if (core.authenticate) cycle.firebaseAuthentication = await core.authenticate(db);
@@ -407,7 +416,9 @@ async function main() {
     cycle.status = 'complete';
   } catch (error) {
     caught = error;
-    cycle.status = cycle.stages.vpnConnect?.error ? 'ciclo sem conexão' : 'failed';
+    cycle.status = error.message.includes('TunnelBear em uso pelo Alex') ? 'ciclo pulado'
+      : cycle.stages.vpnConnect?.error ? 'ciclo sem conexão' : 'failed';
+    if (cycle.status === 'ciclo pulado') cycle.pauseReason = 'TunnelBear em uso pelo Alex';
     cycle.error = sanitizeReason(error.message);
   } finally {
     if (networkTimer) clearInterval(networkTimer);
@@ -475,9 +486,10 @@ async function main() {
       catch (error) { cycle.failureStatusError = error.message; }
     }
     if (browser) await browser.close().catch(() => {});
-    if (vpnStartedAt) {
-      try { cycle.tunnelBearWindow = core.tunnel('minimize'); }
-      catch (error) { cycle.tunnelBearWindowError = error.message; }
+    if (vpnStartedAt && !cycle.vpnPreservedForUser && cycle.tunnelBearProgram?.decision !== 'preserve'
+        && cycle.status !== 'ciclo pulado') {
+      try { cycle.tunnelBearProgramCleanup = core.tunnel('program-close'); }
+      catch (error) { cycle.tunnelBearProgramCloseError = `TUNNELBEAR_PROGRAM_CLOSE_FAILED: ${error.message}`; }
     }
     cycle.finishedAt = new Date().toISOString();
     cycle.dataRoot = process.env.EDGE_DATA_ROOT || ROOT;
@@ -508,6 +520,9 @@ async function main() {
     const logLine = { at: cycle.localDateTime, status: cycle.status, balanceMB: cycle.balanceMB,
       runtimeSha: cycle.runtimeSha, tunnelBearVersion: cycle.tunnelBearVersion,
       tunnelBear: cycle.tunnelBear || null,
+      tunnelBearProgram: cycle.tunnelBearProgram || null,
+      tunnelBearProgramCleanup: cycle.tunnelBearProgramCleanup || null,
+      tunnelBearProgramCloseError: cycle.tunnelBearProgramCloseError || null,
       healthCause: cycle.healthCause, vpnFailures: cycle.vpnFailures || [],
       accumulatedMB: cycle.accumulatedMB, balanceReadDurationMs: cycle.balanceReadDurationMs,
       vpnAdapterBytes: cycle.vpnAdapterBytes ?? null, vpnAdapterMB: cycle.vpnAdapterMB ?? null,
