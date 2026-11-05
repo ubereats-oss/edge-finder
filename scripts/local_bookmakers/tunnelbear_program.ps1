@@ -6,7 +6,7 @@ function Get-TunnelBearProgram {
     $process = $_
     $windows = @([EdgeBackgroundDesktop]::Windows('Default', [int[]]@($process.Id), $false))
     $hidden = @([EdgeBackgroundDesktop]::Windows('EdgeFinderCollection', [int[]]@($process.Id), $false))
-    $visible = @($windows | Where-Object { [EdgeBackgroundDesktop]::Visible($_) }).Count -gt 0
+    $visible = [EdgeBackgroundDesktop]::AnyVisible('Default', [int[]]@($process.Id))
     $desktop = if ($windows.Count) { 'Default' }
       elseif ($hidden.Count) { 'EdgeFinderCollection' }
       else { 'unknown' }
