@@ -8,7 +8,7 @@ const filename = path.resolve(__dirname, '../../pipeline/local_bookmaker_cycle_f
 
 // Run the production orchestration with every external boundary replaced: no
 // process, browser, database, VPN or collector is invoked by these tests.
-async function simulate({ owned = false, connectionError, readError = false, authError = false, budget = null, at } = {}) {
+async function simulate({ owned = false, connectionError, cleanupError, decision = 'collect', readError = false, authError = false, budget = null, at } = {}) {
   const calls = [], written = new Map(), readHouses = [], statuses = [];
   let reads = 0;
   const reference = { set: async () => {}, get: async () => ({ data: () => ({
@@ -24,7 +24,9 @@ async function simulate({ owned = false, connectionError, readError = false, aut
     vpnNetworkBytes: () => ({ receivedBytes: 100, sentBytes: 100 }),
     tunnel: action => {
       calls.push(action);
+      if (action === 'program-check') return { decision };
       if (action === 'connect' && connectionError) throw new Error(connectionError);
+      if (action === 'program-close' && cleanupError) throw new Error(cleanupError);
       return { connectedByCycle: owned, vpnStartedAt: new Date().toISOString(), vpnDisconnectedAt: new Date().toISOString() };
     },
     recordTunnelUsage: () => ({ cycles: [{ measuredMB: 0 }], totalMB: 0 }),
@@ -77,6 +79,10 @@ async function simulate({ owned = false, connectionError, readError = false, aut
 
 test('valor real acrescido: ciclo inicia acima de 2700 MB e em 01/11; só Betano', async () => {
   const actual = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../.local_logs/betano/vpn-budget.json'), 'utf8'));
+  // Reproduce October using its real entries only: the live ledger also has November now.
+  actual.adapterCycles = actual.adapterCycles.filter(row => row.startedAt.slice(0, 7) === '2026-10');
+  actual.measuredMB = actual.adapterCycles.reduce((sum, row) => sum + row.bytes / 1000000, 0);
+  actual.month = '2026-10';
   const baseline = actual.carriedForwardMB + actual.measuredMB;
   const extraBytes = Math.max(1000000000, Math.ceil((2701 - baseline) * 1000000));
   actual.adapterCycles.push({ startedAt: '2026-10-27T13:00:00Z', bytes: extraBytes });
@@ -86,7 +92,7 @@ test('valor real acrescido: ciclo inicia acima de 2700 MB e em 01/11; só Betano
     const result = await simulate({ owned: true, budget: actual, at });
     assert.equal(result.error, undefined);
     assert.equal(result.cycle.status, 'complete');
-    assert.deepEqual(result.calls, ['connect', 'disconnect', 'minimize']);
+    assert.deepEqual(result.calls, ['program-check', 'connect', 'disconnect', 'program-close']);
     assert.deepEqual(result.readHouses, ['betano']);
     assert.deepEqual(Object.keys(result.cycle.reads), ['betano']);
     assert.equal(result.cycle.suspendedHouses.length, 6);
@@ -104,19 +110,19 @@ test('valor real acrescido: ciclo inicia acima de 2700 MB e em 01/11; só Betano
 for (const readError of [false, true]) {
   test(`VPN do Alex permanece ligada ao terminar; falha de leitura=${readError}`, async () => {
     const result = await simulate({ owned: false, readError });
-    assert.deepEqual(result.calls, ['connect', 'minimize']);
+    assert.deepEqual(result.calls, ['program-check', 'connect']);
     assert.equal(result.cycle.vpnPreservedForUser, true);
     assert.equal(Boolean(result.error), readError);
   });
   test(`VPN ligada pelo ciclo é desligada ao terminar; falha de leitura=${readError}`, async () => {
     const result = await simulate({ owned: true, readError });
-    assert.deepEqual(result.calls, ['connect', 'disconnect', 'minimize']);
+    assert.deepEqual(result.calls, ['program-check', 'connect', 'disconnect', 'program-close']);
     assert.equal(Boolean(result.error), readError);
   });
 }
 test('Firebase sem autenticação: não liga VPN nem lê casas', async () => {
   const result = await simulate({ authError: true });
-  assert.deepEqual(result.calls, []); assert.equal(result.reads, 0);
+  assert.deepEqual(result.calls, ['program-check']); assert.equal(result.reads, 0);
   assert.match(result.cycle.error, /authentication rejected/);
   assert.equal(result.cycle.runtimeSha, 'a'.repeat(40));
   assert.equal(result.cycle.tunnelBearVersion, '4.17.4.0');
@@ -124,7 +130,7 @@ test('Firebase sem autenticação: não liga VPN nem lê casas', async () => {
 for (const connectionError of ['TunnelBear não abriu', 'Janela inesperada do TunnelBear; captura=simulated.png']) {
   test(`${connectionError}: nenhuma leitura, nenhuma repetição, 0 MB`, async () => {
     const result = await simulate({ connectionError });
-    assert.deepEqual(result.calls, ['connect', 'minimize']);
+    assert.deepEqual(result.calls, ['program-check', 'connect', 'program-close']);
     assert.equal(result.reads, 0);
     assert.equal(result.cycle.status, 'ciclo sem conexão');
     assert.equal(result.cycle.consumedMB, 0);
@@ -133,3 +139,28 @@ for (const connectionError of ['TunnelBear não abriu', 'Janela inesperada do Tu
     assert.equal(result.cycle.tunnelBearVersion, '4.17.4.0');
   });
 }
+
+test('janela do Alex visível/outro país: pula com motivo próprio antes de abrir Edge, VPN ou leitor', async () => {
+  const result = await simulate({ decision: 'in_use' });
+  assert.deepEqual(result.calls, ['program-check']);
+  assert.equal(result.cycle.status, 'ciclo pulado');
+  assert.equal(result.cycle.pauseReason, 'TunnelBear em uso pelo Alex');
+  assert.equal(result.reads, 0);
+  assert.equal(result.cycle.consumedMB, 0);
+});
+
+test('falha ao fechar UI é registrada; próximo ciclo tenta novamente', async () => {
+  const failed = await simulate({ owned: true, cleanupError: 'acesso negado simulado' });
+  assert.match(failed.cycle.tunnelBearProgramCloseError, /TUNNELBEAR_PROGRAM_CLOSE_FAILED.*acesso negado/);
+  assert.deepEqual(failed.calls, ['program-check', 'connect', 'disconnect', 'program-close']);
+  const next = await simulate({ owned: true });
+  assert.equal(next.cycle.tunnelBearProgramCloseError, undefined);
+  assert.deepEqual(next.calls, ['program-check', 'connect', 'disconnect', 'program-close']);
+});
+
+test('Alex começou a usar entre a consulta inicial e a conexão: pula sem limpeza da interface', async () => {
+  const result = await simulate({ connectionError: 'TunnelBear em uso pelo Alex' });
+  assert.equal(result.cycle.status, 'ciclo pulado');
+  assert.equal(result.cycle.pauseReason, 'TunnelBear em uso pelo Alex');
+  assert.deepEqual(result.calls, ['program-check', 'connect']);
+});
