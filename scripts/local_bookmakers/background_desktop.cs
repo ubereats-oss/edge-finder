@@ -21,6 +21,27 @@ public static class EdgeBackgroundDesktop {
     var title = new StringBuilder(512); GetWindowText(window, title, title.Capacity);
     return IsWindowVisible(window) && !IsIconic(window) && title.Length > 0;
   }
+  [DllImport("user32.dll", SetLastError=true)] static extern bool SetThreadDesktop(IntPtr desktop);
+  [DllImport("user32.dll")] static extern IntPtr GetThreadDesktop(uint thread);
+  [DllImport("kernel32.dll")] static extern uint GetCurrentThreadId();
+  // Visibility must be queried on the window's desktop. This changes only a
+  // fresh inspection thread, never the input desktop (no SwitchDesktop).
+  public static bool AnyVisible(string name, int[] owners) {
+    bool visible = false; Exception failure = null;
+    var reader = new System.Threading.Thread(() => {
+      IntPtr desktop = OpenDesktop(name, 0, false, 0x0041);
+      if (desktop == IntPtr.Zero) { failure = new InvalidOperationException("Desktop para leitura indisponível."); return; }
+      IntPtr original = GetThreadDesktop(GetCurrentThreadId());
+      try {
+        if (!SetThreadDesktop(desktop)) throw new System.ComponentModel.Win32Exception();
+        foreach (IntPtr window in Windows(name, owners, false)) if (Visible(window)) { visible = true; break; }
+      } catch (Exception error) { failure = error; }
+      finally { SetThreadDesktop(original); CloseDesktop(desktop); }
+    });
+    reader.Start(); reader.Join();
+    if (failure != null) throw new InvalidOperationException("Visibilidade do TunnelBear não confirmada.", failure);
+    return visible;
+  }
   [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)] struct Startup {
     public int cb; public string reserved, desktop, title;
     public int x,y,cx,cy,xChars,yChars,fill,flags; public short show,reservedBytes;
