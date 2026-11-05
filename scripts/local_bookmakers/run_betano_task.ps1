@@ -29,11 +29,6 @@ try {
 }
 }
 $logDir = Join-Path $project '.local_logs\betano'
-. (Join-Path $PSScriptRoot 'test_cycle_origin.ps1')
-if (Use-TestCycleRequest $logDir $env:EDGE_CYCLE_ORIGIN $env:EDGE_CYCLE_TRIGGERED_AT) {
-  $env:EDGE_CYCLE_ORIGIN = 'test'
-  $originEvidence = 'solicitação explícita test de uso único e evento nativo110'
-}
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $log = Join-Path $logDir 'task-output.log'
 Write-LocalSafeLog $log "Inicio $(Get-Date -Format o); reader=$reader"

@@ -9,8 +9,6 @@ function Get-TunnelBearProgram {
     $visible = @($windows | Where-Object { [EdgeBackgroundDesktop]::Visible($_) }).Count -gt 0
     $desktop = if ($windows.Count) { 'Default' }
       elseif ($hidden.Count) { 'EdgeFinderCollection' }
-      elseif ([EdgeBackgroundDesktop]::ProcessOnDesktop($process.Id, 'EdgeFinderCollection')) { 'EdgeFinderCollection' }
-      elseif ([EdgeBackgroundDesktop]::ProcessOnDesktop($process.Id, 'Default')) { 'Default' }
       else { 'unknown' }
     [pscustomobject]@{ Id = $process.Id; StartedAt = $process.StartTime.ToUniversalTime().ToString('o');
       Desktop = $desktop; Visible = $visible;

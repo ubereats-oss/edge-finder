@@ -1,6 +1,5 @@
 ﻿$ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'tunnelbear.ps1') -Action library
-. (Join-Path $PSScriptRoot 'test_cycle_origin.ps1')
 $script:passed = 0
 function Assert($Condition, $Message) { if (-not $Condition) { throw $Message }; $script:passed++ }
 $real = Get-Content (Join-Path $PSScriptRoot 'fixtures/native_vpn_real_20261102.json') -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -58,19 +57,5 @@ foreach ($state in @($realPortugal, @{ Status = 'Unavailable' }, @{ Status = 'Co
 $script:native = $realDisconnected; $script:programs = @(Program 'Default' $true); $script:stops = @()
 $result = Stop-TunnelBearProgram 'EdgeFinderCollection'
 Assert ($result.closedCount -eq 0 -and $script:stops.Count -eq 0) 'Limpeza final nunca fecha programa Default'
-$folder = Join-Path ([IO.Path]::GetTempPath()) ('edge-origin-' + [Guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Path $folder | Out-Null
-try {
-  $requestFile = Join-Path $folder 'test-origin-request.json'
-  $created = [DateTimeOffset]::UtcNow.AddSeconds(-2)
-  $request = @{ origin = 'test'; taskName = 'EdgeFinder-Betano-Local'; createdAt = $created.ToString('o'); expiresAt = $created.AddSeconds(120).ToString('o') }
-  [IO.File]::WriteAllText($requestFile, ($request | ConvertTo-Json))
-  Assert (-not (Use-TestCycleRequest $folder 'scheduler' ([DateTimeOffset]::UtcNow.ToString('o'))) -and (Test-Path $requestFile)) 'Marca test nunca consome evento107'
-  Assert ((Use-TestCycleRequest $folder 'manual' ([DateTimeOffset]::UtcNow.ToString('o'))) -and -not (Test-Path $requestFile)) 'Evento110 consome test explicito uma unica vez'
-  Assert (-not (Use-TestCycleRequest $folder 'manual' ([DateTimeOffset]::UtcNow.ToString('o')))) 'Sem pedido nao inventa origem test'
-  $request.expiresAt = $created.AddSeconds(1).ToString('o')
-  [IO.File]::WriteAllText($requestFile, ($request | ConvertTo-Json))
-  Assert (-not (Use-TestCycleRequest $folder 'manual' ([DateTimeOffset]::UtcNow.ToString('o')))) 'Pedido expirado nao marca test'
-} finally { Remove-Item -LiteralPath $folder -Recurse -Force }
 [pscustomobject]@{ passed = $script:passed; failed = 0; simulated = $true;
   replay = 'native_vpn_real_20261102 e disconnected_adapter_up_20261103'; counterfactual = 'Country PT alterado para DE' } | ConvertTo-Json -Compress
