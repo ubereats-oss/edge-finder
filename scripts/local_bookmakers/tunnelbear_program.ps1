@@ -18,25 +18,25 @@ function Get-TunnelBearProgram {
 }
 
 function Get-TunnelBearProgramDecision($Programs, $Native) {
-  if (@($Programs | Where-Object { $_.Visible -or -not $_.Installed -or $_.Desktop -eq 'unknown' }).Count -or
-      ($Native.Status -eq 'Connected' -and $Native.Country -ne 'PT')) {
-    return 'in_use'
-  }
   if ($Native.Status -eq 'Connected' -and $Native.Country -eq 'PT') { return 'preserve' }
-  if (@($Programs | Where-Object { $_.Desktop -eq 'Default' }).Count -and $Native.Status -ne 'Disconnected') {
-    return 'in_use'
+  if ($Native.Status -eq 'Connected' -and $Native.Country -and $Native.Country -ne 'PT') {
+    return 'other_country'
   }
-  return 'collect'
+  if ($Native.Status -eq 'Disconnected') { return 'collect' }
+  return 'unconfirmed'
 }
 
 function Stop-TunnelBearProgram([string]$Desktop) {
   $closed = @()
+  if ($Desktop -eq 'Default' -and @(Get-TunnelBearProgram | Where-Object { $_.Desktop -eq 'unknown' }).Count) {
+    throw 'TUNNELBEAR_PROGRAM_CLOSE_FAILED: desktop da interface não confirmado; fechamento não autorizado.'
+  }
   foreach ($program in @(Get-TunnelBearProgram | Where-Object { $_.Desktop -eq $Desktop })) {
     # Recheck immediately before closing, including process identity/visibility.
     $current = @(Get-TunnelBearProgram | Where-Object { $_.Id -eq $program.Id -and $_.StartedAt -eq $program.StartedAt })
     if (-not $current.Count) { continue }
     $native = Get-TunnelBearNativeConnection
-    if ($native.Status -ne 'Disconnected' -or $current[0].Visible -or -not $current[0].Installed -or $current[0].Desktop -ne $Desktop) {
+    if ($native.Status -ne 'Disconnected' -or -not $current[0].Installed -or $current[0].Desktop -ne $Desktop) {
       throw 'TUNNELBEAR_PROGRAM_CLOSE_FAILED: fechamento não autorizado; VPN não desligado ou interface em uso.'
     }
     $stopped = Stop-Process -Id $program.Id -PassThru -ErrorAction Stop
@@ -46,11 +46,17 @@ function Stop-TunnelBearProgram([string]$Desktop) {
     }
     $closed += $program.Id
   }
-  return [pscustomobject]@{ status = 'closed'; desktop = $Desktop; closedCount = $closed.Count; closedIds = $closed }
+  return [pscustomobject]@{ status = 'closed'; desktop = $Desktop; closedCount = $closed.Count; closedIds = $closed;
+    closedUserProgram = ($Desktop -eq 'Default' -and $closed.Count -gt 0) }
 }
 
 function Assert-TunnelBearProgramAvailable {
-  $decision = Get-TunnelBearProgramDecision (Get-TunnelBearProgram) (Get-TunnelBearNativeConnection)
-  if ($decision -eq 'in_use') { throw 'TunnelBear em uso pelo Alex' }
+  $programs = @(Get-TunnelBearProgram)
+  $native = Get-TunnelBearNativeConnection
+  $decision = Get-TunnelBearProgramDecision $programs $native
+  Write-ConnectionAttempt 1 'program_decision' ([pscustomobject]@{ decision = $decision; programs = $programs;
+    nativeStatus = $native.Status; nativeCountry = $native.Country; nativeAt = $native.At } | ConvertTo-Json -Depth 5 -Compress)
+  if ($decision -eq 'other_country') { throw 'VPN do Alex em outro país' }
+  if ($decision -eq 'unconfirmed') { throw 'VPN_STATE_UNCONFIRMED: estado nativo ou país sem confirmação; nenhum toque autorizado.' }
   return $decision
 }

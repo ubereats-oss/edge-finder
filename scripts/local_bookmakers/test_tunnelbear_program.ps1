@@ -34,11 +34,12 @@ Assert ((Assert-TunnelBearProgramAvailable) -eq 'preserve' -and $script:stops.Co
 # COUNTERFACTUAL: only country differs from the original native Connected/PT replay.
 $counterfactual = $realPortugal | ConvertTo-Json | ConvertFrom-Json
 $counterfactual.Country = 'DE'; $script:native = $counterfactual
-Assert ((Get-TunnelBearProgramDecision $script:programs $script:native) -eq 'in_use' -and $script:stops.Count -eq 0) 'Cenario3 contrafactual Connected/DE preservado'
+Assert ((Get-TunnelBearProgramDecision $script:programs $script:native) -eq 'other_country' -and $script:stops.Count -eq 0) 'Contrafactual Connected/DE pula sem tocar'
 $script:native = $realDisconnected; $script:programs = @(Program 'Default' $true)
-$blocked = $false
-try { $null = Assert-TunnelBearProgramAvailable } catch { $blocked = $_.Exception.Message -eq 'TunnelBear em uso pelo Alex' }
-Assert ($blocked -and $script:stops.Count -eq 0) 'Cenario3 janela visivel desconectada tem motivo proprio e zero toques'
+Assert ((Assert-TunnelBearProgramAvailable) -eq 'collect' -and $script:stops.Count -eq 0) 'Janela visivel desconectada segue normalmente'
+$result = Stop-TunnelBearProgram 'Default'
+Assert ($result.closedCount -eq 1 -and $result.closedUserProgram) 'Fecha UI visivel desligada e registra programa do Alex'
+$script:stops = @()
 $script:programs = @(Program 'Default')
 Assert ((Assert-TunnelBearProgramAvailable) -eq 'collect') 'Cenario4 bandeja/minimizada com Disconnected real permite ciclo'
 $result = Stop-TunnelBearProgram 'Default'
@@ -57,5 +58,19 @@ foreach ($state in @($realPortugal, @{ Status = 'Unavailable' }, @{ Status = 'Co
 $script:native = $realDisconnected; $script:programs = @(Program 'Default' $true); $script:stops = @()
 $result = Stop-TunnelBearProgram 'EdgeFinderCollection'
 Assert ($result.closedCount -eq 0 -and $script:stops.Count -eq 0) 'Limpeza final nunca fecha programa Default'
+$script:programs = @(Program 'Default' $true); $script:native = $realPortugal; $script:stops = @()
+Assert ((Assert-TunnelBearProgramAvailable) -eq 'preserve' -and $script:stops.Count -eq 0) 'Connected/PT preservado com janela visivel'
+Assert ((Get-TunnelBearProgramDecision $null $realDisconnected) -eq 'collect') 'Lista nula nao cria usuario ficticio'
+Assert ((Get-TunnelBearProgramDecision @() $realDisconnected) -eq 'collect') 'Lista vazia permite coleta'
+foreach ($native in @(@{Status='Unavailable'}, @{Status='Connecting'}, @{Status='Connected';Country=$null})) {
+  Assert ((Get-TunnelBearProgramDecision @() $native) -eq 'unconfirmed') 'Sem prova falha sem pulo por outro pais nem clique'
+}
+$replays = Get-Content (Join-Path $PSScriptRoot 'fixtures/tunnelbear_skips_real_20261105_06.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+Assert ($replays.Count -eq 17) 'Exatamente17 pulos reais preservados'
+foreach ($row in $replays) {
+  $script:programs = @($row.program.programs); $script:native = @{Status=$row.program.nativeStatus;Country=$row.program.nativeCountry}
+  $expected = if ($script:native.Status -eq 'Connected' -and $script:native.Country -eq 'PT') {'preserve'} else {'collect'}
+  Assert ((Assert-TunnelBearProgramAvailable) -eq $expected) "Replay real $($row.startedAt) sem veto antigo"
+}
 [pscustomobject]@{ passed = $script:passed; failed = 0; simulated = $true;
   replay = 'native_vpn_real_20261102 e disconnected_adapter_up_20261103'; counterfactual = 'Country PT alterado para DE' } | ConvertTo-Json -Compress
