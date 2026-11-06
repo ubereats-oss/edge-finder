@@ -178,7 +178,7 @@ try {
     $decision = Get-TunnelBearProgramDecision $programs $native
     [pscustomobject]@{ action = $Action; decision = $decision;
       programs = $programs; nativeStatus = $native.Status; nativeCountry = $native.Country;
-      reason = $(if ($decision -eq 'in_use') { 'TunnelBear em uso pelo Alex' } else { $null }) } | ConvertTo-Json -Depth 5 -Compress
+      reason = $(if ($decision -eq 'other_country') { 'VPN do Alex em outro país' } else { $null }) } | ConvertTo-Json -Depth 5 -Compress
   } elseif ($Action -eq 'program-close') {
     Stop-TunnelBearProgram 'EdgeFinderCollection' | ConvertTo-Json -Compress
   } elseif ($Action -eq 'recover') {
@@ -212,6 +212,9 @@ try {
     }
     try { $programClosed = Stop-TunnelBearProgram 'Default' }
     catch { throw ('TUNNELBEAR_PROGRAM_CLOSE_FAILED: ' + $_.Exception.Message) }
+    if ($programClosed.closedUserProgram) {
+      Write-ConnectionAttempt 1 'user_program_closed' ($programClosed | ConvertTo-Json -Compress)
+    }
     Write-ConnectionAttempt 1 'started'
     $vpnStartedAt = Get-Date -Format o
     $prepared = Prepare-TunnelBearWindow

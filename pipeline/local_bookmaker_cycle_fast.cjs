@@ -182,8 +182,8 @@ async function main() {
     cycle.stages[name] = record;
     try { return await work(); }
     catch (error) {
-      if (error.message.includes('TunnelBear em uso pelo Alex')) {
-        record.skipReason = 'TunnelBear em uso pelo Alex';
+      if (error.message.includes('VPN do Alex em outro país')) {
+        record.skipReason = 'VPN do Alex em outro país';
         throw error;
       }
       record.error = sanitizeReason(error.message);
@@ -208,8 +208,8 @@ async function main() {
     const pauseReason = readCycleBudget(cycle);
     if (pauseReason) { cycle.status = 'ciclo pulado'; cycle.pauseReason = pauseReason; return; }
     cycle.tunnelBearProgram = core.tunnel('program-check');
-    if (cycle.tunnelBearProgram.decision === 'in_use') {
-      cycle.status = 'ciclo pulado'; cycle.pauseReason = 'TunnelBear em uso pelo Alex'; return;
+    if (cycle.tunnelBearProgram.decision === 'other_country') {
+      cycle.status = 'ciclo pulado'; cycle.pauseReason = 'VPN do Alex em outro país'; return;
     }
     await stage('preparation', async () => {
       db = core.database();
@@ -251,6 +251,7 @@ async function main() {
     await stage('vpnConnect', async () => {
       vpnStartedAt = Date.now();
       cycle.vpn = core.tunnel('connect', startedAt, 'production_cycle');
+      cycle.tunnelBearUserProgramClosed = cycle.vpn.programClosedBefore?.closedUserProgram === true;
       vpnStartedAt = Date.parse(cycle.vpn.vpnStartedAt) || vpnStartedAt;
       vpnConnected = true;
       vpnOwned = cycle.vpn.connectedByCycle === true;
@@ -416,9 +417,9 @@ async function main() {
     cycle.status = 'complete';
   } catch (error) {
     caught = error;
-    cycle.status = error.message.includes('TunnelBear em uso pelo Alex') ? 'ciclo pulado'
+    cycle.status = error.message.includes('VPN do Alex em outro país') ? 'ciclo pulado'
       : cycle.stages.vpnConnect?.error ? 'ciclo sem conexão' : 'failed';
-    if (cycle.status === 'ciclo pulado') cycle.pauseReason = 'TunnelBear em uso pelo Alex';
+    if (cycle.status === 'ciclo pulado') cycle.pauseReason = 'VPN do Alex em outro país';
     cycle.error = sanitizeReason(error.message);
   } finally {
     if (networkTimer) clearInterval(networkTimer);
@@ -457,7 +458,8 @@ async function main() {
       const attemptFile = path.join(LOG_DIR, `tunnelbear_attempts_${startedAt.slice(0, 7)}.jsonl`);
       cycle.tunnelBearEvents = fs.existsSync(attemptFile) ? fs.readFileSync(attemptFile, 'utf8').replace(/^\uFEFF/, '').split(/\r?\n/)
         .flatMap(line => { try { const row = JSON.parse(line); return row.cycleId === startedAt &&
-          ['upgrade_closed', 'update_ignored', 'update_closed', 'data_exhausted'].includes(row.status) ? [row] : []; } catch { return []; } }) : [];
+          ['upgrade_closed', 'update_ignored', 'update_closed', 'data_exhausted', 'program_decision', 'user_program_closed'].includes(row.status) ? [row] : []; } catch { return []; } }) : [];
+      cycle.tunnelBearUserProgramClosed ||= cycle.tunnelBearEvents.some(row => row.status === 'user_program_closed');
     }
     try {
       cycle.tunnelBear = collectDiagnostic(cycle, LOG_DIR);
@@ -523,6 +525,7 @@ async function main() {
       tunnelBearProgram: cycle.tunnelBearProgram || null,
       tunnelBearProgramCleanup: cycle.tunnelBearProgramCleanup || null,
       tunnelBearProgramCloseError: cycle.tunnelBearProgramCloseError || null,
+      tunnelBearUserProgramClosed: cycle.tunnelBearUserProgramClosed || false,
       healthCause: cycle.healthCause, vpnFailures: cycle.vpnFailures || [],
       accumulatedMB: cycle.accumulatedMB, balanceReadDurationMs: cycle.balanceReadDurationMs,
       vpnAdapterBytes: cycle.vpnAdapterBytes ?? null, vpnAdapterMB: cycle.vpnAdapterMB ?? null,

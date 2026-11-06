@@ -1,0 +1,341 @@
+[
+  {
+    "file": "cycle-2026-11-05T13-50-19-790Z.json",
+    "startedAt": "2026-11-05T13:50:19.790Z",
+    "program": {
+      "action": "program-check",
+      "decision": "in_use",
+      "programs": [
+        {
+          "Id": 7376,
+          "StartedAt": "2026-11-05T13:37:56.7152244Z",
+          "Desktop": "Default",
+          "Visible": true,
+          "Installed": true
+        }
+      ],
+      "nativeStatus": "Connected",
+      "nativeCountry": "PT",
+      "reason": "TunnelBear em uso pelo Alex"
+    },
+    "nativeAtStart": {
+      "Status": "Connected",
+      "Country": "PT",
+      "At": "2026-11-05T13:48:36.533Z",
+      "Source": "trace_maintenance.3.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-05T15-50-06-189Z.json",
+    "startedAt": "2026-11-05T15:50:06.189Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T14:50:40.056Z",
+      "Source": "trace_maintenance.2.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-05T16-50-06-886Z.json",
+    "startedAt": "2026-11-05T16:50:06.886Z",
+    "program": {
+      "action": "program-check",
+      "decision": "in_use",
+      "programs": [
+        {
+          "Id": 16352,
+          "StartedAt": "2026-11-05T15:59:10.5712881Z",
+          "Desktop": "Default",
+          "Visible": true,
+          "Installed": true
+        }
+      ],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": "TunnelBear em uso pelo Alex"
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T16:38:04.130Z",
+      "Source": "trace_maintenance.1.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-05T18-50-06-634Z.json",
+    "startedAt": "2026-11-05T18:50:06.634Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-05T19-50-05-956Z.json",
+    "startedAt": "2026-11-05T19:50:05.956Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-05T23-50-07-046Z.json",
+    "startedAt": "2026-11-05T23:50:07.046Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T00-50-06-973Z.json",
+    "startedAt": "2026-11-06T00:50:06.973Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T01-50-07-212Z.json",
+    "startedAt": "2026-11-06T01:50:07.212Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T02-50-06-883Z.json",
+    "startedAt": "2026-11-06T02:50:06.883Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T03-50-06-271Z.json",
+    "startedAt": "2026-11-06T03:50:06.271Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T04-50-05-756Z.json",
+    "startedAt": "2026-11-06T04:50:05.756Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T05-50-06-217Z.json",
+    "startedAt": "2026-11-06T05:50:06.217Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T06-50-11-318Z.json",
+    "startedAt": "2026-11-06T06:50:11.318Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T07-50-05-913Z.json",
+    "startedAt": "2026-11-06T07:50:05.913Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T08-50-06-596Z.json",
+    "startedAt": "2026-11-06T08:50:06.596Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T09-50-05-977Z.json",
+    "startedAt": "2026-11-06T09:50:05.977Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  },
+  {
+    "file": "cycle-2026-11-06T10-50-10-699Z.json",
+    "startedAt": "2026-11-06T10:50:10.699Z",
+    "program": {
+      "action": "program-check",
+      "decision": "collect",
+      "programs": [],
+      "nativeStatus": "Disconnected",
+      "nativeCountry": null,
+      "reason": null
+    },
+    "nativeAtStart": {
+      "Status": "Disconnected",
+      "Country": null,
+      "At": "2026-11-05T17:51:15.499Z",
+      "Source": "trace_maintenance.log"
+    },
+    "originalReason": "TunnelBear em uso pelo Alex"
+  }
+]

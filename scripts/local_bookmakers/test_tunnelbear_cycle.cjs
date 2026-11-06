@@ -8,7 +8,7 @@ const filename = path.resolve(__dirname, '../../pipeline/local_bookmaker_cycle_f
 
 // Run the production orchestration with every external boundary replaced: no
 // process, browser, database, VPN or collector is invoked by these tests.
-async function simulate({ owned = false, connectionError, cleanupError, decision = 'collect', readError = false, authError = false, budget = null, at } = {}) {
+async function simulate({ owned = false, connectionError, cleanupError, decision = 'collect', userProgramClosed = false, readError = false, authError = false, budget = null, at } = {}) {
   const calls = [], written = new Map(), readHouses = [], statuses = [];
   let reads = 0;
   const reference = { set: async () => {}, get: async () => ({ data: () => ({
@@ -27,7 +27,8 @@ async function simulate({ owned = false, connectionError, cleanupError, decision
       if (action === 'program-check') return { decision };
       if (action === 'connect' && connectionError) throw new Error(connectionError);
       if (action === 'program-close' && cleanupError) throw new Error(cleanupError);
-      return { connectedByCycle: owned, vpnStartedAt: new Date().toISOString(), vpnDisconnectedAt: new Date().toISOString() };
+      return { connectedByCycle: owned, programClosedBefore: { closedUserProgram: userProgramClosed },
+        vpnStartedAt: new Date().toISOString(), vpnDisconnectedAt: new Date().toISOString() };
     },
     recordTunnelUsage: () => ({ cycles: [{ measuredMB: 0 }], totalMB: 0 }),
     updateFailure: async () => {},
@@ -140,11 +141,11 @@ for (const connectionError of ['TunnelBear não abriu', 'Janela inesperada do Tu
   });
 }
 
-test('janela do Alex visível/outro país: pula com motivo próprio antes de abrir Edge, VPN ou leitor', async () => {
-  const result = await simulate({ decision: 'in_use' });
+test('somente outro país: pula com motivo próprio antes de abrir Edge, VPN ou leitor', async () => {
+  const result = await simulate({ decision: 'other_country' });
   assert.deepEqual(result.calls, ['program-check']);
   assert.equal(result.cycle.status, 'ciclo pulado');
-  assert.equal(result.cycle.pauseReason, 'TunnelBear em uso pelo Alex');
+  assert.equal(result.cycle.pauseReason, 'VPN do Alex em outro país');
   assert.equal(result.reads, 0);
   assert.equal(result.cycle.consumedMB, 0);
 });
@@ -158,9 +159,23 @@ test('falha ao fechar UI é registrada; próximo ciclo tenta novamente', async (
   assert.deepEqual(next.calls, ['program-check', 'connect', 'disconnect', 'program-close']);
 });
 
-test('Alex começou a usar entre a consulta inicial e a conexão: pula sem limpeza da interface', async () => {
-  const result = await simulate({ connectionError: 'TunnelBear em uso pelo Alex' });
+test('outro país entre consulta inicial e conexão: pula sem limpeza da interface', async () => {
+  const result = await simulate({ connectionError: 'VPN do Alex em outro país' });
   assert.equal(result.cycle.status, 'ciclo pulado');
-  assert.equal(result.cycle.pauseReason, 'TunnelBear em uso pelo Alex');
+  assert.equal(result.cycle.pauseReason, 'VPN do Alex em outro país');
   assert.deepEqual(result.calls, ['program-check', 'connect']);
+});
+
+test('desconectado visível: ciclo normal registra fechamento do programa do Alex e limpa o próprio', async () => {
+  const result = await simulate({ owned: true, userProgramClosed: true });
+  assert.equal(result.cycle.status, 'complete');
+  assert.equal(result.cycle.tunnelBearUserProgramClosed, true);
+  assert.deepEqual(result.calls, ['program-check', 'connect', 'disconnect', 'program-close']);
+});
+
+test('estado não confirmado falha sem inventar pulo por outro país', async () => {
+  const result = await simulate({ connectionError: 'VPN_STATE_UNCONFIRMED: estado sem prova' });
+  assert.equal(result.cycle.status, 'ciclo sem conexão');
+  assert.equal(result.cycle.pauseReason, undefined);
+  assert.equal(result.reads, 0);
 });
