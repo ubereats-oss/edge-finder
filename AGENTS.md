@@ -49,6 +49,7 @@
 - `tennis` ← `model_results.json`
 
 ## Workflows
+- Workflows que instalam o navegador do Playwright estão temporariamente fixados em `ubuntu-24.04`. Rever essa fixação quando o Playwright suportar a nova versão do executor (Ubuntu 26.04), validando a instalação e a execução antes de atualizar a imagem.
 - `update_model.yml` — sports: `nba_br`, `nba`, `mlb`, `tennis`, `all`
 - `.github/workflows/odds_history.yml` — roda 19h UTC diariamente
 - `update_player_stats.yml` — roda 10h UTC diariamente

@@ -31,7 +31,7 @@ env:
   PLACARD_BOOKMAKER_READ_ID: ${{ github.event_name == 'workflow_dispatch' && inputs.bookmaker_read_id || '' }}
 jobs:
   collect:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
