@@ -18,7 +18,6 @@ const { parseTotals } = require('./esc_online_reader.cjs');
 const { parseEvent } = require('./goldenpark_reader.cjs');
 const { parseMarkets: betclicMarkets } = require('./betclic_reader.cjs');
 const { namesEqual } = require('../../functions/placard_value.js');
-const { readNbaPages } = require('./betano_nba.cjs');
 
 const BETANO = 'https://www.betano.pt';
 const BETANO_LEAGUES = [
@@ -177,12 +176,7 @@ async function betano(context) {
   } catch (error) { diagnostics.push({ phase: 'own_listing', error: error.message }); }
   finally { await page.close().catch(() => {}); }
   const byEvent = new Map();
-  const nbaTasks = [];
   for (const { league, payload, url, status } of payloads) {
-    if (league[0] === 'basketball_nba') {
-      nbaTasks.push(readNbaPages(context, payload.data.events, url, status));
-      continue;
-    }
     const parsed = readSelections(payload);
     const accepted = new Map(parsed.map(game => [String(game.sourceEventId), game]));
     const events = payload.data.events.map(event => {
@@ -208,10 +202,6 @@ async function betano(context) {
     });
     context.report?.({ phase: 'league', league: league[0], url, httpStatus: status,
       seen: events.length, events });
-  }
-  for (const nba of await Promise.all(nbaTasks)) {
-    for (const game of nba.games) byEvent.set(`${game.apiSport}|${game.sourceEventId}`, game);
-    diagnostics.push(...nba.diagnostics);
   }
   for (const league of BETANO_LEAGUES.filter(item => !payloads.some(row => row.league === item)))
     context.report?.({ phase: 'league', league: league[0], url: BETANO + betanoPath(league),
