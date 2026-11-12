@@ -24,6 +24,7 @@ concurrency:
   group: placard-value-${{ inputs.bookmaker_read_id || inputs.closing_only && 'closing' || 'scan' }}
   cancel-in-progress: false
 env:
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
   PLACARD_FORCE_SCAN: ${{ github.event_name == 'workflow_dispatch' && inputs.force_scan && '1' || '0' }}
@@ -31,7 +32,10 @@ env:
   PLACARD_BOOKMAKER_READ_ID: ${{ github.event_name == 'workflow_dispatch' && inputs.bookmaker_read_id || '' }}
 jobs:
   collect:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble@sha256:b0ab6f3cb99aa7803adbc14d9027ec1785fc6e433b97e134e0f8fe61683b6b53
+      options: --init --ipc=host --user 1001
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +44,8 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - name: Verificar versão do Playwright e navegador da imagem
+        run: node scripts/verify_playwright_image.cjs
       - name: Testes sem rede
         run: node --test pipeline/test_legacy_capture_alert.cjs pipeline/test_placard_value.js pipeline/test_market_integrity.cjs scripts/local_bookmakers/test_independent_readers.cjs scripts/local_bookmakers/test_operational_real.cjs scripts/local_bookmakers/test_native_vpn_real.cjs scripts/local_bookmakers/test_disconnected_adapter_up.cjs scripts/local_bookmakers/test_health_real_cycles.cjs scripts/local_bookmakers/test_tunnelbear_failure_replay.cjs functions/test_placard_part4.js functions/test_edge_health.js
       - name: Verificar trabalho pendente sem consumir Odds API
@@ -52,8 +58,6 @@ jobs:
         env:
           THE_ODDS_API_KEYS: ${{ secrets.THE_ODDS_API_KEYS }}
           ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
-      - run: npx playwright install --with-deps chromium
-        if: steps.plan.outputs.needs_scan == 'true' && env.PLACARD_CLOSING_ONLY != '1'
       - name: Comparar e capturar fechamento
         if: steps.plan.outputs.needs_work == 'true'
         run: node pipeline/run_placard_value.js
