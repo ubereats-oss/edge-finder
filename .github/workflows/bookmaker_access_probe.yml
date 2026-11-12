@@ -3,9 +3,14 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+env:
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
 jobs:
   probe:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble@sha256:b0ab6f3cb99aa7803adbc14d9027ec1785fc6e433b97e134e0f8fe61683b6b53
+      options: --init --ipc=host --user 1001
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
@@ -14,7 +19,8 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - name: Verificar versão do Playwright e navegador da imagem
+        run: node scripts/verify_playwright_image.cjs
       - name: Testar páginas públicas sem sessão
         run: node pipeline/probe_bookmaker_access.js
       - uses: actions/upload-artifact@v4
