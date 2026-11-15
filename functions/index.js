@@ -631,7 +631,7 @@ async function loadLedgerEntries(token) {
   const listUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/odds_history?ref=${GH_DATA_REF}`;
   const files = await ghFetchJson(listUrl, token);
   const ledgerFiles = (Array.isArray(files) ? files : [])
-    .filter(f => f.type === 'file' && /^model_ledger_.*\.json$/.test(f.name) && f.download_url);
+    .filter(f => f.type === 'file' && /^model_ledger_nfl_.*\.json$/.test(f.name) && f.download_url);
 
   const entries = [];
   for (const f of ledgerFiles) {

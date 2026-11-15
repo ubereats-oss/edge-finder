@@ -1,5 +1,10 @@
 name: Atualizar Todos os Esportes
 
+# Os três fluxos NFL compartilham o ledger e sua reserva.
+concurrency:
+  group: nfl-observation-ledger
+  cancel-in-progress: false
+
 on:
   schedule:
     # Fora da hora cheia pra não entrar na fila do agendador do GitHub
@@ -322,10 +327,12 @@ jobs:
         if: steps.season.outputs.in_season == 'true'
         run: node pipeline/check_stats_freshness.js nhl
 
-  # ── NFL (set-fev) — modelo próprio encerrado, job desativado (if: false) ────
+  # ── NFL (set-fev) — observação: indicações/CLV, sem apostas/Telegram ────
   nfl:
-    if: false
+    if: true
     runs-on: ubuntu-latest
+    env:
+      FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
     steps:
       - name: Verificar mês (temporada NFL set-fev)
         id: season
@@ -359,7 +366,7 @@ jobs:
           path: ~/.npm
           key: npm-axios-${{ runner.os }}
 
-      - run: npm install axios
+      - run: npm install axios firebase-admin
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nfl'
 
       - name: Injetar chaves
@@ -394,6 +401,10 @@ jobs:
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nfl'
       - run: node pipeline/model_nfl_props.js
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nfl'
+
+      - name: Reservar fechamentos NFL antes de publicar as indicações
+        if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nfl'
+        run: node pipeline/sync_nfl_closing_reserve.js
 
       - name: Empacotar artefatos NFL
         if: steps.season.outputs.in_season == 'true' || github.event.inputs.sports == 'nfl'
@@ -476,7 +487,7 @@ jobs:
   # ── SALVAR DADOS (após todos os jobs) ─────────────────────────────────────
   save-data:
     needs: [nba, mlb, nhl, nfl, tennis]
-    if: always()
+    if: always() && needs.nfl.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -496,6 +507,7 @@ jobs:
       - run: npm install firebase-admin
 
       - name: Baixar artefatos NBA
+        if: false
         uses: actions/download-artifact@v4
         with:
           name: nba-out
@@ -504,6 +516,7 @@ jobs:
         continue-on-error: true
 
       - name: Baixar artefatos MLB
+        if: false
         uses: actions/download-artifact@v4
         with:
           name: mlb-out
@@ -512,6 +525,7 @@ jobs:
         continue-on-error: true
 
       - name: Baixar artefatos NHL
+        if: false
         uses: actions/download-artifact@v4
         with:
           name: nhl-out
@@ -528,6 +542,7 @@ jobs:
         continue-on-error: true
 
       - name: Baixar artefatos Tênis
+        if: false
         uses: actions/download-artifact@v4
         with:
           name: tennis-out
@@ -538,7 +553,7 @@ jobs:
       - name: Copiar artefatos para diretório de trabalho
         run: |
           mkdir -p odds_history
-          for dir in /tmp/nba-out /tmp/mlb-out /tmp/nhl-out /tmp/nfl-out /tmp/tennis-out; do
+          for dir in /tmp/nfl-out; do
             if [ -d "$dir" ]; then
               cp "$dir"/* . 2>/dev/null || true
               [ -d "$dir/odds_history" ] && cp "$dir"/odds_history/*.json odds_history/ 2>/dev/null || true
@@ -552,11 +567,6 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
-      - name: Sincronizar apostas com Firestore
-        run: node pipeline/firebase_sync.js bets
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-
       - name: Salvar dados na branch data
         # Se o push for rejeitado porque a branch data avançou (ex.: uma
         # execução de capture_closing_odds.js gravou no meio tempo),
@@ -567,7 +577,7 @@ jobs:
         run: |
           cp .github/scripts/save_stats_gz.sh /tmp/save_stats_gz.sh
           mkdir -p /tmp/to-save /tmp/to-save/odds_history /tmp/to-save-gz 
-          for dir in /tmp/nba-out /tmp/mlb-out /tmp/nhl-out /tmp/nfl-out /tmp/tennis-out; do
+          for dir in /tmp/nfl-out; do
             if [ -d "$dir" ]; then
               cp "$dir"/* /tmp/to-save/ 2>/dev/null || true
               [ -d "$dir/odds_history" ] && cp "$dir"/odds_history/*.json /tmp/to-save/odds_history/ 2>/dev/null || true
@@ -599,7 +609,7 @@ jobs:
               node /tmp/ledger_pipeline/reapply_ledger_changes.js protect-closing-odds /tmp/to-save/odds_history
             fi
 
-            odds_history_patterns=(model_ledger_*.json basketball_nba_model_br_*.json baseball_mlb_model_*.json hockey_nhl_model_*.json football_nfl_model_*.json)
+            odds_history_patterns=(model_ledger_nfl_*.json football_nfl_model_*.json)
             included_patterns=()
             for pattern in "${odds_history_patterns[@]}"; do
               matched=false
@@ -610,7 +620,7 @@ jobs:
               done
               [ "$matched" = true ] && included_patterns+=("$pattern")
             done
-            for f in *.gz nba_player_team.json nba_player_positions.json nba_boxscores_cache.json nba_injuries_today.json nba_rating.json mlb_results.json mlb_player_team.json mlb_injuries_today.json nhl_player_team.json nfl_player_team.json ranking.json bets.json; do
+            for f in nfl_player_stats.json.gz nfl_player_team.json; do
               [ -f "$f" ] && git add "$f" || true
             done
             if [ ${#included_patterns[@]} -gt 0 ]; then
@@ -636,3 +646,8 @@ jobs:
             delay=$((delay * 2))
             attempt=$((attempt + 1))
           done
+
+      - name: Conciliar reserva NFL com o histórico publicado
+        run: NODE_PATH="$GITHUB_WORKSPACE/node_modules" node /tmp/ledger_pipeline/sync_nfl_closing_reserve.js
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}

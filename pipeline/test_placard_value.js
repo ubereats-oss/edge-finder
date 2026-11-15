@@ -84,6 +84,8 @@ test('reserva transacional consulta evidência real e persiste motivo mesmo quan
       get: async ref => {
         if (ref.name.startsWith('_odds_api_budget')) return { data: () => state };
         if (unavailable) throw Object.assign(new Error('consulta indisponível'), { code: 'UNAVAILABLE' });
+        if (ref.name === 'system/nflClosingReserve') return { exists: true,
+          data: () => ({ schemaVersion: 1, source: 'model_ledger_nfl', entries: [] }) };
         return { docs: (ref.name === '_placard_opportunities' ? reserveReal.opportunities
           : [{ budget: { lastClosingCredits: Math.max(...reserveReal.closingCosts.map(row => row.cost)) } }])
           .map(row => ({ data: () => row })) };
