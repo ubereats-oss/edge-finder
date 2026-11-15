@@ -6,9 +6,11 @@ for (const file of changedFiles) {
   if (!file.startsWith('functions/')) continue;
 
   if (file === 'functions/odds_api_monthly_budget.js') {
+    // retryDailyEdgeFinderHealth só reenvia relatórios/alertas já persistidos;
+    // não consulta nem reserva créditos. Não requer atualização de Cloud Tasks.
     for (const name of ['closingOddsScheduler', 'compareLocalBookmakerRead',
       'dailyEdgeFinderHealth', 'notifyOddsApiExternalUse', 'notifyPlacardOpportunity',
-      'retryDailyEdgeFinderHealth', 'revalidatePlacardOpportunities', 'syncOddsBr']) affected.add(name);
+      'revalidatePlacardOpportunities', 'syncOddsBr']) affected.add(name);
     continue;
   }
 
