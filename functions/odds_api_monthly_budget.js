@@ -2,6 +2,27 @@
 // Sem evidência de custo/indicações, preserva a reserva antiga de 1.000.
 const crypto = require('crypto');
 const axios = require('axios');
+const closingRules = require('./closing_odds_rules');
+
+// Espelho do ledger NFL; os workflows serializados reservam antes de publicar
+// novas indicações e só liberam a reserva depois de persistir o fechamento.
+function nflClosingReserve(entries, now = Date.now()) {
+  if (!Array.isArray(entries)) throw new Error('Espelho de fechamentos NFL inválido.');
+  const groups = new Map();
+  let openCount = 0;
+  for (const e of entries) {
+    if (e.esporte !== 'americanfootball/nfl' || !closingRules.isClosingOddsEligible(e)) continue;
+    const start = Date.parse(e.commenceTime);
+    if (!Number.isFinite(start) || start < now - closingRules.CLOSING_ODDS_CAPTURE_WINDOW_AFTER_MS) continue;
+    const key = `${e.eventId || e.game}|${e.commenceTime}`;
+    if (!groups.has(key)) groups.set(key, new Set());
+    groups.get(key).add(e.market);
+    openCount++;
+  }
+  const marketCount = [...groups.values()].reduce((sum, markets) => sum + markets.size, 0);
+  return { openCount, eventCount: groups.size, marketCount, amount: marketCount * 2,
+    attempts: 2, costSource: 'model_ledger_nfl:mercados distintos por evento, região us' };
+}
 
 const CLOSING_RESERVE = 800;
 const READING_MARGIN = 200;
@@ -15,7 +36,9 @@ function closingReserve(evidence) {
   if (evidence?.mode === 'variable' && Number.isSafeInteger(evidence.openCount) && evidence.openCount >= 0
       && Number.isFinite(evidence.maxClosingCost) && evidence.maxClosingCost > 0
       && Number.isSafeInteger((evidence.openCount + 1) * evidence.maxClosingCost * 2)) {
-    return { ...evidence, amount: (evidence.openCount + 1) * evidence.maxClosingCost * 2, reason: null };
+    const nflAmount = evidence.nflReserve?.amount ?? 0;
+    if (!Number.isSafeInteger(nflAmount) || nflAmount < 0) throw new Error('Reserva NFL inválida.');
+    return { ...evidence, amount: (evidence.openCount + 1) * evidence.maxClosingCost * 2 + nflAmount, reason: null };
   }
   return { mode: 'fallback', amount: CLOSING_RESERVE + READING_MARGIN,
     reason: evidence?.reason || 'Custo real dos fechamentos ou indicações abertas indisponível.' };
@@ -26,7 +49,7 @@ function stateReserve(state) {
     ? { reason: 'Saldo real indisponível; limites anteriores preservados.' } : state.dynamicReserve);
 }
 
-function reserveFromRecords(opportunities, closingCosts, observedAt = new Date().toISOString()) {
+function reserveFromRecords(opportunities, closingCosts, observedAt = new Date().toISOString(), nflReserve = null) {
   if (!Array.isArray(opportunities) || !Array.isArray(closingCosts))
     return closingReserve({ reason: 'Indicações abertas ou custos de fechamento não puderam ser obtidos.' });
   const costs = closingCosts.filter(cost => Number.isFinite(cost) && cost > 0);
@@ -35,7 +58,7 @@ function reserveFromRecords(opportunities, closingCosts, observedAt = new Date()
     && row.annulled !== true && row.status !== 'anulada' && row.closingStatus !== 'anulada'
     && row.closingStatus !== 'capturada' && !row.closingCapturedAt).length;
   return closingReserve({ mode: 'variable', openCount, maxClosingCost: Math.max(...costs), observedAt,
-    costSource: 'results/placard_current/runs:budget.lastClosingCredits' });
+    costSource: 'results/placard_current/runs:budget.lastClosingCredits', ...(nflReserve ? { nflReserve } : {}) });
 }
 
 async function readReserveEvidence(db, reader = { get: query => query.get() }, prior = {}) {
@@ -48,7 +71,12 @@ async function readReserveEvidence(db, reader = { get: query => query.get() }, p
     // Também protege custos maiores observados antes da publicação do resumo.
     if (Number.isFinite(prior.maxClosingRequestCost) && prior.maxClosingRequestCost > 0)
       costs.push(prior.maxClosingRequestCost);
-    return reserveFromRecords(opportunities.docs.map(doc => doc.data()), costs);
+    const nfl = await reader.get(db.collection('system').doc('nflClosingReserve'));
+    const mirror = nfl.data();
+    if (!nfl.exists || mirror?.schemaVersion !== 1 || mirror?.source !== 'model_ledger_nfl')
+      throw new Error('Espelho do histórico central NFL indisponível.');
+    return reserveFromRecords(opportunities.docs.map(doc => doc.data()), costs,
+      new Date().toISOString(), nflClosingReserve(mirror.entries));
   } catch (error) {
     return closingReserve({ reason: `Consulta de indicações/custos indisponível: ${safeError(error)}.` });
   }
@@ -428,5 +456,5 @@ module.exports = {
   recordUnreservedResponse, summarize, planReservation, keyFingerprint, parseHeaders,
   database, CLOSING_RESERVE, READING_MARGIN, SCHEMA_VERSION,
   MONTHLY_SPEND_CAP, MONTHLY_READ_CAP, monthlyUsed, trackUsage, brasilDay, daysRemaining, dailyReadBudget,
-  closingReserve, reserveFromRecords, readReserveEvidence,
+  closingReserve, reserveFromRecords, readReserveEvidence, nflClosingReserve,
 };

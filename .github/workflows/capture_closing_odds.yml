@@ -18,7 +18,7 @@ name: Capturar Odd de Fechamento
 # tempo — se o cron disparar perto de um disparo da Cloud Function, a nova
 # fica na fila em vez de rodar em paralelo.
 concurrency:
-  group: capture-closing-odds
+  group: nfl-observation-ledger
   cancel-in-progress: false
 
 on:
@@ -56,7 +56,7 @@ jobs:
         run: |
           git fetch origin data 2>/dev/null || true
           mkdir -p odds_history
-          git checkout origin/data -- 'odds_history/model_ledger_*.json' 2>/dev/null || true
+          git checkout origin/data -- 'odds_history/model_ledger_nfl_*.json' 2>/dev/null || true
 
       - name: Verificar se há indicação pendente sem odd de fechamento
         id: gate
@@ -70,7 +70,7 @@ jobs:
         run: |
           node -e "
           const fs = require('fs');
-          const files = fs.readdirSync('odds_history').filter(f => f.startsWith('model_ledger_') && f.endsWith('.json'));
+          const files = fs.readdirSync('odds_history').filter(f => f.startsWith('model_ledger_nfl_') && f.endsWith('.json'));
           let pendentes = 0;
           for (const f of files) {
             let entries;
@@ -96,7 +96,7 @@ jobs:
 
       - name: Instalar axios
         if: steps.gate.outputs.has_event == 'true'
-        run: npm install axios
+        run: npm install axios firebase-admin
 
       - name: Injetar chaves
         if: steps.gate.outputs.has_event == 'true'
@@ -107,7 +107,7 @@ jobs:
 
       - name: Capturar odds de fechamento e calcular CLV
         if: steps.gate.outputs.has_event == 'true'
-        run: node pipeline/capture_closing_odds.js
+        run: node pipeline/capture_closing_odds.js nfl
 
       - name: Salvar histórico central atualizado na branch data
         if: steps.gate.outputs.has_event == 'true'
@@ -120,7 +120,7 @@ jobs:
         # pipeline/reapply_ledger_changes.js.
         run: |
           mkdir -p /tmp/odds_history_out 
-          cp odds_history/model_ledger_*.json /tmp/odds_history_out/ 2>/dev/null || true
+          cp odds_history/model_ledger_nfl_*.json /tmp/odds_history_out/ 2>/dev/null || true
           rm -rf /tmp/ledger_pipeline
           cp -R pipeline /tmp/ledger_pipeline
           git config user.name "github-actions[bot]"
@@ -139,7 +139,7 @@ jobs:
             else
               node /tmp/ledger_pipeline/reapply_ledger_changes.js closing-odds /tmp/odds_history_out
             fi
-            odds_history_patterns=(model_ledger_*.json)
+            odds_history_patterns=(model_ledger_nfl_*.json)
             included_patterns=()
             for pattern in "${odds_history_patterns[@]}"; do
               matched=false
@@ -173,3 +173,7 @@ jobs:
             delay=$((delay * 2))
             attempt=$((attempt + 1))
           done
+
+      - name: Conciliar reserva NFL com o histórico publicado
+        if: steps.gate.outputs.has_event == 'true'
+        run: NODE_PATH="$GITHUB_WORKSPACE/node_modules" node /tmp/ledger_pipeline/sync_nfl_closing_reserve.js

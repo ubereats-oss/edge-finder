@@ -25,7 +25,9 @@ const ledger = require('./model_ledger');
 const riskConfig = require('./risk_config');
 
 function main() {
-  const files = ledger.listAllPartitions();
+  const requested = process.argv.slice(2);
+  const files = ledger.listAllPartitions().filter(file => !requested.length ||
+    requested.some(sport => file.includes(`model_ledger_${sport}_`)));
   if (!files.length) {
     console.log('Nenhuma partição de odds_history encontrada — nada a reprocessar.');
     return;

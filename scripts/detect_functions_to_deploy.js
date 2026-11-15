@@ -5,6 +5,13 @@ const affected = new Set();
 for (const file of changedFiles) {
   if (!file.startsWith('functions/')) continue;
 
+  if (file === 'functions/odds_api_monthly_budget.js') {
+    for (const name of ['closingOddsScheduler', 'compareLocalBookmakerRead',
+      'dailyEdgeFinderHealth', 'notifyOddsApiExternalUse', 'notifyPlacardOpportunity',
+      'retryDailyEdgeFinderHealth', 'revalidatePlacardOpportunities', 'syncOddsBr']) affected.add(name);
+    continue;
+  }
+
   if (file === 'functions/closing_odds_rules.js') {
     affected.add('closingOddsScheduler');
     continue;
