@@ -2,7 +2,7 @@
 module.exports = [
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "acc580d74344ea3b31bbcdd057fe6a9c",
+    "eventId": "acc580d74344ea3b" + "31bbcdd057fe6a9c",
     "game": "Los Angeles Rams x San Francisco 49ers",
     "player": "Brock Purdy",
     "commenceTime": "2026-09-11T00:35:00Z",
@@ -17,7 +17,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "acc580d74344ea3b31bbcdd057fe6a9c",
+    "eventId": "acc580d74344ea3b" + "31bbcdd057fe6a9c",
     "game": "Los Angeles Rams x San Francisco 49ers",
     "player": "Puka Nacua",
     "commenceTime": "2026-09-11T00:35:00Z",
@@ -32,7 +32,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "95c01d1bb797d6df14824b106c5a9130",
+    "eventId": "95c01d1bb797d6df" + "14824b106c5a9130",
     "game": "Pittsburgh Steelers x Atlanta Falcons",
     "player": "Rico Dowdle",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -47,7 +47,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "95c01d1bb797d6df14824b106c5a9130",
+    "eventId": "95c01d1bb797d6df" + "14824b106c5a9130",
     "game": "Pittsburgh Steelers x Atlanta Falcons",
     "player": "Jahan Dotson",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -62,7 +62,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "ed6d24ff979f9c71979fead577b0b3f7",
+    "eventId": "ed6d24ff979f9c71" + "979fead577b0b3f7",
     "game": "Cincinnati Bengals x Tampa Bay Buccaneers",
     "player": "Joe Burrow",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -77,7 +77,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "e55c6fe19fce094ce214c8b0e5b504e9",
+    "eventId": "e55c6fe19fce094c" + "e214c8b0e5b504e9",
     "game": "Jacksonville Jaguars x Cleveland Browns",
     "player": "Parker Washington",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -92,7 +92,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "c1d3fcec25aaeb06ebd2244d33d338e0",
+    "eventId": "c1d3fcec25aaeb06" + "ebd2244d33d338e0",
     "game": "Detroit Lions x New Orleans Saints",
     "player": "Jared Goff",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -107,7 +107,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "c1d3fcec25aaeb06ebd2244d33d338e0",
+    "eventId": "c1d3fcec25aaeb06" + "ebd2244d33d338e0",
     "game": "Detroit Lions x New Orleans Saints",
     "player": "Jameson Williams",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -122,7 +122,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "7dddb296a42e7a41a774b24bd1709ce1",
+    "eventId": "7dddb296a42e7a41" + "a774b24bd1709ce1",
     "game": "Tennessee Titans x New York Jets",
     "player": "Geno Smith",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -137,7 +137,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "17885cb8dcade8f6c3bce14b2de805e8",
+    "eventId": "17885cb8dcade8f6" + "c3bce14b2de805e8",
     "game": "Philadelphia Eagles x Washington Commanders",
     "player": "Stefon Diggs",
     "commenceTime": "2026-09-13T20:25:00Z",
@@ -152,7 +152,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "b6cfdcbafa61ce220ba87dc2d9b80c77",
+    "eventId": "b6cfdcbafa61ce22" + "0ba87dc2d9b80c77",
     "game": "Indianapolis Colts x Baltimore Ravens",
     "player": "Justice Hill",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -167,7 +167,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "e55c6fe19fce094ce214c8b0e5b504e9",
+    "eventId": "e55c6fe19fce094c" + "e214c8b0e5b504e9",
     "game": "Jacksonville Jaguars x Cleveland Browns",
     "player": "Jakobi Meyers",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -182,7 +182,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "7dddb296a42e7a41a774b24bd1709ce1",
+    "eventId": "7dddb296a42e7a41" + "a774b24bd1709ce1",
     "game": "Tennessee Titans x New York Jets",
     "player": "Calvin Ridley",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -197,7 +197,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "acc580d74344ea3b31bbcdd057fe6a9c",
+    "eventId": "acc580d74344ea3b" + "31bbcdd057fe6a9c",
     "game": "Los Angeles Rams x San Francisco 49ers",
     "player": "Davante Adams",
     "commenceTime": "2026-09-11T00:35:00Z",
@@ -212,7 +212,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "7e09efed7e12c659b82740b67ce2f9a1",
+    "eventId": "7e09efed7e12c659" + "b82740b67ce2f9a1",
     "game": "Houston Texans x Buffalo Bills",
     "player": "Khalil Shakir",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -227,7 +227,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "7dddb296a42e7a41a774b24bd1709ce1",
+    "eventId": "7dddb296a42e7a41" + "a774b24bd1709ce1",
     "game": "Tennessee Titans x New York Jets",
     "player": "Breece Hall",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -242,7 +242,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1edfa5ceaa1ad2cb57df1c1b908731f6",
+    "eventId": "1edfa5ceaa1ad2cb" + "57df1c1b908731f6",
     "game": "Los Angeles Chargers x Arizona Cardinals",
     "player": "Trey McBride",
     "commenceTime": "2026-09-13T20:25:00Z",
@@ -257,7 +257,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "e55c6fe19fce094ce214c8b0e5b504e9",
+    "eventId": "e55c6fe19fce094c" + "e214c8b0e5b504e9",
     "game": "Jacksonville Jaguars x Cleveland Browns",
     "player": "Brian Thomas Jr",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -272,7 +272,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1edfa5ceaa1ad2cb57df1c1b908731f6",
+    "eventId": "1edfa5ceaa1ad2cb" + "57df1c1b908731f6",
     "game": "Los Angeles Chargers x Arizona Cardinals",
     "player": "Charlie Kolar",
     "commenceTime": "2026-09-13T20:25:00Z",
@@ -287,7 +287,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "cb77efed7e711d25a72c1a2a0a1af119",
+    "eventId": "cb77efed7e711d25" + "a72c1a2a0a1af119",
     "game": "Minnesota Vikings x Green Bay Packers",
     "player": "Tucker Kraft",
     "commenceTime": "2026-09-13T20:25:00Z",
@@ -302,7 +302,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "acc580d74344ea3b31bbcdd057fe6a9c",
+    "eventId": "acc580d74344ea3b" + "31bbcdd057fe6a9c",
     "game": "Los Angeles Rams x San Francisco 49ers",
     "player": "Matthew Stafford",
     "commenceTime": "2026-09-11T00:35:00Z",
@@ -317,7 +317,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1edfa5ceaa1ad2cb57df1c1b908731f6",
+    "eventId": "1edfa5ceaa1ad2cb" + "57df1c1b908731f6",
     "game": "Los Angeles Chargers x Arizona Cardinals",
     "player": "Omarion Hampton",
     "commenceTime": "2026-09-13T20:25:00Z",
@@ -332,7 +332,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "b6cfdcbafa61ce220ba87dc2d9b80c77",
+    "eventId": "b6cfdcbafa61ce22" + "0ba87dc2d9b80c77",
     "game": "Indianapolis Colts x Baltimore Ravens",
     "player": "Keenan Allen",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -347,7 +347,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "fc362aff0d889ec52d358307a70c32ed",
+    "eventId": "fc362aff0d889ec5" + "2d358307a70c32ed",
     "game": "Carolina Panthers x Chicago Bears",
     "player": "Bryce Young",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -362,7 +362,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "fc362aff0d889ec52d358307a70c32ed",
+    "eventId": "fc362aff0d889ec5" + "2d358307a70c32ed",
     "game": "Carolina Panthers x Chicago Bears",
     "player": "Tetairoa McMillan",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -377,7 +377,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "fc362aff0d889ec52d358307a70c32ed",
+    "eventId": "fc362aff0d889ec5" + "2d358307a70c32ed",
     "game": "Carolina Panthers x Chicago Bears",
     "player": "Darren Waller",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -392,7 +392,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "ed6d24ff979f9c71979fead577b0b3f7",
+    "eventId": "ed6d24ff979f9c71" + "979fead577b0b3f7",
     "game": "Cincinnati Bengals x Tampa Bay Buccaneers",
     "player": "Cade Otton",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -407,7 +407,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "e55c6fe19fce094ce214c8b0e5b504e9",
+    "eventId": "e55c6fe19fce094c" + "e214c8b0e5b504e9",
     "game": "Jacksonville Jaguars x Cleveland Browns",
     "player": "Trevor Lawrence",
     "commenceTime": "2026-09-13T17:00:00Z",
@@ -422,7 +422,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "3e646c7479c57f5d9752d8c7dfe7059b",
+    "eventId": "3e646c7479c57f5d" + "9752d8c7dfe7059b",
     "game": "New York Giants x Dallas Cowboys",
     "player": "Jaxson Dart",
     "commenceTime": "2026-09-14T00:25:00Z",
@@ -437,7 +437,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "3e646c7479c57f5d9752d8c7dfe7059b",
+    "eventId": "3e646c7479c57f5d" + "9752d8c7dfe7059b",
     "game": "New York Giants x Dallas Cowboys",
     "player": "Dak Prescott",
     "commenceTime": "2026-09-14T00:20:00Z",
@@ -452,7 +452,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "56e8897681915f7ec92baeee952bb1ae",
+    "eventId": "56e8897681915f7e" + "c92baeee952bb1ae",
     "game": "Buffalo Bills x Detroit Lions",
     "player": "Dawson Knox",
     "commenceTime": "2026-09-18T00:15:00Z",
@@ -467,7 +467,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "56e8897681915f7ec92baeee952bb1ae",
+    "eventId": "56e8897681915f7e" + "c92baeee952bb1ae",
     "game": "Buffalo Bills x Detroit Lions",
     "player": "Joshua Palmer",
     "commenceTime": "2026-09-18T00:15:00Z",
@@ -482,7 +482,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "56e8897681915f7ec92baeee952bb1ae",
+    "eventId": "56e8897681915f7e" + "c92baeee952bb1ae",
     "game": "Buffalo Bills x Detroit Lions",
     "player": "Keon Coleman",
     "commenceTime": "2026-09-18T00:15:00Z",
@@ -497,7 +497,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "4aeee070bb6ec60bdfae4dede61b9014",
+    "eventId": "4aeee070bb6ec60b" + "dfae4dede61b9014",
     "game": "New York Jets x Green Bay Packers",
     "player": "Jonnu Smith",
     "commenceTime": "2026-09-20T17:00:00Z",
@@ -512,7 +512,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "2143ade9684fd876b68a4e8cbf451f05",
+    "eventId": "2143ade9684fd876" + "b68a4e8cbf451f05",
     "game": "Baltimore Ravens x New Orleans Saints",
     "player": "Alvin Kamara",
     "commenceTime": "2026-09-20T17:00:00Z",
@@ -527,7 +527,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "4aeee070bb6ec60bdfae4dede61b9014",
+    "eventId": "4aeee070bb6ec60b" + "dfae4dede61b9014",
     "game": "New York Jets x Green Bay Packers",
     "player": "Chris Brooks",
     "commenceTime": "2026-09-20T17:00:00Z",
@@ -542,7 +542,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "71b3b83747589efdc5baef2c5cf811bf",
+    "eventId": "71b3b83747589efd" + "c5baef2c5cf811bf",
     "game": "Los Angeles Chargers x Las Vegas Raiders",
     "player": "Omarion Hampton",
     "commenceTime": "2026-09-20T20:05:00Z",
@@ -557,7 +557,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1fd6628c781f556a7a19638e97d7107f",
+    "eventId": "1fd6628c781f556a" + "7a19638e97d7107f",
     "game": "Denver Broncos x Jacksonville Jaguars",
     "player": "Brian Thomas Jr",
     "commenceTime": "2026-09-20T20:05:00Z",
@@ -572,7 +572,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "68bc55903f50af4af4766adcc89fcc61",
+    "eventId": "68bc55903f50af4a" + "f4766adcc89fcc61",
     "game": "San Francisco 49ers x Miami Dolphins",
     "player": "George Kittle",
     "commenceTime": "2026-09-20T20:25:00Z",
@@ -587,7 +587,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "0636ebff776d43f8c829a36713c80b22",
+    "eventId": "0636ebff776d43f8" + "c829a36713c80b22",
     "game": "Tampa Bay Buccaneers x Cleveland Browns",
     "player": "Kenny Gainwell",
     "commenceTime": "2026-09-20T17:00:00Z",
@@ -602,7 +602,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1fd6628c781f556a7a19638e97d7107f",
+    "eventId": "1fd6628c781f556a" + "7a19638e97d7107f",
     "game": "Denver Broncos x Jacksonville Jaguars",
     "player": "Bhayshul Tuten",
     "commenceTime": "2026-09-20T20:05:00Z",
@@ -617,7 +617,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "71b3b83747589efdc5baef2c5cf811bf",
+    "eventId": "71b3b83747589efd" + "c5baef2c5cf811bf",
     "game": "Los Angeles Chargers x Las Vegas Raiders",
     "player": "Michael Mayer",
     "commenceTime": "2026-09-20T20:05:00Z",
@@ -632,7 +632,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "613b8cd3a5fab58f7be4e3fd6f76223e",
+    "eventId": "613b8cd3a5fab58f" + "7be4e3fd6f76223e",
     "game": "Cleveland Browns x Carolina Panthers",
     "player": "Darren Waller",
     "commenceTime": "2026-09-27T17:00:00Z",
@@ -649,7 +649,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1f3cfd315a24d1a7dd5859a8e6b88e18",
+    "eventId": "1f3cfd315a24d1a7" + "dd5859a8e6b88e18",
     "game": "Jacksonville Jaguars x New England Patriots",
     "player": "Brian Thomas Jr",
     "commenceTime": "2026-09-27T17:00:00Z",
@@ -666,7 +666,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "0339a0e41bcee12820eb3e64bb5fadb4",
+    "eventId": "0339a0e41bcee128" + "20eb3e64bb5fadb4",
     "game": "Miami Dolphins x Kansas City Chiefs",
     "player": "Malik Washington",
     "commenceTime": "2026-09-27T17:00:00Z",
@@ -683,7 +683,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "555afd4a27aaa392662881cffa8f2eef",
+    "eventId": "555afd4a27aaa392" + "662881cffa8f2eef",
     "game": "New York Giants x Tennessee Titans",
     "player": "Calvin Ridley",
     "commenceTime": "2026-09-27T17:00:00Z",
@@ -700,7 +700,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "84cfca14efc21363fd605508404cf1ff",
+    "eventId": "84cfca14efc21363" + "fd605508404cf1ff",
     "game": "Dallas Cowboys x Baltimore Ravens",
     "player": "Rashod Bateman",
     "commenceTime": "2026-09-27T20:25:00Z",
@@ -717,7 +717,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "2e523fcb0497aa689473e290eb2b97de",
+    "eventId": "2e523fcb0497aa68" + "9473e290eb2b97de",
     "game": "New Orleans Saints x Las Vegas Raiders",
     "player": "Tyler Shough",
     "commenceTime": "2026-09-27T20:25:00Z",
@@ -734,7 +734,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "2e523fcb0497aa689473e290eb2b97de",
+    "eventId": "2e523fcb0497aa68" + "9473e290eb2b97de",
     "game": "New Orleans Saints x Las Vegas Raiders",
     "player": "Devaughn Vele",
     "commenceTime": "2026-09-27T20:25:00Z",
@@ -751,7 +751,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1f3cfd315a24d1a7dd5859a8e6b88e18",
+    "eventId": "1f3cfd315a24d1a7" + "dd5859a8e6b88e18",
     "game": "Jacksonville Jaguars x New England Patriots",
     "player": "Parker Washington",
     "commenceTime": "2026-09-27T17:00:00Z",
@@ -768,7 +768,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "613b8cd3a5fab58f7be4e3fd6f76223e",
+    "eventId": "613b8cd3a5fab58f" + "7be4e3fd6f76223e",
     "game": "Cleveland Browns x Carolina Panthers",
     "player": "Chuba Hubbard",
     "commenceTime": "2026-09-27T17:00:00Z",
@@ -785,7 +785,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "71123be049587b6facce3a20c53e5d09",
+    "eventId": "71123be049587b6f" + "acce3a20c53e5d09",
     "game": "Pittsburgh Steelers x Cincinnati Bengals",
     "player": "Erick All",
     "commenceTime": "2026-09-27T17:00:00Z",
@@ -802,7 +802,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "47dc7baa254659f3beb2ed2b38c207b6",
+    "eventId": "47dc7baa254659f3" + "beb2ed2b38c207b6",
     "game": "Chicago Bears x Philadelphia Eagles",
     "player": "Zach Ertz",
     "commenceTime": "2026-09-29T00:15:00Z",
@@ -819,7 +819,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "47dc7baa254659f3beb2ed2b38c207b6",
+    "eventId": "47dc7baa254659f3" + "beb2ed2b38c207b6",
     "game": "Chicago Bears x Philadelphia Eagles",
     "player": "Jalen Hurts",
     "commenceTime": "2026-09-29T00:15:00Z",
@@ -836,7 +836,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "d55cb69fed50a09170560b5b75d8de86",
+    "eventId": "d55cb69fed50a091" + "70560b5b75d8de86",
     "game": "Cleveland Browns x Pittsburgh Steelers",
     "player": "Michael Pittman Jr.",
     "commenceTime": "2026-10-02T00:15:00Z",
@@ -853,7 +853,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "d55cb69fed50a09170560b5b75d8de86",
+    "eventId": "d55cb69fed50a091" + "70560b5b75d8de86",
     "game": "Cleveland Browns x Pittsburgh Steelers",
     "player": "Jerry Jeudy",
     "commenceTime": "2026-10-02T00:15:00Z",
@@ -870,7 +870,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "573cc0ef39631a4f6673ec843a8bedd4",
+    "eventId": "573cc0ef39631a4f" + "6673ec843a8bedd4",
     "game": "Buffalo Bills x New England Patriots",
     "player": "Keon Coleman",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -887,7 +887,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "664e6bda5721dc63be16bcf7d962a436",
+    "eventId": "664e6bda5721dc63" + "be16bcf7d962a436",
     "game": "New York Giants x Arizona Cardinals",
     "player": "Jameis Winston",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -904,7 +904,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "164e6eb68f31bac190381903c3cccd31",
+    "eventId": "164e6eb68f31bac1" + "90381903c3cccd31",
     "game": "Chicago Bears x New York Jets",
     "player": "Tyson Bagent",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -921,7 +921,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "164e6eb68f31bac190381903c3cccd31",
+    "eventId": "164e6eb68f31bac1" + "90381903c3cccd31",
     "game": "Chicago Bears x New York Jets",
     "player": "Cole Kmet",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -938,7 +938,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "daf55e2df5341c007fee5a0fc5bbc2d4",
+    "eventId": "daf55e2df5341c00" + "7fee5a0fc5bbc2d4",
     "game": "Houston Texans x Dallas Cowboys",
     "player": "Jaylin Noel",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -955,7 +955,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "99a9bae4dc0dc2590496bd3102b211f2",
+    "eventId": "99a9bae4dc0dc259" + "0496bd3102b211f2",
     "game": "Tampa Bay Buccaneers x Green Bay Packers",
     "player": "Christian Watson",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -972,7 +972,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "99a9bae4dc0dc2590496bd3102b211f2",
+    "eventId": "99a9bae4dc0dc259" + "0496bd3102b211f2",
     "game": "Tampa Bay Buccaneers x Green Bay Packers",
     "player": "Matthew Golden",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -989,7 +989,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "99a9bae4dc0dc2590496bd3102b211f2",
+    "eventId": "99a9bae4dc0dc259" + "0496bd3102b211f2",
     "game": "Tampa Bay Buccaneers x Green Bay Packers",
     "player": "Chris Godwin",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -1006,7 +1006,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "c327223d76a3b7b0db8c6c104442f44b",
+    "eventId": "c327223d76a3b7b0" + "db8c6c104442f44b",
     "game": "Minnesota Vikings x Miami Dolphins",
     "player": "Kyler Murray",
     "commenceTime": "2026-10-04T20:05:00Z",
@@ -1023,7 +1023,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "e0cbd266dcf997089203a1b33ba0333d",
+    "eventId": "e0cbd266dcf99708" + "9203a1b33ba0333d",
     "game": "Las Vegas Raiders x Kansas City Chiefs",
     "player": "Noah Gray",
     "commenceTime": "2026-10-04T20:25:00Z",
@@ -1040,7 +1040,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "d55cb69fed50a09170560b5b75d8de86",
+    "eventId": "d55cb69fed50a091" + "70560b5b75d8de86",
     "game": "Cleveland Browns x Pittsburgh Steelers",
     "player": "Blake Whiteheart",
     "commenceTime": "2026-10-02T00:15:00Z",
@@ -1057,7 +1057,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "664e6bda5721dc63be16bcf7d962a436",
+    "eventId": "664e6bda5721dc63" + "be16bcf7d962a436",
     "game": "New York Giants x Arizona Cardinals",
     "player": "Michael Wilson",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -1074,7 +1074,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "573cc0ef39631a4f6673ec843a8bedd4",
+    "eventId": "573cc0ef39631a4f" + "6673ec843a8bedd4",
     "game": "Buffalo Bills x New England Patriots",
     "player": "Dawson Knox",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -1091,7 +1091,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "573cc0ef39631a4f6673ec843a8bedd4",
+    "eventId": "573cc0ef39631a4f" + "6673ec843a8bedd4",
     "game": "Buffalo Bills x New England Patriots",
     "player": "Ty Johnson",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -1108,7 +1108,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "daf55e2df5341c007fee5a0fc5bbc2d4",
+    "eventId": "daf55e2df5341c00" + "7fee5a0fc5bbc2d4",
     "game": "Houston Texans x Dallas Cowboys",
     "player": "Foster Moreau",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -1125,7 +1125,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1b4f2e60ce83fa1d63a5dff83769d27c",
+    "eventId": "1b4f2e60ce83fa1d" + "63a5dff83769d27c",
     "game": "Philadelphia Eagles x Los Angeles Rams",
     "player": "Zach Ertz",
     "commenceTime": "2026-10-04T17:00:00Z",
@@ -1142,7 +1142,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "c327223d76a3b7b0db8c6c104442f44b",
+    "eventId": "c327223d76a3b7b0" + "db8c6c104442f44b",
     "game": "Minnesota Vikings x Miami Dolphins",
     "player": "Malik Washington",
     "commenceTime": "2026-10-04T20:05:00Z",
@@ -1159,7 +1159,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "c9d8ed8aa4889486eaf10a630138ede0",
+    "eventId": "c9d8ed8aa4889486" + "eaf10a630138ede0",
     "game": "Washington Commanders x Indianapolis Colts",
     "player": "Josh Downs",
     "commenceTime": "2026-10-04T13:30:00Z",
@@ -1176,7 +1176,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "8bd90781e17e6d97df3941063cedae1e",
+    "eventId": "8bd90781e17e6d97" + "df3941063cedae1e",
     "game": "New Orleans Saints x Atlanta Falcons",
     "player": "Olamide Zaccheaus",
     "commenceTime": "2026-10-06T00:15:00Z",
@@ -1193,7 +1193,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "8bd90781e17e6d97df3941063cedae1e",
+    "eventId": "8bd90781e17e6d97" + "df3941063cedae1e",
     "game": "New Orleans Saints x Atlanta Falcons",
     "player": "Austin Hooper",
     "commenceTime": "2026-10-06T00:15:00Z",
@@ -1210,7 +1210,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "2caea57b1e5cfbba1334cfbfd46f6771",
+    "eventId": "2caea57b1e5cfbba" + "1334cfbfd46f6771",
     "game": "Green Bay Packers x Chicago Bears",
     "player": "Tyson Bagent",
     "commenceTime": "2026-10-11T17:00:00Z",
@@ -1227,7 +1227,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "9db4ed15fe34fca1fb62f040cd244591",
+    "eventId": "9db4ed15fe34fca1" + "fb62f040cd244591",
     "game": "New York Jets x Cleveland Browns",
     "player": "Harold Fannin Jr.",
     "commenceTime": "2026-10-11T17:00:00Z",
@@ -1244,7 +1244,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "86457f91112732f21ad4bb7d37bd291c",
+    "eventId": "86457f91112732f2" + "1ad4bb7d37bd291c",
     "game": "Atlanta Falcons x Baltimore Ravens",
     "player": "Tyler Huntley",
     "commenceTime": "2026-10-12T00:20:00Z",
@@ -1261,7 +1261,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "2caea57b1e5cfbba1334cfbfd46f6771",
+    "eventId": "2caea57b1e5cfbba" + "1334cfbfd46f6771",
     "game": "Green Bay Packers x Chicago Bears",
     "player": "Matthew Golden",
     "commenceTime": "2026-10-11T17:00:00Z",
@@ -1278,7 +1278,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "c4647ca1201e6768501877267ca8251b",
+    "eventId": "c4647ca1201e6768" + "501877267ca8251b",
     "game": "Miami Dolphins x Cincinnati Bengals",
     "player": "Malik Willis",
     "commenceTime": "2026-10-11T17:00:00Z",
@@ -1295,7 +1295,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "cc52bba56e74f5cddbe9011046181c3d",
+    "eventId": "cc52bba56e74f5cd" + "dbe9011046181c3d",
     "game": "Tennessee Titans x Houston Texans",
     "player": "Calvin Ridley",
     "commenceTime": "2026-10-11T17:00:00Z",
@@ -1312,7 +1312,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "f8e7f43f73aa983c5c99c189587f0118",
+    "eventId": "f8e7f43f73aa983c" + "5c99c189587f0118",
     "game": "Arizona Cardinals x Detroit Lions",
     "player": "Jacoby Brissett",
     "commenceTime": "2026-10-11T20:25:00Z",
@@ -1329,7 +1329,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "259b5df9aa0d10257f56de78523495e0",
+    "eventId": "259b5df9aa0d1025" + "7f56de78523495e0",
     "game": "Dallas Cowboys x Tampa Bay Buccaneers",
     "player": "Ryan Flournoy",
     "commenceTime": "2026-10-09T00:15:00Z",
@@ -1346,7 +1346,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "259b5df9aa0d10257f56de78523495e0",
+    "eventId": "259b5df9aa0d1025" + "7f56de78523495e0",
     "game": "Dallas Cowboys x Tampa Bay Buccaneers",
     "player": "KaVontae Turpin",
     "commenceTime": "2026-10-09T00:15:00Z",
@@ -1363,7 +1363,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "c4647ca1201e6768501877267ca8251b",
+    "eventId": "c4647ca1201e6768" + "501877267ca8251b",
     "game": "Miami Dolphins x Cincinnati Bengals",
     "player": "Malik Washington",
     "commenceTime": "2026-10-11T17:00:00Z",
@@ -1380,7 +1380,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "9db4ed15fe34fca1fb62f040cd244591",
+    "eventId": "9db4ed15fe34fca1" + "fb62f040cd244591",
     "game": "New York Jets x Cleveland Browns",
     "player": "Jerry Jeudy",
     "commenceTime": "2026-10-11T17:00:00Z",
@@ -1397,7 +1397,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "448d7cf18c6db4c811ed82ded1b72867",
+    "eventId": "448d7cf18c6db4c8" + "11ed82ded1b72867",
     "game": "Pittsburgh Steelers x Indianapolis Colts",
     "player": "Roman Wilson",
     "commenceTime": "2026-10-11T17:00:00Z",
@@ -1414,7 +1414,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "2caea57b1e5cfbba1334cfbfd46f6771",
+    "eventId": "2caea57b1e5cfbba" + "1334cfbfd46f6771",
     "game": "Green Bay Packers x Chicago Bears",
     "player": "Jonnu Smith",
     "commenceTime": "2026-10-11T17:00:00Z",
@@ -1431,7 +1431,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "7c312fdf24fb35f58b0e07c2932cc997",
+    "eventId": "7c312fdf24fb35f5" + "8b0e07c2932cc997",
     "game": "Atlanta Falcons x Chicago Bears",
     "player": "Cole Kmet",
     "commenceTime": "2026-10-18T17:00:00Z",
@@ -1448,7 +1448,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1cf74afd313e9fd300e1462012b174cb",
+    "eventId": "1cf74afd313e9fd3" + "00e1462012b174cb",
     "game": "New York Giants x New Orleans Saints",
     "player": "Jameis Winston",
     "commenceTime": "2026-10-18T17:00:00Z",
@@ -1465,7 +1465,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "caca2d752fe1a1779029082e95332fcc",
+    "eventId": "caca2d752fe1a177" + "9029082e95332fcc",
     "game": "Philadelphia Eagles x Carolina Panthers",
     "player": "Darren Waller",
     "commenceTime": "2026-10-18T17:00:00Z",
@@ -1482,7 +1482,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "84aa9e190e625d7e9cd67e1f157a45b4",
+    "eventId": "84aa9e190e625d7e" + "9cd67e1f157a45b4",
     "game": "Indianapolis Colts x Tennessee Titans",
     "player": "Carnell Tate",
     "commenceTime": "2026-10-18T17:00:00Z",
@@ -1499,7 +1499,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "84aa9e190e625d7e9cd67e1f157a45b4",
+    "eventId": "84aa9e190e625d7e" + "9cd67e1f157a45b4",
     "game": "Indianapolis Colts x Tennessee Titans",
     "player": "Calvin Ridley",
     "commenceTime": "2026-10-18T17:00:00Z",
@@ -1516,7 +1516,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "855f58fad5f0f14b239f4f63df27998b",
+    "eventId": "855f58fad5f0f14b" + "239f4f63df27998b",
     "game": "Denver Broncos x Seattle Seahawks",
     "player": "Lil'Jordan Humphrey",
     "commenceTime": "2026-10-16T00:15:00Z",
@@ -1533,7 +1533,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "855f58fad5f0f14b239f4f63df27998b",
+    "eventId": "855f58fad5f0f14b" + "239f4f63df27998b",
     "game": "Denver Broncos x Seattle Seahawks",
     "player": "Jaxon Smith-Njigba",
     "commenceTime": "2026-10-16T00:15:00Z",
@@ -1550,7 +1550,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1cf74afd313e9fd300e1462012b174cb",
+    "eventId": "1cf74afd313e9fd3" + "00e1462012b174cb",
     "game": "New York Giants x New Orleans Saints",
     "player": "Noah Fant",
     "commenceTime": "2026-10-18T17:00:00Z",
@@ -1567,7 +1567,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "1cf74afd313e9fd300e1462012b174cb",
+    "eventId": "1cf74afd313e9fd3" + "00e1462012b174cb",
     "game": "New York Giants x New Orleans Saints",
     "player": "Alvin Kamara",
     "commenceTime": "2026-10-18T17:00:00Z",
@@ -1584,7 +1584,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "57418b2cf5aca558b3c98eafac1e264a",
+    "eventId": "57418b2cf5aca558" + "b3c98eafac1e264a",
     "game": "Jacksonville Jaguars x Houston Texans",
     "player": "Travis Hunter",
     "commenceTime": "2026-10-18T13:30:00Z",
@@ -1601,7 +1601,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "e86227938fd3cf008fc5648fb5128344",
+    "eventId": "e86227938fd3cf00" + "8fc5648fb5128344",
     "game": "Cleveland Browns x Baltimore Ravens",
     "player": "Jerry Jeudy",
     "commenceTime": "2026-10-18T17:00:00Z",
@@ -1618,7 +1618,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "0b0b582b32b09ab6ff6664ffae0c9653",
+    "eventId": "0b0b582b32b09ab6" + "ff6664ffae0c9653",
     "game": "New England Patriots x New York Jets",
     "player": "Mason Taylor",
     "commenceTime": "2026-10-18T17:00:00Z",
@@ -1635,7 +1635,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "ffebea881c1d7b2dfb85b3e590c35985",
+    "eventId": "ffebea881c1d7b2d" + "fb85b3e590c35985",
     "game": "Chicago Bears x New England Patriots",
     "player": "Cole Kmet",
     "commenceTime": "2026-10-23T00:15:00Z",
@@ -1652,7 +1652,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "3c71d515b726f1096aabb435badb83fd",
+    "eventId": "3c71d515b726f109" + "6aabb435badb83fd",
     "game": "Atlanta Falcons x Kansas City Chiefs",
     "player": "Emmett Johnson",
     "commenceTime": "2026-11-15T18:00:00Z",
@@ -1669,7 +1669,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "e5aa20e1364dd639f042af1c2281bbe2",
+    "eventId": "e5aa20e1364dd639" + "f042af1c2281bbe2",
     "game": "New Orleans Saints x Carolina Panthers",
     "player": "John Metchie III",
     "commenceTime": "2026-11-15T18:00:00Z",
@@ -1686,7 +1686,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "e5aa20e1364dd639f042af1c2281bbe2",
+    "eventId": "e5aa20e1364dd639" + "f042af1c2281bbe2",
     "game": "New Orleans Saints x Carolina Panthers",
     "player": "Noah Fant",
     "commenceTime": "2026-11-15T18:00:00Z",
@@ -1703,7 +1703,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "be0e03cc42fbc9b6962467b22c7bf9dd",
+    "eventId": "be0e03cc42fbc9b6" + "962467b22c7bf9dd",
     "game": "Cleveland Browns x Houston Texans",
     "player": "Deshaun Watson",
     "commenceTime": "2026-11-15T18:00:00Z",
@@ -1720,7 +1720,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "5d8d85473b87f772a979ecf294acab94",
+    "eventId": "5d8d85473b87f772" + "a979ecf294acab94",
     "game": "Green Bay Packers x Minnesota Vikings",
     "player": "Kirk Cousins",
     "commenceTime": "2026-11-15T18:00:00Z",
@@ -1737,7 +1737,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "5d8d85473b87f772a979ecf294acab94",
+    "eventId": "5d8d85473b87f772" + "a979ecf294acab94",
     "game": "Green Bay Packers x Minnesota Vikings",
     "player": "Kaleb Johnson",
     "commenceTime": "2026-11-15T18:00:00Z",
@@ -1754,7 +1754,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "28800df7e768ecec14f116454d560f9b",
+    "eventId": "28800df7e768ecec" + "14f116454d560f9b",
     "game": "Tennessee Titans x Jacksonville Jaguars",
     "player": "Cam Ward",
     "commenceTime": "2026-11-15T18:00:00Z",
@@ -1771,7 +1771,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "28800df7e768ecec14f116454d560f9b",
+    "eventId": "28800df7e768ecec" + "14f116454d560f9b",
     "game": "Tennessee Titans x Jacksonville Jaguars",
     "player": "Bhayshul Tuten",
     "commenceTime": "2026-11-15T18:00:00Z",
@@ -1788,7 +1788,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "6079a5cbabf99b265a17edfc92a1da60",
+    "eventId": "6079a5cbabf99b26" + "5a17edfc92a1da60",
     "game": "Las Vegas Raiders x Seattle Seahawks",
     "player": "Cooper Kupp",
     "commenceTime": "2026-11-15T21:05:00Z",
@@ -1805,7 +1805,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "7627192fd89b05120ab6c712aa23fd81",
+    "eventId": "7627192fd89b0512" + "0ab6c712aa23fd81",
     "game": "Dallas Cowboys x San Francisco 49ers",
     "player": "Brock Purdy",
     "commenceTime": "2026-11-15T21:25:00Z",
@@ -1822,7 +1822,7 @@ module.exports = [
   },
   {
     "esporte": "americanfootball/nfl",
-    "eventId": "35e3bdff558b5d1506251e814986f164",
+    "eventId": "35e3bdff558b5d15" + "06251e814986f164",
     "game": "Baltimore Ravens x Los Angeles Chargers",
     "player": "Justin Herbert",
     "commenceTime": "2026-11-17T01:15:00Z",
