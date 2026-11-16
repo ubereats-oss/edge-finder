@@ -4,6 +4,7 @@ const { isAnnulled } = require('./market_integrity');
 const { pruneCloudStateLines } = require('./tunnelbear_retention');
 const { classifyCycle, groupedIssues, sanitizeReason } = require('./local_cycle_health');
 const { cycleOrigin } = require('./local_cycle_origin');
+const observationHealth = require('./observation_health');
 
 const DAY_MS = 24 * 3600000;
 const reportDay = (now = new Date()) => brasilDay(now);
@@ -43,7 +44,8 @@ function octoberReview(cycles, opportunities, budget) {
   if (empty) lines.push(`Sem jogo elegível na Betano: ${empty}.`);
   return lines.join('\n');
 }
-function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}, priorErrors = [], octoberBudget = {} }, now = Date.now()) {
+function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}, priorErrors = [], octoberBudget = {},
+  nflEntries = null, nflError = null, nbaSample = null }, now = Date.now()) {
   const start = now - DAY_MS;
   const allRecent = cycles.filter(row => Date.parse(row.startedAt) >= start && Date.parse(row.startedAt) < now);
   const recent = allRecent.filter(row => cycleOrigin(row) === 'scheduler');
@@ -109,6 +111,10 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   if (brasilDay(new Date(now)) === '2026-11-01') lines.push(octoberReview(cycles, opportunities, octoberBudget));
   if (warnings.length) lines.push('Avisos:', ...warnings);
   lines.push('Erros por categoria:', ...(errors.length ? errors : ['nenhum registrado']));
+  if (nflEntries !== null) lines.push(observationHealth.nflHealth(nflEntries, now).text);
+  else if (nflError) lines.push('NFL (observação): não confirmado — histórico central indisponível.');
+  const sampleLine = observationHealth.sampleHealth(nbaSample, now);
+  if (sampleLine) lines.push(sampleLine);
   const text = lines.join('\n');
   return { text, messages: splitHealthMessages(text), issues, warnings, counts: { run: complete.length + empty.length,
     noEligible: empty.length, disconnectWarnings: recent.filter(row => classifyCycle(row).kind === 'disconnect_warning').length,
@@ -142,12 +148,12 @@ async function sendHealthReport(ref, report, send) {
   await ref.set({ status: 'sent', messageId: messageIds.at(-1) || null,
     sentAt: new Date().toISOString() }, { merge: true });
 }
-async function loadHealth(db, token, now = Date.now(), fetchImpl = fetch) {
+async function loadHealth(db, token, now = Date.now(), fetchImpl = fetch, { readOnly = false } = {}) {
   const since = new Date(now - DAY_MS).toISOString();
   const october = brasilDay(new Date(now)) === '2026-11-01';
   const dataSince = october ? OCT_START : since;
   const errors = [];
-  try { await pruneCloudStateLines(db, now); }
+  try { if (!readOnly) await pruneCloudStateLines(db, now); }
   catch { errors.push('Retenção de estados TunnelBear pendente'); }
   const [cycles, opportunities, budget, reports, alerts, octoberBudget] = await Promise.all([
     db.collection('_local_cycle_health').where('startedAt', '>=', dataSince).get(),
@@ -174,8 +180,13 @@ async function loadHealth(db, token, now = Date.now(), fetchImpl = fetch) {
     if (row.status === 'send_failed') errors.push(`Telegram anterior: ${row.error || 'falha sem detalhe'}`);
   }
   for (const alert of alerts.docs) errors.push(`Aviso Telegram ${alert.id}: ${alert.data().error}`);
+  let nflEntries = null, nflError = null, nbaSample = null;
+  try { nflEntries = await observationHealth.loadNflLedger(token, fetchImpl); }
+  catch (error) { nflError = error.message; }
+  try { nbaSample = (await db.collection('system').doc('nbaPropsSampleHealth').get()).data() || null; }
+  catch { nbaSample = { attempts: [{ status: 'failed', reason: 'estado da amostragem indisponível' }] }; }
   return composeHealth({ cycles: cycles.docs.map(doc => doc.data()), runs,
     opportunities: opportunities.docs.map(doc => doc.data()), budget: budget.data() || {}, priorErrors: errors,
-    octoberBudget: octoberBudget?.data() || {} }, now);
+    octoberBudget: octoberBudget?.data() || {}, nflEntries, nflError, nbaSample }, now);
 }
 module.exports = { scheduledSlots, composeHealth, loadHealth, reportDay, octoberReview, splitHealthMessages, sendHealthReport };
