@@ -5,6 +5,11 @@ const affected = new Set();
 for (const file of changedFiles) {
   if (!file.startsWith('functions/')) continue;
 
+  if (['functions/edge_health.js', 'functions/observation_health.js'].includes(file)) {
+    affected.add('dailyEdgeFinderHealth');
+    continue;
+  }
+
   if (file === 'functions/odds_api_monthly_budget.js') {
     // retryDailyEdgeFinderHealth só reenvia relatórios/alertas já persistidos;
     // não consulta nem reserva créditos. Não requer atualização de Cloud Tasks.

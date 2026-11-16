@@ -855,8 +855,15 @@ exports.notifyPlacardOpportunity = onDocumentCreated({
 exports.dailyEdgeFinderHealth = onSchedule({
   region: 'southamerica-east1', schedule: '0 8 * * *', timeZone: 'America/Sao_Paulo',
   secrets: [TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, GH_DISPATCH_TOKEN],
-}, async () => {
-  const report = await edgeHealth.loadHealth(db, GH_DISPATCH_TOKEN.value());
+}, async event => {
+  const preview = event?.jobName === 'edge-health-preview';
+  const report = await edgeHealth.loadHealth(db, GH_DISPATCH_TOKEN.value(), Date.now(), fetch, { readOnly: preview });
+  if (preview) {
+    await db.collection('_edge_health_previews').doc(edgeHealth.reportDay()).set({
+      generatedAt: new Date().toISOString(), text: report.text, counts: report.counts, telegramSent: false,
+    });
+    return;
+  }
   const ref = db.collection('_edge_health_reports').doc(edgeHealth.reportDay());
   const generatedAt = new Date().toISOString();
   await ref.set({ generatedAt, text: report.text, messages: report.messages, counts: report.counts,
