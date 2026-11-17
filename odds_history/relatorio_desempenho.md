@@ -1,6 +1,6 @@
 # Relatório de desempenho — histórico central de indicações
 
-Gerado em: 2026-11-16T20:42:14.870Z
+Gerado em: 2026-11-17T19:14:05.865Z
 
 ## Teste NFL receptions
 
@@ -19,7 +19,7 @@ Taxa prevista calibrada sempre separada por versão do método de calibração (
 | Esporte | Mercado | Faixa de edge | Nº resolvidas válidas | Taxa de acerto real | Taxa prevista calibrada (por método) | ROI agregado | CLV médio agregado (+ recorte método novo) | Estado do segmento | Faltam p/ calibrar |
 |---|---|---|---|---|---|---|---|---|---|
 | americanfootball/nfl | passTDs | 0-5% | 4 | 50.0% (4 decididas) | antigo 63.9% (bruta 70.7%) (n=4) · novo: sem dados | 25.2% | 1.4% (4/4 exata); ajustado —; mov. favor — | calibrado | 0 |
-| americanfootball/nfl | passTDs | 15-20% | 8 | 37.5% (8 decididas) | antigo 79.1% (bruta 87.4%) (n=5) · novo 53.2% (bruta 40.8%) (n=3) | -28.1% | 0.8% (8/8 exata); ajustado —; mov. favor 0.0% (0/8) · recorte novo: ROI -13.8%, CLV 0.52% (3/3) | calibrado | 0 |
+| americanfootball/nfl | passTDs | 15-20% | 9 | 44.4% (9 decididas) | antigo 79.1% (bruta 87.4%) (n=5) · novo 52.3% (bruta 38.9%) (n=4) | -8.3% | 1.3% (9/9 exata); ajustado —; mov. favor 0.0% (0/9) · recorte novo: ROI 39.6%, CLV 1.86% (4/4) | calibrado | 0 |
 | americanfootball/nfl | passTDs | 20-25% | 3 | 66.7% (3 decididas) | antigo 72.7% (bruta 77.3%) (n=2) · novo 64.3% (bruta 64.5%) (n=1) | 43.6% | -1.9% (3/3 exata); ajustado —; mov. favor 0.0% (0/3) · recorte novo: ROI 142.0%, CLV 0.00% (1/1) | calibrado | 0 |
 | americanfootball/nfl | passTDs | 25-30% | 2 | 50.0% (2 decididas) | antigo 76.9% (bruta 85.2%) (n=2) · novo: sem dados | -12.0% | -2.4% (2/2 exata); ajustado —; mov. favor 0.0% (0/2) | calibrado | 0 |
 | americanfootball/nfl | passYards | -5-0% | 2 | 50.0% (2 decididas) | antigo 70.3% (bruta 68.8%) (n=2) · novo: sem dados | — | 0.0% (2/2 exata); ajustado —; mov. favor — | calibrado | 0 |
@@ -58,7 +58,7 @@ Taxa prevista calibrada sempre separada por versão do método de calibração (
 | antes_primeira_captura | 3 | 0 | 0 | 0.0% | captura_expirada_sem_odd_gravada: 3 |
 | captura_inicial_pre_jit | 86 | 30 | 0 | 34.9% | captura_expirada_sem_odd_gravada: 56 |
 | jit_pre_controle_status | 27 | 12 | 1 | 48.1% | captura_expirada_sem_odd_gravada: 11; cota_api_esgotada_na_captura_pre_fix: 3 |
-| apos_fix_dependencia_be2ab14 | 167 | 127 | 20 | 88.0% | jogador_indisponivel_no_mercado: 1; linha_mudou_ate_fechamento: 2; captura_expirada_sem_odd_gravada: 17 |
+| apos_fix_dependencia_be2ab14 | 168 | 128 | 20 | 88.1% | jogador_indisponivel_no_mercado: 1; linha_mudou_ate_fechamento: 2; captura_expirada_sem_odd_gravada: 17 |
 
 ## Apostas reais
 
