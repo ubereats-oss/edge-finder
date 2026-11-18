@@ -1,6 +1,6 @@
 # Relatório de desempenho — histórico central de indicações
 
-Gerado em: 2026-11-17T19:14:05.865Z
+Gerado em: 2026-11-18T18:52:51.022Z
 
 ## Teste NFL receptions
 
