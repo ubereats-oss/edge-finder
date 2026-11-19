@@ -96,9 +96,15 @@ function collectDiagnostic(cycle, logDir, roots) {
   catch { diagnostic.errors.push('Estado de avisos indisponível'); }
   if (cycle.vpnConnectedAt && !cycle.stages?.vpnConnect?.error) {
     state.lastSuccessfulConnectionAt = cycle.vpnConnectedAt;
+    state.pendingLogin = null;
     try { safe.atomic(stateFile, JSON.stringify(state)); }
     catch { diagnostic.errors.push('Gravação do estado de avisos indisponível'); }
   }
+  if (diagnostic.failure?.code === 'LoginRequired') {
+    state.pendingLogin = diagnostic.failure;
+    try { safe.atomic(stateFile, JSON.stringify(state)); }
+    catch { diagnostic.errors.push('Gravação do estado de login indisponível'); }
+  } else if (state.pendingLogin && !cycle.vpnConnectedAt) diagnostic.failure = state.pendingLogin;
   diagnostic.lastSuccessfulConnectionAt = state.lastSuccessfulConnectionAt || null;
   return diagnostic;
 }

@@ -26,7 +26,7 @@ function Get-TunnelBearProgramDecision($Programs, $Native) {
   return 'unconfirmed'
 }
 
-function Stop-TunnelBearProgram([string]$Desktop) {
+function Stop-TunnelBearProgram([string]$Desktop, [switch]$OwnedAttempt) {
   $closed = @()
   if ($Desktop -eq 'Default' -and @(Get-TunnelBearProgram | Where-Object { $_.Desktop -eq 'unknown' }).Count) {
     throw 'TUNNELBEAR_PROGRAM_CLOSE_FAILED: desktop da interface não confirmado; fechamento não autorizado.'
@@ -36,7 +36,14 @@ function Stop-TunnelBearProgram([string]$Desktop) {
     $current = @(Get-TunnelBearProgram | Where-Object { $_.Id -eq $program.Id -and $_.StartedAt -eq $program.StartedAt })
     if (-not $current.Count) { continue }
     $native = Get-TunnelBearNativeConnection
-    if ($native.Status -ne 'Disconnected' -or -not $current[0].Installed -or $current[0].Desktop -ne $Desktop) {
+    $ownedDown = $false
+    if ($OwnedAttempt -and $Desktop -eq 'EdgeFinderCollection' -and $native.Status -ne 'Connected') {
+      try {
+        $ownership = Get-Content -Raw -LiteralPath (Join-Path $env:EDGE_DATA_ROOT '.local_logs/betano/vpn-ownership.json') | ConvertFrom-Json
+        $ownedDown = $ownership.owner -eq 'routine' -and (Get-VpnAdapter).OperationalStatus.ToString() -eq 'Down' -and @(Get-TunnelBearProgram | Where-Object { $_.Desktop -ne 'EdgeFinderCollection' }).Count -eq 0
+      } catch {}
+    }
+    if (($native.Status -ne 'Disconnected' -and -not $ownedDown) -or -not $current[0].Installed -or $current[0].Desktop -ne $Desktop) {
       throw 'TUNNELBEAR_PROGRAM_CLOSE_FAILED: fechamento não autorizado; VPN não desligado ou interface em uso.'
     }
     $stopped = Stop-Process -Id $program.Id -PassThru -ErrorAction Stop
