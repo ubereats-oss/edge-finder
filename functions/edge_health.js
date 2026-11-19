@@ -111,6 +111,7 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   if (brasilDay(new Date(now)) === '2026-11-01') lines.push(octoberReview(cycles, opportunities, octoberBudget));
   if (warnings.length) lines.push('Avisos:', ...warnings);
   lines.push('Erros por categoria:', ...(errors.length ? errors : ['nenhum registrado']));
+  if (issues.some(row => row.category === 'TunnelBear pede login')) lines.push('TunnelBear pede login: abrir o TunnelBear e fazer login.');
   if (nflEntries !== null) lines.push(observationHealth.nflHealth(nflEntries, now).text);
   else if (nflError) lines.push('NFL (observação): não confirmado — histórico central indisponível.');
   const sampleLine = observationHealth.sampleHealth(nbaSample, now);
