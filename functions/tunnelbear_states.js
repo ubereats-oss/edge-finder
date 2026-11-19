@@ -5,7 +5,6 @@ const CATEGORIES = Object.freeze({
   Interrupted: 'conexão interrompida',
   Unknown: 'estado não reconhecido',
   NoRecords: 'TunnelBear sem registro no intervalo',
-  LoginRequired: 'TunnelBear pede login',
   ExecutableNotFound: 'executável do TunnelBear não encontrado',
   CountryUnproven: 'país do VPN sem comprovação',
   OtherCountry: 'VPN preexistente em outro país',
@@ -16,7 +15,6 @@ const knownResults = new Set(['DataLimitReached', 'VpnConnectionFailed', 'Succes
 // Only fixed state fields are retained. Arbitrary native messages, identifiers,
 // country/IP fields and log prefixes never cross this boundary.
 function statePayload(line) {
-  if (/TUNNELBEAR_LOGIN_REQUIRED|login[ _-]?required|must (?:log|sign)[ -]?in|authentication required|login:required/i.test(line)) return 'login:required';
   const status = /\bstatus:\s*([^,;\s]+)/i.exec(line) ||
     /(?:Application connection status\s+changed to|OpenVPNInternalChanged changed to|OnConnectionStatusChanged):\s*(\S+)/i.exec(line);
   if (status) {
@@ -35,7 +33,6 @@ function statePayload(line) {
   return null;
 }
 function categoryFor(lines) {
-  if (lines.some(line => /login:required/.test(line))) return 'LoginRequired';
   if (!lines.length) return 'NoRecords';
   if (lines.some(line => /responseResult:DataLimitReached/.test(line))) return 'DataLimitReached';
   if (lines.some(line => /responseResult:VpnConnectionFailed|TUN\/TAP:/.test(line))) return 'VpnConnectionFailed';
@@ -52,7 +49,6 @@ function safeStateLines(lines = []) {
 }
 function failureCodeFor(lines = [], reason = '', recordedCode) {
   const native = categoryFor(lines);
-  if (native === 'LoginRequired' || /TUNNELBEAR_LOGIN_REQUIRED|TunnelBear pede login|login[ _-]?required|authentication required/i.test(reason)) return 'LoginRequired';
   // Explicit refusal always outranks adapter inference or a generic old category.
   for (const code of ['DataLimitReached', 'VpnConnectionFailed'])
     if (native === code || recordedCode === code) return code;
