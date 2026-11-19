@@ -135,14 +135,14 @@ function future(games) {
   });
 }
 
-async function betano(context, { leagues = BETANO_LEAGUES } = {}) {
+async function betano(context) {
   const payloads = [];
   const diagnostics = [];
   const missingPaths = [];
-  const direct = await Promise.allSettled(leagues.map(league =>
+  const direct = await Promise.allSettled(BETANO_LEAGUES.map(league =>
     responseJson(context, BETANO + betanoPath(league), 20000)));
   for (const [index, result] of direct.entries()) {
-    const league = leagues[index];
+    const league = BETANO_LEAGUES[index];
     if (result.status === 'fulfilled' && Array.isArray(result.value?.data?.events))
       payloads.push({ league, payload: result.value, url: BETANO + betanoPath(league), status: 200 });
     else {
@@ -213,7 +213,7 @@ async function betano(context, { leagues = BETANO_LEAGUES } = {}) {
     for (const game of nba.games) byEvent.set(`${game.apiSport}|${game.sourceEventId}`, game);
     diagnostics.push(...nba.diagnostics);
   }
-  for (const league of leagues.filter(item => !payloads.some(row => row.league === item)))
+  for (const league of BETANO_LEAGUES.filter(item => !payloads.some(row => row.league === item)))
     context.report?.({ phase: 'league', league: league[0], url: BETANO + betanoPath(league),
       httpStatus: null, seen: 0, events: [], reason: 'feed indisponível' });
   const games = ordered(future([...byEvent.values()]));

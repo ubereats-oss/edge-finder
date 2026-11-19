@@ -14,7 +14,7 @@ function sanitizeReason(value, limit = 300) {
     .replace(/\b[\da-f]{8}-[\da-f-]{27,}\b/gi, '[dado removido]')
     .replace(/\b[\da-f]{12,}\b/gi, '[dado removido]')
     .replace(/\blocal-[\w-]+\b/gi, '[dado removido]')
-    .replace(/\b(?!TUNNELBEAR_LOGIN_REQUIRED\b)[A-Za-z0-9_+\/-]{24,}={0,2}\b/g, '[dado removido]')
+    .replace(/\b[A-Za-z0-9_+\/-]{24,}={0,2}\b/g, '[dado removido]')
     .replace(/\b\d{6,}\b/g, '[dado removido]')
     .replace(/\s+/g, ' ').slice(0, limit) || null;
 }
@@ -45,8 +45,7 @@ function classifyCycle(cycle) {
   const vpnReason = cycle.vpnFailures?.find(row => row.stage === 'vpnConnect')?.originalError
     || cycle.tunnelBear?.failure?.originalError || cycle.stages?.vpnConnect?.originalError || '';
   const actualCode = failureCodeFor(cycle.tunnelBear?.stateLines || [], vpnReason, savedCode);
-  if (actualCode === 'LoginRequired') return result('vpn_failed', CATEGORIES.LoginRequired, vpnReason || cycle.error);
-  if (actualCode !== savedCode && ['LoginRequired', 'ExternalConfirmation', 'VpnConnectionFailed', 'CountryUnproven', 'OtherCountry'].includes(actualCode))
+  if (actualCode !== savedCode && ['ExternalConfirmation', 'VpnConnectionFailed', 'CountryUnproven', 'OtherCountry'].includes(actualCode))
     return result(actualCode === 'ExternalConfirmation' ? 'other_failed' : 'vpn_failed', CATEGORIES[actualCode], vpnReason);
   if (cycle.healthCause) {
     const value = cycle.healthCause;

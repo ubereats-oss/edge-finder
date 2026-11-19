@@ -1,6 +1,6 @@
 ﻿param(
   [Parameter(Mandatory = $true)]
-  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state', 'prepare', 'minimize', 'library', 'recover', 'program-check', 'program-close', 'program-close-owned')]
+  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state', 'prepare', 'minimize', 'library', 'recover', 'program-check', 'program-close')]
   [string]$Action,
   [ValidateRange(5, 90)]
   [int]$StableSeconds = 90
@@ -179,8 +179,6 @@ try {
     [pscustomobject]@{ action = $Action; decision = $decision;
       programs = $programs; nativeStatus = $native.Status; nativeCountry = $native.Country;
       reason = $(if ($decision -eq 'other_country') { 'VPN do Alex em outro país' } else { $null }) } | ConvertTo-Json -Depth 5 -Compress
-  } elseif ($Action -eq 'program-close-owned') {
-    Stop-TunnelBearProgram 'EdgeFinderCollection' -OwnedAttempt | ConvertTo-Json -Compress
   } elseif ($Action -eq 'program-close') {
     Stop-TunnelBearProgram 'EdgeFinderCollection' | ConvertTo-Json -Compress
   } elseif ($Action -eq 'recover') {
