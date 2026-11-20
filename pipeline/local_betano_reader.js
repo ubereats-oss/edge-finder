@@ -31,6 +31,7 @@ const BWIN_VALIDATION_REQUEST = path.join(OUTPUT_DIR, 'bwin-validation-request.j
 const BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font']);
 const BLOCKED_TRACKING_URL = /google-analytics|googletagmanager|doubleclick|facebook\.net|hotjar|optimove|go-mpulse|bsqd\.me/i;
 
+const tunnelSessionId = `${process.pid}-${Date.now()}`;
 function tunnel(action, cycleId = '', purpose = '') {
   const attemptFile = path.join(OUTPUT_DIR, `tunnelbear_attempts_${monthKey()}.jsonl`);
   const invoke = (operation, restarted = false) => {
@@ -42,10 +43,15 @@ function tunnel(action, cycleId = '', purpose = '') {
         EDGE_TUNNEL_RESTARTED: restarted ? '1' : '0' } });
   };
   const { runTunnel } = require('../scripts/local_bookmakers/tunnel_runner.cjs');
-  const result = runTunnel(action, invoke, () => fs.existsSync(attemptFile) && fs.readFileSync(attemptFile, 'utf8')
+  const call = operation => {
+  const result = runTunnel(operation, invoke, () => fs.existsSync(attemptFile) && fs.readFileSync(attemptFile, 'utf8')
     .split(/\r?\n/).some(line => { try { const row = JSON.parse(line); return row.cycleId === cycleId && row.status === 'hung_reopened'; } catch { return false; } }));
   if (result.status !== 0) throw new Error((result.stderr || result.stdout || `TunnelBear ${action} falhou`).trim());
   return JSON.parse(result.stdout.trim());
+  };
+  return require('../scripts/local_bookmakers/tunnel_session.cjs').createSession({
+    root: process.env.EDGE_DATA_ROOT || PROJECT, id: tunnelSessionId, call,
+  }).run(action);
 }
 
 function physicalNetworkBytes() {

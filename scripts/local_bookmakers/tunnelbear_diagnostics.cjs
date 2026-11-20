@@ -78,6 +78,9 @@ function collectDiagnostic(cycle, logDir, roots) {
       }
     } catch { diagnostic.errors.push('Diretório de registros TunnelBear indisponível'); }
   }
+  const windows = (cycle.tunnelBearEvents || []).filter(row => row.status === 'window_state');
+  const latestWindow = windows.at(-1);
+  if (latestWindow) { try { diagnostic.screenSummary = require('../../functions/local_cycle_health').sanitizeReason(JSON.parse(latestWindow.detail).summary); } catch {} }
   diagnostic.nativeFailures.sort((a, b) => a.at.localeCompare(b.at));
   diagnostic.stateLines = [...new Set(diagnostic.stateLines)].sort();
   if (cycle.stages?.vpnConnect?.error) {
@@ -88,6 +91,9 @@ function collectDiagnostic(cycle, logDir, roots) {
       originalError, originalErrorUnavailable: !originalError };
     diagnostic.stateLines = diagnostic.stateLines.slice(-20);
   } else diagnostic.stateLines = [];
+  const loginError = (cycle.vpnFailures || []).map(row => row.originalError).find(reason => /TUNNELBEAR_LOGIN_REQUIRED|TunnelBear pede login/i.test(reason || ''));
+  if (loginError) diagnostic.failure = { code: 'LoginRequired', category: CATEGORIES.LoginRequired,
+    message: CATEGORIES.LoginRequired, originalError: loginError, originalErrorUnavailable: false };
   // Versions are numeric, so a rotated older log cannot replace a newer offer.
   diagnostic.requestedUpdateVersion = updates.sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).at(-1) || null;
   const stateFile = path.join(logDir, 'tunnelbear-notification-state.json');
@@ -96,9 +102,15 @@ function collectDiagnostic(cycle, logDir, roots) {
   catch { diagnostic.errors.push('Estado de avisos indisponível'); }
   if (cycle.vpnConnectedAt && !cycle.stages?.vpnConnect?.error) {
     state.lastSuccessfulConnectionAt = cycle.vpnConnectedAt;
+    state.pendingLogin = null;
     try { safe.atomic(stateFile, JSON.stringify(state)); }
     catch { diagnostic.errors.push('Gravação do estado de avisos indisponível'); }
   }
+  if (diagnostic.failure?.code === 'LoginRequired') {
+    state.pendingLogin = diagnostic.failure;
+    try { safe.atomic(stateFile, JSON.stringify(state)); }
+    catch { diagnostic.errors.push('Gravação do estado de login indisponível'); }
+  } else if (state.pendingLogin && !cycle.vpnConnectedAt) diagnostic.failure = state.pendingLogin;
   diagnostic.lastSuccessfulConnectionAt = state.lastSuccessfulConnectionAt || null;
   return diagnostic;
 }

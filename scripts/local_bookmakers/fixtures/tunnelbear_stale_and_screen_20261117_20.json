@@ -1,0 +1,445 @@
+{
+  "source": "Registros reais preservados 17-20/11, horários e estados originais",
+  "oldProof": {
+    "observedAt": "2026-11-19T19:32:24.7599571-03:00",
+    "runtimeSha": "e4fc19707eaa8be754cc88996073cc966c0d1bcd",
+    "state": {
+      "action": "state",
+      "status": "Down",
+      "nativeStatus": "Connecting",
+      "nativeCountry": null,
+      "description": "Estado da conexão VPN; consulta sem alteração"
+    },
+    "native": {
+      "Status": "Connecting",
+      "Country": null,
+      "At": "2026-11-17T17:50:54.233Z",
+      "Source": "trace.1.log"
+    },
+    "uiOpen": false,
+    "lockPresent": false
+  },
+  "mainScreen": {
+    "at": "2026-11-20T03:30:23.1130173Z",
+    "title": "TunnelBear",
+    "pid": 26360,
+    "toggle": "Off",
+    "image": "C:\\Users\\Alex Salles\\Apps - desenvolvimento\\odds_app\\.local_logs\\tunnelbear-screen-20261120\\hidden-window.png",
+    "elements": [
+      {
+        "name": "VPN",
+        "automationId": "vpnSwitch",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "541;160;119;52"
+      },
+      {
+        "name": "Disconnected",
+        "automationId": "statusAccessibility",
+        "type": "ControlType.Text",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "685;165;91;15"
+      },
+      {
+        "name": "",
+        "automationId": "cbxCountry",
+        "type": "ControlType.ComboBox",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "685;154;130;63"
+      },
+      {
+        "name": "Secure your connection!",
+        "automationId": "txt",
+        "type": "ControlType.Text",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "892;430;195;25"
+      },
+      {
+        "name": "Turn TunnelBear on",
+        "automationId": "",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "892;461;195;42"
+      },
+      {
+        "name": "Turn TunnelBear on",
+        "automationId": "",
+        "type": "ControlType.Text",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "920;472;140;20"
+      },
+      {
+        "name": "",
+        "automationId": "connectedPill",
+        "type": "ControlType.Custom",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "771;254;438;611"
+      },
+      {
+        "name": "",
+        "automationId": "ratingsBox",
+        "type": "ControlType.Custom",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "Empty"
+      },
+      {
+        "name": "11196 MB",
+        "automationId": "",
+        "type": "ControlType.Text",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "962;835;81;25"
+      },
+      {
+        "name": "remaining",
+        "automationId": "",
+        "type": "ControlType.Text",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "1049;835;78;25"
+      },
+      {
+        "name": "",
+        "automationId": "",
+        "type": "ControlType.ProgressBar",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "956;825;323;5"
+      },
+      {
+        "name": "Upgrade",
+        "automationId": "",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "1279;825;165;44"
+      },
+      {
+        "name": "Upgrade",
+        "automationId": "",
+        "type": "ControlType.Text",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "1329;837;65;21"
+      },
+      {
+        "name": "",
+        "automationId": "menu",
+        "type": "ControlType.List",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "461;136;60;748"
+      },
+      {
+        "name": "Menu open. Available options are main vpn window and settings.",
+        "automationId": "",
+        "type": "ControlType.ListItem",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "461;136;60;49"
+      },
+      {
+        "name": "Menu open. Available options are main vpn window and settings.",
+        "automationId": "",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "461;136;60;49"
+      },
+      {
+        "name": "",
+        "automationId": "",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "395;136;252;49"
+      },
+      {
+        "name": "Menu open. Available options are main vpn window and settings.",
+        "automationId": "",
+        "type": "ControlType.ListItem",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "461;185;60;50"
+      },
+      {
+        "name": "Menu open. Available options are main vpn window and settings.",
+        "automationId": "",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "461;185;60;50"
+      },
+      {
+        "name": "",
+        "automationId": "",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "521;185;252;50"
+      },
+      {
+        "name": "Main vpn window",
+        "automationId": "",
+        "type": "ControlType.ListItem",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "461;235;60;60"
+      },
+      {
+        "name": "Map",
+        "automationId": "",
+        "type": "ControlType.Text",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "521;253;35;25"
+      },
+      {
+        "name": "Settings",
+        "automationId": "",
+        "type": "ControlType.ListItem",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "461;295;60;60"
+      },
+      {
+        "name": "Settings",
+        "automationId": "",
+        "type": "ControlType.Text",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "521;313;64;25"
+      },
+      {
+        "name": "SplitBear",
+        "automationId": "",
+        "type": "ControlType.ListItem",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "461;355;60;60"
+      },
+      {
+        "name": "SplitBear",
+        "automationId": "",
+        "type": "ControlType.Text",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "521;373;70;25"
+      },
+      {
+        "name": "Mini mode",
+        "automationId": "",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "461;824;60;60"
+      },
+      {
+        "name": "Minimize",
+        "automationId": "",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "1291;136;56;36"
+      },
+      {
+        "name": "Maximize",
+        "automationId": "maximizeBtn",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "1347;136;56;36"
+      },
+      {
+        "name": "Close",
+        "automationId": "",
+        "type": "ControlType.Button",
+        "enabled": true,
+        "offscreen": false,
+        "bounds": "1403;136;56;36"
+      }
+    ],
+    "loginMatches": [],
+    "visibleNames": [
+      "VPN",
+      "Disconnected",
+      "Secure your connection!",
+      "Turn TunnelBear on",
+      "11196 MB",
+      "remaining",
+      "Upgrade",
+      "Menu open. Available options are main vpn window and settings.",
+      "Main vpn window",
+      "Map",
+      "Settings",
+      "SplitBear",
+      "Mini mode",
+      "Minimize",
+      "Maximize",
+      "Close"
+    ]
+  },
+  "alexProgram": {
+    "action": "program-check",
+    "decision": "unconfirmed",
+    "programs": [
+      {
+        "Id": 44236,
+        "StartedAt": "2026-11-19T21:43:35.7272683Z",
+        "Desktop": "Default",
+        "Visible": false,
+        "Installed": true
+      }
+    ],
+    "nativeStatus": "Connecting",
+    "nativeCountry": null,
+    "reason": null
+  },
+  "schedulerCycles": [
+    {
+      "file": "cycle-2026-11-19T22-50-08-336Z.json",
+      "startedAt": "2026-11-19T22:50:08.336Z",
+      "finishedAt": "2026-11-19T22:50:53.991Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "failures": [
+        {
+          "stage": "vpnConnect",
+          "category": "TunnelBear sem registro no intervalo",
+          "originalError": "Janela inesperada do TunnelBear: [dado removido]; captura=[caminho removido]; captura=[caminho removido]",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "games": 0,
+      "vpn": null,
+      "cleanup": {
+        "status": "closed",
+        "desktop": "EdgeFinderCollection",
+        "closedCount": 1,
+        "closedIds": [
+          28176
+        ],
+        "closedUserProgram": false
+      },
+      "mb": 0
+    },
+    {
+      "file": "cycle-2026-11-19T23-50-15-730Z.json",
+      "startedAt": "2026-11-19T23:50:15.730Z",
+      "finishedAt": "2026-11-19T23:51:03.052Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "failures": [
+        {
+          "stage": "vpnConnect",
+          "category": "TunnelBear sem registro no intervalo",
+          "originalError": "Janela inesperada do TunnelBear: [dado removido]; captura=[caminho removido]; captura=[caminho removido]",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "games": 0,
+      "vpn": null,
+      "cleanup": {
+        "status": "closed",
+        "desktop": "EdgeFinderCollection",
+        "closedCount": 1,
+        "closedIds": [
+          46444
+        ],
+        "closedUserProgram": false
+      },
+      "mb": 0
+    },
+    {
+      "file": "cycle-2026-11-20T00-50-18-574Z.json",
+      "startedAt": "2026-11-20T00:50:18.574Z",
+      "finishedAt": "2026-11-20T00:51:05.671Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "failures": [
+        {
+          "stage": "vpnConnect",
+          "category": "TunnelBear sem registro no intervalo",
+          "originalError": "Janela inesperada do TunnelBear: [dado removido]; captura=[caminho removido]; captura=[caminho removido]",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "games": 0,
+      "vpn": null,
+      "cleanup": {
+        "status": "closed",
+        "desktop": "EdgeFinderCollection",
+        "closedCount": 1,
+        "closedIds": [
+          35204
+        ],
+        "closedUserProgram": false
+      },
+      "mb": 0
+    },
+    {
+      "file": "cycle-2026-11-20T01-50-22-088Z.json",
+      "startedAt": "2026-11-20T01:50:22.088Z",
+      "finishedAt": "2026-11-20T01:51:18.509Z",
+      "status": "ciclo sem conexão",
+      "error": "VPN não confirmado — TunnelBear sem registro no intervalo",
+      "failures": [
+        {
+          "stage": "vpnConnect",
+          "category": "TunnelBear sem registro no intervalo",
+          "originalError": "Janela inesperada do TunnelBear: [dado removido]; captura=[caminho removido]; captura=[caminho removido]",
+          "originalErrorUnavailable": false
+        }
+      ],
+      "games": 0,
+      "vpn": null,
+      "cleanup": {
+        "status": "closed",
+        "desktop": "EdgeFinderCollection",
+        "closedCount": 1,
+        "closedIds": [
+          45104
+        ],
+        "closedUserProgram": false
+      },
+      "mb": 0
+    },
+    {
+      "file": "cycle-2026-11-20T02-50-19-925Z.json",
+      "startedAt": "2026-11-20T02:50:19.925Z",
+      "finishedAt": "2026-11-20T02:52:14.602Z",
+      "status": "failed",
+      "error": "Nenhuma casa produziu odds elegíveis; ciclo não conta como sucesso.",
+      "readError": "Betano sem odds elegíveis nas próximas 12 horas: HTTP 403: https://www.betano.pt/api/sports/BASK/hot/trending/leagues/441g/events/?req=s,stnf,c,mb; HTTP 403: https://www.betano.pt/api/sports/FOOT/hot/trending/leagues/433g/events/?req=s,stnf,c,mb; HTTP 403: https://www.betano.pt/api/sports/FOOT/hot/trending/leagues/432g/events/?req=s,stnf,c,mb; HTTP 403: https://www.betano.pt/api/sports/FOOT/hot/trending/leagues/17083/events/?req=s,stnf,c,mb; HTTP 403: https://www.betano.pt/api/sports/FOOT/hot/trending/leagues/1/events/?req=s,stnf,c,mb; HTTP 403: https://www.betano.pt/api/sports/FOOT/hot/trending/leagues/5/events/?req=s,stnf,c,mb; HTTP 403: https://www.betano.pt/api/sports/FOOT/hot/trending/leagues/1635/events/?req=s,stnf,c,mb; HTTP 403: https://www.betano.pt/api/sports/FOOT/hot/trending/leagues/216/events/?req=s,stnf,c,mb; HTTP 403: https://www.betano.pt/api/sports/FOOT/hot/trending/leagues/215/events/?req=s,stnf,c,mb; HTTP 403: https://www.betano.pt/api/sports/FOOT/hot/trending/leagues/17067/events/?req=s,stnf,c,mb; HTTP 403: https://www.betano.pt/api/sports/FOOT/hot/trending/leagues/2/events/?req=s,stnf,c,mb; edge_feed HTTP 200, 13 eventos; edge_feed HTTP 200, 18 eventos; edge_feed HTTP 200, 18 eventos; edge_feed HTTP 200, 7 eventos; edge_feed HTTP 200, 10 eventos; edge_feed HTTP 200, 9 eventos; edge_feed HTTP 200, 10 eventos; edge_feed HTTP 200, 9 eventos; edge_feed HTTP 200, 9 eventos; edge_feed HTTP 200, 9 eventos; edge_feed HTTP 200, 12 eventos",
+      "games": 0,
+      "vpn": {
+        "nativeStatus": "Connected",
+        "country": "PT",
+        "connectedByCycle": true
+      },
+      "disconnected": {
+        "action": "disconnect",
+        "status": "disconnected",
+        "vpnDisconnectedAt": "2026-11-19T23:52:05.0934744-03:00"
+      },
+      "cleanup": {
+        "status": "closed",
+        "desktop": "EdgeFinderCollection",
+        "closedCount": 1,
+        "closedIds": [
+          3460
+        ],
+        "closedUserProgram": false
+      },
+      "mb": 5.543672
+    }
+  ]
+}
