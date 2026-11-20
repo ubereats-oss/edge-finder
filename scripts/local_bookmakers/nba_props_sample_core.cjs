@@ -4,3 +4,14 @@ function compare(data,text,pinnacle,observedAt,fairProbabilities){const rows=[],
 function summarize(rows){const a=rows.map(r=>r.edge).sort((a,b)=>a-b),n=a.length,above1=a.filter(x=>x>1).length;return{n,median:n?(a[Math.floor((n-1)/2)]+a[Math.ceil((n-1)/2)])/2:null,above0:a.filter(x=>x>0).length,above1,above3:a.filter(x=>x>3).length,shareAbove1:n?above1/n:null,verdict:n&&above1/n>=.02?'VIÁVEL':'INVIÁVEL',distribution:{belowMinus20:a.filter(x=>x< -20).length,minus20ToMinus10:a.filter(x=>x>=-20&&x< -10).length,minus10ToZero:a.filter(x=>x>=-10&&x<=0).length,zeroToOne:a.filter(x=>x>0&&x<=1).length,oneToThree:a.filter(x=>x>1&&x<=3).length,aboveThree:a.filter(x=>x>3).length},top:rows.slice().sort((a,b)=>b.edge-a.edge).slice(0,10)};}
 function recordError(result,error,phase='primary'){const message=error?.message||String(error);(result.errors||=[]).push({phase,message});result.reason ||= message;result.status ||= 'failed';return result;}
 module.exports={normalize,quotes,compare,summarize,recordError};
+async function productionNbaListing(reader,context,date,now=Date.now()){
+ const previous=context.report;let listing;
+ context.report=row=>{if(row.phase==='league'&&row.league==='basketball_nba')listing=row;previous?.(row)};
+ try{return await reader(context)}
+ catch(error){
+  const eligible=listing?.events?.some(e=>{const at=Date.parse(e.commenceTime),delta=at-now;return Number.isFinite(at)&&new Date(at-10800000).toISOString().slice(0,10)===date&&delta>600000&&delta<=12*3600000});
+  if(listing?.httpStatus===200&&Array.isArray(listing.events)&&!eligible)return{games:[],noGamesConfirmed:true};
+  throw error;
+ }finally{if(previous===undefined)delete context.report;else context.report=previous}
+}
+module.exports.productionNbaListing=productionNbaListing;
