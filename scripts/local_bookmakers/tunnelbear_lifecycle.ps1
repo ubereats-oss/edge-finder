@@ -57,31 +57,56 @@ function Minimize-TunnelBearWindow {
   }
 }
 
+function Remove-ExpiredTunnelBearEvidence([DateTime]$Now = [DateTime]::UtcNow) {
+  $root = if ($env:EDGE_DATA_ROOT) {$env:EDGE_DATA_ROOT} else {Join-Path $PSScriptRoot '../..'}
+  $folder = [IO.Path]::GetFullPath((Join-Path $root '.local_logs/betano'))
+  if (-not (Test-Path -LiteralPath $folder)) {return}
+  foreach ($file in @(Get-ChildItem -LiteralPath $folder -File -ErrorAction SilentlyContinue)) {
+    if ($file.Name -notmatch '^tunnelbear-(?:unexpected|action-required|screen-state)-\d{8}T\d{9}\.(?:png|json)$') {continue}
+    if ([IO.Path]::GetFullPath($file.DirectoryName) -ne $folder -or ($file.Attributes -band [IO.FileAttributes]::ReparsePoint)) {continue}
+    if ($file.LastWriteTimeUtc -lt $Now.AddDays(-3)) {Remove-Item -LiteralPath $file.FullName -ErrorAction Stop}
+  }
+}
+
+function Protect-TunnelBearScreenText([string]$Text) {
+  return ($Text -replace '[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}','[email removido]' -replace '(?i)(?:Bearer|Basic)\s+\S+','[dado removido]' -replace '(?i)(token|password|senha|authorization|api.?key)\s*[:=]\s*\S+','$1=[removido]' -replace 'https?://\S+','[URL removida]')
+}
+
+function Get-TunnelBearScreenSummary($Rows) {
+  $names = @($Rows | Where-Object {-not $_.offscreen -and $_.name} | ForEach-Object {Protect-TunnelBearScreenText $_.name} | Select-Object -Unique)
+  $text = ($names | Select-Object -First 10) -join ' | '
+  if ($text.Length -gt 500) {$text=$text.Substring(0,500)}
+  return $text
+}
+
 function Save-TunnelBearUnexpectedWindow($Window = $null, [string]$Label = 'unexpected') {
-  Add-Type -AssemblyName System.Windows.Forms
   Add-Type -AssemblyName System.Drawing
-  $dataRoot = if ($env:EDGE_DATA_ROOT) { $env:EDGE_DATA_ROOT } else { Join-Path $PSScriptRoot '..\..' }
-  $directory = Join-Path $dataRoot '.local_logs\betano'
-  $null = [System.IO.Directory]::CreateDirectory($directory)
+  $root = if ($env:EDGE_DATA_ROOT) {$env:EDGE_DATA_ROOT} else {Join-Path $PSScriptRoot '../..'}
+  $directory = Join-Path $root '.local_logs/betano'
+  [void][IO.Directory]::CreateDirectory($directory)
+  Remove-ExpiredTunnelBearEvidence
   $file = Join-Path $directory ('tunnelbear-' + $Label + '-' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfff') + '.png')
-  if (-not $Window) { $Window = Find-TunnelBearWindow }
-  if (-not $Window) { throw 'Janela indisponível para captura.' }
-  $rectangle = $Window.Current.BoundingRectangle
-  $bounds = New-Object System.Drawing.Rectangle([int]$rectangle.Left, [int]$rectangle.Top, [int]$rectangle.Width, [int]$rectangle.Height)
-  $bitmap = New-Object System.Drawing.Bitmap($bounds.Width, $bounds.Height)
-  $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+  if (-not $Window) {$Window=Find-TunnelBearWindow}
+  if (-not $Window) {throw 'Janela indisponível para captura.'}
+  $rows = @($Window.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition) | ForEach-Object {
+    try {[pscustomobject]@{name=$(if($_.Current.IsPassword){'[campo protegido]'}else{Protect-TunnelBearScreenText $_.Current.Name});automationId=$_.Current.AutomationId;type=$_.Current.ControlType.ProgrammaticName;enabled=$_.Current.IsEnabled;offscreen=$_.Current.IsOffscreen;bounds=$_.Current.BoundingRectangle.ToString()}}catch{}
+  })
+  $data = [ordered]@{at=[DateTime]::UtcNow.ToString('o');title=(Protect-TunnelBearScreenText $Window.Current.Name);summary=(Get-TunnelBearScreenSummary $rows);elements=$rows;captureError=$null;capturePossiblyBlank=$null}
+  $bitmap=$null;$graphics=$null
   try {
-    if (-not ('TunnelBearWindowCapture' -as [type])) {
-      Add-Type 'using System; using System.Runtime.InteropServices; public class TunnelBearWindowCapture { [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr hwnd, IntPtr hdc, uint flags); }'
-    }
-    $dc = $graphics.GetHdc()
-    try {
-      if (-not [TunnelBearWindowCapture]::PrintWindow([IntPtr]$Window.Current.NativeWindowHandle, $dc, 2)) {
-        throw 'PrintWindow não conseguiu capturar o TunnelBear.'
-      }
-    } finally { $graphics.ReleaseHdc($dc) }
-    $bitmap.Save($file, [System.Drawing.Imaging.ImageFormat]::Png)
-  } finally { $graphics.Dispose(); $bitmap.Dispose() }
+    $rectangle=$Window.Current.BoundingRectangle
+    $bitmap=New-Object System.Drawing.Bitmap([int]$rectangle.Width,[int]$rectangle.Height)
+    $graphics=[System.Drawing.Graphics]::FromImage($bitmap)
+    if (-not ('TunnelBearWindowCapture' -as [type])) {Add-Type 'using System; using System.Runtime.InteropServices; public class TunnelBearWindowCapture { [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr hwnd, IntPtr hdc, uint flags); }'}
+    $dc=$graphics.GetHdc()
+    try {if(-not [TunnelBearWindowCapture]::PrintWindow([IntPtr]$Window.Current.NativeWindowHandle,$dc,2)){throw 'PrintWindow não capturou a janela'}}finally{$graphics.ReleaseHdc($dc)}
+    $bitmap.Save($file,[System.Drawing.Imaging.ImageFormat]::Png)
+    $colors=@(for($x=0;$x -lt 5;$x++){for($y=0;$y -lt 5;$y++){$bitmap.GetPixel([int](($bitmap.Width-1)*$x/4),[int](($bitmap.Height-1)*$y/4)).ToArgb()}})
+    $data.capturePossiblyBlank=@($colors|Select-Object -Unique).Count -eq 1
+  }catch{$data.captureError=Protect-TunnelBearScreenText $_.Exception.Message}
+  finally{if($graphics){$graphics.Dispose()};if($bitmap){$bitmap.Dispose()}}
+  [IO.File]::WriteAllText(($file -replace '\.png$','.json'),($data|ConvertTo-Json -Depth 6),[Text.UTF8Encoding]::new($false))
+  Write-ConnectionAttempt 1 'window_state' ([pscustomobject]@{summary=$data.summary;image=[IO.Path]::GetFileName($file);elements=[IO.Path]::GetFileName(($file -replace '\.png$','.json'));captureError=$data.captureError;capturePossiblyBlank=$data.capturePossiblyBlank}|ConvertTo-Json -Compress)
   return $file
 }
 

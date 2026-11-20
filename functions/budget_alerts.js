@@ -4,8 +4,9 @@ const { tunnelBearAlerts } = require('./tunnelbear_alerts');
 const { closingReserve } = require('./odds_api_monthly_budget');
 
 function budgetAlerts(month, state = {}) {
-  const alerts = tunnelBearAlerts(state.vpn?.tunnelBear);
-  if (state.vpn?.operatorIssue && state.vpn.operatorIssue !== 'data' && actions[state.vpn.operatorIssue])
+  const diagnostic = state.vpn?.operatorIssue === 'login' ? { ...state.vpn?.tunnelBear, failure: { code: 'LoginRequired' } } : state.vpn?.tunnelBear;
+  const alerts = tunnelBearAlerts(diagnostic);
+  if (state.vpn?.operatorIssue && !['data', 'login'].includes(state.vpn.operatorIssue) && actions[state.vpn.operatorIssue])
     alerts.push({ id: `vpn-action-${month}-${state.vpn.operatorIssue}`, text: `Edge Finder: coleta local bloqueada. Alex: ${actions[state.vpn.operatorIssue]}` });
   if (state.vpn?.providerExhausted && !state.vpn?.tunnelBear)
     alerts.push({ id: `vpn-provider-${month}`, text: `Edge Finder: TunnelBear informou que a franquia de dados acabou. ${actions.data}` });

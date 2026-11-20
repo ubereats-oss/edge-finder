@@ -1,6 +1,6 @@
 ﻿param(
   [Parameter(Mandatory = $true)]
-  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state', 'prepare', 'minimize', 'library', 'recover', 'program-check', 'program-close')]
+  [ValidateSet('connect', 'disconnect', 'meter', 'meter-once', 'state', 'prepare', 'minimize', 'library', 'recover', 'program-check', 'program-close', 'program-close-owned')]
   [string]$Action,
   [ValidateRange(5, 90)]
   [int]$StableSeconds = 90
@@ -171,14 +171,19 @@ function Write-ConnectionAttempt([int]$Attempt, [string]$Status, [string]$Detail
 }
 
 if ($Action -eq 'library') { return }
+Remove-ExpiredTunnelBearEvidence
 try {
   if ($Action -eq 'program-check') {
     $programs = @(Get-TunnelBearProgram)
     $native = Get-TunnelBearNativeConnection
     $decision = Get-TunnelBearProgramDecision $programs $native
     [pscustomobject]@{ action = $Action; decision = $decision;
-      programs = $programs; nativeStatus = $native.Status; nativeCountry = $native.Country;
+      programs = $programs; nativeStatus = $native.Status; nativeCountry = $native.Country; nativeAt = $native.At;
+      staleIntermediateAccepted = ($decision -eq 'collect' -and $native.Status -ne 'Disconnected');
+      effectiveStatus = $(if ($decision -eq 'collect') {'Disconnected'} else {$native.Status});
       reason = $(if ($decision -eq 'other_country') { 'VPN do Alex em outro país' } else { $null }) } | ConvertTo-Json -Depth 5 -Compress
+  } elseif ($Action -eq 'program-close-owned') {
+    Stop-TunnelBearProgram 'EdgeFinderCollection' -OwnedAttempt | ConvertTo-Json -Compress
   } elseif ($Action -eq 'program-close') {
     Stop-TunnelBearProgram 'EdgeFinderCollection' | ConvertTo-Json -Compress
   } elseif ($Action -eq 'recover') {

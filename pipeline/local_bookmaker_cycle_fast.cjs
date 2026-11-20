@@ -187,6 +187,8 @@ async function main() {
         throw error;
       }
       record.error = sanitizeReason(error.message);
+      if (error.cleanup) cycle.ownedCleanup = error.cleanup;
+      if (error.cleanupError) (cycle.cleanupErrors ||= []).push(error.cleanupError);
       if (error.message.includes('TUNNELBEAR_PROGRAM_CLOSE_FAILED')) cycle.tunnelBearProgramCloseError = record.error;
       if (name === 'vpnConnect' || name === 'vpnDisconnect') {
         const failure = captureVpnFailure(cycle, name, error);
@@ -421,6 +423,7 @@ async function main() {
       : cycle.stages.vpnConnect?.error ? 'ciclo sem conexão' : 'failed';
     if (cycle.status === 'ciclo pulado') cycle.pauseReason = 'VPN do Alex em outro país';
     cycle.error = sanitizeReason(error.message);
+    cycle.originalError = cycle.error;
   } finally {
     if (networkTimer) clearInterval(networkTimer);
     if (vpnConnected && vpnOwned) {
@@ -458,7 +461,7 @@ async function main() {
       const attemptFile = path.join(LOG_DIR, `tunnelbear_attempts_${startedAt.slice(0, 7)}.jsonl`);
       cycle.tunnelBearEvents = fs.existsSync(attemptFile) ? fs.readFileSync(attemptFile, 'utf8').replace(/^\uFEFF/, '').split(/\r?\n/)
         .flatMap(line => { try { const row = JSON.parse(line); return row.cycleId === startedAt &&
-          ['upgrade_closed', 'update_ignored', 'update_closed', 'data_exhausted', 'program_decision', 'user_program_closed'].includes(row.status) ? [row] : []; } catch { return []; } }) : [];
+          ['upgrade_closed', 'update_ignored', 'update_closed', 'data_exhausted', 'program_decision', 'user_program_closed', 'window_state'].includes(row.status) ? [row] : []; } catch { return []; } }) : [];
       cycle.tunnelBearUserProgramClosed ||= cycle.tunnelBearEvents.some(row => row.status === 'user_program_closed');
     }
     try {
@@ -466,9 +469,9 @@ async function main() {
       if (cycle.tunnelBear.failure) {
         const { category } = cycle.tunnelBear.failure;
         for (const failure of cycle.vpnFailures || []) if (failure.stage === 'vpnConnect') failure.category = category;
-        cycle.error = `VPN não confirmado — ${category}`;
-        cycle.stages.vpnConnect.error = cycle.error;
-        if (caught) caught.message = cycle.error;
+        cycle.errorCategory = category;
+        if (category === 'TunnelBear pede login') cycle.operatorInstruction = 'abrir o TunnelBear e fazer login';
+        cycle.error ||= `VPN não confirmado — ${category}`;
       }
     } catch {
       cycle.tunnelBearDiagnosticError = 'Diagnóstico TunnelBear indisponível';
@@ -477,9 +480,8 @@ async function main() {
         cycle.tunnelBear = { failure: { code: 'NoRecords', category: 'TunnelBear sem registro no intervalo',
           originalError, originalErrorUnavailable: !originalError }, stateLines: [] };
         for (const failure of cycle.vpnFailures || []) if (failure.stage === 'vpnConnect') failure.category = cycle.tunnelBear.failure.category;
-        cycle.error = 'VPN não confirmado — TunnelBear sem registro no intervalo';
-        cycle.stages.vpnConnect.error = cycle.error;
-        if (caught) caught.message = cycle.error;
+        cycle.errorCategory = 'TunnelBear sem registro no intervalo';
+        cycle.error ||= 'VPN não confirmado — TunnelBear sem registro no intervalo';
       }
     }
     if (caught && db) {

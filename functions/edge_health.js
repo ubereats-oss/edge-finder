@@ -111,6 +111,8 @@ function composeHealth({ cycles = [], runs = [], opportunities = [], budget = {}
   if (brasilDay(new Date(now)) === '2026-11-01') lines.push(octoberReview(cycles, opportunities, octoberBudget));
   if (warnings.length) lines.push('Avisos:', ...warnings);
   lines.push('Erros por categoria:', ...(errors.length ? errors : ['nenhum registrado']));
+  for (const summary of [...new Set(recent.map(row => row.tunnelBear?.screenSummary).filter(Boolean))].slice(-5)) lines.push('Tela TunnelBear: ' + sanitizeReason(summary));
+  if (issues.some(row => row.category === 'TunnelBear pede login')) lines.push('TunnelBear pede login: abrir o TunnelBear e fazer login.');
   if (nflEntries !== null) lines.push(observationHealth.nflHealth(nflEntries, now).text);
   else if (nflError) lines.push('NFL (observação): não confirmado — histórico central indisponível.');
   const sampleLine = observationHealth.sampleHealth(nbaSample, now);
@@ -163,6 +165,13 @@ async function loadHealth(db, token, now = Date.now(), fetchImpl = fetch, { read
     db.collection('_edge_budget_alerts').where('failedAt', '>=', since).get(),
     october ? db.collection('_odds_api_budget').doc('2026-10').get() : Promise.resolve(null),
   ]);
+  const vpn = budget.data()?.vpn;
+  const loginPending = vpn?.tunnelBear?.failure?.code === 'LoginRequired' || vpn?.operatorIssue === 'login';
+  if (!readOnly && loginPending && vpn.loginReminderDay !== brasilDay(new Date(now))) {
+    // Reuse the existing budget-document notification trigger; no new schedule.
+    await db.collection('_odds_api_budget').doc(brasilDay(new Date(now)).slice(0, 7))
+      .set({ vpn: { loginReminderDay: brasilDay(new Date(now)) } }, { merge: true });
+  }
   let runs = [];
   try {
     for (let page = 1; ; page++) {

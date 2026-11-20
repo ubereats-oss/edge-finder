@@ -17,16 +17,25 @@ function Get-TunnelBearProgram {
   return $rows
 }
 
+function Test-TunnelBearStaleIntermediate($Programs, $Native, [DateTimeOffset]$Now = [DateTimeOffset]::UtcNow) {
+  if ($Native.Status -notin @('Connecting','Disconnecting','Reconnecting') -or @($Programs | Where-Object {$_}).Count -or -not $Native.At) { return $false }
+  try { $age = ($Now - [DateTimeOffset]::Parse($Native.At)).TotalMinutes } catch { return $false }
+  if ($age -le 10) { return $false }
+  if (@(Get-Process -Name 'TunnelBear','TunnelBear.UI' -ErrorAction SilentlyContinue).Count) { return $false }
+  return (Get-VpnAdapter).OperationalStatus.ToString() -eq 'Down'
+}
+
 function Get-TunnelBearProgramDecision($Programs, $Native) {
   if ($Native.Status -eq 'Connected' -and $Native.Country -eq 'PT') { return 'preserve' }
   if ($Native.Status -eq 'Connected' -and $Native.Country -and $Native.Country -ne 'PT') {
     return 'other_country'
   }
   if ($Native.Status -eq 'Disconnected') { return 'collect' }
+  if (Test-TunnelBearStaleIntermediate $Programs $Native) { return 'collect' }
   return 'unconfirmed'
 }
 
-function Stop-TunnelBearProgram([string]$Desktop) {
+function Stop-TunnelBearProgram([string]$Desktop, [switch]$OwnedAttempt) {
   $closed = @()
   if ($Desktop -eq 'Default' -and @(Get-TunnelBearProgram | Where-Object { $_.Desktop -eq 'unknown' }).Count) {
     throw 'TUNNELBEAR_PROGRAM_CLOSE_FAILED: desktop da interface não confirmado; fechamento não autorizado.'
@@ -36,7 +45,14 @@ function Stop-TunnelBearProgram([string]$Desktop) {
     $current = @(Get-TunnelBearProgram | Where-Object { $_.Id -eq $program.Id -and $_.StartedAt -eq $program.StartedAt })
     if (-not $current.Count) { continue }
     $native = Get-TunnelBearNativeConnection
-    if ($native.Status -ne 'Disconnected' -or -not $current[0].Installed -or $current[0].Desktop -ne $Desktop) {
+    $ownedDown = $false
+    if ($OwnedAttempt -and $Desktop -eq 'EdgeFinderCollection' -and $native.Status -ne 'Connected') {
+      try {
+        $ownership = Get-Content -Raw -LiteralPath (Join-Path $env:EDGE_DATA_ROOT '.local_logs/betano/vpn-ownership.json') | ConvertFrom-Json
+        $ownedDown = $ownership.owner -eq 'routine' -and (Get-VpnAdapter).OperationalStatus.ToString() -eq 'Down' -and @(Get-TunnelBearProgram | Where-Object { $_.Desktop -ne 'EdgeFinderCollection' }).Count -eq 0
+      } catch {}
+    }
+    if (($native.Status -ne 'Disconnected' -and -not $ownedDown) -or -not $current[0].Installed -or $current[0].Desktop -ne $Desktop) {
       throw 'TUNNELBEAR_PROGRAM_CLOSE_FAILED: fechamento não autorizado; VPN não desligado ou interface em uso.'
     }
     $stopped = Stop-Process -Id $program.Id -PassThru -ErrorAction Stop
@@ -55,7 +71,8 @@ function Assert-TunnelBearProgramAvailable {
   $native = Get-TunnelBearNativeConnection
   $decision = Get-TunnelBearProgramDecision $programs $native
   Write-ConnectionAttempt 1 'program_decision' ([pscustomobject]@{ decision = $decision; programs = $programs;
-    nativeStatus = $native.Status; nativeCountry = $native.Country; nativeAt = $native.At } | ConvertTo-Json -Depth 5 -Compress)
+    nativeStatus = $native.Status; nativeCountry = $native.Country; nativeAt = $native.At;
+    staleIntermediateAccepted = ($decision -eq 'collect' -and $native.Status -ne 'Disconnected') } | ConvertTo-Json -Depth 5 -Compress)
   if ($decision -eq 'other_country') { throw 'VPN do Alex em outro país' }
   if ($decision -eq 'unconfirmed') { throw 'VPN_STATE_UNCONFIRMED: estado nativo ou país sem confirmação; nenhum toque autorizado.' }
   return $decision
