@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-19T19:00:43.057Z",
+  "generatedAt": "2026-11-20T18:40:20.651Z",
   "rows": [
     {
       "esporte": "americanfootball/nfl",
@@ -26,7 +26,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 76,
+      "sampleSize": 77,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -64,7 +64,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 76,
+      "sampleSize": 77,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -111,7 +111,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 76,
+      "sampleSize": 77,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -158,7 +158,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 76,
+      "sampleSize": 77,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -196,7 +196,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 727,
+      "sampleSize": 738,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -236,7 +236,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 727,
+      "sampleSize": 738,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -276,7 +276,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 727,
+      "sampleSize": 738,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -316,7 +316,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 573,
+      "sampleSize": 578,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -357,7 +357,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 573,
+      "sampleSize": 578,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -407,7 +407,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 573,
+      "sampleSize": 578,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -456,7 +456,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 573,
+      "sampleSize": 578,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -496,7 +496,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 573,
+      "sampleSize": 578,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -536,7 +536,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 573,
+      "sampleSize": 578,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -576,7 +576,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2277,
+      "sampleSize": 2316,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -616,7 +616,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2277,
+      "sampleSize": 2316,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -657,7 +657,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2277,
+      "sampleSize": 2316,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -699,7 +699,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2277,
+      "sampleSize": 2316,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -739,7 +739,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2277,
+      "sampleSize": 2316,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -779,7 +779,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2277,
+      "sampleSize": 2316,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -820,7 +820,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2277,
+      "sampleSize": 2316,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -860,7 +860,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2277,
+      "sampleSize": 2316,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -902,7 +902,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1239,
+      "sampleSize": 1258,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -952,7 +952,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1239,
+      "sampleSize": 1258,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1001,7 +1001,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1239,
+      "sampleSize": 1258,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
