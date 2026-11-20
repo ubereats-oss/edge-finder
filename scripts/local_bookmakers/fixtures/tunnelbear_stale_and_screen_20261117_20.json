@@ -441,5 +441,121 @@
       },
       "mb": 5.543672
     }
-  ]
+  ],
+  "postAcceptanceNbaAudit": {
+    "at": "2026-11-20T04:09:07.079Z",
+    "record": {
+      "requests": [
+        {
+          "at": "2026-11-20T04:10:00.295Z",
+          "url": "https://www.betano.pt/api/sports/BASK/hot/trending/leagues/441g/events/?req=s,stnf,c,mb",
+          "httpStatus": 200,
+          "reason": null
+        }
+      ],
+      "seen": 9,
+      "events": [
+        {
+          "url": "https://www.betano.pt/odds/atlanta-hawks-charlotte-hornets/95565186/",
+          "eventId": "95565186",
+          "teams": [
+            "Atlanta Hawks",
+            "Charlotte Hornets"
+          ],
+          "commenceTime": "2026-11-21T00:00:00.000Z",
+          "reason": "fora da janela de 12 horas",
+          "httpStatus": null
+        },
+        {
+          "url": "https://www.betano.pt/odds/detroit-pistons-toronto-raptors/95565049/",
+          "eventId": "95565049",
+          "teams": [
+            "Detroit Pistons",
+            "Toronto Raptors"
+          ],
+          "commenceTime": "2026-11-21T00:30:00.000Z",
+          "reason": "fora da janela de 12 horas",
+          "httpStatus": null
+        },
+        {
+          "url": "https://www.betano.pt/odds/cleveland-cavaliers-indiana-pacers/95565062/",
+          "eventId": "95565062",
+          "teams": [
+            "Cleveland Cavaliers",
+            "Indiana Pacers"
+          ],
+          "commenceTime": "2026-11-21T00:30:00.000Z",
+          "reason": "fora da janela de 12 horas",
+          "httpStatus": null
+        },
+        {
+          "url": "https://www.betano.pt/odds/brooklyn-nets-orlando-magic/95565102/",
+          "eventId": "95565102",
+          "teams": [
+            "Brooklyn Nets",
+            "Orlando Magic"
+          ],
+          "commenceTime": "2026-11-21T00:30:00.000Z",
+          "reason": "fora da janela de 12 horas",
+          "httpStatus": null
+        },
+        {
+          "url": "https://www.betano.pt/odds/oklahoma-city-thunder-new-orleans-pelicans/95565143/",
+          "eventId": "95565143",
+          "teams": [
+            "Oklahoma City Thunder",
+            "New Orleans Pelicans"
+          ],
+          "commenceTime": "2026-11-21T01:00:00.000Z",
+          "reason": "fora da janela de 12 horas",
+          "httpStatus": null
+        },
+        {
+          "url": "https://www.betano.pt/odds/chicago-bulls-washington-wizards/95565265/",
+          "eventId": "95565265",
+          "teams": [
+            "Chicago Bulls",
+            "Washington Wizards"
+          ],
+          "commenceTime": "2026-11-21T01:00:00.000Z",
+          "reason": "fora da janela de 12 horas",
+          "httpStatus": null
+        },
+        {
+          "url": "https://www.betano.pt/odds/utah-jazz-phoenix-suns/95565066/",
+          "eventId": "95565066",
+          "teams": [
+            "Utah Jazz",
+            "Phoenix Suns"
+          ],
+          "commenceTime": "2026-11-21T02:30:00.000Z",
+          "reason": "fora da janela de 12 horas",
+          "httpStatus": null
+        },
+        {
+          "url": "https://www.betano.pt/odds/denver-nuggets-houston-rockets/91843274/",
+          "eventId": "91843274",
+          "teams": [
+            "Denver Nuggets",
+            "Houston Rockets"
+          ],
+          "commenceTime": "2026-11-21T03:00:00.000Z",
+          "reason": "fora da janela de 12 horas",
+          "httpStatus": null
+        },
+        {
+          "url": "https://www.betano.pt/odds/los-angeles-lakers-sacramento-kings/95565181/",
+          "eventId": "95565181",
+          "teams": [
+            "Los Angeles Lakers",
+            "Sacramento Kings"
+          ],
+          "commenceTime": "2026-11-21T03:00:00.000Z",
+          "reason": "fora da janela de 12 horas",
+          "httpStatus": null
+        }
+      ],
+      "reason": null
+    }
+  }
 }
