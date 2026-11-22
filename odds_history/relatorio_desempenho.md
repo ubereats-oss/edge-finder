@@ -1,15 +1,15 @@
 # Relatório de desempenho — histórico central de indicações
 
-Gerado em: 2026-11-21T17:37:02.593Z
+Gerado em: 2026-11-22T17:52:02.114Z
 
 ## Teste NFL receptions
 
 Candidato único sobrando após desabilitar todos os props de NHL e NFL receptionYards por CLV ~0% (ver DISABLED_SEGMENTS em pipeline/risk_config.js). Meta de amostra: 100 indicações com CLV exato (publicadas e válidas, resolvidas ou não — CLV independe do resultado do jogo).
 
-- Indicações com CLV: **4/100**
-- CLV médio: **-5.28%**
-- IC95%: **-6.51% a -4.04%**
-- CLV médio das 4 mais recentes: **-5.28%**
+- Indicações com CLV: **8/100**
+- CLV médio: **-3.52%**
+- IC95%: **-5.65% a -1.39%**
+- CLV médio das 8 mais recentes: **-3.52%**
 - Veredito: **EM TESTE ⏳**
 
 Só inclui indicações publicadas, resolvidas e válidas para calibração (mesmo critério da calibração — NHL pré-correção da agregação de odds fica de fora, por exemplo). Push e cancelado entram no lucro/ROI mas não na taxa de acerto.

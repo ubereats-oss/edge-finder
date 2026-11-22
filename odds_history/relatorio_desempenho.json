@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T17:37:02.593Z",
+  "generatedAt": "2026-11-22T17:52:02.114Z",
   "rows": [
     {
       "esporte": "americanfootball/nfl",
@@ -1392,13 +1392,13 @@
     "esporte": "americanfootball/nfl",
     "market": "receptions",
     "metodo": "clv_sem_margem",
-    "n": 4,
+    "n": 8,
     "nAlvo": 100,
-    "clvMedio": -5.28,
-    "ic95Lower": -6.51,
-    "ic95Upper": -4.04,
+    "clvMedio": -3.52,
+    "ic95Lower": -5.65,
+    "ic95Upper": -1.39,
     "veredito": "em_teste",
-    "nRecentes": 4,
-    "clvMedioRecentes": -5.28
+    "nRecentes": 8,
+    "clvMedioRecentes": -3.52
   }
 }
