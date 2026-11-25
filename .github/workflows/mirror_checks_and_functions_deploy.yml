@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       force_closing_odds_deploy:
@@ -23,7 +26,7 @@ on:
           - 'false'
           - 'true'
       force_firestore_rules_deploy:
-        description: Force deploy firestore.rules without a new push (e.g. retry after fixing IAM permission)
+        description: Force deploy firestore.rules without a new push
         required: true
         default: 'false'
         type: choice
@@ -33,10 +36,9 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 concurrency:
-  group: mirror-checks-functions-deploy-main
+  group: mirror-checks-functions-deploy-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -48,17 +50,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check public repository paths
+        run: bash scripts/check_public_paths.sh
+
       - name: Test The Odds API key detector
         run: node --test scripts/test_check_no_odds_api_keys.cjs
         env:
-          THE_ODDS_API_KEYS: ${{ secrets.THE_ODDS_API_KEYS }}
-          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+          EDGE_REQUIRE_ODDS_API_KEYS: ${{ github.event_name != 'pull_request' }}
+          THE_ODDS_API_KEYS: ${{ github.event_name != 'pull_request' && secrets.THE_ODDS_API_KEYS || '' }}
+          ODDS_API_KEYS: ${{ github.event_name != 'pull_request' && secrets.ODDS_API_KEYS || '' }}
 
       - name: Check for committed The Odds API keys
         run: node scripts/check_no_odds_api_keys.js
         env:
-          THE_ODDS_API_KEYS: ${{ secrets.THE_ODDS_API_KEYS }}
-          ODDS_API_KEYS: ${{ secrets.ODDS_API_KEYS }}
+          THE_ODDS_API_KEYS: ${{ github.event_name != 'pull_request' && secrets.THE_ODDS_API_KEYS || '' }}
+          ODDS_API_KEYS: ${{ github.event_name != 'pull_request' && secrets.ODDS_API_KEYS || '' }}
 
       - name: Verify closing odds and risk mirrors
         run: node scripts/verify_mirrors.js
@@ -67,39 +73,42 @@ jobs:
         run: bash scripts/check_data_save_helpers.sh
 
   deploy-firestore-rules:
-    # Publicação de firestore.rules é manual, local, pela conta pessoal de
-    # quem mantém o projeto (firebase deploy --only firestore:rules, login
-    # já existente na máquina) — não pela service account de CI, que não
-    # tem (e não deve ganhar) permissão de publicar regras. Este job é só
-    # uma via alternativa opcional pra quando for mais prático disparar
-    # pelo GitHub Actions: nunca roda sozinho (só com
-    # force_firestore_rules_deploy=true no workflow_dispatch) e, por ser
-    # condicionado a esse input, fica "skipped" (não falha o workflow) em
-    # toda push normal e em todo workflow_dispatch sem o input marcado.
     name: Deploy Firestore rules (manual)
-    needs:
-      - verify-mirrors
+    needs: verify-mirrors
     if: >
       github.repository == 'ubereats-oss/edge-finder' &&
+      github.ref == 'refs/heads/main' &&
       github.event_name == 'workflow_dispatch' &&
       inputs.force_firestore_rules_deploy == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: projects/29716291623/locations/global/workloadIdentityPools/github-actions/providers/edge-finder-main
-          service_account: github-functions-deployer@odds-app-edge.iam.gserviceaccount.com
+          persist-credentials: false
 
-      - name: Deploy Firestore rules
-        run: npx -y firebase-tools@latest deploy --project odds-app-edge --only firestore:rules
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          skip_install: true
+
+      - name: Validate Firestore rules publication
+        run: bash scripts/deploy_firebase_quietly.sh rules
+        env:
+          EDGE_WIF_PROVIDER: ${{ secrets.EDGE_WIF_PROVIDER }}
+          EDGE_DEPLOY_SERVICE_ACCOUNT: ${{ secrets.EDGE_DEPLOY_SERVICE_ACCOUNT }}
+          EDGE_FIREBASE_PROJECT: ${{ secrets.EDGE_FIREBASE_PROJECT }}
 
   detect-functions:
     name: Detect changed Functions
-    if: github.repository == 'ubereats-oss/edge-finder'
+    if: >
+      github.repository == 'ubereats-oss/edge-finder' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     outputs:
       functions: ${{ steps.detect.outputs.functions }}
@@ -130,7 +139,6 @@ jobs:
               echo "functions=$functions" >> "$GITHUB_OUTPUT"
               echo "firebase_only=$firebase_only" >> "$GITHUB_OUTPUT"
               echo "should_deploy=true" >> "$GITHUB_OUTPUT"
-              echo "Forced Functions deploy: $functions"
               exit 0
             fi
           fi
@@ -139,7 +147,6 @@ jobs:
             echo "functions=" >> "$GITHUB_OUTPUT"
             echo "firebase_only=" >> "$GITHUB_OUTPUT"
             echo "should_deploy=false" >> "$GITHUB_OUTPUT"
-            echo "No Functions deploy forced."
             exit 0
           fi
 
@@ -151,13 +158,11 @@ jobs:
             mapfile -t changed < <(git diff --name-only "$before" "$after")
           fi
 
-          printf '%s\n' "${changed[@]}" > /tmp/changed_files.txt
           functions="$(node scripts/detect_functions_to_deploy.js "${changed[@]}")"
           if [[ -z "$functions" ]]; then
             echo "functions=" >> "$GITHUB_OUTPUT"
             echo "firebase_only=" >> "$GITHUB_OUTPUT"
             echo "should_deploy=false" >> "$GITHUB_OUTPUT"
-            echo "No Functions changed."
             exit 0
           fi
 
@@ -165,8 +170,6 @@ jobs:
           echo "functions=$functions" >> "$GITHUB_OUTPUT"
           echo "firebase_only=$firebase_only" >> "$GITHUB_OUTPUT"
           echo "should_deploy=true" >> "$GITHUB_OUTPUT"
-          echo "Affected Functions: $functions"
-          echo "Firebase --only: $firebase_only"
 
   deploy-functions:
     name: Deploy changed Functions
@@ -175,60 +178,30 @@ jobs:
       - detect-functions
     if: >
       github.repository == 'ubereats-oss/edge-finder' &&
-      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      github.ref == 'refs/heads/main' &&
       needs.detect-functions.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
-    env:
-      GOOGLE_CLOUD_PROJECT: odds-app-edge
-      FUNCTIONS_REGION: southamerica-east1
-      FUNCTIONS_TO_VERIFY: ${{ needs.detect-functions.outputs.functions }}
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: projects/29716291623/locations/global/workloadIdentityPools/github-actions/providers/edge-finder-main
-          service_account: github-functions-deployer@odds-app-edge.iam.gserviceaccount.com
+          persist-credentials: false
 
-      - name: Set up gcloud
+      - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
+        with:
+          skip_install: true
 
-      - name: Mark deployed commit in Functions source
-        run: printf '%s\n' '${{ github.sha }}' > functions/.deploy_commit
-
-      - name: Install Functions dependencies
-        working-directory: functions
-        run: npm ci
-
-      - name: Deploy affected Functions
-        run: npx -y firebase-tools@latest deploy --project "$GOOGLE_CLOUD_PROJECT" --only "${{ needs.detect-functions.outputs.firebase_only }}"
-
-      - name: Confirm active revisions contain this commit
-        shell: bash
-        run: |
-          set -euo pipefail
-          IFS=',' read -ra functions <<< "$FUNCTIONS_TO_VERIFY"
-          for fn in "${functions[@]}"; do
-            echo "Checking active source for $fn"
-            gcloud functions describe "$fn" \
-              --gen2 \
-              --region="$FUNCTIONS_REGION" \
-              --project="$GOOGLE_CLOUD_PROJECT" \
-              --format=json > "/tmp/${fn}.json"
-
-            bucket="$(node -e "const d=require('/tmp/${fn}.json'); console.log(d.buildConfig.sourceProvenance.resolvedStorageSource.bucket)")"
-            object="$(node -e "const d=require('/tmp/${fn}.json'); console.log(d.buildConfig.sourceProvenance.resolvedStorageSource.object)")"
-            generation="$(node -e "const d=require('/tmp/${fn}.json'); console.log(d.buildConfig.sourceProvenance.resolvedStorageSource.generation)")"
-            revision="$(node -e "const d=require('/tmp/${fn}.json'); console.log(d.serviceConfig.revision)")"
-            update_time="$(node -e "const d=require('/tmp/${fn}.json'); console.log(d.updateTime)")"
-
-            gsutil cp "gs://${bucket}/${object}#${generation}" "/tmp/${fn}-source.zip"
-            deployed_sha="$(unzip -p "/tmp/${fn}-source.zip" .deploy_commit | tr -d '\r\n')"
-            if [[ "$deployed_sha" != "${{ github.sha }}" ]]; then
-              echo "::error::${fn} active revision ${revision} source has commit ${deployed_sha}, expected ${{ github.sha }}"
-              exit 1
-            fi
-            echo "${fn}: revision ${revision}, updateTime ${update_time}, commit ${deployed_sha}"
-          done
+      - name: Validate Functions deployment
+        run: bash scripts/deploy_firebase_quietly.sh functions
+        env:
+          EDGE_WIF_PROVIDER: ${{ secrets.EDGE_WIF_PROVIDER }}
+          EDGE_DEPLOY_SERVICE_ACCOUNT: ${{ secrets.EDGE_DEPLOY_SERVICE_ACCOUNT }}
+          EDGE_FIREBASE_PROJECT: ${{ secrets.EDGE_FIREBASE_PROJECT }}
+          EDGE_FUNCTIONS_REGION: ${{ secrets.EDGE_FUNCTIONS_REGION }}
+          EDGE_FUNCTIONS: ${{ needs.detect-functions.outputs.functions }}
+          EDGE_FIREBASE_ONLY: ${{ needs.detect-functions.outputs.firebase_only }}

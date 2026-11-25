@@ -14,10 +14,6 @@ node_modules/
 odds_history/
 odds_snapshots/
 
-# Dumps do Repomix (snapshot do código pra IA, não deve ser versionado)
-odds_app.xml
-odds_app_*.xml
-
 # Flutter build
 build/
 .dart_tool/
@@ -38,3 +34,25 @@ build/
 *.iml
 chrome.bat 
 odds.bat 
+
+# BEGIN PROHIBITED PUBLIC PATHS
+AGENTS.md
+CLAUDE.md
+LOG_ATIVIDADES.md
+relatorio_*.md
+prompt_claude_chrome_sync_br.md
+Apostas App*.xlsx
+repomix-output*
+odds_app.xml
+odds_app_*.xml
+exported_code/
+code_exports/
+audit_outputs/
+audit-outputs/
+auditoria/
+audit_logs*.json
+policy*.json
+iam_policy*.json
+gcloud_*.json
+auditoria_*_parte_*.txt
+# END PROHIBITED PUBLIC PATHS
