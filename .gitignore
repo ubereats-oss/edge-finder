@@ -36,8 +36,8 @@ chrome.bat
 odds.bat 
 
 # BEGIN PROHIBITED PUBLIC PATHS
-AGENTS.md
-CLAUDE.md
+/AGENTS.md
+/CLAUDE.md
 LOG_ATIVIDADES.md
 relatorio_*.md
 prompt_claude_chrome_sync_br.md
