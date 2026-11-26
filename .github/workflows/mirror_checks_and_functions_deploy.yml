@@ -53,6 +53,9 @@ jobs:
       - name: Check public repository paths
         run: bash scripts/check_public_paths.sh
 
+      - name: Check deployment log safety
+        run: python3 scripts/check_deploy_log_safety.py
+
       - name: Test The Odds API key detector
         run: node --test scripts/test_check_no_odds_api_keys.cjs
         env:

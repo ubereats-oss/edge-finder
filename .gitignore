@@ -45,6 +45,8 @@ Apostas App*.xlsx
 repomix-output*
 odds_app.xml
 odds_app_*.xml
+/export_js_root.js
+/exportar_codigo.py
 exported_code/
 code_exports/
 audit_outputs/
