@@ -1,6 +1,6 @@
 # Relatório de desempenho — histórico central de indicações
 
-Gerado em: 2026-11-25T19:58:22.106Z
+Gerado em: 2026-11-27T19:36:49.666Z
 
 ## Teste NFL receptions
 
@@ -20,10 +20,11 @@ Taxa prevista calibrada sempre separada por versão do método de calibração (
 |---|---|---|---|---|---|---|---|---|---|
 | americanfootball/nfl | passTDs | 0-5% | 4 | 50.0% (4 decididas) | antigo 63.9% (bruta 70.7%) (n=4) · novo: sem dados | 25.2% | 1.4% (4/4 exata); ajustado —; mov. favor — | calibrado | 0 |
 | americanfootball/nfl | passTDs | 15-20% | 10 | 40.0% (10 decididas) | antigo 79.1% (bruta 87.4%) (n=5) · novo 54.1% (bruta 44.0%) (n=5) | -17.1% | 1.6% (10/10 exata); ajustado —; mov. favor 0.0% (0/10) · recorte novo: ROI 7.2%, CLV 2.32% (5/5) | calibrado | 0 |
-| americanfootball/nfl | passTDs | 20-25% | 4 | 75.0% (4 decididas) | antigo 72.7% (bruta 77.3%) (n=2) · novo 64.8% (bruta 69.3%) (n=2) | 65.4% | -1.4% (4/4 exata); ajustado —; mov. favor 0.0% (0/4) · recorte novo: ROI 139.0%, CLV 0.00% (2/2) | calibrado | 0 |
+| americanfootball/nfl | passTDs | 20-25% | 5 | 60.0% (5 decididas) | antigo 72.7% (bruta 77.3%) (n=2) · novo 63.9% (bruta 69.5%) (n=3) | 34.5% | -1.1% (5/5 exata); ajustado —; mov. favor 0.0% (0/5) · recorte novo: ROI 60.1%, CLV 0.00% (3/3) | calibrado | 0 |
 | americanfootball/nfl | passTDs | 25-30% | 2 | 50.0% (2 decididas) | antigo 76.9% (bruta 85.2%) (n=2) · novo: sem dados | -12.0% | -2.4% (2/2 exata); ajustado —; mov. favor 0.0% (0/2) | calibrado | 0 |
 | americanfootball/nfl | passYards | -5-0% | 2 | 50.0% (2 decididas) | antigo 70.3% (bruta 68.8%) (n=2) · novo: sem dados | — | 0.0% (2/2 exata); ajustado —; mov. favor — | calibrado | 0 |
 | americanfootball/nfl | passYards | 0-5% | 15 | 46.7% (15 decididas) | antigo 59.1% (bruta 68.4%) (n=15) · novo: sem dados | -22.6% | 0.3% (2/15 exata); ajustado —; mov. favor — | calibrado | 0 |
+| americanfootball/nfl | passYards | 20-25% | 1 | 0.0% (1 decididas) | antigo: sem dados · novo 59.0% (bruta 100.0%) (n=1) | -100.0% | —; ajustado —; mov. favor — · recorte novo: ROI -100.0%, CLV — (0/1) | calibrado | 0 |
 | americanfootball/nfl | passYards | 5-10% | 5 | 0.0% (5 decididas) | antigo 59.7% (bruta 86.6%) (n=5) · novo: sem dados | -100.0% | 0.0% (1/5 exata); ajustado —; mov. favor — | calibrado | 0 |
 | americanfootball/nfl | receptions | 0-5% | 2 | 50.0% (2 decididas) | antigo 58.8% (bruta 67.8%) (n=2) · novo: sem dados | -38.1% | -1.6% (1/2 exata); ajustado —; mov. favor — | calibrado | 0 |
 | americanfootball/nfl | receptions | 15-20% | 32 | 59.4% (32 decididas) | antigo 66.3% (bruta 83.3%) (n=25) · novo 58.0% (bruta 79.4%) (n=7) | 26.8% | 1.8% (30/32 exata); ajustado —; mov. favor 0.0% (0/27) · recorte novo: ROI -67.4%, CLV 2.74% (7/7) | calibrado | 0 |
@@ -58,7 +59,7 @@ Taxa prevista calibrada sempre separada por versão do método de calibração (
 | antes_primeira_captura | 3 | 0 | 0 | 0.0% | captura_expirada_sem_odd_gravada: 3 |
 | captura_inicial_pre_jit | 86 | 30 | 0 | 34.9% | captura_expirada_sem_odd_gravada: 56 |
 | jit_pre_controle_status | 27 | 12 | 1 | 48.1% | captura_expirada_sem_odd_gravada: 11; cota_api_esgotada_na_captura_pre_fix: 3 |
-| apos_fix_dependencia_be2ab14 | 177 | 135 | 22 | 88.7% | jogador_indisponivel_no_mercado: 1; linha_mudou_ate_fechamento: 2; captura_expirada_sem_odd_gravada: 17 |
+| apos_fix_dependencia_be2ab14 | 179 | 136 | 22 | 88.3% | jogador_indisponivel_no_mercado: 1; linha_mudou_ate_fechamento: 2; captura_expirada_sem_odd_gravada: 18 |
 
 ## Apostas reais
 

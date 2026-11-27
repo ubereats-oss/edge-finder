@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T19:58:22.106Z",
+  "generatedAt": "2026-11-27T19:36:49.666Z",
   "rows": [
     {
       "esporte": "americanfootball/nfl",
@@ -26,7 +26,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 85,
+      "sampleSize": 88,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -64,7 +64,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 85,
+      "sampleSize": 88,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -90,18 +90,18 @@
       "esporte": "americanfootball/nfl",
       "market": "passTDs",
       "edgeBucket": "20-25%",
-      "nResolvidasValidas": 4,
-      "nBinarias": 4,
-      "winRateReal": 75,
-      "winRateModelo": 68.8,
-      "winRateModeloBruto": 73.3,
-      "roi": 65.4,
-      "clvMedio": -1.43,
-      "clvComOdd": 4,
+      "nResolvidasValidas": 5,
+      "nBinarias": 5,
+      "winRateReal": 60,
+      "winRateModelo": 67.4,
+      "winRateModeloBruto": 72.6,
+      "roi": 34.5,
+      "clvMedio": -1.14,
+      "clvComOdd": 5,
       "clvAjustadoMedio": null,
       "clvComLinhaAjustada": 0,
-      "clvCoberturaTotal": 4,
-      "movimentoLinhaTotal": 4,
+      "clvCoberturaTotal": 5,
+      "movimentoLinhaTotal": 5,
       "movimentoLinhaFavor": 0,
       "movimentoLinhaFavorPct": 0,
       "semClv": 0,
@@ -111,7 +111,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 85,
+      "sampleSize": 88,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -122,14 +122,14 @@
           "winRateModeloBruto": 77.3
         },
         "novo": {
-          "n": 2,
-          "nBinarias": 2,
-          "winRateReal": 100,
-          "winRateModelo": 64.8,
-          "winRateModeloBruto": 69.3,
-          "roi": 139,
+          "n": 3,
+          "nBinarias": 3,
+          "winRateReal": 66.7,
+          "winRateModelo": 63.9,
+          "winRateModeloBruto": 69.5,
+          "roi": 60.1,
           "clvMedio": 0,
-          "clvComOdd": 2
+          "clvComOdd": 3
         }
       }
     },
@@ -158,7 +158,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 85,
+      "sampleSize": 88,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -196,7 +196,7 @@
       "semClvMotivos": {},
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 850,
+      "sampleSize": 894,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -236,7 +236,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 850,
+      "sampleSize": 894,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -247,6 +247,49 @@
           "winRateModeloBruto": 68.4
         },
         "novo": null
+      }
+    },
+    {
+      "esporte": "americanfootball/nfl",
+      "market": "passYards",
+      "edgeBucket": "20-25%",
+      "nResolvidasValidas": 1,
+      "nBinarias": 1,
+      "winRateReal": 0,
+      "winRateModelo": 59,
+      "winRateModeloBruto": 100,
+      "roi": -100,
+      "clvMedio": null,
+      "clvComOdd": 0,
+      "clvAjustadoMedio": null,
+      "clvComLinhaAjustada": 0,
+      "clvCoberturaTotal": 0,
+      "movimentoLinhaTotal": 0,
+      "movimentoLinhaFavor": 0,
+      "movimentoLinhaFavorPct": null,
+      "semClv": 1,
+      "clvCoveragePct": 0,
+      "clvExactCoveragePct": 0,
+      "clvAdjustedCoveragePct": 0,
+      "semClvMotivos": {
+        "captura_expirada_sem_odd_gravada": 1
+      },
+      "minSampleToCalibrate": 30,
+      "segmentState": "calibrado",
+      "sampleSize": 894,
+      "faltamParaCalibrar": 0,
+      "byMethodVersion": {
+        "antigo": null,
+        "novo": {
+          "n": 1,
+          "nBinarias": 1,
+          "winRateReal": 0,
+          "winRateModelo": 59,
+          "winRateModeloBruto": 100,
+          "roi": -100,
+          "clvMedio": null,
+          "clvComOdd": 0
+        }
       }
     },
     {
@@ -276,7 +319,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 850,
+      "sampleSize": 894,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -316,7 +359,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 659,
+      "sampleSize": 679,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -357,7 +400,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 659,
+      "sampleSize": 679,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -407,7 +450,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 659,
+      "sampleSize": 679,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -456,7 +499,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 659,
+      "sampleSize": 679,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -505,7 +548,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 659,
+      "sampleSize": 679,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -545,7 +588,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 659,
+      "sampleSize": 679,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -585,7 +628,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2661,
+      "sampleSize": 2729,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -625,7 +668,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2661,
+      "sampleSize": 2729,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -666,7 +709,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2661,
+      "sampleSize": 2729,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -708,7 +751,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2661,
+      "sampleSize": 2729,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -748,7 +791,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2661,
+      "sampleSize": 2729,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -788,7 +831,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2661,
+      "sampleSize": 2729,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -829,7 +872,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2661,
+      "sampleSize": 2729,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -869,7 +912,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 2661,
+      "sampleSize": 2729,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -911,7 +954,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1472,
+      "sampleSize": 1530,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -961,7 +1004,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1472,
+      "sampleSize": 1530,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1010,7 +1053,7 @@
       },
       "minSampleToCalibrate": 30,
       "segmentState": "calibrado",
-      "sampleSize": 1472,
+      "sampleSize": 1530,
       "faltamParaCalibrar": 0,
       "byMethodVersion": {
         "antigo": {
@@ -1378,16 +1421,16 @@
     },
     {
       "cohort": "apos_fix_dependencia_be2ab14",
-      "nPublicadasResolvidas": 177,
-      "clvExato": 135,
+      "nPublicadasResolvidas": 179,
+      "clvExato": 136,
       "clvAjustado": 22,
-      "clvTotal": 157,
-      "semClv": 20,
-      "clvCoveragePct": 88.7,
+      "clvTotal": 158,
+      "semClv": 21,
+      "clvCoveragePct": 88.3,
       "semClvMotivos": {
         "jogador_indisponivel_no_mercado": 1,
         "linha_mudou_ate_fechamento": 2,
-        "captura_expirada_sem_odd_gravada": 17
+        "captura_expirada_sem_odd_gravada": 18
       }
     }
   ],
